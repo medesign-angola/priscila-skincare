@@ -1,0 +1,96 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss' source('./app');
+
+@font-face {
+    font-family: 'cormorant';
+    src: url('/fonts/cormorant-garamond/cg.ttf');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'inter';
+    src: url('/fonts/inter/inter.ttf');
+    font-display: swap;
+}
+
+@theme{
+    --primary: #7D6645;
+    --text-primary:  #1A1917;
+    --dm-secondary:  #fff;
+    --dm-bg: #373737;
+    --breakpoint-xl-1230: 1230px;
+    --breakpoint-md-905: 905px;
+    --breakpoint-xl-1230: 1230px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1440px;
+    --breakpoint-3xl: 1536px;
+    --breakpoint-4xl: 1600px;
+    --breakpoint-5xl: 1900px;
+    --breakpoint-xl-1920: 1920px;
+    --breakpoint-6xl: 2050px;
+
+}
+
+:root{
+    --max-w: 90%;
+    --max-w-1536: 1536px;
+}
+
+*{
+    font-family: 'inter';
+}
+
+.overflow-x-auto::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar
+{
+    display: none;
+}
+.overflow-x-auto,
+.no-scrollbar{
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.limited-container{
+    max-width: 95%;
+    margin: 0px auto;
+}
+
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched{
+    border-color: red;
+}
+
+@media (prefers-color-scheme: dark) {
+    .darkmode-enabled > svg path {
+        stroke: var(--dm-secondary);
+    }
+}
+
+/* xl */
+@media screen and (min-width: 1280px) {
+    .limited-container{
+        max-width: 90%;
+    }
+}
+/* 2xl */
+@media screen and (min-width: 1440px) {
+    .limited-container{
+        /* max-width: var(--max-w); */
+        max-width: 80%;
+    }
+}
+/* 4xl */
+@media screen and (min-width: 1600px) {
+    .limited-container{
+        max-width: 1173px;
+    }
+}
+/* 5xl */
+@media screen and (min-width: 1900px) {
+  .limited-container{
+      /* max-width: var(--max-w-1536); */
+      /* max-width: 1920px; */
+      /* max-width: 90%; */
+  }
+}
