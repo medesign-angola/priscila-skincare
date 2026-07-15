@@ -98,10 +98,19 @@
   color: var(--brand-primary, #7d6645);
   background: #fff;
   cursor: pointer;
+  transition:
+    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms ease;
 }
 
 .kits-editorial__action button:hover {
-  background: #f7f5f2;
+  color: #fff;
+  background: var(--color-burgundy-500, #b49667);
+}
+
+.kits-editorial__action button:active {
+  transform: scale(0.985);
 }
 
 .kits-editorial__action button:focus-visible,
@@ -112,6 +121,11 @@
 
 .kits-editorial__action svg {
   flex: 0 0 auto;
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kits-editorial__action button:hover svg {
+  transform: translateX(0.25rem);
 }
 
 .kits-editorial__action path {
@@ -265,7 +279,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .kits-editorial__action button,
+  .kits-editorial__action svg,
   .kit-card__media img {
     transition: none;
+  }
+
+  .kits-editorial__action button:active,
+  .kits-editorial__action button:hover svg {
+    transform: none;
   }
 }
