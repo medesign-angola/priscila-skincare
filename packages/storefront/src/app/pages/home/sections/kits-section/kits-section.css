@@ -4,6 +4,8 @@
 
 .kits-section {
   --section-padding: clamp(1.5rem, 2.222vw, 4rem);
+  --kits-editorial-inset: clamp(1.5rem, 2.222vw, 4rem);
+
   color: var(--text-primary, #1a1917);
   background: #fff;
 }
@@ -35,6 +37,9 @@
 }
 
 .kits-editorial__intro {
+  position: sticky;
+  top: var(--kits-editorial-inset);
+  z-index: 1;
   gap: clamp(1rem, 1.667vw, 2.5rem);
 }
 
@@ -241,6 +246,7 @@
   }
 
   .kits-editorial__intro {
+    position: static;
     padding: 1rem;
     border-radius: 0.125rem;
     background: rgb(44 34 24 / 48%);

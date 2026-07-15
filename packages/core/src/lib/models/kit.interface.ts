@@ -3,6 +3,7 @@ import type { Product } from './product.interface';
 export interface KitHomeTranslation {
   editorialTitle: string;
   editorialDescription: string;
+  editorialFootnote: string;
   finderDescription: string;
 }
 

@@ -22,6 +22,8 @@ export class HeroCoverComponent {
   hasNoise = input<boolean>(false);
   blendMode = input<string>('normal');
   height = input<string>('100vh');
+  contentPadding = input<string>();
+  overflowMode = input<'hidden' | 'clip'>('hidden');
 
   // Query the active BlurUpDirective in the template
   highResMedia = viewChild(BlurUpDirective);

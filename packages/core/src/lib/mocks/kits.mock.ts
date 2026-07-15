@@ -27,6 +27,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'O fluido de hidratação SPF30',
           editorialDescription:
             'Unifique a pele para um último segundo de pele natural e luminosa, reforçando os mecanismos de proteção da pele.',
+          editorialFootnote:
+            'Tudo que sua pele precisa para brilhar e se manter hidratada, suave e forte ao longo do dia.',
           finderDescription:
             'Caramel Set: hidratação e suavidade para o seu dia.',
         },
@@ -34,6 +36,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'Le fluide hydratant SPF30',
           editorialDescription:
             'Unifiez la peau pour un fini naturel et lumineux, tout en renforçant ses mécanismes de protection.',
+          editorialFootnote:
+            'Tout ce dont votre peau a besoin pour rester lumineuse, hydratée, douce et forte au quotidien.',
           finderDescription:
             'Caramel Set : hydratation et douceur au quotidien.',
         },
@@ -64,6 +68,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'Luminosidade que se sente',
           editorialDescription:
             'Uma rotina concentrada para nutrir e uniformizar a pele.',
+          editorialFootnote:
+            'Uma seleção completa para revelar luminosidade, conforto e uniformidade.',
           finderDescription:
             'Descubra a linha de produtos que transformam a sua beleza.',
         },
@@ -71,6 +77,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'Un éclat qui se ressent',
           editorialDescription:
             'Une routine concentrée pour nourrir et unifier la peau.',
+          editorialFootnote:
+            'Une sélection complète pour révéler éclat, confort et uniformité.',
           finderDescription:
             'Découvrez la gamme de produits qui transforme votre beauté.',
         },
@@ -101,6 +109,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'O essencial para a sua pele',
           editorialDescription:
             'Uma seleção diária simples, eficaz e adequada às suas necessidades.',
+          editorialFootnote:
+            'Cuidados essenciais para acompanhar a sua pele todos os dias.',
           finderDescription:
             'Encontre o produto ideal para cuidar da sua pele.',
         },
@@ -108,6 +118,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: "L'essentiel pour votre peau",
           editorialDescription:
             'Une sélection quotidienne simple, efficace et adaptée à vos besoins.',
+          editorialFootnote:
+            'Des soins essentiels pour accompagner votre peau chaque jour.',
           finderDescription:
             'Trouvez le produit idéal pour prendre soin de votre peau.',
         },
@@ -137,6 +149,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'Equilíbrio e conforto',
           editorialDescription:
             'Ativos suaves para acalmar e apoiar a barreira natural da pele.',
+          editorialFootnote:
+            'Uma rotina suave para recuperar o equilíbrio e o conforto da pele.',
           finderDescription:
             'Descubra produtos que atendem às suas necessidades.',
         },
@@ -144,6 +158,8 @@ export const MOCK_KITS: Kit[] = [
           editorialTitle: 'Équilibre et confort',
           editorialDescription:
             'Des actifs doux pour apaiser et soutenir la barrière naturelle de la peau.',
+          editorialFootnote:
+            "Une routine douce pour restaurer l'équilibre et le confort de la peau.",
           finderDescription: 'Découvrez des produits adaptés à vos besoins.',
         },
       },

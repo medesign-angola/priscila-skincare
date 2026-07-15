@@ -114,15 +114,3 @@ html.lenis body {
 .lenis-scrolling iframe {
   pointer-events: none;
 }
-
-.noise-overlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('/assets/images/noise.png');
-  background-repeat: repeat;
-  opacity: 1; /* Opacidade sutil para textura analógica premium */
-  pointer-events: none;
-  z-index: 1; /* Acima do fundo, mas abaixo do texto */
-}

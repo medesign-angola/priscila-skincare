@@ -1,6 +1,7 @@
 <div
-  class="hero-cover-container relative flex items-center overflow-hidden"
+  class="hero-cover-container relative flex items-center"
   [style.height]="height()"
+  [style.overflow]="overflowMode()"
 >
   @if (hasNoise()) {
   <div class="noise-overlay"></div>
@@ -9,6 +10,7 @@
   <!-- 1. Interactive Content overlay -->
   <div
     class="w-full h-full flex flex-col justify-end text-white relative z-10 pb-20 px-4 md:px-10"
+    [style.padding]="contentPadding()"
   >
     @if (contentTemplate(); as temp) {
     <ng-container *ngTemplateOutlet="temp"></ng-container>

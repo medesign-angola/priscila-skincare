@@ -13,6 +13,7 @@ interface HomeKitViewModel {
   index: string;
   title: string;
   editorialDescription: string;
+  editorialFootnote: string;
   finderDescription: string;
   thumbnailImage: string;
   mediaType: 'image' | 'video';
@@ -61,6 +62,7 @@ export class KitsSection {
         index: String(index + 1).padStart(2, '0'),
         title: translation.editorialTitle,
         editorialDescription: translation.editorialDescription,
+        editorialFootnote: translation.editorialFootnote,
         finderDescription: translation.finderDescription,
         thumbnailImage: kit.home.thumbnailImage,
         mediaType: kit.home.mediaType,

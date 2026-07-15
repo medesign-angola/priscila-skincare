@@ -5,6 +5,8 @@
       @if (kit.mediaStyle === 'split-right') {
       <org-hero-split
         height="100%"
+        [contentPadding]="'var(--kits-editorial-inset)'"
+        overflowMode="clip"
         [mediaUrl]="kit.mediaUrl"
         [placeholderUrl]="kit.placeholderUrl"
         [hasNoise]="true"
@@ -36,7 +38,7 @@
                   <path d="M5 12H19M13 6L19 12L13 18" />
                 </svg>
               </button>
-              <p>{{ 'KITS_SECTION.EDITORIAL_FOOTNOTE' | translate }}</p>
+              <p>{{ kit.editorialFootnote }}</p>
             </div>
           </div>
         </ng-template>
@@ -44,6 +46,8 @@
       } @else {
       <org-hero-cover
         height="100%"
+        [contentPadding]="'var(--kits-editorial-inset)'"
+        overflowMode="clip"
         [mediaType]="kit.mediaType"
         [mediaUrl]="kit.mediaUrl"
         [placeholderUrl]="kit.placeholderUrl"
@@ -76,7 +80,7 @@
                   <path d="M5 12H19M13 6L19 12L13 18" />
                 </svg>
               </button>
-              <p>{{ 'KITS_SECTION.EDITORIAL_FOOTNOTE' | translate }}</p>
+              <p>{{ kit.editorialFootnote }}</p>
             </div>
           </div>
         </ng-template>
