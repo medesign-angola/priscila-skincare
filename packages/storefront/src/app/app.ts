@@ -1,4 +1,4 @@
-import { Component, afterNextRender, inject } from '@angular/core';
+import { Component, afterNextRender, computed, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '@org/shared';
 import { ProductFacade, HeaderService } from '@org/core';
@@ -12,6 +12,15 @@ import { ProductFacade, HeaderService } from '@org/core';
 export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
+  readonly headerProducts = computed(() => {
+    const language = this.facade.currentLanguage();
+
+    return this.facade.products().map((product) => ({
+      id: product.id,
+      name: product.translations[language].name,
+      image: product.thumbnailImage,
+    }));
+  });
 
   constructor() {
     afterNextRender(async () => {

@@ -5,11 +5,16 @@
 >
   <!-- 1. Esquerda: Navegação -->
   <nav class="flex items-center gap-8 text-sm uppercase">
-    <a
-      routerLink="/produtos"
-      class="cursor-pointer hover:opacity-75 transition-opacity duration-150"
-      >Produtos</a
+    <button
+      #productsMenuTrigger
+      type="button"
+      class="cursor-pointer bg-transparent border-0 p-0 uppercase hover:opacity-75 transition-opacity duration-150"
+      aria-controls="products-navigation-menu"
+      [attr.aria-expanded]="productsMenuOpen()"
+      (click)="toggleProductsMenu()"
     >
+      Produtos
+    </button>
     <a
       routerLink="/colecao"
       class="cursor-pointer hover:opacity-75 transition-opacity duration-150 uppercase"
@@ -184,5 +189,64 @@
     </div>
   </div>
 
+  @if (productsMenuInitialized()) {
+  <section
+    id="products-navigation-menu"
+    class="products-menu"
+    [class.products-menu--open]="productsMenuOpen()"
+    [attr.aria-hidden]="!productsMenuOpen()"
+    [attr.inert]="productsMenuOpen() ? null : ''"
+    aria-label="Produtos"
+    data-lenis-prevent
+  >
+    <a
+      routerLink="/produtos"
+      class="products-menu__all"
+      (click)="closeProductsMenu()"
+    >
+      <span>Ver todos</span>
+      <svg
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12H19M13 6L19 12L13 18"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </a>
 
+    <ul class="products-menu__list">
+      @for (product of products(); track product.id; let index = $index) {
+      <li>
+        <button
+          type="button"
+          class="products-menu__item"
+          (click)="closeProductsMenu()"
+        >
+          <span class="products-menu__index" aria-hidden="true">
+            {{ formatIndex(index) }}
+          </span>
+          <span class="products-menu__name">{{ product.name }}</span>
+          <img
+            class="products-menu__image"
+            [src]="product.image"
+            [alt]="product.name"
+            width="40"
+            height="40"
+            decoding="async"
+          />
+        </button>
+      </li>
+      }
+    </ul>
+  </section>
+  }
 </header>

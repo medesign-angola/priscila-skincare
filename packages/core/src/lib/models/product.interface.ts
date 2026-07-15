@@ -52,6 +52,7 @@ export interface Product {
   categoryId: string;
   sizeIds: string[]; // references Size entity
   images: string[]; // e.g. ['/assets/images/products/product-1-1.png', ...]
+  thumbnailImage: string;
   translations: {
     pt: ProductTranslation;
     fr: ProductTranslation;
