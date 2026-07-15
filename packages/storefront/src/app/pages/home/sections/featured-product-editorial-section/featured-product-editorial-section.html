@@ -35,7 +35,10 @@
               "
             >
               <span>{{ 'FEATURED_PRODUCTS.ADD_TO_CART' | translate }}</span>
-              <span>{{ product.currencyLabel }} {{ product.priceLabel }}</span>
+              <span
+                >{{ product.price | priceFormat: product.currency :
+                product.language }}</span
+              >
             </button>
             <p>{{ product.footnote }}</p>
           </div>

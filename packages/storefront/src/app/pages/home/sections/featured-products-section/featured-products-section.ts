@@ -5,7 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { HeaderService, ProductFacade } from '@org/core';
-import { ProductCard, ProductCardData } from '@org/shared';
+import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
@@ -22,11 +22,6 @@ export class FeaturedProductsSection {
   readonly products = computed<ProductCardData[]>(() => {
     const language = this.facade.currentLanguage();
     const currency = this.headerService.currency();
-    const formatter = new Intl.NumberFormat(
-      language === 'pt' ? 'pt-AO' : 'fr-FR',
-      { minimumFractionDigits: 2, maximumFractionDigits: 2 },
-    );
-
     return this.facade.featuredProducts().flatMap((product) => {
       const commerce = product.commerce;
       if (!commerce) return [];
@@ -41,7 +36,12 @@ export class FeaturedProductsSection {
           rating: translation.reviews.averageRating,
           totalReviews: translation.reviews.totalReviews,
           currencyLabel: currency === 'AOA' ? 'Kz' : '€',
-          priceLabel: formatter.format(commerce.prices[currency]),
+          priceLabel: formatPrice(
+            commerce.prices[currency],
+            currency,
+            language,
+            false,
+          ),
           available: commerce.availability === 'in-stock',
           badge: commerce.badge,
         },

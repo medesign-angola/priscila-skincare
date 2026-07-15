@@ -5,7 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { HeaderService, ProductFacade } from '@org/core';
-import { HeroCoverComponent } from '@org/shared';
+import { HeroCoverComponent, PriceFormatPipe } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 
 interface EditorialProductViewModel {
@@ -18,14 +18,15 @@ interface EditorialProductViewModel {
   mediaUrl: string;
   placeholderUrl?: string;
   hasNoise: boolean;
-  currencyLabel: string;
-  priceLabel: string;
+  currency: 'AOA' | 'EUR';
+  language: 'pt' | 'fr';
+  price: number;
   available: boolean;
 }
 
 @Component({
   selector: 'app-featured-product-editorial-section',
-  imports: [HeroCoverComponent, TranslatePipe],
+  imports: [HeroCoverComponent, PriceFormatPipe, TranslatePipe],
   templateUrl: './featured-product-editorial-section.html',
   styleUrl: './featured-product-editorial-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,11 +46,6 @@ export class FeaturedProductEditorialSection {
 
     if (!product || !editorial || !presentation || !commerce) return null;
 
-    const formatter = new Intl.NumberFormat(
-      language === 'pt' ? 'pt-AO' : 'fr-FR',
-      { minimumFractionDigits: 2, maximumFractionDigits: 2 },
-    );
-
     return {
       id: product.id,
       name: product.translations[language].name,
@@ -60,8 +56,9 @@ export class FeaturedProductEditorialSection {
       mediaUrl: presentation.mediaUrl,
       placeholderUrl: presentation.placeholderUrl,
       hasNoise: presentation.hasNoise ?? false,
-      currencyLabel: currency === 'AOA' ? 'Kz' : '€',
-      priceLabel: formatter.format(commerce.prices[currency]),
+      currency,
+      language,
+      price: commerce.prices[currency],
       available: commerce.availability === 'in-stock',
     };
   });
