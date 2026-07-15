@@ -2,6 +2,11 @@ export interface ProductTranslation {
   name: string;
   description: string;
   additionalDescription?: string;
+  editorial?: {
+    headline: string;
+    description: string;
+    footnote: string;
+  };
   highlights: string[];
   benefits: {
     mainImage: string;
@@ -68,6 +73,13 @@ export interface Product {
   thumbnailImage: string;
   featuredImage?: string;
   commerce?: ProductCommerce;
+  homeEditorial?: {
+    order: number;
+    mediaType: 'image' | 'video';
+    mediaUrl: string;
+    placeholderUrl?: string;
+    hasNoise?: boolean;
+  };
   translations: {
     pt: ProductTranslation;
     fr: ProductTranslation;

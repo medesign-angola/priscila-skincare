@@ -43,6 +43,16 @@ export class ProductFacade {
       ),
   );
 
+  readonly homeEditorialProducts = computed(() =>
+    this.products()
+      .filter((product) => product.homeEditorial !== undefined)
+      .sort(
+        (firstProduct, secondProduct) =>
+          (firstProduct.homeEditorial?.order ?? Number.MAX_SAFE_INTEGER) -
+          (secondProduct.homeEditorial?.order ?? Number.MAX_SAFE_INTEGER),
+      ),
+  );
+
   readonly collectionsWithProducts = computed(() => {
     const mappedProducts = this.mappedProducts();
 

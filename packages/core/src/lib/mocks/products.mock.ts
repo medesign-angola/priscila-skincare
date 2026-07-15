@@ -328,6 +328,16 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-6',
     featured: false,
+    commerce: {
+      prices: { AOA: 150000, EUR: 150 },
+      availability: 'in-stock',
+    },
+    homeEditorial: {
+      order: 1,
+      mediaType: 'video',
+      mediaUrl: '/assets/videos/products/caramel-body-cream-editorial.mp4',
+      hasNoise: false,
+    },
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: ['/assets/images/products/product-6-1.jpg'],
@@ -335,6 +345,14 @@ export const MOCK_PRODUCTS: Product[] = [
     translations: {
       pt: {
         name: 'Caramel Body Cream',
+        editorial: {
+          headline:
+            'Creme Corporal Caramel: Hidratação e suavidade em cada aplicação.',
+          description:
+            'Transforme sua rotina com o Caramel Set. Este creme hidrata e traz frescor, garantindo uma pele saudável e luminosa. Experimente e sinta a diferença!',
+          footnote:
+            'O Caramel Body Cream é ideal para sua pele. Com ingredientes selecionados, oferece hidratação intensa, deixando-a suave e irresistível o dia todo.',
+        },
         description:
           'Creme corporal reconfortante com fragrância doce e hidratação prolongada.',
         highlights: ['Hidratação 24h', 'Aroma Doce', 'Nutrição'],
@@ -346,6 +364,14 @@ export const MOCK_PRODUCTS: Product[] = [
       },
       fr: {
         name: 'Caramel Body Cream',
+        editorial: {
+          headline:
+            'Crème Corps Caramel : hydratation et douceur à chaque application.',
+          description:
+            'Transformez votre routine avec le Caramel Set. Cette crème hydrate et rafraîchit la peau pour la garder saine et lumineuse. Essayez-la et sentez la différence !',
+          footnote:
+            'Le Caramel Body Cream est idéal pour votre peau. Ses ingrédients sélectionnés procurent une hydratation intense et la laissent douce et irrésistible toute la journée.',
+        },
         description:
           'Crème corporelle réconfortante au parfum sucré et hydratation prolongée.',
         highlights: ['Hydratation 24h', 'Parfum Sucré', 'Nutrition'],
