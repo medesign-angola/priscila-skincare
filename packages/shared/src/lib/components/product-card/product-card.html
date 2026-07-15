@@ -1,0 +1,87 @@
+<article class="product-card">
+  <div class="product-card__media">
+    <button
+      type="button"
+      class="product-card__image-trigger"
+      [attr.aria-label]="product().name"
+      (click)="selectProduct()"
+    >
+      <img
+        [src]="product().imageUrl"
+        [alt]="product().name"
+        width="1000"
+        height="880"
+        loading="lazy"
+        decoding="async"
+      />
+    </button>
+
+    @if (product().badge; as badge) {
+    <span class="product-card__badge">
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
+        <path
+          d="M2.5 3.5v3.7L8.8 13.5l4.7-4.7-6.3-6.3H3.5a1 1 0 0 0-1 1Z"
+          fill="none"
+          stroke="currentColor"
+          stroke-linejoin="round"
+        />
+        <circle cx="5.3" cy="5.3" r="0.8" fill="currentColor" />
+      </svg>
+      @switch (badge.type) { @case ('discount') {
+      <span>-{{ badge.percentage }}%</span>
+      } @case ('new') {
+      <span>{{ 'FEATURED_PRODUCTS.NEW' | translate }}</span>
+      } @case ('coming-soon') {
+      <span>{{ 'FEATURED_PRODUCTS.COMING_SOON' | translate }}</span>
+      } }
+    </span>
+    }
+
+    <button
+      type="button"
+      class="product-card__add"
+      [disabled]="!product().available"
+      (click)="requestAddToCart()"
+    >
+      <span>
+        {{ (product().available ? 'FEATURED_PRODUCTS.ADD_TO_CART' :
+        'FEATURED_PRODUCTS.UNAVAILABLE' ) | translate }}
+      </span>
+      <span class="product-card__price">
+        <span>{{ product().currencyLabel }}</span>
+        <span>{{ product().priceLabel }}</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="product-card__content">
+    <p class="product-card__category">
+      {{ 'FEATURED_PRODUCTS.CATEGORY' | translate }}
+    </p>
+    <button type="button" class="product-card__name" (click)="selectProduct()">
+      {{ product().name }}
+    </button>
+    <p class="product-card__description">{{ product().description }}</p>
+    <p
+      class="product-card__rating"
+      [attr.aria-label]="
+        'FEATURED_PRODUCTS.RATING_LABEL'
+          | translate
+            : {
+                rating: product().rating,
+                reviews: product().totalReviews,
+              }
+      "
+    >
+      <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
+        <path
+          d="m8 1.8 1.9 3.8 4.2.6-3 3 .7 4.2L8 11.4l-3.8 2 .7-4.2-3-3 4.2-.6L8 1.8Z"
+          fill="currentColor"
+        />
+      </svg>
+      <span>
+        {{ product().rating | number: '1.1-1' }} ({{ product().totalReviews }})
+      </span>
+    </p>
+  </div>
+</article>

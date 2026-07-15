@@ -47,6 +47,17 @@ export interface ProductTranslation {
   };
 }
 
+export type ProductBadge =
+  | { type: 'discount'; percentage: number }
+  | { type: 'new' }
+  | { type: 'coming-soon' };
+
+export interface ProductCommerce {
+  prices: { AOA: number; EUR: number };
+  availability: 'in-stock' | 'coming-soon';
+  badge?: ProductBadge;
+}
+
 export interface Product {
   id: string;
   featured: boolean;
@@ -55,6 +66,8 @@ export interface Product {
   sizeIds: string[]; // references Size entity
   images: string[]; // e.g. ['/assets/images/products/product-1-1.png', ...]
   thumbnailImage: string;
+  featuredImage?: string;
+  commerce?: ProductCommerce;
   translations: {
     pt: ProductTranslation;
     fr: ProductTranslation;

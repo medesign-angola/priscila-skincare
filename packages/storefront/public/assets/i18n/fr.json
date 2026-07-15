@@ -42,5 +42,14 @@
     "ANGOLA": "Angola",
     "EUROPE": "Europe",
     "UPDATE": "Mettre à jour les préférences"
+  },
+  "FEATURED_PRODUCTS": {
+    "TITLE": "À la une",
+    "CATEGORY": "Catégorie",
+    "ADD_TO_CART": "Ajouter au panier",
+    "NEW": "Nouveau",
+    "COMING_SOON": "Bientôt",
+    "UNAVAILABLE": "Indisponible",
+    "RATING_LABEL": "Note de {{rating}} sur 5, basée sur {{reviews}} avis"
   }
 }

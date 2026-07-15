@@ -130,6 +130,12 @@ export const MOCK_PRODUCTS: Product[] = [
       '/assets/images/products/product-1-4.jpg',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-1.webp',
+    featuredImage: '/assets/images/products/featured/product-1.webp',
+    commerce: {
+      prices: { AOA: 270000, EUR: 270 },
+      availability: 'in-stock',
+      badge: { type: 'discount', percentage: 50 },
+    },
     translations: {
       pt: {
         name: 'Snow White Soap',
@@ -161,7 +167,8 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-2',
-    featured: false,
+    featured: true,
+    featuredOrder: 2,
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
     images: [
@@ -171,6 +178,12 @@ export const MOCK_PRODUCTS: Product[] = [
       '/assets/images/products/product-2-4.jpg',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-2.webp',
+    featuredImage: '/assets/images/products/featured/product-2.webp',
+    commerce: {
+      prices: { AOA: 270000, EUR: 270 },
+      availability: 'in-stock',
+      badge: { type: 'new' },
+    },
     translations: {
       pt: {
         name: 'Polish Body Scrub',
@@ -198,7 +211,8 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-3',
-    featured: false,
+    featured: true,
+    featuredOrder: 3,
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: [
@@ -208,6 +222,12 @@ export const MOCK_PRODUCTS: Product[] = [
       '/assets/images/products/product-3-4.jpg',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-3.webp',
+    featuredImage: '/assets/images/products/featured/product-3.webp',
+    commerce: {
+      prices: { AOA: 270000, EUR: 270 },
+      availability: 'coming-soon',
+      badge: { type: 'coming-soon' },
+    },
     translations: {
       pt: {
         name: 'Snow White Body Cream',
