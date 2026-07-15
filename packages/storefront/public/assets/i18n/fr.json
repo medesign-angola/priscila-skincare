@@ -3,7 +3,26 @@
     "TITLE": "Priscila Skincare - Site Officiel"
   },
   "HOME": {
-    "WELCOME": "Bienvenue dans le monde des soins de la peau !"
+    "WELCOME": "Bienvenue dans le monde des soins de la peau !",
+    "BRAND_PILLARS": {
+      "LABEL": "Nos engagements",
+      "ACTIVE_FORMULAS": {
+        "TITLE": "Formules aux actifs",
+        "DESCRIPTION": "Nos formules contiennent des actifs de soin hautement concentrés."
+      },
+      "SENSITIVE_SKIN": {
+        "TITLE": "Peaux sensibles",
+        "DESCRIPTION": "Nos produits sont testés pour tous les types de peau, y compris les peaux sensibles."
+      },
+      "MADE_IN_FRANCE": {
+        "TITLE": "Fabriqué en France",
+        "DESCRIPTION": "Nous développons et fabriquons nos formules en France."
+      },
+      "SAFETY_CERTIFIED": {
+        "TITLE": "Certifié pour votre sécurité",
+        "DESCRIPTION": "Tous nos produits sont certifiés et conçus pour votre sécurité."
+      }
+    }
   },
   "HEADER": {
     "PRODUCTS": "Produits",

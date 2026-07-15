@@ -124,3 +124,24 @@
   </div>
   }
 </div>
+
+<section
+  class="brand-pillars"
+  aria-labelledby="brand-pillars-title"
+  data-node-id="161:3390"
+>
+  <h2 id="brand-pillars-title" class="sr-only">
+    {{ 'HOME.BRAND_PILLARS.LABEL' | translate }}
+  </h2>
+
+  <div class="brand-pillars__list" role="list">
+    @for (pillar of brandPillars; track pillar.titleKey) {
+    <article class="brand-pillars__item" role="listitem">
+      <h3 class="brand-pillars__title">{{ pillar.titleKey | translate }}</h3>
+      <p class="brand-pillars__description">
+        {{ pillar.descriptionKey | translate }}
+      </p>
+    </article>
+    }
+  </div>
+</section>
