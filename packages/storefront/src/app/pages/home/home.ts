@@ -4,6 +4,7 @@ import { BrandPillarsSection } from './sections/brand-pillars-section/brand-pill
 import { FeaturedProductsSection } from './sections/featured-products-section/featured-products-section';
 import { KitsSection } from './sections/kits-section/kits-section';
 import { FeaturedProductEditorialSection } from './sections/featured-product-editorial-section/featured-product-editorial-section';
+import { ProductEditorialGallerySection } from './sections/product-editorial-gallery-section/product-editorial-gallery-section';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ import { FeaturedProductEditorialSection } from './sections/featured-product-edi
     FeaturedProductsSection,
     KitsSection,
     FeaturedProductEditorialSection,
+    ProductEditorialGallerySection,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

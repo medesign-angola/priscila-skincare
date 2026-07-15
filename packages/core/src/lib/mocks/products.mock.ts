@@ -264,13 +264,33 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-4',
     featured: false,
+    homePlacements: [
+      {
+        type: 'editorial-gallery',
+        order: 1,
+        coverImage:
+          '/assets/images/products/editorial/product-4/product-4-editorial-cover.webp',
+        imageIndexes: [0, 1, 2, 3, 4],
+      },
+    ],
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-4-1.jpg'],
+    images: [
+      '/assets/images/products/editorial/product-4/product-4-1.webp',
+      '/assets/images/products/editorial/product-4/product-4-2.webp',
+      '/assets/images/products/editorial/product-4/product-4-3.webp',
+      '/assets/images/products/editorial/product-4/product-4-4.webp',
+      '/assets/images/products/editorial/product-4/product-4-5.webp',
+    ],
     thumbnailImage: '/assets/images/products/thumbnails/product-4.webp',
     translations: {
       pt: {
         name: 'Snow White Face Cream',
+        galleryEditorial: {
+          headline: 'Fluido de hidratação Snow White Face Cream',
+          description:
+            'Experimente a luminosidade e proteção que sua pele merece com o Snow White Face Cream, garantindo um acabamento natural e radiante.',
+        },
         description:
           'Creme facial hidratante e iluminador profundo que devolve a luminosidade natural.',
         highlights: ['Luminosidade', 'Antioxidante', 'Uso Diário'],
@@ -282,6 +302,11 @@ export const MOCK_PRODUCTS: Product[] = [
       },
       fr: {
         name: 'Snow White Face Cream',
+        galleryEditorial: {
+          headline: 'Fluide hydratant Snow White Face Cream',
+          description:
+            'Découvrez la luminosité et la protection que votre peau mérite avec Snow White Face Cream, pour un fini naturel et éclatant.',
+        },
         description:
           'Crème visage hydratante et illuminatrice profonde qui redonne de l’éclat.',
         highlights: ['Éclat', 'Antioxydant', 'Usage Quotidien'],
@@ -332,12 +357,15 @@ export const MOCK_PRODUCTS: Product[] = [
       prices: { AOA: 150000, EUR: 150 },
       availability: 'in-stock',
     },
-    homeEditorial: {
-      order: 1,
-      mediaType: 'video',
-      mediaUrl: '/assets/videos/products/caramel-body-cream-editorial.mp4',
-      hasNoise: false,
-    },
+    homePlacements: [
+      {
+        type: 'editorial-cover',
+        order: 1,
+        mediaType: 'video',
+        mediaUrl: '/assets/videos/products/caramel-body-cream-editorial.mp4',
+        hasNoise: false,
+      },
+    ],
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: ['/assets/images/products/product-6-1.jpg'],

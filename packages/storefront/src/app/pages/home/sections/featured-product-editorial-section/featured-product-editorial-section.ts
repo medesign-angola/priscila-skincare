@@ -35,11 +35,12 @@ export class FeaturedProductEditorialSection {
   private readonly headerService = inject(HeaderService);
 
   readonly product = computed<EditorialProductViewModel | null>(() => {
-    const product = this.facade.homeEditorialProducts()[0];
+    const entry = this.facade.editorialCoverProducts()[0];
+    const product = entry?.product;
     const language = this.facade.currentLanguage();
     const currency = this.headerService.currency();
     const editorial = product?.translations[language].editorial;
-    const presentation = product?.homeEditorial;
+    const presentation = entry?.placement;
     const commerce = product?.commerce;
 
     if (!product || !editorial || !presentation || !commerce) return null;

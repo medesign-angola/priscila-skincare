@@ -7,6 +7,10 @@ export interface ProductTranslation {
     description: string;
     footnote: string;
   };
+  galleryEditorial?: {
+    headline: string;
+    description: string;
+  };
   highlights: string[];
   benefits: {
     mainImage: string;
@@ -63,6 +67,26 @@ export interface ProductCommerce {
   badge?: ProductBadge;
 }
 
+export type ProductHomePlacement =
+  | {
+      type: 'featured-products';
+      order: number;
+    }
+  | {
+      type: 'editorial-cover';
+      order: number;
+      mediaType: 'image' | 'video';
+      mediaUrl: string;
+      placeholderUrl?: string;
+      hasNoise?: boolean;
+    }
+  | {
+      type: 'editorial-gallery';
+      order: number;
+      coverImage: string;
+      imageIndexes: number[];
+    };
+
 export interface Product {
   id: string;
   featured: boolean;
@@ -73,13 +97,7 @@ export interface Product {
   thumbnailImage: string;
   featuredImage?: string;
   commerce?: ProductCommerce;
-  homeEditorial?: {
-    order: number;
-    mediaType: 'image' | 'video';
-    mediaUrl: string;
-    placeholderUrl?: string;
-    hasNoise?: boolean;
-  };
+  homePlacements?: ProductHomePlacement[];
   translations: {
     pt: ProductTranslation;
     fr: ProductTranslation;

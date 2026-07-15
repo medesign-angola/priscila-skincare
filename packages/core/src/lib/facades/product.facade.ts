@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { ProductService } from '../services/product.service';
-import { Product } from '../models/product.interface';
+import { Product, ProductHomePlacement } from '../models/product.interface';
 import { Kit } from '../models/kit.interface';
 import { Collection } from '../models/collection.interface';
 import { Category } from '../models/category.interface';
@@ -43,14 +43,12 @@ export class ProductFacade {
       ),
   );
 
-  readonly homeEditorialProducts = computed(() =>
-    this.products()
-      .filter((product) => product.homeEditorial !== undefined)
-      .sort(
-        (firstProduct, secondProduct) =>
-          (firstProduct.homeEditorial?.order ?? Number.MAX_SAFE_INTEGER) -
-          (secondProduct.homeEditorial?.order ?? Number.MAX_SAFE_INTEGER),
-      ),
+  readonly editorialCoverProducts = computed(() =>
+    this.productsWithPlacement('editorial-cover'),
+  );
+
+  readonly editorialGalleryProducts = computed(() =>
+    this.productsWithPlacement('editorial-gallery'),
   );
 
   readonly collectionsWithProducts = computed(() => {
@@ -150,5 +148,25 @@ export class ProductFacade {
 
   selectSlide(index: number) {
     this.activeKitIndex.set(index);
+  }
+
+  private productsWithPlacement<T extends ProductHomePlacement['type']>(
+    type: T,
+  ) {
+    return this.products()
+      .flatMap((product) => {
+        const placement = product.homePlacements?.find(
+          (
+            candidate,
+          ): candidate is Extract<ProductHomePlacement, { type: T }> =>
+            candidate.type === type,
+        );
+
+        return placement ? [{ product, placement }] : [];
+      })
+      .sort(
+        (firstEntry, secondEntry) =>
+          firstEntry.placement.order - secondEntry.placement.order,
+      );
   }
 }
