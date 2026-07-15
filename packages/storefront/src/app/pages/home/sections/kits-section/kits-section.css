@@ -17,7 +17,7 @@
 .kits-editorial__hero {
   width: 100%;
   height: clamp(36rem, 53.125vw, 70rem);
-  overflow: hidden;
+  overflow: clip;
 }
 
 .kits-editorial__content {
@@ -41,6 +41,7 @@
   top: var(--kits-editorial-inset);
   z-index: 1;
   gap: clamp(1rem, 1.667vw, 2.5rem);
+  padding-block: 2rem;
 }
 
 .kits-editorial__intro h2,

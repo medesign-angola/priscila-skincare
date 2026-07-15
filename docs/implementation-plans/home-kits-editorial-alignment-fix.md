@@ -83,6 +83,45 @@ No frame de 1440 px:
 - Confirmar que a Hero principal não sofreu mudanças visuais.
 - Executar formatação, `git diff --check` e build Nx completo com SSR/prerender.
 
+## Correção complementar após validação visual
+
+### Padding vertical local
+
+- Adicionar exclusivamente a `.kits-editorial__intro` o equivalente a `py-8`:
+
+```css
+padding-block: 2rem;
+```
+
+- Não alterar o inset geral do conteúdo nem o posicionamento do CTA.
+
+### Sticky realmente funcional
+
+- Substituir `overflow: hidden` por `overflow: clip` no wrapper externo `.kits-editorial__hero`.
+- Manter `overflowMode="clip"` no `org-hero` interno.
+- Essa mudança remove o ancestral de scroll artificial que atualmente impede o comportamento sticky, preservando o recorte visual da mídia.
+- Manter `.kits-editorial__intro` com `position: sticky` e offset pelo token `--kits-editorial-inset`.
+- Confirmar que o sticky permanece limitado à altura do painel editorial.
+- Continuar desativando o sticky no mobile.
+
+### Noise com presença visual
+
+- Adicionar `isolation: isolate` aos containers `hero-cover` e `hero-split` para tornar previsível a composição das camadas.
+- Manter a mídia no fundo, elevar o noise acima dela e manter o conteúdo acima do noise.
+- Ajustar a textura para uma combinação perceptível sobre o gradiente castanho:
+  - `mix-blend-mode: soft-light`;
+  - opacidade inicial entre `0.3` e `0.35`, refinada visualmente;
+  - `background-size` controlado para evitar que a textura de 1440 px desapareça por escala ou densidade do ecrã.
+- Confirmar que o asset `/assets/images/noise.png` responde no build e aparece tanto no `org-hero-split` quanto no `org-hero-cover` quando `hasNoise` for verdadeiro.
+- Não ativar o noise na Hero principal, que continua passando `[hasNoise]="false"`.
+
+### Nova validação
+
+- Inspecionar no navegador os estilos computados de `.noise-overlay` e `.kits-editorial__intro`.
+- Testar o sticky rolando do início ao fim do painel editorial.
+- Conferir o noise em 100% e 125% de escala do navegador.
+- Reexecutar build Nx com SSR/prerender e `git diff --check`.
+
 ## Commit
 
 Após validação:
