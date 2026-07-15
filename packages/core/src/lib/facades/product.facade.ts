@@ -5,6 +5,10 @@ import { Kit } from '../models/kit.interface';
 import { Collection } from '../models/collection.interface';
 import { Category } from '../models/category.interface';
 import { Size } from '../models/size.interface';
+import {
+  HomeIngredientsPresentation,
+  Ingredient,
+} from '../models/ingredient.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +23,9 @@ export class ProductFacade {
   readonly collections = signal<Collection[]>([]);
   readonly categories = signal<Category[]>([]);
   readonly sizes = signal<Size[]>([]);
+  readonly ingredients = signal<Ingredient[]>([]);
+  readonly homeIngredientsPresentation =
+    signal<HomeIngredientsPresentation | null>(null);
   readonly activeKitIndex = signal<number>(0);
   readonly currentLanguage = signal<'pt' | 'fr'>('pt');
 
@@ -50,6 +57,41 @@ export class ProductFacade {
   readonly editorialGalleryProducts = computed(() =>
     this.productsWithPlacement('editorial-gallery'),
   );
+
+  readonly mappedIngredients = computed(
+    () =>
+      new Map(
+        this.ingredients().map((ingredient) => [ingredient.id, ingredient]),
+      ),
+  );
+
+  readonly homeIngredients = computed(() => {
+    const presentation = this.homeIngredientsPresentation();
+    if (!presentation) return null;
+
+    const language = this.currentLanguage();
+    const mappedIngredients = this.mappedIngredients();
+
+    return {
+      ...presentation.translations[language],
+      initialIngredientId: presentation.initialIngredientId,
+      ingredients: presentation.ingredientIds.flatMap((id, index) => {
+        const ingredient = mappedIngredients.get(id);
+        if (!ingredient) return [];
+
+        return [
+          {
+            id: ingredient.id,
+            index: String(index + 1).padStart(2, '0'),
+            name: ingredient.translations[language].name,
+            thumbnailImage: ingredient.thumbnailImage,
+            editorialImage: ingredient.editorialImage,
+            editorialPosition: ingredient.editorialPosition ?? 'center',
+          },
+        ];
+      }),
+    };
+  });
 
   readonly collectionsWithProducts = computed(() => {
     const mappedProducts = this.mappedProducts();
@@ -126,6 +168,12 @@ export class ProductFacade {
       .getCategories()
       .subscribe((data) => this.categories.set(data));
     this.productService.getSizes().subscribe((data) => this.sizes.set(data));
+    this.productService
+      .getIngredients()
+      .subscribe((data) => this.ingredients.set(data));
+    this.productService
+      .getHomeIngredients()
+      .subscribe((data) => this.homeIngredientsPresentation.set(data));
   }
 
   // Resolves sizes of a given product (accepts both original and translated product shape)

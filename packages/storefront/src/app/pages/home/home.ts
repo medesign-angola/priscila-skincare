@@ -5,6 +5,7 @@ import { FeaturedProductsSection } from './sections/featured-products-section/fe
 import { KitsSection } from './sections/kits-section/kits-section';
 import { FeaturedProductEditorialSection } from './sections/featured-product-editorial-section/featured-product-editorial-section';
 import { ProductEditorialGallerySection } from './sections/product-editorial-gallery-section/product-editorial-gallery-section';
+import { IngredientsSection } from './sections/ingredients-section/ingredients-section';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ import { ProductEditorialGallerySection } from './sections/product-editorial-gal
     KitsSection,
     FeaturedProductEditorialSection,
     ProductEditorialGallerySection,
+    IngredientsSection,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',
