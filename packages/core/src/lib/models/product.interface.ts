@@ -49,6 +49,8 @@ export interface ProductTranslation {
 
 export interface Product {
   id: string;
+  featured: boolean;
+  featuredOrder?: number;
   categoryId: string;
   sizeIds: string[]; // references Size entity
   images: string[]; // e.g. ['/assets/images/products/product-1-1.png', ...]

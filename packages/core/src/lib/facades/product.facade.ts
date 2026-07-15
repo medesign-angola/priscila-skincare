@@ -28,12 +28,50 @@ export class ProductFacade {
     return list.length > 0 ? list[idx] : null;
   });
 
+  readonly mappedProducts = computed(
+    () => new Map(this.products().map((product) => [product.id, product])),
+  );
+
+  readonly featuredProducts = computed(() =>
+    this.products()
+      .filter((product) => product.featured)
+      .sort(
+        (firstProduct, secondProduct) =>
+          (firstProduct.featuredOrder ?? Number.MAX_SAFE_INTEGER) -
+          (secondProduct.featuredOrder ?? Number.MAX_SAFE_INTEGER),
+      ),
+  );
+
+  readonly collectionsWithProducts = computed(() => {
+    const mappedProducts = this.mappedProducts();
+
+    return this.collections().map((collection) => ({
+      ...collection,
+      products: collection.productIds
+        .map((id) => mappedProducts.get(id))
+        .filter((product): product is Product => product !== undefined),
+    }));
+  });
+
+  readonly kitsWithProducts = computed(() => {
+    const mappedProducts = this.mappedProducts();
+
+    return this.featuredKits().map((kit) => ({
+      ...kit,
+      products: kit.productIds
+        .map((id) => mappedProducts.get(id))
+        .filter((product): product is Product => product !== undefined),
+    }));
+  });
+
   // Maps active kit's product IDs to actual Product objects dynamically
   readonly activeKitProducts = computed<Product[]>(() => {
     const kit = this.activeKit();
-    const allProducts = this.products();
-    if (!kit || allProducts.length === 0) return [];
-    return allProducts.filter((prod) => kit.productIds.includes(prod.id));
+    const mappedProducts = this.mappedProducts();
+    if (!kit || mappedProducts.size === 0) return [];
+    return kit.productIds
+      .map((id) => mappedProducts.get(id))
+      .filter((product): product is Product => product !== undefined);
   });
 
   // Automatically resolves translated product details for the current active language

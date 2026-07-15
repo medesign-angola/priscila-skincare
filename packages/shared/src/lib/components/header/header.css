@@ -2,6 +2,170 @@
   display: contents;
 }
 
+.preferences-trigger {
+  padding: 0;
+  color: inherit;
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.preferences-trigger:hover {
+  opacity: 0.75;
+}
+
+.preferences-trigger:focus-visible,
+.preferences-dialog button:focus-visible,
+.preferences-dialog select:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.preferences-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  visibility: hidden;
+  color: var(--text-primary, #1a1917);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease-out,
+    visibility 0s linear 180ms;
+}
+
+.preferences-layer--open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.preferences-dialog {
+  width: min(100%, 408px);
+  padding: 28px 26px 26px;
+  background: #fff;
+  box-shadow: 0 12px 40px rgb(26 25 23 / 12%);
+  transform: translateY(-8px);
+  transition: transform 180ms ease-out;
+}
+
+.preferences-layer--open .preferences-dialog {
+  transform: translateY(0);
+}
+
+.preferences-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+
+.preferences-dialog__header h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.12px;
+  text-transform: uppercase;
+}
+
+.preferences-dialog__close {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  place-items: center;
+}
+
+.preferences-dialog__languages {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 24px;
+}
+
+.preferences-dialog__languages button {
+  min-height: 40px;
+  padding: 8px 16px;
+  color: rgb(26 25 23 / 55%);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  background: #fff;
+  border: 1px solid #d8d3cc;
+  cursor: pointer;
+}
+
+.preferences-dialog__languages button:first-child {
+  border-radius: 2px 0 0 2px;
+}
+
+.preferences-dialog__languages button:last-child {
+  margin-left: -1px;
+  border-radius: 0 2px 2px 0;
+}
+
+.preferences-dialog__languages .preferences-dialog__language--active {
+  position: relative;
+  color: #fff;
+  background: var(--primary, #7d6645);
+  border-color: var(--primary, #7d6645);
+}
+
+.preferences-dialog__currency {
+  position: relative;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.preferences-dialog__currency select {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 38px 8px 12px;
+  color: var(--text-primary, #1a1917);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #fff;
+  border: 1px solid #d8d3cc;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.preferences-dialog__apply {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 16px;
+  color: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--primary, #7d6645);
+  border: 0;
+  border-radius: 1px;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.preferences-dialog__apply:hover {
+  opacity: 0.9;
+}
+
 .products-menu {
   position: fixed;
   top: 110px;
@@ -145,6 +309,12 @@
   }
 }
 
+@media (max-width: 480px) {
+  .preferences-dialog {
+    padding: 24px 20px 20px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .products-menu {
     transition: none;
@@ -152,6 +322,12 @@
 
   .products-menu__index,
   .products-menu__name {
+    transition: none;
+  }
+
+  .preferences-layer,
+  .preferences-dialog,
+  .preferences-dialog__apply {
     transition: none;
   }
 }

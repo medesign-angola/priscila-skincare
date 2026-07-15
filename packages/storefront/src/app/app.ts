@@ -1,5 +1,12 @@
-import { Component, afterNextRender, computed, inject } from '@angular/core';
+import {
+  Component,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { HeaderComponent } from '@org/shared';
 import { ProductFacade, HeaderService } from '@org/core';
 
@@ -12,6 +19,7 @@ import { ProductFacade, HeaderService } from '@org/core';
 export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
+  private readonly translateService = inject(TranslateService);
   readonly headerProducts = computed(() => {
     const language = this.facade.currentLanguage();
 
@@ -21,8 +29,19 @@ export class App {
       image: product.thumbnailImage,
     }));
   });
+  readonly headerCollections = computed(() =>
+    this.facade.collectionsWithProducts().map((collection) => ({
+      id: collection.id,
+      name: collection.name,
+      image: collection.thumbnailImage,
+    })),
+  );
 
   constructor() {
+    effect(() => {
+      this.translateService.use(this.facade.currentLanguage());
+    });
+
     afterNextRender(async () => {
       const { default: Lenis } = await import('lenis');
       const { gsap } = await import('gsap');

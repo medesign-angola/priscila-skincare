@@ -119,6 +119,8 @@ const DEFAULT_REVIEWS_FR = {
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-1',
+    featured: true,
+    featuredOrder: 1,
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: [
@@ -159,6 +161,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-2',
+    featured: false,
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
     images: [
@@ -195,6 +198,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-3',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: [
@@ -239,6 +243,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-4',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-4-1.jpg'],
@@ -270,6 +275,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-5',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-5-1.jpg'],
@@ -301,6 +307,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-6',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: ['/assets/images/products/product-6-1.jpg'],
@@ -332,6 +339,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-7',
+    featured: false,
     categoryId: 'cat-1',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-7-1.jpg'],
@@ -363,6 +371,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-8',
+    featured: false,
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-8-1.jpg'],
@@ -394,6 +403,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-9',
+    featured: false,
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-9-1.jpg'],
@@ -425,6 +435,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-10',
+    featured: false,
     categoryId: 'cat-3',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-10-1.jpg'],
@@ -464,6 +475,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-11',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-11-1.jpg'],
@@ -499,6 +511,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-12',
+    featured: false,
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-12-1.jpg'],
@@ -534,6 +547,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-13',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-13-1.jpg'],
@@ -565,6 +579,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-14',
+    featured: false,
     categoryId: 'cat-2',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-14-1.jpg'],

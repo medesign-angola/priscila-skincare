@@ -4,5 +4,24 @@
   },
   "HOME": {
     "WELCOME": "Bienvenue dans le monde des soins de la peau !"
+  },
+  "HEADER": {
+    "PRODUCTS": "Produits",
+    "COLLECTIONS": "Collection",
+    "ABOUT": "À propos"
+  },
+  "NAVIGATION_MENU": {
+    "VIEW_ALL": "Voir tout"
+  },
+  "PREFERENCES": {
+    "TITLE": "Langue et devise",
+    "CLOSE": "Fermer les préférences",
+    "LANGUAGE_LABEL": "Langue",
+    "PORTUGUESE": "Portugais",
+    "FRENCH": "Français",
+    "CURRENCY_MARKET": "Devise et marché",
+    "ANGOLA": "Angola",
+    "EUROPE": "Europe",
+    "UPDATE": "Mettre à jour les préférences"
   }
 }

@@ -4,5 +4,24 @@
   },
   "HOME": {
     "WELCOME": "Bem-vindo ao mundo dos cuidados com a pele!"
+  },
+  "HEADER": {
+    "PRODUCTS": "Produtos",
+    "COLLECTIONS": "Coleção",
+    "ABOUT": "Sobre"
+  },
+  "NAVIGATION_MENU": {
+    "VIEW_ALL": "Ver todos"
+  },
+  "PREFERENCES": {
+    "TITLE": "Linguagem e moeda",
+    "CLOSE": "Fechar preferências",
+    "LANGUAGE_LABEL": "Idioma",
+    "PORTUGUESE": "Português",
+    "FRENCH": "Francês",
+    "CURRENCY_MARKET": "Moeda e mercado",
+    "ANGOLA": "Angola",
+    "EUROPE": "Europa",
+    "UPDATE": "Atualizar preferências"
   }
 }
