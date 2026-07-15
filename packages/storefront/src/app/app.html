@@ -1,0 +1,8 @@
+<org-header
+  [theme]="headerService.theme()"
+  [currentLanguage]="facade.currentLanguage()"
+  [currency]="headerService.currency()"
+  (languageChange)="facade.currentLanguage.set($event)"
+  (currencyChange)="headerService.currency.set($event)"
+></org-header>
+<router-outlet></router-outlet>

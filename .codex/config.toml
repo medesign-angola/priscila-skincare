@@ -2,6 +2,9 @@
 command = "npx"
 args = [ "nx", "mcp", "--minimal" ]
 
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+
 [features]
 multi_agent = true
 

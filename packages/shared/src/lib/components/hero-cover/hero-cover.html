@@ -1,0 +1,53 @@
+<div class="hero-cover-container relative flex items-center overflow-hidden">
+  @if (hasNoise()) {
+  <div class="noise-overlay"></div>
+  }
+
+  <!-- 1. Interactive Content overlay -->
+  <div
+    class="w-full h-full flex flex-col justify-end text-white relative z-10 pb-20 px-4 md:px-10"
+  >
+    @if (contentTemplate(); as temp) {
+    <ng-container *ngTemplateOutlet="temp"></ng-container>
+    }
+  </div>
+
+  <!-- 2. Stretched & Blurred Placeholder Thumbnail -->
+  @if (placeholderUrl()) {
+  <img
+    [src]="placeholderUrl()"
+    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-out z-1"
+    [class.opacity-0]="highResMedia()?.loaded()"
+    style="filter: blur(20px); transform: scale(1.1)"
+    alt="Loading Placeholder"
+  />
+  }
+
+  <!-- 3. High-Resolution Media Layer (Burgundy Gradient on parent absolute div) -->
+  <div
+    class="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
+    [style.background]="'radial-gradient(61.64% 59.59% at 68.99% 53.43%, var(--color-burgundy-500, #B49667) 16.18%, var(--color-burgundy-800, #5F4D35) 100%)'"
+  >
+    @if (mediaType() === 'video') {
+    <video
+      [src]="mediaUrl()"
+      [poster]="placeholderUrl() || ''"
+      autoplay
+      loop
+      muted
+      playsinline
+      orgBlurUp
+      [style.mixBlendMode]="blendMode()"
+      class="w-full h-full object-cover transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
+    ></video>
+    } @else {
+    <img
+      [src]="mediaUrl()"
+      orgBlurUp
+      [style.mixBlendMode]="blendMode()"
+      alt="Cover Background"
+      class="w-full h-full object-cover transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
+    />
+    }
+  </div>
+</div>
