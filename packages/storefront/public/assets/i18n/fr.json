@@ -51,5 +51,10 @@
     "COMING_SOON": "Bientôt",
     "UNAVAILABLE": "Indisponible",
     "RATING_LABEL": "Note de {{rating}} sur 5, basée sur {{reviews}} avis"
+  },
+  "KITS_SECTION": {
+    "FIND": "Découvrir",
+    "VIEW_PRODUCTS": "Voir les produits",
+    "EDITORIAL_FOOTNOTE": "Tout ce dont votre peau a besoin pour rester lumineuse, hydratée, douce et forte au quotidien."
   }
 }

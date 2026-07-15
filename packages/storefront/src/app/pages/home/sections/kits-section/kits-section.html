@@ -1,0 +1,123 @@
+<section class="kits-section" aria-labelledby="kits-finder-title">
+  @if (editorialKit(); as kit) {
+  <div class="kits-editorial">
+    <div class="kits-editorial__hero">
+      @if (kit.mediaStyle === 'split-right') {
+      <org-hero-split
+        height="100%"
+        [mediaUrl]="kit.mediaUrl"
+        [placeholderUrl]="kit.placeholderUrl"
+        [hasNoise]="true"
+        blendMode="hard-light"
+      >
+        <ng-template #heroContent>
+          <div class="kits-editorial__content">
+            <div class="kits-editorial__intro">
+              <h2>{{ kit.title }}</h2>
+              <p>{{ kit.editorialDescription }}</p>
+            </div>
+
+            <div class="kits-editorial__action">
+              <button
+                type="button"
+                (click)="viewProducts(kit.id)"
+                [attr.aria-label]="
+                  ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.title
+                "
+              >
+                <span>{{ 'KITS_SECTION.VIEW_PRODUCTS' | translate }}</span>
+                <svg
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d="M5 12H19M13 6L19 12L13 18" />
+                </svg>
+              </button>
+              <p>{{ 'KITS_SECTION.EDITORIAL_FOOTNOTE' | translate }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </org-hero-split>
+      } @else {
+      <org-hero-cover
+        height="100%"
+        [mediaType]="kit.mediaType"
+        [mediaUrl]="kit.mediaUrl"
+        [placeholderUrl]="kit.placeholderUrl"
+        [hasNoise]="true"
+        blendMode="hard-light"
+      >
+        <ng-template #heroContent>
+          <div class="kits-editorial__content">
+            <div class="kits-editorial__intro">
+              <h2>{{ kit.title }}</h2>
+              <p>{{ kit.editorialDescription }}</p>
+            </div>
+
+            <div class="kits-editorial__action">
+              <button
+                type="button"
+                (click)="viewProducts(kit.id)"
+                [attr.aria-label]="
+                  ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.title
+                "
+              >
+                <span>{{ 'KITS_SECTION.VIEW_PRODUCTS' | translate }}</span>
+                <svg
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path d="M5 12H19M13 6L19 12L13 18" />
+                </svg>
+              </button>
+              <p>{{ 'KITS_SECTION.EDITORIAL_FOOTNOTE' | translate }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </org-hero-cover>
+      }
+    </div>
+  </div>
+  }
+
+  <div class="kits-finder">
+    <div class="kits-finder__content">
+      <h2 id="kits-finder-title">{{ 'KITS_SECTION.FIND' | translate }}</h2>
+
+      <div class="kits-finder__list">
+        @for (kit of kits(); track kit.id) {
+        <article class="kit-card" [attr.data-product-count]="kit.productCount">
+          <button
+            class="kit-card__media"
+            type="button"
+            (click)="viewProducts(kit.id)"
+            [attr.aria-label]="
+              ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.finderDescription
+            "
+          >
+            <img
+              [src]="kit.thumbnailImage"
+              [alt]="kit.finderDescription"
+              width="700"
+              height="700"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+
+          <div class="kit-card__caption">
+            <span aria-hidden="true">{{ kit.index }}</span>
+            <h3>{{ kit.finderDescription }}</h3>
+          </div>
+        </article>
+        }
+      </div>
+    </div>
+  </div>
+</section>

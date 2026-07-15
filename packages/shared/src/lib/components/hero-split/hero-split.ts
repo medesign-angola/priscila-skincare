@@ -14,6 +14,7 @@ export class HeroSplitComponent {
   placeholderUrl = input<string>();
   hasNoise = input<boolean>(false);
   blendMode = input<string>('hard-light');
+  height = input<string>('100vh');
 
   // Capture nested ng-template via signal content child query
   contentTemplate = contentChild<TemplateRef<any>>('heroContent');

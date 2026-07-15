@@ -51,5 +51,10 @@
     "COMING_SOON": "Em breve",
     "UNAVAILABLE": "Indisponível",
     "RATING_LABEL": "Avaliação de {{rating}} em 5, baseada em {{reviews}} avaliações"
+  },
+  "KITS_SECTION": {
+    "FIND": "Encontrar",
+    "VIEW_PRODUCTS": "Ver produtos",
+    "EDITORIAL_FOOTNOTE": "Tudo que sua pele precisa para brilhar e se manter hidratada, suave e forte ao longo do dia."
   }
 }

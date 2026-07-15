@@ -14,6 +14,7 @@ export class ProductFacade {
 
   // States
   readonly products = signal<Product[]>([]);
+  readonly kits = signal<Kit[]>([]);
   readonly featuredKits = signal<Kit[]>([]);
   readonly collections = signal<Collection[]>([]);
   readonly categories = signal<Category[]>([]);
@@ -56,13 +57,24 @@ export class ProductFacade {
   readonly kitsWithProducts = computed(() => {
     const mappedProducts = this.mappedProducts();
 
-    return this.featuredKits().map((kit) => ({
+    return this.kits().map((kit) => ({
       ...kit,
       products: kit.productIds
         .map((id) => mappedProducts.get(id))
         .filter((product): product is Product => product !== undefined),
     }));
   });
+
+  readonly homeKitsWithProducts = computed(() =>
+    this.kitsWithProducts()
+      .filter((kit) => kit.home !== undefined)
+      .sort(
+        (firstKit, secondKit) =>
+          (firstKit.home?.order ?? Number.MAX_SAFE_INTEGER) -
+          (secondKit.home?.order ?? Number.MAX_SAFE_INTEGER),
+      )
+      .slice(0, 4),
+  );
 
   // Maps active kit's product IDs to actual Product objects dynamically
   readonly activeKitProducts = computed<Product[]>(() => {
@@ -95,6 +107,7 @@ export class ProductFacade {
     this.productService
       .getProducts()
       .subscribe((data) => this.products.set(data));
+    this.productService.getKits().subscribe((data) => this.kits.set(data));
     this.productService
       .getFeaturedKits()
       .subscribe((data) => this.featuredKits.set(data));

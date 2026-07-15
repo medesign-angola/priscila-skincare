@@ -21,6 +21,7 @@ export class HeroCoverComponent {
   placeholderUrl = input<string>();
   hasNoise = input<boolean>(false);
   blendMode = input<string>('normal');
+  height = input<string>('100vh');
 
   // Query the active BlurUpDirective in the template
   highResMedia = viewChild(BlurUpDirective);

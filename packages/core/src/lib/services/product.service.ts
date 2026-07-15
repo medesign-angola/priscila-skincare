@@ -20,9 +20,13 @@ export class ProductService {
     return of(MOCK_PRODUCTS);
   }
 
+  getKits(): Observable<Kit[]> {
+    return of(MOCK_KITS);
+  }
+
   // Returns only featured kits (featured: true) for the Hero slider
   getFeaturedKits(): Observable<Kit[]> {
-    return of(MOCK_KITS).pipe(
+    return this.getKits().pipe(
       map((kits) => kits.filter((kit) => kit.featured)),
     );
   }

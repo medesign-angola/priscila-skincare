@@ -1,4 +1,7 @@
-<div class="hero-split-container relative flex items-center overflow-hidden">
+<div
+  class="hero-split-container relative flex items-center overflow-hidden"
+  [style.height]="height()"
+>
   @if (hasNoise()) {
   <div class="noise-overlay"></div>
   }
