@@ -2,7 +2,7 @@
   display: block;
 }
 .related { display: flex; gap: 2rem; padding: clamp(3rem, 5.556vw, 5rem) 2rem; }
-.related h2 { flex: 0 0 10rem; margin: .75rem 0 0; font-size: .875rem; text-transform: uppercase; }
+.related h2 { flex: 0 0 10rem; margin: .75rem 0 0; font-size: .875rem; font-weight: 600; text-transform: uppercase; }
 .related > div { display: flex; flex: 1; gap: .5rem; min-width: 0; }
 .related org-product-card { flex: 1; min-width: 0; }
 @media (max-width: 700px) { .related { flex-direction: column; padding-inline: 1rem; } .related > div { flex-direction: column; } }

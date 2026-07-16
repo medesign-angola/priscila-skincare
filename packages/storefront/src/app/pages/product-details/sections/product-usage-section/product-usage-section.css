@@ -2,11 +2,11 @@
   display: block;
 }
 .usage { display: flex; gap: .5rem; padding: 2rem; background: #f5f3ef; }
-.usage > h2 { flex: 0 0 7rem; margin: 1rem 0 0; font-size: .875rem; text-transform: uppercase; }
+.usage > h2 { flex: 0 0 7rem; margin: 1rem 0 0; font-size: .875rem; font-weight: 600; text-transform: uppercase; }
 .usage > img { flex: 2; min-width: 0; object-fit: cover; }
 .usage__steps { display: flex; flex: 1; flex-direction: column; gap: .5rem; }
 .usage article { display: flex; flex: 1; flex-direction: column; justify-content: space-between; padding: 1rem; background: #f8f7f4; }
 .usage strong { color: #ccc7bf; font-size: clamp(3rem, 4.5vw, 4rem); }
 .usage h3, .usage p { margin: 0; font-size: .875rem; line-height: 1.5; }
-.usage h3 { text-transform: uppercase; }
+.usage h3 { font-weight: 600; text-transform: uppercase; }
 @media (max-width: 800px) { .usage { flex-direction: column; padding: 2rem 1rem; } .usage > img { order: 2; width: 100%; max-height: 36rem; } .usage__steps { order: 3; } .usage__steps--left { order: 1; } }

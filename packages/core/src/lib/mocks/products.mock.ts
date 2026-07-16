@@ -10,18 +10,38 @@ const commerce = (
 
 // Reusable default structures for products 4-14 to keep code elegant and maintainable
 const DEFAULT_BENEFITS = {
-  mainImage: '/assets/images/benefits-snow-white.png',
+  mainImage: '/assets/images/product-details/prod-1/benefits-main.webp',
   sections: [
     {
-      title: 'Nutrição Completa',
+      title: 'Proteção Diária Essencial',
       description:
-        'Ajuda a restaurar o equilíbrio natural e a suavidade da pele.',
+        'Ajuda a proteger a pele contra os efeitos causados pela exposição aos raios solares, contribuindo para a manutenção de uma aparência saudável.',
+      images: [
+        '/assets/images/product-details/prod-1/benefits-detail-1.webp',
+        '/assets/images/product-details/prod-1/benefits-detail-2.webp',
+        '/assets/images/product-details/prod-1/benefits-detail-3.webp',
+      ],
+    },
+    {
+      title: 'Prevenção do Envelhecimento Precoce',
+      description:
+        'O uso diário ajuda a minimizar os impactos externos que podem acelerar o aparecimento de linhas finas e alterações no tom da pele.',
+    },
+    {
+      title: 'Hidratação e Conforto',
+      description:
+        'Mantém a pele confortável ao longo do dia sem comprometer a sensação de leveza.',
+    },
+    {
+      title: 'Acabamento Natural',
+      description:
+        'Desenvolvido para proporcionar um aspecto natural e uniforme, sem resíduos visíveis.',
     },
   ],
 };
 
 const DEFAULT_BENEFITS_FR = {
-  mainImage: '/assets/images/benefits-snow-white.png',
+  mainImage: '/assets/images/product-details/prod-1/benefits-main.webp',
   sections: [
     {
       title: 'Nutrition Complète',
@@ -32,28 +52,81 @@ const DEFAULT_BENEFITS_FR = {
 };
 
 const DEFAULT_INGREDIENTS = {
-  name: 'Ingredientes Naturais Ativos',
+  name: 'Óxido de Zinco',
   description:
-    'Fórmula enriquecida com vitaminas essenciais e extratos botânicos.',
-  mainIngredientsImages: ['/assets/images/ingredient-peony.png'],
-  bodyResultImage: '/assets/images/result-body-peony.png',
+    'Rico em aminoácidos essenciais que trabalham em sinergia para revitalizar e estimular a regeneração celular da pele.',
+  mainIngredientsImages: [
+    '/assets/images/product-details/prod-1/ingredient-zinc.webp',
+    '/assets/images/product-details/prod-1/ingredient-avobenzone.webp',
+  ],
+  editorialImage:
+    '/assets/images/product-details/prod-1/ingredients-editorial.webp',
+  bodyResultImage:
+    '/assets/images/product-details/prod-1/ingredients-editorial.webp',
+  items: [
+    {
+      name: 'Óxido de Zinco',
+      description:
+        'Ajuda a formar uma barreira protetora na pele e contribui para a proteção contra a radiação solar.',
+    },
+    {
+      name: 'Avobenzona',
+      description:
+        'Filtro solar que auxilia na proteção da pele contra os raios UVA.',
+    },
+    {
+      name: 'Dióxido de Titânio',
+      description:
+        'Ingrediente mineral que reforça a proteção e ajuda a manter a pele confortável.',
+    },
+    {
+      name: 'Octocrileno',
+      description:
+        'Contribui para a estabilidade da fórmula e para uma proteção solar uniforme.',
+    },
+  ],
 };
 
 const DEFAULT_INGREDIENTS_FR = {
   name: 'Ingrédients Naturels Actifs',
   description:
     'Formule enrichie en vitamines essentielles et extraits botaniques.',
-  mainIngredientsImages: ['/assets/images/ingredient-peony.png'],
-  bodyResultImage: '/assets/images/result-body-peony.png',
+  mainIngredientsImages: [
+    '/assets/images/product-details/prod-1/ingredient-zinc.webp',
+    '/assets/images/product-details/prod-1/ingredient-avobenzone.webp',
+  ],
+  editorialImage:
+    '/assets/images/product-details/prod-1/ingredients-editorial.webp',
+  bodyResultImage:
+    '/assets/images/product-details/prod-1/ingredients-editorial.webp',
 };
 
 const DEFAULT_HOW_TO_USE = {
+  editorialImage: '/assets/images/product-details/prod-1/usage-editorial.webp',
   steps: [
     {
       order: 1,
-      name: 'Aplicar na Pele',
+      name: 'Limpeza',
       description:
-        'Aplique uniformemente na área desejada massageando suavemente.',
+        'Inicie com a pele limpa e seca, garantindo que não haja resíduos de maquiagem ou impurezas.',
+    },
+    {
+      order: 2,
+      name: 'Aplicação',
+      description:
+        'Aplique uma quantidade generosa do produto em todo o rosto e pescoço, evitando a área dos olhos.',
+    },
+    {
+      order: 3,
+      name: 'Distribuição',
+      description:
+        'Espalhe o produto uniformemente, massageando suavemente até que seja completamente absorvido.',
+    },
+    {
+      order: 4,
+      name: 'Reaplicação',
+      description:
+        'Reaplique a cada duas horas ou após nadar, suar excessivamente ou secar-se com toalha.',
     },
   ],
 };
@@ -72,15 +145,25 @@ const DEFAULT_HOW_TO_USE_FR = {
 const DEFAULT_RESULT = {
   data: [
     {
-      percentage: 90,
-      description: 'dos utilizadores relataram melhoria na textura da pele.',
+      percentage: 95,
+      description:
+        'dos participantes notaram uma redução visível na vermelhidão e irritação da pele.',
+    },
+    {
+      percentage: 81,
+      description: 'dos participantes aprovaram o conforto do produto.',
+    },
+    {
+      percentage: 62,
+      description:
+        'dos utilizadores sentiram-se confortáveis com a utilização diária.',
     },
   ],
   description:
-    'Resultados visíveis comprovados após 2 semanas de uso contínuo.',
+    'O estudo envolveu 21 mulheres, incluindo 9 com pele sensível. Os resultados foram recolhidos após 28 dias de uso contínuo.',
   images: {
-    before: '/assets/images/results-before-1.png',
-    after: '/assets/images/results-after-1.png',
+    before: '/assets/images/product-details/prod-1/results-comparison.webp',
+    after: '/assets/images/product-details/prod-1/results-comparison.webp',
   },
 };
 
@@ -95,8 +178,8 @@ const DEFAULT_RESULT_FR = {
   description:
     'Résultats visibles prouvés après 2 semaines d’utilisation continue.',
   images: {
-    before: '/assets/images/results-before-1.png',
-    after: '/assets/images/results-after-1.png',
+    before: '/assets/images/product-details/prod-1/results-comparison.webp',
+    after: '/assets/images/product-details/prod-1/results-comparison.webp',
   },
 };
 

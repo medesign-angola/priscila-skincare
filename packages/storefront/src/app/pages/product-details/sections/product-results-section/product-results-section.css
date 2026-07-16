@@ -3,7 +3,7 @@
 }
 .results { display: flex; min-height: clamp(42rem, 64.236vw, 58rem); color: var(--primary, #7d6645); background: #f4f4f1; }
 .results__content { display: flex; flex: 0 0 48%; flex-direction: column; padding: 3rem clamp(2rem, 11vw, 10rem); }
-.results h2 { margin: 0 0 4rem; font-size: .875rem; text-transform: uppercase; }
+.results h2 { margin: 0 0 4rem; font-size: .875rem; font-weight: 600; text-transform: uppercase; }
 .results__metrics { display: flex; flex: 1; flex-direction: column; justify-content: space-around; }
 .results__metrics strong { font-size: clamp(4rem, 7vw, 6rem); line-height: 1; }
 .results p { max-width: 28rem; font-size: .875rem; line-height: 1.5; }
