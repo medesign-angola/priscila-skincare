@@ -36,3 +36,12 @@
       auto;
   }
 }
+
+@media screen and (max-width: 600px) {
+  .hero-split__media-layer {
+    background-position:
+      center center,
+      center !important;
+    background-size: cover, auto !important;
+  }
+}

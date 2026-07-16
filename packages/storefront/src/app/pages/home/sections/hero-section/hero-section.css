@@ -51,28 +51,39 @@ button,
   }
 
   .hero-content-layer > div {
+    position: relative;
     padding: 0 1rem 1.5rem !important;
   }
 
   .hero--content {
-    align-items: flex-end;
-    gap: 1rem;
+    display: block !important;
   }
 
   .box-content {
     gap: 1.5rem !important;
     width: 100%;
     max-width: none !important;
+    padding-bottom: 3.5rem;
   }
 
   .badges {
     flex-direction: row !important;
     justify-content: flex-start !important;
     gap: 0.5rem !important;
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .badges::-webkit-scrollbar {
+    display: none;
   }
 
   .badges button {
+    flex: 0 0 auto;
     font-size: 0.75rem;
+    white-space: nowrap;
   }
 
   .main-content {
@@ -94,7 +105,9 @@ button,
   }
 
   .hero--content > div:last-child {
-    flex: 0 0 auto;
+    position: absolute;
+    right: 1rem;
+    bottom: 1.5rem;
   }
 }
 

@@ -13,7 +13,7 @@
   <!-- Camada 1: Blurred Placeholder (Fades out when loaded) -->
   @if (placeholderUrl()) {
   <div
-    class="absolute inset-0 w-full h-full transition-opacity duration-500 z-0"
+    class="hero-split__media-layer absolute inset-0 w-full h-full transition-opacity duration-500 z-0"
     [class.opacity-0]="highRes.loaded()"
     [style.backgroundImage]="'url(' + placeholderUrl() + '), radial-gradient(61.64% 59.59% at 68.99% 53.43%, var(--color-burgundy-500, #B49667) 16.18%, var(--color-burgundy-800, #5F4D35) 100%)'"
     [style.backgroundBlendMode]="blendMode() + ', normal'"
@@ -33,7 +33,7 @@
 
   <!-- Camada 2: High-Resolution Image (Fades in when loaded) -->
   <div
-    class="absolute inset-0 w-full h-full transition-opacity duration-500 z-1"
+    class="hero-split__media-layer absolute inset-0 w-full h-full transition-opacity duration-500 z-1"
     [class.opacity-0]="!highRes.loaded()"
     [style.backgroundImage]="'url(' + mediaUrl() + '), radial-gradient(61.64% 59.59% at 68.99% 53.43%, var(--color-burgundy-500, #B49667) 16.18%, var(--color-burgundy-800, #5F4D35) 100%)'"
     [style.backgroundBlendMode]="blendMode() + ', normal'"
