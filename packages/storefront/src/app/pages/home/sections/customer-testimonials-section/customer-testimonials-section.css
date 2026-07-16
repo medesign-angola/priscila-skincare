@@ -46,10 +46,9 @@
 }
 
 .testimonials h2 {
-  position: sticky;
-  top: clamp(1rem, 2.222vw, 4rem);
   max-width: 18rem;
   padding-top: clamp(0.5rem, 0.833vw, 1rem);
+  margin-bottom: clamp(1.5rem, 2.222vw, 3rem);
 }
 
 .testimonials__rating-info,
@@ -277,9 +276,9 @@
   }
 
   .testimonials h2 {
-    position: static;
     flex: 1 1 100%;
     padding-top: 0;
+    margin-bottom: 0;
   }
 
   .testimonials__rating-info {
