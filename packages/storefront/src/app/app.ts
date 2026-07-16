@@ -5,7 +5,7 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {
   FooterComponent,
@@ -24,6 +24,7 @@ export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
   private readonly translateService = inject(TranslateService);
+  private readonly router = inject(Router);
   readonly headerProducts = computed(() => {
     const language = this.facade.currentLanguage();
 
@@ -92,7 +93,9 @@ export class App {
     type: 'product' | 'collection';
     id: string;
   }): void {
-    console.log('Abrir item do footer:', selection);
+    if (selection.type === 'product') {
+      void this.router.navigate(['/produtos', selection.id]);
+    }
   }
 
   handleNewsletterSubmit(email: string): void {

@@ -1,0 +1,17 @@
+@if (product(); as product) {
+<main class="product-details">
+  <app-product-purchase-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-shipping-information-section />
+  <app-product-benefits-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-product-ingredients-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-product-usage-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-product-results-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-product-reviews-section [product]="product" [language]="facade.currentLanguage()" />
+  <app-related-products-section [product]="product" [language]="facade.currentLanguage()" />
+</main>
+} @else {
+<main class="product-details__not-found">
+  <h1>Produto não encontrado</h1>
+  <a routerLink="/">Voltar à página inicial</a>
+</main>
+}

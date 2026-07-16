@@ -1,0 +1,10 @@
+@let ingredients = content();
+<section class="detail-section ingredients" aria-labelledby="ingredients-title">
+  <h2 id="ingredients-title">Ingredientes</h2>
+  <div class="ingredients__content">
+    <div class="ingredients__images">@for (image of ingredients.mainIngredientsImages; track image) { <img [src]="image" alt="" loading="lazy" /> }</div>
+    <div class="ingredients__items">@for (item of items(); track item.name) { <article><h3>{{ item.name }}</h3><p>{{ item.description }}</p></article> }</div>
+    <button type="button">Ver listagem completa →</button>
+  </div>
+  <img class="ingredients__editorial" [src]="ingredients.editorialImage || ingredients.bodyResultImage" alt="" loading="lazy" />
+</section>

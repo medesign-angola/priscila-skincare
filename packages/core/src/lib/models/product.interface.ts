@@ -25,8 +25,15 @@ export interface ProductTranslation {
     description: string;
     mainIngredientsImages: string[]; // max 2
     bodyResultImage: string;
+    items?: {
+      name: string;
+      description: string;
+      image?: string;
+    }[];
+    editorialImage?: string;
   };
   howToUse: {
+    editorialImage?: string;
     steps: {
       order: number;
       name: string;
@@ -89,6 +96,7 @@ export type ProductHomePlacement =
 
 export interface Product {
   id: string;
+  slug?: string;
   featured: boolean;
   featuredOrder?: number;
   categoryId: string;

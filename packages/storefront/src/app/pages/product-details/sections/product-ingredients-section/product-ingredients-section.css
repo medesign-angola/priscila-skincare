@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+.detail-section { display: flex; gap: 2rem; padding: clamp(3rem, 5.556vw, 5rem) 2rem; }
+.detail-section > h2 { flex: 0 0 7rem; margin: .75rem 0 0; font-size: .875rem; text-transform: uppercase; }
+.ingredients__content { display: flex; flex: 0 1 50%; flex-direction: column; gap: clamp(2rem, 4vw, 4rem); }
+.ingredients__images, .ingredients__items { display: flex; gap: 2rem; }
+.ingredients__images img, .ingredients__items article { flex: 1; min-width: 0; }
+.ingredients__images img { aspect-ratio: 1; object-fit: cover; }
+.ingredients h3, .ingredients p { margin: 0; font-size: .875rem; line-height: 1.5; }
+.ingredients h3 { margin-bottom: 1.5rem; text-transform: uppercase; }
+.ingredients__editorial { flex: 1; min-width: 0; object-fit: cover; }
+.ingredients button { align-self: flex-start; padding: 0; border: 0; background: transparent; color: inherit; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+@media (max-width: 800px) { .detail-section, .ingredients__images, .ingredients__items { flex-direction: column; } .detail-section { padding-inline: 1rem; } .ingredients__editorial { width: 100%; max-height: 36rem; } }

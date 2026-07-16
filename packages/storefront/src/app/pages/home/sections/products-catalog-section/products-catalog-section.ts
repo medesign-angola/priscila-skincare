@@ -14,6 +14,7 @@ import {
 import { HeaderService, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import {
   HOME_PRODUCTS_CATALOG_CONFIG,
   normalizeCatalogConfig,
@@ -37,6 +38,7 @@ interface Revertible {
 export class ProductsCatalogSection {
   private readonly facade = inject(ProductFacade);
   private readonly headerService = inject(HeaderService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly config = normalizeCatalogConfig(
@@ -131,7 +133,7 @@ export class ProductsCatalogSection {
   }
 
   selectProduct(productId: string): void {
-    console.log('Abrir produto:', productId);
+    void this.router.navigate(['/produtos', productId]);
   }
 
   addToCart(productId: string): void {

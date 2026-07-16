@@ -7,6 +7,7 @@ import {
 import { HeaderService, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-featured-products-section',
@@ -18,6 +19,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class FeaturedProductsSection {
   private readonly facade = inject(ProductFacade);
   private readonly headerService = inject(HeaderService);
+  private readonly router = inject(Router);
 
   readonly products = computed<ProductCardData[]>(() => {
     const language = this.facade.currentLanguage();
@@ -50,7 +52,7 @@ export class FeaturedProductsSection {
   });
 
   selectProduct(productId: string): void {
-    console.log('Abrir produto:', productId);
+    void this.router.navigate(['/produtos', productId]);
   }
 
   addToCart(productId: string): void {

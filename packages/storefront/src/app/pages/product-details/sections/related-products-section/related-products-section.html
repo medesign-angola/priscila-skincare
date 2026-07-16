@@ -1,0 +1,1 @@
+<section class="related" aria-labelledby="related-title"><h2 id="related-title">Produtos relacionados</h2><div>@for (item of products(); track item.id) { <org-product-card [product]="item" (productSelect)="openProduct($event)" /> }</div></section>

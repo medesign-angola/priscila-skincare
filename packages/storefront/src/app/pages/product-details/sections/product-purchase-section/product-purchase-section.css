@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.purchase { display: flex; min-height: clamp(44rem, 58.819vw, 53rem); padding-top: 5.5rem; }
+.purchase__gallery { position: relative; flex: 0 0 58.5%; min-width: 0; background: #eef0ed; }
+.purchase__main-image { display: block; width: calc(100% - 6rem); height: 100%; object-fit: cover; }
+.purchase__thumbnails { position: absolute; right: 0; bottom: 0; display: flex; flex-direction: column; gap: .25rem; width: 5rem; }
+.purchase__thumbnails button { display: flex; align-items: center; gap: .5rem; height: 2.5rem; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; opacity: .5; }
+.purchase__thumbnails button.is-active { opacity: 1; }
+.purchase__thumbnails img { width: 2.5rem; height: 2.5rem; object-fit: cover; }
+.purchase__information { display: flex; flex: 1; flex-direction: column; gap: clamp(1.5rem, 2.4vw, 2.8rem); padding: clamp(2rem, 5.5vw, 7rem) clamp(2rem, 5.5vw, 5rem) 0; }
+.purchase p, .purchase h1, .purchase h2, .purchase ul { margin: 0; }
+.purchase__summary, .purchase__details { display: flex; flex-direction: column; gap: .75rem; }
+.purchase__category, .purchase h2, .purchase label { font-size: .8125rem; font-weight: 600; line-height: 1.5; text-transform: uppercase; }
+.purchase h1 { font-size: clamp(2rem, 2.778vw, 2.5rem); line-height: 1.2; text-transform: uppercase; }
+.purchase p, .purchase li, .purchase__rating, .purchase select { font-size: clamp(.8125rem, .972vw, 1rem); line-height: 1.5; }
+.purchase__rating span { letter-spacing: .5rem; }
+.purchase__details ul { display: flex; flex-wrap: wrap; gap: .25rem 1rem; padding: 0; list-style: none; }
+.purchase__details li { flex: 1 1 calc(50% - .5rem); }
+.purchase__details li::before { content: '✓'; margin-right: .5rem; color: var(--primary, #7d6645); }
+.purchase label { display: flex; flex-direction: column; gap: .5rem; }
+.purchase select { width: 100%; min-height: 3rem; padding: .75rem; border: 1px solid #cfc6b9; background: #fff; text-transform: uppercase; }
+.purchase__add { display: flex; justify-content: space-between; min-height: 3.5rem; padding: 1rem 1.5rem; border: 0; color: #fff; background: var(--primary, #7d6645); font-weight: 700; text-transform: uppercase; cursor: pointer; }
+.purchase__add:disabled { cursor: not-allowed; opacity: .55; }
+@media (max-width: 800px) { .purchase { flex-direction: column; padding-top: 0; } .purchase__gallery { flex-basis: auto; height: 36rem; } .purchase__information { padding: 2rem 1rem; } }

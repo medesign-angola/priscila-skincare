@@ -1,0 +1,7 @@
+@let reviewData = reviews();
+<section class="reviews" aria-labelledby="reviews-title">
+  <div class="reviews__summary"><h2 id="reviews-title">O que nossos clientes dizem</h2><strong>{{ reviewData.averageRating }}</strong><div>★★★★★</div><button type="button">Deixa sua avaliação</button></div>
+  <div class="reviews__list">@for (review of visibleReviews(); track $index) { <article><header><span>{{ review.name.slice(0, 1) }}</span><strong>{{ review.name }}</strong><span>★★★★★ {{ review.rating }}/5</span></header><p>{{ review.comment }}</p></article> }
+    @if (reviewData.userReviews.length > 4) { <button type="button" (click)="expanded.set(!expanded())">{{ expanded() ? 'Ver menos' : 'Ver todas as avaliações' }} →</button> }
+  </div>
+</section>
