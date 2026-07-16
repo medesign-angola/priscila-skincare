@@ -6,3 +6,5 @@ export * from './lib/components/header/header';
 
 export * from './lib/components/product-card/product-card';
 export * from './lib/pipes/price-format/price-format.pipe';
+
+export * from './lib/components/footer/footer';

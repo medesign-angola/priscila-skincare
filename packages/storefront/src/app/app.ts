@@ -7,11 +7,15 @@ import {
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { HeaderComponent } from '@org/shared';
+import {
+  FooterComponent,
+  FooterSocialLink,
+  HeaderComponent,
+} from '@org/shared';
 import { ProductFacade, HeaderService } from '@org/core';
 
 @Component({
-  imports: [RouterModule, HeaderComponent],
+  imports: [RouterModule, HeaderComponent, FooterComponent],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -36,6 +40,29 @@ export class App {
       image: collection.thumbnailImage,
     })),
   );
+  readonly footerProducts = computed(() => {
+    const language = this.facade.currentLanguage();
+
+    return this.facade.products().map((product, index) => ({
+      id: product.id,
+      index: String(index + 1).padStart(2, '0'),
+      label: product.translations[language].name,
+      imageUrl: product.thumbnailImage,
+    }));
+  });
+  readonly footerCollections = computed(() =>
+    this.facade.collectionsWithProducts().map((collection, index) => ({
+      id: collection.id,
+      index: String(index + 1).padStart(2, '0'),
+      label: collection.name,
+      imageUrl: collection.thumbnailImage,
+    })),
+  );
+  readonly footerSocialLinks: readonly FooterSocialLink[] = [
+    { id: 'instagram', index: '01', label: 'Instagram' },
+    { id: 'facebook', index: '02', label: 'Facebook' },
+    { id: 'tiktok', index: '03', label: 'TikTok' },
+  ];
 
   constructor() {
     effect(() => {
@@ -59,5 +86,16 @@ export class App {
 
       gsap.ticker.lagSmoothing(0);
     });
+  }
+
+  handleFooterNavigation(selection: {
+    type: 'product' | 'collection';
+    id: string;
+  }): void {
+    console.log('Abrir item do footer:', selection);
+  }
+
+  handleNewsletterSubmit(email: string): void {
+    void email;
   }
 }

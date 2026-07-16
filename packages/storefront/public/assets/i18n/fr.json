@@ -68,6 +68,22 @@
     "UNMUTE": "Activer le son de la vidéo",
     "RATING_LABEL": "Note globale de {{rating}} sur 5, basée sur {{reviews}} avis"
   },
+  "FOOTER": {
+    "PRODUCTS": "Produits",
+    "COLLECTIONS": "Collection",
+    "SOCIALS": "Réseaux sociaux",
+    "NEWSLETTER_TITLE": "Inscrivez-vous pour recevoir des actualités et des histoires exclusives sur nos produits",
+    "EMAIL": "Saisissez votre e-mail",
+    "SEND": "Envoyer",
+    "EMAIL_ERROR": "Saisissez une adresse e-mail valide.",
+    "CONSENT_PREFIX": "En vous inscrivant, vous acceptez de recevoir les e-mails marketing de Priscila Araujo Skincare conformément à nos",
+    "TERMS": "Conditions",
+    "CONSENT_JOIN": "et à notre",
+    "PRIVACY": "Politique de confidentialité",
+    "CONSENT_SUFFIX": "Vous pouvez vous désabonner à tout moment.",
+    "RIGHTS": "Tous droits réservés.",
+    "BACK_TO_TOP": "Retour en haut"
+  },
   "KITS_SECTION": {
     "FIND": "Découvrir",
     "VIEW_PRODUCTS": "Voir les produits"
