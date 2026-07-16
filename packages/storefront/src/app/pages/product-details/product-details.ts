@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { ProductFacade } from '@org/core';
+import { HeaderService, ProductFacade } from '@org/core';
 import { map } from 'rxjs';
 import { ProductPurchaseSection } from './sections/product-purchase-section/product-purchase-section';
 import { ShippingInformationSection } from './sections/shipping-information-section/shipping-information-section';
@@ -14,24 +20,46 @@ import { RelatedProductsSection } from './sections/related-products-section/rela
 
 @Component({
   selector: 'app-product-details',
-  imports: [RouterLink, ProductPurchaseSection, ShippingInformationSection, ProductBenefitsSection, ProductIngredientsSection, ProductUsageSection, ProductResultsSection, ProductReviewsSection, RelatedProductsSection],
+  imports: [
+    RouterLink,
+    ProductPurchaseSection,
+    ShippingInformationSection,
+    ProductBenefitsSection,
+    ProductIngredientsSection,
+    ProductUsageSection,
+    ProductResultsSection,
+    ProductReviewsSection,
+    RelatedProductsSection,
+  ],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetails {
   private readonly route = inject(ActivatedRoute);
+  private readonly header = inject(HeaderService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly facade = inject(ProductFacade);
   private readonly productId = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('productId'))),
     { initialValue: null },
   );
 
+  constructor() {
+    const previousTheme = this.header.theme();
+    this.header.theme.set('black');
+    this.destroyRef.onDestroy(() => this.header.theme.set(previousTheme));
+  }
+
   readonly product = computed(() => {
     const identifier = this.productId();
     if (!identifier) return null;
-    return this.facade.products().find(
-      (product) => product.id === identifier || product.slug === identifier,
-    ) ?? null;
+    return (
+      this.facade
+        .products()
+        .find(
+          (product) => product.id === identifier || product.slug === identifier,
+        ) ?? null
+    );
   });
 }
