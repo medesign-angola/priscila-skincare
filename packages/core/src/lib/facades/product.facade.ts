@@ -108,6 +108,26 @@ export class ProductFacade {
     }));
   });
 
+  readonly homeCollectionsWithProducts = computed(() => {
+    const language = this.currentLanguage();
+
+    return this.collectionsWithProducts()
+      .filter((collection) => collection.home !== undefined && collection.media)
+      .sort(
+        (firstCollection, secondCollection) =>
+          (firstCollection.home?.order ?? Number.MAX_SAFE_INTEGER) -
+          (secondCollection.home?.order ?? Number.MAX_SAFE_INTEGER),
+      )
+      .map((collection) => ({
+        id: collection.id,
+        slug: collection.slug,
+        thumbnailImage: collection.thumbnailImage,
+        media: collection.media!,
+        productCount: collection.products.length,
+        ...collection.home!.translations[language],
+      }));
+  });
+
   readonly kitsWithProducts = computed(() => {
     const mappedProducts = this.mappedProducts();
 

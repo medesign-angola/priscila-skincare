@@ -55,6 +55,9 @@
   "PRODUCTS_CATALOG": {
     "TITLE": "Produtos"
   },
+  "FEATURED_COLLECTION": {
+    "EXPLORE": "Explore nossa coleção"
+  },
   "KITS_SECTION": {
     "FIND": "Encontrar",
     "VIEW_PRODUCTS": "Ver produtos"

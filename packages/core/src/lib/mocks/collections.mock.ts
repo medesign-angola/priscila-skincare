@@ -10,6 +10,31 @@ export const MOCK_COLLECTIONS: Collection[] = [
     thumbnailImage:
       '/assets/images/collections/thumbnails/snow-white-set-big.webp',
     productIds: ['prod-1', 'prod-3', 'prod-4'],
+    media: {
+      type: 'video',
+      url: '/assets/videos/collections/snow-white-hydration-spf30.mp4',
+      posterUrl:
+        '/assets/images/collections/thumbnails/snow-white-set-big.webp',
+    },
+    home: {
+      order: 1,
+      translations: {
+        pt: {
+          title: 'Fluido de hidratação Snow White SPF30',
+          description:
+            'Proporcione à sua pele um toque de luminosidade e proteção, garantindo um acabamento natural e radiante com nossa linha Snow White.',
+          footnote:
+            'Descubra tudo que sua pele deseja para brilhar e se manter hidratada, suave e revitalizada durante todo o dia.',
+        },
+        fr: {
+          title: 'Fluide hydratant Snow White SPF30',
+          description:
+            'Apportez à votre peau luminosité et protection, avec un fini naturel et éclatant grâce à notre ligne Snow White.',
+          footnote:
+            'Découvrez tout ce dont votre peau a besoin pour rayonner et rester hydratée, douce et revitalisée tout au long de la journée.',
+        },
+      },
+    },
   },
   {
     id: 'col-2',
