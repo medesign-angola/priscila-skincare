@@ -40,6 +40,10 @@ export class ProductFacade {
     () => new Map(this.products().map((product) => [product.id, product])),
   );
 
+  readonly mappedCategories = computed(
+    () => new Map(this.categories().map((category) => [category.id, category])),
+  );
+
   readonly featuredProducts = computed(() =>
     this.products()
       .filter((product) => product.featured)

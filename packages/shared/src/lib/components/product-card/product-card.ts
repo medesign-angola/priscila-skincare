@@ -16,6 +16,7 @@ export interface ProductCardData {
   id: string;
   name: string;
   description: string;
+  categoryLabel?: string;
   imageUrl: string;
   rating: number;
   totalReviews: number;

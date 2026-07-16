@@ -6,6 +6,7 @@ import { KitsSection } from './sections/kits-section/kits-section';
 import { FeaturedProductEditorialSection } from './sections/featured-product-editorial-section/featured-product-editorial-section';
 import { ProductEditorialGallerySection } from './sections/product-editorial-gallery-section/product-editorial-gallery-section';
 import { IngredientsSection } from './sections/ingredients-section/ingredients-section';
+import { ProductsCatalogSection } from './sections/products-catalog-section/products-catalog-section';
 
 @Component({
   selector: 'app-home',
@@ -18,6 +19,7 @@ import { IngredientsSection } from './sections/ingredients-section/ingredients-s
     FeaturedProductEditorialSection,
     ProductEditorialGallerySection,
     IngredientsSection,
+    ProductsCatalogSection,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

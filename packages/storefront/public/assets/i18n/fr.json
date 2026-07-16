@@ -52,6 +52,9 @@
     "UNAVAILABLE": "Indisponible",
     "RATING_LABEL": "Note de {{rating}} sur 5, basée sur {{reviews}} avis"
   },
+  "PRODUCTS_CATALOG": {
+    "TITLE": "Produits"
+  },
   "KITS_SECTION": {
     "FIND": "Découvrir",
     "VIEW_PRODUCTS": "Voir les produits"

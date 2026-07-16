@@ -1,4 +1,12 @@
-import { Product } from '../models/product.interface';
+import { Product, ProductCommerce } from '../models/product.interface';
+
+const commerce = (
+  aoaPrice: number,
+  availability: ProductCommerce['availability'] = 'in-stock',
+): ProductCommerce => ({
+  prices: { AOA: aoaPrice, EUR: aoaPrice / 1000 },
+  availability,
+});
 
 // Reusable default structures for products 4-14 to keep code elegant and maintainable
 const DEFAULT_BENEFITS = {
@@ -264,6 +272,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-4',
     featured: false,
+    commerce: commerce(180000),
     homePlacements: [
       {
         type: 'editorial-gallery',
@@ -321,6 +330,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-5',
     featured: false,
+    commerce: commerce(165000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-5-1.jpg'],
@@ -414,6 +424,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-7',
     featured: false,
+    commerce: commerce(95000),
     categoryId: 'cat-1',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-7-1.jpg'],
@@ -446,6 +457,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-8',
     featured: false,
+    commerce: commerce(85000),
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-8-1.jpg'],
@@ -478,6 +490,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-9',
     featured: false,
+    commerce: commerce(65000),
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-9-1.jpg'],
@@ -510,6 +523,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-10',
     featured: false,
+    commerce: commerce(175000),
     categoryId: 'cat-3',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-10-1.jpg'],
@@ -550,6 +564,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-11',
     featured: false,
+    commerce: commerce(120000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-11-1.jpg'],
@@ -586,6 +601,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-12',
     featured: false,
+    commerce: commerce(190000),
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-12-1.jpg'],
@@ -622,6 +638,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-13',
     featured: false,
+    commerce: commerce(210000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: ['/assets/images/products/product-13-1.jpg'],
@@ -654,6 +671,7 @@ export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-14',
     featured: false,
+    commerce: commerce(220000),
     categoryId: 'cat-2',
     sizeIds: ['size-100ml'],
     images: ['/assets/images/products/product-14-1.jpg'],
