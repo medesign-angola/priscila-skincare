@@ -1,0 +1,165 @@
+@if (presentation(); as content) {
+<section
+  #sectionRoot
+  class="testimonials"
+  aria-labelledby="customer-testimonials-title"
+>
+  <div class="testimonials__content">
+    <aside class="testimonials__summary">
+      <h2 id="customer-testimonials-title">{{ content.title }}</h2>
+
+      <div class="testimonials__rating-info">
+        <div
+          class="testimonials__rating"
+          [attr.aria-label]="
+            'CUSTOMER_TESTIMONIALS.RATING_LABEL'
+              | translate
+                : {
+                    rating: (reviewsSummary().averageRating | number: '1.1-1'),
+                    reviews: reviewsSummary().totalReviews,
+                  }
+          "
+        >
+          <strong
+            >{{ reviewsSummary().averageRating | number: '1.1-1' }}</strong
+          >
+          <div class="testimonials__stars" aria-hidden="true">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+            <svg width="16" height="16" viewBox="0 0 16 16">
+              <path
+                d="M8 1.3 9.86 5.2l4.27.57-3.12 2.96.78 4.19L8 10.88l-3.79 2.04.78-4.19-3.12-2.96 4.27-.57L8 1.3Z"
+              />
+            </svg>
+            }
+          </div>
+        </div>
+
+        <p>{{ content.description }}</p>
+      </div>
+
+      <button
+        class="testimonials__review-button"
+        type="button"
+        (click)="leaveReview()"
+      >
+        <span>{{ 'CUSTOMER_TESTIMONIALS.LEAVE_REVIEW' | translate }}</span>
+        <svg
+          aria-hidden="true"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path d="M5 12H19M13 6L19 12L13 18" />
+        </svg>
+      </button>
+    </aside>
+
+    <div class="testimonials__slider">
+      <div class="testimonials__viewport">
+        <div class="testimonials__track" [style.transform]="trackTransform()">
+          @for (page of pages(); track $index; let pageIndex = $index) {
+          <div
+            class="testimonials__page"
+            [attr.aria-hidden]="pageIndex !== activePage()"
+          >
+            @for (testimonial of page; track testimonial.id) {
+            <article class="testimonial-card">
+              <video
+                #testimonialVideo
+                [src]="testimonial.videoUrl"
+                [poster]="testimonial.posterUrl || ''"
+                [attr.preload]="pageIndex === activePage() ? 'metadata' : 'none'"
+                [muted]="isMuted(testimonial.id)"
+                [attr.data-page-index]="pageIndex"
+                [attr.data-testimonial-id]="testimonial.id"
+                loop
+                playsinline
+                (loadeddata)="onVideoReady(testimonialVideo, pageIndex)"
+                (play)="onVideoPlay(testimonial.id)"
+                (pause)="onVideoPause(testimonial.id)"
+              ></video>
+
+              <span class="testimonial-card__author"
+                >{{ testimonial.authorLabel }}</span
+              >
+
+              <button
+                class="testimonial-card__control testimonial-card__control--play"
+                type="button"
+                (click)="togglePlayback(testimonial.id)"
+                [attr.aria-label]="
+                  (isPlaying(testimonial.id)
+                    ? 'CUSTOMER_TESTIMONIALS.PAUSE'
+                    : 'CUSTOMER_TESTIMONIALS.PLAY'
+                  ) | translate
+                "
+              >
+                @if (isPlaying(testimonial.id)) {
+                <svg aria-hidden="true" viewBox="0 0 16 16">
+                  <path d="M4 3h3v10H4zm5 0h3v10H9z" />
+                </svg>
+                } @else {
+                <svg aria-hidden="true" viewBox="0 0 16 16">
+                  <path d="m5 3 8 5-8 5V3Z" />
+                </svg>
+                }
+              </button>
+
+              <button
+                class="testimonial-card__control testimonial-card__control--sound"
+                type="button"
+                (click)="toggleMute(testimonial.id)"
+                [attr.aria-label]="
+                  (isMuted(testimonial.id)
+                    ? 'CUSTOMER_TESTIMONIALS.UNMUTE'
+                    : 'CUSTOMER_TESTIMONIALS.MUTE'
+                  ) | translate
+                "
+              >
+                @if (isMuted(testimonial.id)) {
+                <svg aria-hidden="true" viewBox="0 0 16 16">
+                  <path d="M2.5 6h2L8 3v10l-3.5-3h-2V6Zm8.5.3 3 3m0-3-3 3" />
+                </svg>
+                } @else {
+                <svg aria-hidden="true" viewBox="0 0 16 16">
+                  <path
+                    d="M2.5 6h2L8 3v10l-3.5-3h-2V6Zm7.5-.5a3.5 3.5 0 0 1 0 5m1.5-7a6 6 0 0 1 0 9"
+                  />
+                </svg>
+                }
+              </button>
+            </article>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      @if (totalPages() > 0) {
+      <nav class="testimonials__pagination" aria-label="Testimonials">
+        <button
+          type="button"
+          (click)="previousPage()"
+          [attr.aria-label]="'CUSTOMER_TESTIMONIALS.PREVIOUS_PAGE' | translate"
+        >
+          <svg aria-hidden="true" viewBox="0 0 16 16">
+            <path d="m10 3-5 5 5 5" />
+          </svg>
+        </button>
+        <span>{{ activePage() + 1 }} / {{ totalPages() }}</span>
+        <button
+          type="button"
+          (click)="nextPage()"
+          [attr.aria-label]="'CUSTOMER_TESTIMONIALS.NEXT_PAGE' | translate"
+        >
+          <svg aria-hidden="true" viewBox="0 0 16 16">
+            <path d="m6 3 5 5-5 5" />
+          </svg>
+        </button>
+      </nav>
+      }
+    </div>
+  </div>
+</section>
+}

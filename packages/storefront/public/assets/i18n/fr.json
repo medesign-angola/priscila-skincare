@@ -58,6 +58,16 @@
   "FEATURED_COLLECTION": {
     "EXPLORE": "Explorez notre collection"
   },
+  "CUSTOMER_TESTIMONIALS": {
+    "LEAVE_REVIEW": "Laissez votre avis",
+    "PREVIOUS_PAGE": "Page précédente des avis",
+    "NEXT_PAGE": "Page suivante des avis",
+    "PLAY": "Lire la vidéo",
+    "PAUSE": "Mettre la vidéo en pause",
+    "MUTE": "Couper le son de la vidéo",
+    "UNMUTE": "Activer le son de la vidéo",
+    "RATING_LABEL": "Note globale de {{rating}} sur 5, basée sur {{reviews}} avis"
+  },
   "KITS_SECTION": {
     "FIND": "Découvrir",
     "VIEW_PRODUCTS": "Voir les produits"

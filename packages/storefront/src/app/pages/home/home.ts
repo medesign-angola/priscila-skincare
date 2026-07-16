@@ -8,6 +8,7 @@ import { ProductEditorialGallerySection } from './sections/product-editorial-gal
 import { IngredientsSection } from './sections/ingredients-section/ingredients-section';
 import { ProductsCatalogSection } from './sections/products-catalog-section/products-catalog-section';
 import { FeaturedCollectionSection } from './sections/featured-collection-section/featured-collection-section';
+import { CustomerTestimonialsSection } from './sections/customer-testimonials-section/customer-testimonials-section';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ import { FeaturedCollectionSection } from './sections/featured-collection-sectio
     IngredientsSection,
     ProductsCatalogSection,
     FeaturedCollectionSection,
+    CustomerTestimonialsSection,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

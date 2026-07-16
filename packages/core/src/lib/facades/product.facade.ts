@@ -9,6 +9,7 @@ import {
   HomeIngredientsPresentation,
   Ingredient,
 } from '../models/ingredient.interface';
+import { HomeTestimonialsPresentation } from '../models/testimonial.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,8 @@ export class ProductFacade {
   readonly ingredients = signal<Ingredient[]>([]);
   readonly homeIngredientsPresentation =
     signal<HomeIngredientsPresentation | null>(null);
+  readonly homeTestimonialsPresentation =
+    signal<HomeTestimonialsPresentation | null>(null);
   readonly activeKitIndex = signal<number>(0);
   readonly currentLanguage = signal<'pt' | 'fr'>('pt');
 
@@ -94,6 +97,38 @@ export class ProductFacade {
           },
         ];
       }),
+    };
+  });
+
+  readonly globalReviewsSummary = computed(() => {
+    const language = this.currentLanguage();
+    let weightedRatingTotal = 0;
+    let totalReviews = 0;
+
+    for (const product of this.products()) {
+      const reviews = product.translations[language].reviews;
+      if (reviews.totalReviews <= 0) continue;
+
+      weightedRatingTotal += reviews.averageRating * reviews.totalReviews;
+      totalReviews += reviews.totalReviews;
+    }
+
+    return {
+      averageRating: totalReviews > 0 ? weightedRatingTotal / totalReviews : 0,
+      totalReviews,
+    };
+  });
+
+  readonly homeTestimonials = computed(() => {
+    const presentation = this.homeTestimonialsPresentation();
+    if (!presentation) return null;
+
+    return {
+      ...presentation.translations[this.currentLanguage()],
+      testimonials: [...presentation.testimonials].sort(
+        (firstTestimonial, secondTestimonial) =>
+          firstTestimonial.order - secondTestimonial.order,
+      ),
     };
   });
 
@@ -198,6 +233,9 @@ export class ProductFacade {
     this.productService
       .getHomeIngredients()
       .subscribe((data) => this.homeIngredientsPresentation.set(data));
+    this.productService
+      .getHomeTestimonials()
+      .subscribe((data) => this.homeTestimonialsPresentation.set(data));
   }
 
   // Resolves sizes of a given product (accepts both original and translated product shape)

@@ -10,6 +10,7 @@ import {
   HomeIngredientsPresentation,
   Ingredient,
 } from '../models/ingredient.interface';
+import { HomeTestimonialsPresentation } from '../models/testimonial.interface';
 import { MOCK_PRODUCTS } from '../mocks/products.mock';
 import { MOCK_KITS } from '../mocks/kits.mock';
 import { MOCK_COLLECTIONS } from '../mocks/collections.mock';
@@ -19,6 +20,7 @@ import {
   MOCK_HOME_INGREDIENTS,
   MOCK_INGREDIENTS,
 } from '../mocks/ingredients.mock';
+import { MOCK_HOME_TESTIMONIALS } from '../mocks/testimonials.mock';
 
 @Injectable({
   providedIn: 'root',
@@ -57,5 +59,9 @@ export class ProductService {
 
   getHomeIngredients(): Observable<HomeIngredientsPresentation> {
     return of(MOCK_HOME_INGREDIENTS);
+  }
+
+  getHomeTestimonials(): Observable<HomeTestimonialsPresentation> {
+    return of(MOCK_HOME_TESTIMONIALS);
   }
 }
