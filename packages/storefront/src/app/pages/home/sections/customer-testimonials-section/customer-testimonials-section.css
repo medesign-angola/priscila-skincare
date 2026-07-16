@@ -108,8 +108,8 @@
 }
 
 .testimonials__review-button:hover {
-  color: var(--brand-primary, #7d6645);
-  background: var(--color-burgundy-500, #b49667);
+  color: #fff;
+  background: var(--color-burgundy-800, #5f4d35);
 }
 
 .testimonials__review-button:active {
