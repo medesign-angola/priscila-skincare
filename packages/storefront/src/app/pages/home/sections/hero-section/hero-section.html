@@ -7,6 +7,7 @@
     >
       @if (kit.mediaStyle === 'split-right') {
       <org-hero-split
+        height="100%"
         [mediaUrl]="kit.mediaUrl"
         [placeholderUrl]="kit.placeholderUrl"
         [hasNoise]="false"
@@ -14,6 +15,7 @@
       />
       } @else {
       <org-hero-cover
+        height="100%"
         [mediaType]="kit.mediaType"
         [mediaUrl]="kit.mediaUrl"
         [placeholderUrl]="kit.placeholderUrl"
