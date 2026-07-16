@@ -2,7 +2,9 @@
   "name": "@org/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "optimize:product-images": "node tools/optimize-product-images.mjs"
+  },
   "private": true,
   "devDependencies": {
     "@angular-devkit/core": "~21.2.0",
@@ -29,6 +31,7 @@
     "eslint-config-prettier": "^10.0.0",
     "nx": "23.0.1",
     "prettier": "^3.8.1",
+    "sharp": "^0.35.3",
     "tslib": "^2.3.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.40.0"

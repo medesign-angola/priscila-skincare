@@ -132,10 +132,10 @@ export const MOCK_PRODUCTS: Product[] = [
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
     images: [
-      '/assets/images/products/product-1-1.jpg',
-      '/assets/images/products/product-1-2.jpg',
-      '/assets/images/products/product-1-3.jpg',
-      '/assets/images/products/product-1-4.jpg',
+      '/assets/images/products/product-1-1.webp',
+      '/assets/images/products/product-1-2.webp',
+      '/assets/images/products/product-1-3.webp',
+      '/assets/images/products/product-1-4.webp',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-1.webp',
     featuredImage: '/assets/images/products/featured/product-1.webp',
@@ -180,10 +180,10 @@ export const MOCK_PRODUCTS: Product[] = [
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
     images: [
-      '/assets/images/products/product-2-1.jpg',
-      '/assets/images/products/product-2-2.jpg',
-      '/assets/images/products/product-2-3.jpg',
-      '/assets/images/products/product-2-4.jpg',
+      '/assets/images/products/product-2-1.webp',
+      '/assets/images/products/product-2-2.webp',
+      '/assets/images/products/product-2-3.webp',
+      '/assets/images/products/product-2-4.webp',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-2.webp',
     featuredImage: '/assets/images/products/featured/product-2.webp',
@@ -224,10 +224,10 @@ export const MOCK_PRODUCTS: Product[] = [
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
     images: [
-      '/assets/images/products/product-3-1.jpg',
-      '/assets/images/products/product-3-2.jpg',
-      '/assets/images/products/product-3-3.jpg',
-      '/assets/images/products/product-3-4.jpg',
+      '/assets/images/products/product-3-1.webp',
+      '/assets/images/products/product-3-2.webp',
+      '/assets/images/products/product-3-3.webp',
+      '/assets/images/products/product-3-4.webp',
     ],
     thumbnailImage: '/assets/images/products/thumbnails/product-3.webp',
     featuredImage: '/assets/images/products/featured/product-3.webp',
@@ -333,7 +333,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(165000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-5-1.jpg'],
+    images: ['/assets/images/products/product-5-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-5.webp',
     translations: {
       pt: {
@@ -378,7 +378,7 @@ export const MOCK_PRODUCTS: Product[] = [
     ],
     categoryId: 'cat-2',
     sizeIds: ['size-200ml'],
-    images: ['/assets/images/products/product-6-1.jpg'],
+    images: ['/assets/images/products/product-6-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-6.webp',
     translations: {
       pt: {
@@ -427,7 +427,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(95000),
     categoryId: 'cat-1',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-7-1.jpg'],
+    images: ['/assets/images/products/product-7-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-7.webp',
     translations: {
       pt: {
@@ -460,7 +460,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(85000),
     categoryId: 'cat-1',
     sizeIds: ['size-100ml'],
-    images: ['/assets/images/products/product-8-1.jpg'],
+    images: ['/assets/images/products/product-8-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-8.webp',
     translations: {
       pt: {
@@ -493,7 +493,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(65000),
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-9-1.jpg'],
+    images: ['/assets/images/products/product-9-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-9.webp',
     translations: {
       pt: {
@@ -526,7 +526,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(175000),
     categoryId: 'cat-3',
     sizeIds: ['size-100ml'],
-    images: ['/assets/images/products/product-10-1.jpg'],
+    images: ['/assets/images/products/product-10-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-10.webp',
     translations: {
       pt: {
@@ -567,7 +567,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(120000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-11-1.jpg'],
+    images: ['/assets/images/products/product-11-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-11.webp',
     translations: {
       pt: {
@@ -604,7 +604,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(190000),
     categoryId: 'cat-3',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-12-1.jpg'],
+    images: ['/assets/images/products/product-12-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-12.webp',
     translations: {
       pt: {
@@ -641,7 +641,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(210000),
     categoryId: 'cat-2',
     sizeIds: ['size-50ml'],
-    images: ['/assets/images/products/product-13-1.jpg'],
+    images: ['/assets/images/products/product-13-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-13.webp',
     translations: {
       pt: {
@@ -674,7 +674,7 @@ export const MOCK_PRODUCTS: Product[] = [
     commerce: commerce(220000),
     categoryId: 'cat-2',
     sizeIds: ['size-100ml'],
-    images: ['/assets/images/products/product-14-1.jpg'],
+    images: ['/assets/images/products/product-14-1.webp'],
     thumbnailImage: '/assets/images/products/thumbnails/product-14.webp',
     translations: {
       pt: {
