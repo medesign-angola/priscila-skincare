@@ -33,8 +33,11 @@ export class CustomerTestimonialsSection {
   private intersectionObserver: IntersectionObserver | null = null;
   private playbackTimeout: ReturnType<typeof setTimeout> | null = null;
   private isSectionVisible = false;
+  private autoplayEnabled = true;
+  private sequencePausedByUser = false;
 
   readonly activePage = signal(0);
+  readonly activeTestimonialId = signal<string | null>(null);
   readonly playingVideoIds = signal<ReadonlySet<string>>(new Set());
   readonly unmutedVideoIds = signal<ReadonlySet<string>>(new Set());
   readonly presentation = this.facade.homeTestimonials;
@@ -66,7 +69,16 @@ export class CustomerTestimonialsSection {
   );
 
   constructor() {
-    afterNextRender(() => this.observeSection());
+    afterNextRender(() => {
+      const connection = (
+        navigator as Navigator & { connection?: { saveData?: boolean } }
+      ).connection;
+      this.autoplayEnabled =
+        !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        !connection?.saveData;
+      this.selectFirstVideoOnActivePage();
+      this.observeSection();
+    });
 
     this.destroyRef.onDestroy(() => {
       this.intersectionObserver?.disconnect();
@@ -92,8 +104,12 @@ export class CustomerTestimonialsSection {
     if (!video) return;
 
     if (video.paused) {
+      this.sequencePausedByUser = false;
+      this.activeTestimonialId.set(testimonialId);
+      this.pauseAllVideos(testimonialId);
       void video.play().catch(() => undefined);
     } else {
+      this.sequencePausedByUser = true;
       video.pause();
     }
   }
@@ -111,17 +127,46 @@ export class CustomerTestimonialsSection {
     });
   }
 
-  onVideoReady(video: HTMLVideoElement, pageIndex: number): void {
-    if (pageIndex !== this.activePage() || !this.isSectionVisible) return;
+  onVideoReady(
+    video: HTMLVideoElement,
+    pageIndex: number,
+    testimonialId: string,
+  ): void {
+    if (
+      !this.autoplayEnabled ||
+      this.sequencePausedByUser ||
+      pageIndex !== this.activePage() ||
+      testimonialId !== this.activeTestimonialId() ||
+      !this.isSectionVisible
+    ) {
+      return;
+    }
     void video.play().catch(() => undefined);
   }
 
   onVideoPlay(testimonialId: string): void {
+    this.activeTestimonialId.set(testimonialId);
+    this.pauseAllVideos(testimonialId);
     this.updatePlayingState(testimonialId, true);
   }
 
   onVideoPause(testimonialId: string): void {
     this.updatePlayingState(testimonialId, false);
+  }
+
+  onVideoEnded(testimonialId: string, pageIndex: number): void {
+    this.updatePlayingState(testimonialId, false);
+    if (pageIndex !== this.activePage() || this.sequencePausedByUser) return;
+
+    const page = this.pages()[pageIndex] ?? [];
+    const currentIndex = page.findIndex(
+      (testimonial) => testimonial.id === testimonialId,
+    );
+    if (currentIndex < 0 || page.length === 0) return;
+
+    const nextTestimonial = page[(currentIndex + 1) % page.length];
+    this.activeTestimonialId.set(nextTestimonial.id);
+    this.playSelectedVideo();
   }
 
   isPlaying(testimonialId: string): boolean {
@@ -132,6 +177,14 @@ export class CustomerTestimonialsSection {
     return !this.unmutedVideoIds().has(testimonialId);
   }
 
+  videoPreload(
+    testimonialId: string,
+    pageIndex: number,
+  ): 'auto' | 'metadata' | 'none' {
+    if (pageIndex !== this.activePage()) return 'none';
+    return testimonialId === this.activeTestimonialId() ? 'auto' : 'metadata';
+  }
+
   leaveReview(): void {
     console.log('Abrir formulário de avaliação');
   }
@@ -139,9 +192,11 @@ export class CustomerTestimonialsSection {
   private goToPage(pageIndex: number): void {
     this.pauseAllVideos();
     this.activePage.set(pageIndex);
+    this.sequencePausedByUser = false;
+    this.selectFirstVideoOnActivePage();
 
     if (this.playbackTimeout) clearTimeout(this.playbackTimeout);
-    this.playbackTimeout = setTimeout(() => this.playActivePageVideos(), 420);
+    this.playbackTimeout = setTimeout(() => this.playSelectedVideo(), 420);
   }
 
   private observeSection(): void {
@@ -151,7 +206,7 @@ export class CustomerTestimonialsSection {
     this.intersectionObserver = new IntersectionObserver(
       ([entry]) => {
         this.isSectionVisible = entry.isIntersecting;
-        if (entry.isIntersecting) this.playActivePageVideos();
+        if (entry.isIntersecting) this.playSelectedVideo();
         else this.pauseAllVideos();
       },
       { threshold: 0.2 },
@@ -159,23 +214,36 @@ export class CustomerTestimonialsSection {
     this.intersectionObserver.observe(section);
   }
 
-  private playActivePageVideos(): void {
-    if (!this.isSectionVisible) return;
-
-    for (const reference of this.videoElements()) {
-      const video = reference.nativeElement;
-      const pageIndex = Number(video.dataset['pageIndex']);
-
-      if (pageIndex === this.activePage()) {
-        void video.play().catch(() => undefined);
-      } else {
-        video.pause();
-      }
+  private playSelectedVideo(): void {
+    if (
+      !this.autoplayEnabled ||
+      this.sequencePausedByUser ||
+      !this.isSectionVisible
+    ) {
+      return;
     }
+
+    const testimonialId = this.activeTestimonialId();
+    if (!testimonialId) return;
+
+    const video = this.findVideo(testimonialId);
+    if (!video) return;
+
+    this.pauseAllVideos(testimonialId);
+    void video.play().catch(() => undefined);
   }
 
-  private pauseAllVideos(): void {
-    this.videoElements().forEach(({ nativeElement }) => nativeElement.pause());
+  private pauseAllVideos(exceptTestimonialId?: string): void {
+    this.videoElements().forEach(({ nativeElement }) => {
+      if (nativeElement.dataset['testimonialId'] !== exceptTestimonialId) {
+        nativeElement.pause();
+      }
+    });
+  }
+
+  private selectFirstVideoOnActivePage(): void {
+    const firstTestimonial = this.pages()[this.activePage()]?.[0];
+    this.activeTestimonialId.set(firstTestimonial?.id ?? null);
   }
 
   private findVideo(testimonialId: string): HTMLVideoElement | undefined {

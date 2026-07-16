@@ -69,15 +69,17 @@
                 #testimonialVideo
                 [src]="testimonial.videoUrl"
                 [poster]="testimonial.posterUrl || ''"
-                [attr.preload]="pageIndex === activePage() ? 'metadata' : 'none'"
+                [attr.preload]="videoPreload(testimonial.id, pageIndex)"
                 [muted]="isMuted(testimonial.id)"
                 [attr.data-page-index]="pageIndex"
                 [attr.data-testimonial-id]="testimonial.id"
-                loop
                 playsinline
-                (loadeddata)="onVideoReady(testimonialVideo, pageIndex)"
+                (loadeddata)="
+                  onVideoReady(testimonialVideo, pageIndex, testimonial.id)
+                "
                 (play)="onVideoPlay(testimonial.id)"
                 (pause)="onVideoPause(testimonial.id)"
+                (ended)="onVideoEnded(testimonial.id, pageIndex)"
               ></video>
 
               <span class="testimonial-card__author"
