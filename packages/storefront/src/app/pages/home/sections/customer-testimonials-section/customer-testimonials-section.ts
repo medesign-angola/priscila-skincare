@@ -35,6 +35,7 @@ export class CustomerTestimonialsSection {
   private isSectionVisible = false;
   private autoplayEnabled = true;
   private sequencePausedByUser = false;
+  private destroyed = false;
 
   readonly activePage = signal(0);
   readonly activeTestimonialId = signal<string | null>(null);
@@ -81,9 +82,9 @@ export class CustomerTestimonialsSection {
     });
 
     this.destroyRef.onDestroy(() => {
+      this.destroyed = true;
       this.intersectionObserver?.disconnect();
       if (this.playbackTimeout) clearTimeout(this.playbackTimeout);
-      this.pauseAllVideos();
     });
   }
 
@@ -196,7 +197,9 @@ export class CustomerTestimonialsSection {
     this.selectFirstVideoOnActivePage();
 
     if (this.playbackTimeout) clearTimeout(this.playbackTimeout);
-    this.playbackTimeout = setTimeout(() => this.playSelectedVideo(), 420);
+    this.playbackTimeout = setTimeout(() => {
+      if (!this.destroyed) this.playSelectedVideo();
+    }, 420);
   }
 
   private observeSection(): void {
@@ -205,6 +208,7 @@ export class CustomerTestimonialsSection {
 
     this.intersectionObserver = new IntersectionObserver(
       ([entry]) => {
+        if (this.destroyed || !entry) return;
         this.isSectionVisible = entry.isIntersecting;
         if (entry.isIntersecting) this.playSelectedVideo();
         else this.pauseAllVideos();
@@ -216,6 +220,7 @@ export class CustomerTestimonialsSection {
 
   private playSelectedVideo(): void {
     if (
+      this.destroyed ||
       !this.autoplayEnabled ||
       this.sequencePausedByUser ||
       !this.isSectionVisible
@@ -234,11 +239,18 @@ export class CustomerTestimonialsSection {
   }
 
   private pauseAllVideos(exceptTestimonialId?: string): void {
-    this.videoElements().forEach(({ nativeElement }) => {
-      if (nativeElement.dataset['testimonialId'] !== exceptTestimonialId) {
-        nativeElement.pause();
+    for (const elementRef of this.videoElements()) {
+      const video = elementRef?.nativeElement;
+      if (
+        !video ||
+        !video.isConnected ||
+        video.dataset['testimonialId'] === exceptTestimonialId
+      ) {
+        continue;
       }
-    });
+
+      video.pause();
+    }
   }
 
   private selectFirstVideoOnActivePage(): void {
@@ -248,8 +260,13 @@ export class CustomerTestimonialsSection {
 
   private findVideo(testimonialId: string): HTMLVideoElement | undefined {
     return this.videoElements()
-      .map(({ nativeElement }) => nativeElement)
-      .find((video) => video.dataset['testimonialId'] === testimonialId);
+      .map((elementRef) => elementRef?.nativeElement)
+      .find((video): video is HTMLVideoElement =>
+        Boolean(
+          video?.isConnected &&
+          video.dataset['testimonialId'] === testimonialId,
+        ),
+      );
   }
 
   private updatePlayingState(testimonialId: string, isPlaying: boolean): void {
