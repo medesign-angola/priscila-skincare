@@ -5,16 +5,17 @@
 .purchase {
   display: flex;
   align-items: stretch;
-  min-height: clamp(44rem, 58.819vw, 60rem);
 }
 .purchase__gallery {
   display: flex;
   flex: 0 0 57.36%;
   gap: 1rem;
   min-width: 0;
+  max-height: clamp(44rem, 58.819vw, 53rem);
   background: #fff;
 }
 .purchase__image-stage {
+  position: relative;
   display: flex;
   flex: 1;
   min-width: 0;
@@ -24,10 +25,11 @@
   background: #fff;
 }
 .purchase__main-image {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  min-height: clamp(44rem, 58.819vw, 60rem);
   object-fit: cover;
   object-position: center;
   transition: opacity 180ms ease;
@@ -38,7 +40,12 @@
   flex-direction: column;
   justify-content: flex-end;
   gap: 0.25rem;
+  overflow-y: auto;
   background: #fff;
+  scrollbar-width: none;
+}
+.purchase__thumbnails::-webkit-scrollbar {
+  display: none;
 }
 .purchase__thumbnails button {
   display: flex;
@@ -83,7 +90,6 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
   gap: clamp(2rem, 3vw, 3rem);
   padding: clamp(6rem, 7.778vw, 7rem) clamp(2rem, 5.556vw, 5rem) 0;
   background: #fff;
@@ -102,6 +108,12 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+.purchase__details {
+  gap: 1rem;
+}
+.purchase__details h2:nth-of-type(2) {
+  margin-top: 1rem;
 }
 .purchase__category,
 .purchase h2,
