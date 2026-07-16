@@ -77,6 +77,11 @@
 }
 
 @media (max-width: 600px) {
+  .brand-pillars {
+    --pillars-gap: 1.5rem;
+    padding-block: 2rem;
+  }
+
   .brand-pillars__list {
     flex-direction: column;
     flex-wrap: nowrap;
@@ -87,6 +92,7 @@
     width: 100%;
     padding-right: 0;
     padding-bottom: var(--pillars-gap);
+    gap: 0.75rem;
   }
 
   .brand-pillars__item:nth-child(odd) {

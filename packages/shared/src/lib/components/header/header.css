@@ -309,6 +309,12 @@
   }
 }
 
+@media (max-width: 600px) {
+  header {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .preferences-dialog {
     padding: 24px 20px 20px;

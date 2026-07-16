@@ -67,26 +67,14 @@
 }
 
 @media (max-width: 600px) {
-  .featured-products {
-    overflow: hidden;
-  }
-
   .featured-products__cards {
+    flex-direction: column;
     flex-wrap: nowrap;
-    width: calc(100% + clamp(1.5rem, 2.222vw, 4rem));
-    padding-right: clamp(1.5rem, 2.222vw, 4rem);
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: none;
-  }
-
-  .featured-products__cards::-webkit-scrollbar {
-    display: none;
+    gap: 1rem;
   }
 
   .featured-products__cards org-product-card {
-    flex: 0 0 min(82vw, 22rem);
-    scroll-snap-align: start;
+    flex: 0 0 auto;
+    width: 100%;
   }
 }

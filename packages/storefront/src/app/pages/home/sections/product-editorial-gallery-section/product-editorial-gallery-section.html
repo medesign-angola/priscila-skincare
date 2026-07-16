@@ -56,5 +56,30 @@
       }
     </div>
   </div>
+
+  <div class="editorial-gallery__mobile-strip" aria-label="Galeria">
+    <figure>
+      <img
+        [src]="gallery.coverImage"
+        [alt]="gallery.coverAlt"
+        width="720"
+        height="900"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+    @for (image of gallery.images; track image.url) {
+    <figure>
+      <img
+        [src]="image.url"
+        [alt]="image.alt"
+        width="720"
+        height="900"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+    }
+  </div>
 </section>
 }

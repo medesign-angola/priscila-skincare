@@ -19,6 +19,10 @@
   height: clamp(46rem, 70.278vw, 78rem);
 }
 
+.editorial-gallery__mobile-strip {
+  display: none;
+}
+
 .editorial-gallery__column {
   display: flex;
   flex: 1 1 0;
@@ -120,7 +124,7 @@
   }
 
   .editorial-gallery__layout {
-    flex-wrap: wrap;
+    display: block;
     height: auto;
   }
 
@@ -136,23 +140,39 @@
   .editorial-gallery__intro {
     position: static;
     width: min(100%, 30rem);
-    padding: 0 0 var(--gallery-inset);
+    padding: 0 0 1.5rem;
   }
 
-  .editorial-gallery__cover {
-    flex: 0 0 100%;
-    order: 2;
-    height: min(125vw, 46rem);
-  }
-
-  .editorial-gallery__column--end {
-    display: contents;
-  }
-
+  .editorial-gallery__cover,
+  .editorial-gallery__column--end,
   .editorial-gallery__tile {
-    flex: 0 0 calc(50% - var(--gallery-gap) / 2);
-    order: 3;
-    aspect-ratio: 1;
+    display: none;
+  }
+
+  .editorial-gallery__mobile-strip {
+    display: flex;
+    gap: 0.5rem;
+    width: calc(100% + var(--gallery-inset));
+    padding-right: var(--gallery-inset);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+  }
+
+  .editorial-gallery__mobile-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .editorial-gallery__mobile-strip figure {
+    flex: 0 0 min(70.4vw, 18rem);
+    height: 19.125rem;
+    overflow: hidden;
+    scroll-snap-align: start;
+  }
+
+  .editorial-gallery__mobile-strip img {
+    object-fit: cover;
   }
 }
 

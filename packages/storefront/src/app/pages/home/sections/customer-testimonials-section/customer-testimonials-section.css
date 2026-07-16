@@ -296,8 +296,26 @@
 }
 
 @media (max-width: 600px) {
+  .testimonials {
+    --section-padding: 1rem;
+    padding-block: 3rem;
+  }
+
+  .testimonials__content,
+  .testimonials__summary {
+    gap: 2rem;
+  }
+
   .testimonials__summary {
     flex-direction: column;
+  }
+
+  .testimonials__rating-info {
+    gap: 1.5rem;
+  }
+
+  .testimonials__rating strong {
+    font-size: 4rem;
   }
 
   .testimonials__review-button {
@@ -317,8 +335,8 @@
   }
 
   .testimonial-card {
-    flex-basis: min(82vw, 22rem);
-    height: clamp(28rem, 125vw, 38rem);
+    flex-basis: min(82.133vw, 19.25rem);
+    height: 29.3125rem;
     scroll-snap-align: start;
   }
 }

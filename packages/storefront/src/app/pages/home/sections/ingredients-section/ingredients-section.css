@@ -180,6 +180,43 @@
   }
 }
 
+@media (max-width: 600px) {
+  .ingredients {
+    --ingredients-inset: 1rem;
+    padding-block: 2rem;
+  }
+
+  .ingredients__content {
+    min-height: 0;
+    gap: 1.5rem;
+  }
+
+  .ingredients__copy {
+    gap: 1.5rem;
+  }
+
+  .ingredients__intro {
+    gap: 1.5rem;
+    width: min(100%, 21.5rem);
+  }
+
+  .ingredients__list {
+    gap: 0.25rem;
+  }
+
+  .ingredients__list button {
+    min-height: 2.5rem;
+  }
+
+  .ingredients__media {
+    min-height: 20rem;
+  }
+
+  .ingredients__footnote {
+    width: 100%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ingredients__list button,
   .ingredients__media img {

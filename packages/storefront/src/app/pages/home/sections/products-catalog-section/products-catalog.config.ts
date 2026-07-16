@@ -3,12 +3,16 @@ import { InjectionToken } from '@angular/core';
 export interface HomeProductsCatalogConfig {
   initialLimit: number;
   batchSize: number;
+  mobileInitialLimit: number;
+  mobileBatchSize: number;
   maxProducts: number;
 }
 
 export const DEFAULT_HOME_PRODUCTS_CATALOG_CONFIG = {
   initialLimit: 9,
   batchSize: 9,
+  mobileInitialLimit: 3,
+  mobileBatchSize: 3,
   maxProducts: 18,
 } as const satisfies HomeProductsCatalogConfig;
 
@@ -29,6 +33,11 @@ export function normalizeCatalogConfig(
       Math.max(1, Math.floor(config.initialLimit)),
     ),
     batchSize: Math.max(1, Math.floor(config.batchSize)),
+    mobileInitialLimit: Math.min(
+      maxProducts,
+      Math.max(1, Math.floor(config.mobileInitialLimit)),
+    ),
+    mobileBatchSize: Math.max(1, Math.floor(config.mobileBatchSize)),
     maxProducts,
   };
 }

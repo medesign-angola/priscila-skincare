@@ -183,6 +183,21 @@
   }
 }
 
+@media (max-width: 600px) {
+  .product-card {
+    gap: 1rem;
+  }
+
+  .product-card__media {
+    aspect-ratio: 343 / 364;
+  }
+
+  .product-card__add {
+    min-height: 3rem;
+    padding-inline: 1.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .product-card__image-trigger img,
   .product-card__add {

@@ -52,11 +52,13 @@ export class ProductsCatalogSection {
   private ScrollTrigger:
     (typeof import('gsap/ScrollTrigger'))['ScrollTrigger'] | null = null;
   private loadTrigger: Killable | null = null;
+  private mobileMediaQuery: MediaQueryList | null = null;
   private readonly motionContexts: Revertible[] = [];
   private renderTimeout: ReturnType<typeof setTimeout> | null = null;
   private destroyed = false;
 
   readonly visibleLimit = signal(this.config.initialLimit);
+  readonly isMobile = signal(false);
 
   readonly catalogProducts = computed<ProductCardData[]>(() => {
     const language = this.facade.currentLanguage();
@@ -111,13 +113,20 @@ export class ProductsCatalogSection {
   );
 
   constructor() {
-    afterNextRender(() => void this.initializeMotion());
+    afterNextRender(() => {
+      this.initializeResponsiveMode();
+      void this.initializeMotion();
+    });
 
     this.destroyRef.onDestroy(() => {
       this.destroyed = true;
       this.loadTrigger?.kill();
       this.motionContexts.forEach((context) => context.revert());
       if (this.renderTimeout) clearTimeout(this.renderTimeout);
+      this.mobileMediaQuery?.removeEventListener(
+        'change',
+        this.handleResponsiveChange,
+      );
     });
   }
 
@@ -129,7 +138,7 @@ export class ProductsCatalogSection {
     console.log('Adicionar ao carrinho:', productId);
   }
 
-  private loadNextBatch(): void {
+  loadNextBatch(): void {
     if (!this.hasMoreProducts()) return;
 
     const availableLimit = Math.min(
@@ -138,7 +147,13 @@ export class ProductsCatalogSection {
     );
 
     this.visibleLimit.update((currentLimit) =>
-      Math.min(currentLimit + this.config.batchSize, availableLimit),
+      Math.min(
+        currentLimit +
+          (this.isMobile()
+            ? this.config.mobileBatchSize
+            : this.config.batchSize),
+        availableLimit,
+      ),
     );
 
     this.loadTrigger?.kill();
@@ -149,8 +164,39 @@ export class ProductsCatalogSection {
       if (this.destroyed) return;
       this.animateNewCards();
       this.ScrollTrigger?.refresh();
-      this.createLoadTrigger();
+      if (!this.isMobile()) this.createLoadTrigger();
     });
+  }
+
+  private readonly handleResponsiveChange = (event: MediaQueryListEvent) => {
+    this.applyResponsiveMode(event.matches);
+  };
+
+  private initializeResponsiveMode(): void {
+    this.mobileMediaQuery = matchMedia('(max-width: 600px)');
+    this.mobileMediaQuery.addEventListener(
+      'change',
+      this.handleResponsiveChange,
+    );
+    this.applyResponsiveMode(this.mobileMediaQuery.matches);
+  }
+
+  private applyResponsiveMode(isMobile: boolean): void {
+    this.isMobile.set(isMobile);
+    this.loadTrigger?.kill();
+    this.loadTrigger = null;
+
+    if (isMobile) {
+      this.visibleLimit.set(
+        Math.min(this.config.mobileInitialLimit, this.config.maxProducts),
+      );
+      return;
+    }
+
+    this.visibleLimit.set(
+      Math.max(this.visibleLimit(), this.config.initialLimit),
+    );
+    this.createLoadTrigger();
   }
 
   private async initializeMotion(): Promise<void> {
@@ -213,7 +259,13 @@ export class ProductsCatalogSection {
   private createLoadTrigger(): void {
     const ScrollTrigger = this.ScrollTrigger;
     const sentinel = this.loadSentinel()?.nativeElement;
-    if (!ScrollTrigger || !sentinel || !this.hasMoreProducts()) return;
+    if (
+      !ScrollTrigger ||
+      !sentinel ||
+      !this.hasMoreProducts() ||
+      this.isMobile()
+    )
+      return;
 
     this.loadTrigger?.kill();
     this.loadTrigger = ScrollTrigger.create({

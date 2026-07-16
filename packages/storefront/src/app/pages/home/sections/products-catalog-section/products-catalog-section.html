@@ -29,6 +29,19 @@
         aria-hidden="true"
       ></div>
 
+      @if (isMobile() && hasMoreProducts()) {
+      <button
+        class="products-catalog__load-more"
+        type="button"
+        (click)="loadNextBatch()"
+      >
+        <span>{{ 'PRODUCTS_CATALOG.LOAD_MORE' | translate }}</span>
+        <svg aria-hidden="true" viewBox="0 0 16 16">
+          <path d="m3 6 5 5 5-5" />
+        </svg>
+      </button>
+      }
+
       <p class="sr-only" aria-live="polite" aria-atomic="true">
         {{ visibleProducts().length }} de {{ catalogProducts().length }} {{
         'PRODUCTS_CATALOG.TITLE' | translate }}

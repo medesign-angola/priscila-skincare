@@ -116,16 +116,21 @@
 }
 
 @media (max-width: 600px) {
+  .product-editorial {
+    padding-block: 0;
+  }
+
   .product-editorial__hero {
-    height: clamp(40rem, 165vw, 48rem);
+    height: 39.5rem;
   }
 
   .product-editorial__intro {
     position: static;
-    padding: 1rem;
-    border-radius: 0.125rem;
-    background: rgb(44 34 24 / 48%);
-    backdrop-filter: blur(0.25rem);
+    padding: 0;
+  }
+
+  .product-editorial__action {
+    width: 100%;
   }
 }
 

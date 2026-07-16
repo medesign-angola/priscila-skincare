@@ -44,6 +44,60 @@ button,
   transition: all 0.15s ease-in-out !important;
 }
 
+@media (max-width: 600px) {
+  .hero-container {
+    height: clamp(42rem, 100svh, 47.875rem);
+    min-height: 42rem;
+  }
+
+  .hero-content-layer > div {
+    padding: 0 1rem 1.5rem !important;
+  }
+
+  .hero--content {
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .box-content {
+    gap: 1.5rem !important;
+    width: 100%;
+    max-width: none !important;
+  }
+
+  .badges {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem !important;
+  }
+
+  .badges button {
+    font-size: 0.75rem;
+  }
+
+  .main-content {
+    gap: 1rem !important;
+  }
+
+  .main-content h1 {
+    max-width: 21rem;
+    font-size: clamp(2.25rem, 10.667vw, 2.5rem) !important;
+  }
+
+  .main-content > button {
+    width: 100% !important;
+    min-height: 3rem;
+  }
+
+  .main-content > button span:last-child {
+    display: none;
+  }
+
+  .hero--content > div:last-child {
+    flex: 0 0 auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .slide-wrapper {
     transition: none;

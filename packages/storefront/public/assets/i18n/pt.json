@@ -53,7 +53,8 @@
     "RATING_LABEL": "Avaliação de {{rating}} em 5, baseada em {{reviews}} avaliações"
   },
   "PRODUCTS_CATALOG": {
-    "TITLE": "Produtos"
+    "TITLE": "Produtos",
+    "LOAD_MORE": "Carregar mais produtos"
   },
   "FEATURED_COLLECTION": {
     "EXPLORE": "Explore nossa coleção"
