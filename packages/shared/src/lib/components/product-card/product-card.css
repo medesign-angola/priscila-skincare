@@ -208,6 +208,15 @@
     min-height: 3rem;
     padding-inline: 1.5rem;
   }
+
+  :host(.product-card--related) .product-card__media {
+    aspect-ratio: 308 / 364;
+  }
+
+  :host(.product-card--related) .product-card__add {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

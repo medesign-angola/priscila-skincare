@@ -125,3 +125,41 @@
     min-height: 36rem;
   }
 }
+@media (max-width: 600px) {
+  .results {
+    min-height: 0;
+    padding: 1rem;
+  }
+  .results__compare {
+    order: -1;
+    flex: none;
+    min-height: 0;
+    aspect-ratio: 343 / 333;
+    border-radius: 0.125rem;
+  }
+  .results__content {
+    padding: 1.5rem 0 0;
+  }
+  .results h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary, #1a1917);
+  }
+  .results__metrics {
+    gap: 2rem;
+  }
+  .results__metrics strong {
+    font-size: 3.5rem;
+  }
+  .results__metrics p {
+    margin-block: 0.75rem 0;
+  }
+  .results__content > p {
+    margin-top: 2rem;
+  }
+  .results__divider::after {
+    top: 50%;
+  }
+  .results__label {
+    font-size: 0.625rem;
+  }
+}

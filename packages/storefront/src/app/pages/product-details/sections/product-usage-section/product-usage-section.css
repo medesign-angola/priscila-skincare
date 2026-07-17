@@ -99,3 +99,29 @@
     min-height: 18rem;
   }
 }
+@media (max-width: 600px) {
+  .usage {
+    gap: 1.5rem;
+    min-height: 0;
+    padding: 1.25rem 1rem;
+  }
+  .usage__content {
+    gap: 1rem;
+  }
+  .usage__content > img {
+    max-height: none;
+    aspect-ratio: 343 / 340;
+  }
+  .usage__steps {
+    gap: 1rem;
+  }
+  .usage article {
+    min-height: 10.375rem;
+  }
+  .usage strong {
+    font-size: 2.5rem;
+  }
+  .usage h3 {
+    margin-bottom: 0.25rem;
+  }
+}

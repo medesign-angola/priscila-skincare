@@ -43,3 +43,24 @@
     scroll-snap-align: start;
   }
 }
+@media (max-width: 600px) {
+  .related {
+    gap: 1.5rem;
+    min-height: 0;
+    padding: 1.25rem 0;
+  }
+  .related h2 {
+    margin-inline: 1.25rem;
+  }
+  .related__products {
+    gap: 1rem;
+    padding-left: 1.25rem;
+    scrollbar-width: none;
+  }
+  .related__products::-webkit-scrollbar {
+    display: none;
+  }
+  .related org-product-card {
+    flex-basis: 19.25rem;
+  }
+}
