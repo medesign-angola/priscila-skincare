@@ -28,6 +28,9 @@ export interface ProductCardData {
 
 @Component({
   selector: 'org-product-card',
+  host: {
+    '[class.product-card--related]': "variant() === 'related'",
+  },
   imports: [DecimalPipe, TranslatePipe],
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
@@ -35,6 +38,7 @@ export interface ProductCardData {
 })
 export class ProductCard {
   readonly product = input.required<ProductCardData>();
+  readonly variant = input<'default' | 'related'>('default');
   readonly productSelect = output<string>();
   readonly addToCart = output<string>();
 

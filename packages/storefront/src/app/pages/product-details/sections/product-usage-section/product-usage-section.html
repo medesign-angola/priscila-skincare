@@ -1,7 +1,29 @@
 @let usage = content();
 <section class="usage" aria-labelledby="usage-title">
-  <h2 id="usage-title">Como usar</h2>
-  <div class="usage__steps usage__steps--left">@for (step of usage.steps.slice(0, 2); track step.order) { <article><strong>{{ step.order.toString().padStart(2, '0') }}</strong><h3>{{ step.name }}</h3><p>{{ step.description }}</p></article> }</div>
-  <img [src]="image()" alt="" loading="lazy" />
-  <div class="usage__steps">@for (step of usage.steps.slice(2, 4); track step.order) { <article><strong>{{ step.order.toString().padStart(2, '0') }}</strong><h3>{{ step.name }}</h3><p>{{ step.description }}</p></article> }</div>
+  <div class="usage__heading"><h2 id="usage-title">Como usar</h2></div>
+  <div class="usage__content">
+    <div class="usage__steps">
+      @for (step of usage.steps.slice(0, 2); track step.order) {
+      <article>
+        <strong>{{ step.order.toString().padStart(2, '0') }}</strong>
+        <div>
+          <h3>{{ step.name }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </article>
+      }
+    </div>
+    <img [src]="image()" alt="" loading="lazy" />
+    <div class="usage__steps">
+      @for (step of usage.steps.slice(2, 4); track step.order) {
+      <article>
+        <strong>{{ step.order.toString().padStart(2, '0') }}</strong>
+        <div>
+          <h3>{{ step.name }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </article>
+      }
+    </div>
+  </div>
 </section>

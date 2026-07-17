@@ -188,9 +188,34 @@ const DEFAULT_REVIEWS = {
   totalReviews: 12,
   userReviews: [
     {
-      name: 'Utilizador Verificado',
-      comment: 'Excelente qualidade, recomendo vivamente.',
+      name: 'Lívia Costa',
+      comment:
+        'O produto é leve e não oleoso, perfeito para o dia a dia. Minha pele ficou protegida e hidratada, mesmo sob o sol intenso.',
       rating: 5,
+    },
+    {
+      name: 'Marta Silva',
+      comment:
+        'A textura espalha facilmente e deixa um acabamento muito confortável durante todo o dia.',
+      rating: 5,
+    },
+    {
+      name: 'Carla Mendes',
+      comment:
+        'Integrei o produto à minha rotina diária e gostei bastante do resultado na pele.',
+      rating: 4.8,
+    },
+    {
+      name: 'Sara Manuel',
+      comment:
+        'Proteção eficiente, rápida absorção e nenhuma sensação pesada depois da aplicação.',
+      rating: 5,
+    },
+    {
+      name: 'Joana Pedro',
+      comment:
+        'A pele permanece hidratada e confortável mesmo depois de várias horas de utilização.',
+      rating: 4.7,
     },
   ],
 };

@@ -2,12 +2,58 @@
 <section class="results" aria-labelledby="results-title">
   <div class="results__content">
     <h2 id="results-title">Resultado</h2>
-    <div class="results__metrics">@for (item of result.data; track item.percentage) { <article><strong>{{ item.percentage }}%</strong><p>{{ item.description }}</p></article> }</div>
+    <div class="results__metrics">
+      @for (item of result.data; track item.percentage) {
+      <article>
+        <strong>{{ item.percentage }}%</strong>
+        <p>{{ item.description }}</p>
+      </article>
+      }
+    </div>
     <p>{{ result.description }}</p>
   </div>
-  <div class="results__compare" role="slider" tabindex="0" aria-label="Comparar antes e depois" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="position()" (pointerdown)="updateFromPointer($event)" (pointermove)="$event.buttons && updateFromPointer($event)" (keydown)="updateFromKeyboard($event)">
-    <img [src]="result.images.before" alt="Antes da utilização" />
-    <div class="results__after" [style.clip-path]="'inset(0 0 0 ' + position() + '%)'"><img [src]="result.images.after" alt="Depois da utilização" /></div>
-    <span class="results__divider" [style.left.%]="position()">‹ ›</span>
+  <div
+    class="results__compare"
+    role="slider"
+    tabindex="0"
+    aria-label="Comparar antes e depois"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-valuenow]="position()"
+    (pointerdown)="updateFromPointer($event)"
+    (pointermove)="$event.buttons && updateFromPointer($event)"
+    (keydown)="updateFromKeyboard($event)"
+  >
+    <img
+      [src]="result.images.before"
+      alt="Antes da utilização"
+      draggable="false"
+    />
+    <div
+      class="results__after"
+      [style.clip-path]="'inset(0 0 0 ' + position() + '%)'"
+    >
+      <img
+        [src]="result.images.after"
+        alt="Depois da utilização"
+        draggable="false"
+      />
+    </div>
+    <span
+      class="results__before-filter"
+      [style.width.%]="position()"
+      aria-hidden="true"
+    ></span>
+    <span class="results__label results__label--before"
+      >Antes da utilização</span
+    >
+    <span class="results__label results__label--after"
+      >Depois da utilização</span
+    >
+    <span
+      class="results__divider"
+      [style.left.%]="position()"
+      aria-hidden="true"
+    ></span>
   </div>
 </section>
