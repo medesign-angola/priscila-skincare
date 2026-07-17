@@ -59,7 +59,7 @@ export class HeaderComponent {
       : this.products(),
   );
   readonly navigationMenuRoute = computed(() =>
-    this.displayedNavigationMenu() === 'collections' ? '/colecao' : '/produtos',
+    '/produtos',
   );
   readonly navigationMenuLabel = computed(() =>
     this.displayedNavigationMenu() === 'collections'
@@ -77,6 +77,12 @@ export class HeaderComponent {
 
   languageChange = output<'pt' | 'fr'>();
   currencyChange = output<'AOA' | 'EUR'>();
+
+  navigationItemRoute(itemId: string): readonly string[] {
+    return this.displayedNavigationMenu() === 'collections'
+      ? ['/produtos', 'colecao', itemId]
+      : ['/produtos', itemId];
+  }
 
   constructor() {
     effect((onCleanup) => {

@@ -243,6 +243,7 @@
   color: var(--text-primary, #1a1917);
   font: inherit;
   text-align: left;
+  text-decoration: none;
   text-transform: uppercase;
   background: transparent;
   border: 0;

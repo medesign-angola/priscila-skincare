@@ -95,7 +95,10 @@ export class App {
   }): void {
     if (selection.type === 'product') {
       void this.router.navigate(['/produtos', selection.id]);
+      return;
     }
+
+    void this.router.navigate(['/produtos', 'colecao', selection.id]);
   }
 
   handleNewsletterSubmit(email: string): void {

@@ -1,0 +1,82 @@
+<main class="products-page">
+  <section class="catalog" aria-labelledby="catalog-title">
+    <header class="catalog__toolbar">
+      <button type="button" class="catalog__filter">Filtrar</button>
+      <label class="catalog__sort">
+        <span class="sr-only">Ordenar produtos</span>
+        <select [value]="sort()" (change)="updateSort($event)">
+          <option value="default">Ordenar</option>
+          <option value="name-asc">Nome: A–Z</option>
+          <option value="price-asc">Preço: menor primeiro</option>
+          <option value="price-desc">Preço: maior primeiro</option>
+        </select>
+      </label>
+    </header>
+
+    <div class="catalog__body">
+      <h1 id="catalog-title">{{ catalog().title }}</h1>
+
+      <div class="catalog__content">
+        @if (!catalog().found || productCards().length === 0) {
+          <div class="catalog__empty">
+            <p>Nenhum produto foi encontrado neste contexto.</p>
+            <a routerLink="/produtos">Ver todos os produtos</a>
+          </div>
+        } @else {
+          <div class="catalog__grid">
+            @for (product of visibleProducts(); track product.id; let index = $index) {
+              <org-product-card
+                class="catalog__card"
+                [style.--card-index]="index % 9"
+                [product]="product"
+                (productSelect)="openProduct($event)"
+                (addToCart)="addToCart($event)"
+              />
+            }
+          </div>
+          <div #loadSentinel class="catalog__sentinel" aria-hidden="true"></div>
+          @if (isMobile() && hasMore()) {
+            <button
+              type="button"
+              class="catalog__load-more"
+              (click)="loadMoreProducts()"
+            >
+              <span>Carregar mais produtos</span>
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
+                <path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          }
+        }
+      </div>
+
+      <p class="catalog__aside">Quantidade: {{ productCards().length }}</p>
+    </div>
+  </section>
+
+  <app-shipping-information-section />
+
+  @if (recommendations().length > 0) {
+    <section class="recommended" aria-labelledby="recommended-title">
+      <h2 id="recommended-title">Produtos de coleção</h2>
+      <div class="recommended__products">
+        @for (product of recommendations(); track product.id) {
+          <org-product-card
+            variant="related"
+            [product]="product"
+            (productSelect)="openProduct($event)"
+            (addToCart)="addToCart($event)"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a routerLink="/">Início</a><span>/</span>
+    @if (catalog().parentLabel) {
+      <a routerLink="/produtos">{{ catalog().parentLabel }}</a><span>/</span>
+    }
+    <span aria-current="page">{{ catalog().title }}</span>
+  </nav>
+</main>

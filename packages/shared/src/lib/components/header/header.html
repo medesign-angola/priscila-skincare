@@ -237,8 +237,8 @@
     <ul class="products-menu__list">
       @for (item of navigationMenuItems(); track item.id; let index = $index) {
       <li>
-        <button
-          type="button"
+        <a
+          [routerLink]="navigationItemRoute(item.id)"
           class="products-menu__item"
           (click)="closeNavigationMenu()"
         >
@@ -254,7 +254,7 @@
             height="40"
             decoding="async"
           />
-        </button>
+        </a>
       </li>
       }
     </ul>
