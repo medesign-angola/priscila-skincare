@@ -49,6 +49,7 @@
   .shipping {
     gap: 1.5rem;
     padding: 1.25rem 1rem;
+    border-bottom: 0;
   }
   .shipping h2 {
     flex-basis: auto;

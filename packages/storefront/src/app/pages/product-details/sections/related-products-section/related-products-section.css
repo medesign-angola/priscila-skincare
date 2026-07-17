@@ -54,7 +54,8 @@
   }
   .related__products {
     gap: 1rem;
-    padding-left: 1.25rem;
+    padding-inline: 1.25rem;
+    scroll-padding-inline: 1.25rem;
     scrollbar-width: none;
   }
   .related__products::-webkit-scrollbar {

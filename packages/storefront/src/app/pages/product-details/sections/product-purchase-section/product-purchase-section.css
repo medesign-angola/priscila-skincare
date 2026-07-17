@@ -211,6 +211,9 @@
   }
 }
 @media (max-width: 600px) {
+  .purchase {
+    gap: 1.5rem;
+  }
   .purchase__gallery {
     flex-wrap: wrap;
     gap: 1rem 0;
