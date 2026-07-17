@@ -1,0 +1,20 @@
+@if (section(); as section) {
+<section class="ingredients" aria-labelledby="ingredients-title">
+  <div class="ingredients__content">
+    <div class="ingredients__copy">
+      <div class="ingredients__intro"><h2 id="ingredients-title">{{ section.headline }}</h2><p>{{ section.description }}</p></div>
+      <ol class="ingredients__list">
+        @for (ingredient of section.ingredients; track ingredient.id) {
+        <li><button type="button" [class.is-active]="activeIngredient()?.id === ingredient.id" [attr.aria-pressed]="activeIngredient()?.id === ingredient.id" (click)="selectIngredient(ingredient.id)">
+          <span class="ingredients__index" aria-hidden="true">{{ ingredient.index }}</span><span class="ingredients__name">{{ ingredient.name }}</span>
+          <img [src]="ingredient.thumbnailImage" alt="" width="80" height="80" loading="lazy" decoding="async" />
+        </button></li>}
+      </ol>
+      <p class="ingredients__footnote">{{ section.footnote }}</p>
+    </div>
+    <div class="ingredients__media" aria-live="polite">
+      @for (ingredient of section.ingredients; track ingredient.id) {
+      <img [src]="ingredient.editorialImage" [alt]="ingredient.name" width="1400" height="1400" loading="lazy" decoding="async" [style.object-position]="ingredient.editorialPosition" [class.is-active]="activeIngredient()?.id === ingredient.id" [attr.aria-hidden]="activeIngredient()?.id !== ingredient.id" />}
+    </div>
+  </div>
+</section>}

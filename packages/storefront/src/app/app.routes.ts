@@ -7,6 +7,11 @@ export const appRoutes: Route[] = [
       import('./pages/home/home').then((m) => m.HomeComponent),
   },
   {
+    path: 'sobre',
+    loadComponent: () =>
+      import('./pages/about/about').then((m) => m.About),
+  },
+  {
     path: 'produtos',
     loadComponent: () =>
       import('./pages/products/products').then((m) => m.Products),
