@@ -1,4 +1,8 @@
-<div class="hero-split-container relative flex items-center overflow-hidden">
+<div
+  class="hero-split-container relative flex items-center"
+  [style.height]="height()"
+  [style.overflow]="overflowMode()"
+>
   @if (hasNoise()) {
   <div class="noise-overlay"></div>
   }
@@ -9,7 +13,7 @@
   <!-- Camada 1: Blurred Placeholder (Fades out when loaded) -->
   @if (placeholderUrl()) {
   <div
-    class="absolute inset-0 w-full h-full transition-opacity duration-500 z-0"
+    class="hero-split__media-layer absolute inset-0 w-full h-full transition-opacity duration-500 z-0"
     [class.opacity-0]="highRes.loaded()"
     [style.backgroundImage]="'url(' + placeholderUrl() + '), radial-gradient(61.64% 59.59% at 68.99% 53.43%, var(--color-burgundy-500, #B49667) 16.18%, var(--color-burgundy-800, #5F4D35) 100%)'"
     [style.backgroundBlendMode]="blendMode() + ', normal'"
@@ -29,7 +33,7 @@
 
   <!-- Camada 2: High-Resolution Image (Fades in when loaded) -->
   <div
-    class="absolute inset-0 w-full h-full transition-opacity duration-500 z-1"
+    class="hero-split__media-layer absolute inset-0 w-full h-full transition-opacity duration-500 z-1"
     [class.opacity-0]="!highRes.loaded()"
     [style.backgroundImage]="'url(' + mediaUrl() + '), radial-gradient(61.64% 59.59% at 68.99% 53.43%, var(--color-burgundy-500, #B49667) 16.18%, var(--color-burgundy-800, #5F4D35) 100%)'"
     [style.backgroundBlendMode]="blendMode() + ', normal'"
@@ -47,6 +51,7 @@
   <!-- Camada 3: Content template overlay -->
   <div
     class="w-full h-full flex flex-col justify-end text-white relative pb-20 z-10 px-4 md:px-10"
+    [style.padding]="contentPadding()"
   >
     @if (contentTemplate(); as temp) {
     <ng-container *ngTemplateOutlet="temp"></ng-container>

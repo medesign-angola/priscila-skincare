@@ -1,0 +1,3 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+@Component({selector:'app-about-brand-section',imports:[],templateUrl:'./about-brand-section.html',styleUrl:'./about-brand-section.css',changeDetection:ChangeDetectionStrategy.OnPush})
+export class AboutBrandSection { readonly metrics=[{value:'2020',label:'Fundação:',description:'Início de uma jornada dedicada à ciência, inovação e cuidado com a pele.'},{value:'73+',label:'Produtos:',description:'Fórmulas cuidadosamente desenvolvidas para oferecer resultados visíveis e uma experiência de cuidado completa.'},{value:'5K+',label:'Clientes:',description:'Uma comunidade crescente que escolhe diariamente a qualidade e a confiança da Priscila Skin Care.'}]; }

@@ -1,0 +1,76 @@
+@let details = translation();
+<section class="purchase" aria-labelledby="product-title">
+  <div class="purchase__gallery">
+    <div class="purchase__image-stage">
+      <img
+        class="purchase__main-image"
+        [src]="activeImage()"
+        [alt]="details.name"
+        width="900"
+        height="1024"
+      />
+    </div>
+    <div class="purchase__thumbnails" aria-label="Imagens do produto">
+      @for (image of product().images; track image; let index = $index) {
+      <button
+        type="button"
+        [class.is-active]="index === activeImageIndex()"
+        [attr.aria-label]="'Ver imagem ' + (index + 1) + ' de ' + product().images.length"
+        [attr.aria-current]="index === activeImageIndex() ? 'true' : null"
+        (click)="selectImage(index)"
+      >
+        <span class="purchase__image-number">{{ formatIndex(index) }}</span>
+        <img [src]="image" alt="" width="40" height="40" />
+      </button>
+      }
+    </div>
+  </div>
+
+  <div class="purchase__information">
+    <div class="purchase__summary">
+      <p class="purchase__category">
+        {{ category()?.translations?.[language()] ?? category()?.name }}
+      </p>
+      <h1 id="product-title">{{ details.name }}</h1>
+      <p>{{ details.description }}</p>
+      <div class="purchase__rating">
+        <span aria-hidden="true">★★★★★</span> {{ details.reviews.averageRating
+        }} ({{ details.reviews.totalReviews }})
+      </div>
+    </div>
+    <div class="purchase__details">
+      <h2 class="purchase__details-heading">
+        Mais detalhes sobre o produto <span aria-hidden="true">+</span>
+      </h2>
+      <p>{{ details.additionalDescription || details.description }}</p>
+      <h2>Destaques</h2>
+      <ul>
+        @for (highlight of details.highlights; track highlight) {
+        <li>{{ highlight }}</li>
+        }
+      </ul>
+    </div>
+    <div class="purchase__form">
+      <label
+        >Tamanho
+        <select [value]="selectedSizeId()" (change)="selectSize($event)">
+          <option value="">Selecionar</option>
+          @for (size of sizes(); track size.id) {
+          <option [value]="size.id">{{ size.value }}</option>
+          }
+        </select>
+      </label>
+      <button
+        class="purchase__add"
+        type="button"
+        [disabled]="product().commerce?.availability !== 'in-stock'"
+        (click)="addToCart()"
+      >
+        <span>Ad. ao carrinho</span
+        ><span
+          >{{ price() | priceFormat: header.currency() : language() }}</span
+        >
+      </button>
+    </div>
+  </div>
+</section>

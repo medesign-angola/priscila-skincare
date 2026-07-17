@@ -5,20 +5,30 @@
 >
   <!-- 1. Esquerda: Navegação -->
   <nav class="flex items-center gap-8 text-sm uppercase">
-    <a
-      routerLink="/produtos"
-      class="cursor-pointer hover:opacity-75 transition-opacity duration-150"
-      >Produtos</a
+    <button
+      #productsMenuTrigger
+      type="button"
+      class="cursor-pointer bg-transparent border-0 p-0 uppercase hover:opacity-75 transition-opacity duration-150"
+      aria-controls="products-navigation-menu"
+      [attr.aria-expanded]="activeNavigationMenu() === 'products'"
+      (click)="toggleNavigationMenu('products')"
     >
-    <a
-      routerLink="/colecao"
-      class="cursor-pointer hover:opacity-75 transition-opacity duration-150 uppercase"
-      >Coleção</a
+      {{ 'HEADER.PRODUCTS' | translate }}
+    </button>
+    <button
+      #collectionsMenuTrigger
+      type="button"
+      class="cursor-pointer bg-transparent border-0 p-0 uppercase hover:opacity-75 transition-opacity duration-150"
+      aria-controls="products-navigation-menu"
+      [attr.aria-expanded]="activeNavigationMenu() === 'collections'"
+      (click)="toggleNavigationMenu('collections')"
     >
+      {{ 'HEADER.COLLECTIONS' | translate }}
+    </button>
     <a
       routerLink="/sobre"
       class="cursor-pointer hover:opacity-75 transition-opacity duration-150"
-      >Sobre</a
+      >{{ 'HEADER.ABOUT' | translate }}</a
     >
   </nav>
 
@@ -63,14 +73,20 @@
   </div>
 
   <div class="interation-container flex gap-4 items-center">
-    <div class="flex items-center gap-2 text-sm uppercase font-bold">
-      <!-- Rótulo Combinado -->
+    <button
+      #preferencesTrigger
+      type="button"
+      class="preferences-trigger flex items-center gap-2 text-sm uppercase font-bold"
+      aria-haspopup="dialog"
+      aria-controls="language-currency-dialog"
+      [attr.aria-expanded]="preferencesOpen()"
+      (click)="openPreferences()"
+    >
       <span
         >{{ currentLanguage().toUpperCase() }} / {{ currency() === 'AOA' ? 'Kz'
         : '€' }}</span
       >
-      <!-- Espaço para o Ícone de Globo -->
-      <div class="flex items-center justify-center p-0 cursor-pointer">
+      <span class="flex items-center justify-center p-0" aria-hidden="true">
         <svg
           width="24"
           height="24"
@@ -114,8 +130,8 @@
             </clipPath>
           </defs>
         </svg>
-      </div>
-    </div>
+      </span>
+    </button>
 
     <!-- Espaço para o Ícone de Usuário -->
     <div class="flex items-center justify-center p-2.5 cursor-pointer">
@@ -184,5 +200,143 @@
     </div>
   </div>
 
+  @if (navigationMenuInitialized()) {
+  <section
+    id="products-navigation-menu"
+    class="products-menu"
+    [class.products-menu--open]="activeNavigationMenu() !== null"
+    [attr.aria-hidden]="activeNavigationMenu() === null"
+    [attr.inert]="activeNavigationMenu() ? null : ''"
+    [attr.aria-label]="navigationMenuLabel() | translate"
+    data-lenis-prevent
+  >
+    <a
+      [routerLink]="navigationMenuRoute()"
+      class="products-menu__all"
+      (click)="closeNavigationMenu()"
+    >
+      <span>{{ 'NAVIGATION_MENU.VIEW_ALL' | translate }}</span>
+      <svg
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12H19M13 6L19 12L13 18"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </a>
 
+    <ul class="products-menu__list">
+      @for (item of navigationMenuItems(); track item.id; let index = $index) {
+      <li>
+        <a
+          [routerLink]="navigationItemRoute(item.id)"
+          class="products-menu__item"
+          (click)="closeNavigationMenu()"
+        >
+          <span class="products-menu__index" aria-hidden="true">
+            {{ formatIndex(index) }}
+          </span>
+          <span class="products-menu__name">{{ item.name }}</span>
+          <img
+            class="products-menu__image"
+            [src]="item.image"
+            [alt]="item.name"
+            width="40"
+            height="40"
+            decoding="async"
+          />
+        </a>
+      </li>
+      }
+    </ul>
+  </section>
+  } @if (preferencesInitialized()) {
+  <div
+    class="preferences-layer"
+    [class.preferences-layer--open]="preferencesOpen()"
+    [attr.aria-hidden]="!preferencesOpen()"
+    [attr.inert]="preferencesOpen() ? null : ''"
+    (click)="closePreferences()"
+  >
+    <section
+      #preferencesDialog
+      id="language-currency-dialog"
+      class="preferences-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="preferences-dialog-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="preferences-dialog__header">
+        <h2 id="preferences-dialog-title">
+          {{ 'PREFERENCES.TITLE' | translate }}
+        </h2>
+        <button
+          #preferencesCloseButton
+          type="button"
+          class="preferences-dialog__close"
+          [attr.aria-label]="'PREFERENCES.CLOSE' | translate"
+          (click)="closePreferences()"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div
+        class="preferences-dialog__languages"
+        [attr.aria-label]="'PREFERENCES.LANGUAGE_LABEL' | translate"
+      >
+        <button
+          type="button"
+          [class.preferences-dialog__language--active]="draftLanguage() === 'pt'"
+          [attr.aria-pressed]="draftLanguage() === 'pt'"
+          (click)="draftLanguage.set('pt')"
+        >
+          {{ 'PREFERENCES.PORTUGUESE' | translate }}
+        </button>
+        <button
+          type="button"
+          [class.preferences-dialog__language--active]="draftLanguage() === 'fr'"
+          [attr.aria-pressed]="draftLanguage() === 'fr'"
+          (click)="draftLanguage.set('fr')"
+        >
+          {{ 'PREFERENCES.FRENCH' | translate }}
+        </button>
+      </div>
+
+      <label class="preferences-dialog__currency">
+        <span class="sr-only">
+          {{ 'PREFERENCES.CURRENCY_MARKET' | translate }}
+        </span>
+        <select
+          [value]="draftCurrency()"
+          (change)="draftCurrency.set($any($event.target).value)"
+        >
+          @for (option of currencyOptions; track option.value) {
+          <option [value]="option.value">
+            {{ option.code }} &nbsp;&nbsp; {{ option.marketKey | translate }}
+          </option>
+          }
+        </select>
+      </label>
+
+      <button
+        type="button"
+        class="preferences-dialog__apply"
+        (click)="applyPreferences()"
+      >
+        {{ 'PREFERENCES.UPDATE' | translate }}
+      </button>
+    </section>
+  </div>
+  }
 </header>

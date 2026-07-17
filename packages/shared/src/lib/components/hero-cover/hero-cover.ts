@@ -18,9 +18,16 @@ import { BlurUpDirective } from '../../directives/blur-up.directive';
 export class HeroCoverComponent {
   mediaType = input<'image' | 'video'>('video');
   mediaUrl = input.required<string>();
+  mobileMediaUrl = input<string>();
   placeholderUrl = input<string>();
   hasNoise = input<boolean>(false);
   blendMode = input<string>('normal');
+  height = input<string>('100vh');
+  mobileHeight = input<string>();
+  contentPadding = input<string>();
+  overflowMode = input<'hidden' | 'clip'>('hidden');
+  objectPosition = input<string>('center');
+  mobileObjectPosition = input<string>();
 
   // Query the active BlurUpDirective in the template
   highResMedia = viewChild(BlurUpDirective);

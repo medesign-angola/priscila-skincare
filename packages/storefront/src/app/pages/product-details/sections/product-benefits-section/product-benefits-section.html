@@ -1,0 +1,12 @@
+@let benefits = content();
+<section class="detail-section benefits" aria-labelledby="benefits-title">
+  <h2 id="benefits-title">Benefícios</h2>
+  <img class="benefits__main" [src]="benefits.mainImage" alt="" width="900" height="900" loading="lazy" />
+  <div class="benefits__content">
+    @for (section of benefits.sections; track section.title; let first = $first) {
+    <article><h3>{{ section.title }}</h3><p>{{ section.description }}</p>
+      @if (first && section.images?.length) { <div class="benefits__gallery">@for (image of section.images; track image) { <img [src]="image" alt="" loading="lazy" /> }</div> }
+    </article>
+    }
+  </div>
+</section>

@@ -1,4 +1,6 @@
 <org-header
+  [products]="headerProducts()"
+  [collections]="headerCollections()"
   [theme]="headerService.theme()"
   [currentLanguage]="facade.currentLanguage()"
   [currency]="headerService.currency()"
@@ -6,3 +8,10 @@
   (currencyChange)="headerService.currency.set($event)"
 ></org-header>
 <router-outlet></router-outlet>
+<org-footer
+  [products]="footerProducts()"
+  [collections]="footerCollections()"
+  [socialLinks]="footerSocialLinks"
+  (navigationSelect)="handleFooterNavigation($event)"
+  (newsletterSubmit)="handleNewsletterSubmit($event)"
+/>

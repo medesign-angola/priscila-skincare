@@ -1,0 +1,50 @@
+@if (product(); as product) {
+<section
+  class="product-editorial"
+  [attr.aria-labelledby]="'product-editorial-title-' + product.id"
+>
+  <div class="product-editorial__hero">
+    <org-hero-cover
+      height="100%"
+      [contentPadding]="'var(--product-editorial-inset)'"
+      overflowMode="clip"
+      [mediaType]="product.mediaType"
+      [mediaUrl]="product.mediaUrl"
+      [placeholderUrl]="product.placeholderUrl"
+      [hasNoise]="product.hasNoise"
+      blendMode="normal"
+    >
+      <ng-template #heroContent>
+        <div class="product-editorial__content">
+          <div class="product-editorial__intro-region">
+            <div class="product-editorial__intro">
+              <h2 [id]="'product-editorial-title-' + product.id">
+                {{ product.headline }}
+              </h2>
+              <p>{{ product.description }}</p>
+            </div>
+          </div>
+
+          <div class="product-editorial__action">
+            <button
+              type="button"
+              [disabled]="!product.available"
+              (click)="addToCart(product.id)"
+              [attr.aria-label]="
+                ('FEATURED_PRODUCTS.ADD_TO_CART' | translate) + ': ' + product.name
+              "
+            >
+              <span>{{ 'FEATURED_PRODUCTS.ADD_TO_CART' | translate }}</span>
+              <span
+                >{{ product.price | priceFormat: product.currency :
+                product.language }}</span
+              >
+            </button>
+            <p>{{ product.footnote }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </org-hero-cover>
+  </div>
+</section>
+}

@@ -1,0 +1,85 @@
+@if (gallery(); as gallery) {
+<section
+  class="editorial-gallery"
+  [attr.aria-labelledby]="'editorial-gallery-title-' + gallery.id"
+>
+  <div class="editorial-gallery__layout">
+    <div class="editorial-gallery__column editorial-gallery__column--intro">
+      <div class="editorial-gallery__intro-region">
+        <div class="editorial-gallery__intro">
+          <h2 [id]="'editorial-gallery-title-' + gallery.id">
+            {{ gallery.headline }}
+          </h2>
+          <p>{{ gallery.description }}</p>
+        </div>
+      </div>
+
+      @for (image of gallery.images.slice(0, 2); track image.url) {
+      <figure class="editorial-gallery__tile">
+        <img
+          [src]="image.url"
+          [alt]="image.alt"
+          width="720"
+          height="720"
+          loading="lazy"
+          decoding="async"
+        />
+        <span aria-hidden="true">{{ image.index }}</span>
+      </figure>
+      }
+    </div>
+
+    <figure class="editorial-gallery__cover">
+      <img
+        [src]="gallery.coverImage"
+        [alt]="gallery.coverAlt"
+        width="900"
+        height="1450"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="editorial-gallery__column editorial-gallery__column--end">
+      @for (image of gallery.images.slice(2); track image.url) {
+      <figure class="editorial-gallery__tile">
+        <img
+          [src]="image.url"
+          [alt]="image.alt"
+          width="720"
+          height="720"
+          loading="lazy"
+          decoding="async"
+        />
+        <span aria-hidden="true">{{ image.index }}</span>
+      </figure>
+      }
+    </div>
+  </div>
+
+  <div class="editorial-gallery__mobile-strip" aria-label="Galeria">
+    <figure>
+      <img
+        [src]="gallery.coverImage"
+        [alt]="gallery.coverAlt"
+        width="720"
+        height="900"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+    @for (image of gallery.images; track image.url) {
+    <figure>
+      <img
+        [src]="image.url"
+        [alt]="image.alt"
+        width="720"
+        height="900"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+    }
+  </div>
+</section>
+}

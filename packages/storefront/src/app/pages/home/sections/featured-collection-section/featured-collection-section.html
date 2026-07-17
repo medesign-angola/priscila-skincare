@@ -1,0 +1,59 @@
+@if (collection(); as collection) {
+<section
+  class="featured-collection"
+  [attr.aria-labelledby]="'featured-collection-' + collection.id"
+  [attr.data-product-count]="collection.productCount"
+>
+  <div class="featured-collection__cover">
+    <org-hero-cover
+      height="100%"
+      overflowMode="clip"
+      [contentPadding]="'var(--featured-collection-inset)'"
+      [mediaType]="collection.media.type"
+      [mediaUrl]="collection.media.url"
+      [placeholderUrl]="
+        collection.media.posterUrl || collection.thumbnailImage
+      "
+      [hasNoise]="false"
+      blendMode="normal"
+    >
+      <ng-template #heroContent>
+        <div class="featured-collection__content">
+          <div class="featured-collection__intro-region">
+            <div class="featured-collection__intro">
+              <h2 [id]="'featured-collection-' + collection.id">
+                {{ collection.title }}
+              </h2>
+              <p>{{ collection.description }}</p>
+            </div>
+          </div>
+
+          <div class="featured-collection__action">
+            <button
+              type="button"
+              (click)="exploreCollection(collection.slug)"
+              [attr.aria-label]="
+                ('FEATURED_COLLECTION.EXPLORE' | translate) +
+                ': ' +
+                collection.title
+              "
+            >
+              <span>{{ 'FEATURED_COLLECTION.EXPLORE' | translate }}</span>
+              <svg
+                aria-hidden="true"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path d="M5 12H19M13 6L19 12L13 18" />
+              </svg>
+            </button>
+            <p>{{ collection.footnote }}</p>
+          </div>
+        </div>
+      </ng-template>
+    </org-hero-cover>
+  </div>
+</section>
+}

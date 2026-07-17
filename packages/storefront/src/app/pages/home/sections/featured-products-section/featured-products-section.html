@@ -1,0 +1,22 @@
+<section
+  class="featured-products"
+  aria-labelledby="featured-products-title"
+  data-node-id="161:3325"
+>
+  <div class="featured-products__content">
+    <h2 id="featured-products-title" class="featured-products__heading">
+      {{ 'FEATURED_PRODUCTS.TITLE' | translate }}
+    </h2>
+
+    <div class="featured-products__cards" role="list">
+      @for (product of products(); track product.id) {
+      <org-product-card
+        role="listitem"
+        [product]="product"
+        (productSelect)="selectProduct($event)"
+        (addToCart)="addToCart($event)"
+      />
+      }
+    </div>
+  </div>
+</section>

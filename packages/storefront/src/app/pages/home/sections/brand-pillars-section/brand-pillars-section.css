@@ -1,0 +1,109 @@
+:host {
+  display: block;
+}
+
+.brand-pillars {
+  --pillars-gap: clamp(1.5rem, 2.222vw, 4rem);
+  --pillars-item-padding: clamp(0.75rem, 1.111vw, 2rem);
+
+  width: 100%;
+  padding: clamp(3.5rem, 5.556vw, 7rem) clamp(1rem, 2.222vw, 4rem);
+  color: var(--text-primary, #1a1917);
+  background: #fff;
+}
+
+.brand-pillars__list {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pillars-gap);
+  width: 100%;
+}
+
+.brand-pillars__item {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: clamp(1rem, 1.667vw, 2.25rem);
+  min-width: 0;
+  padding-right: var(--pillars-item-padding);
+}
+
+.brand-pillars__item:not(:last-child) {
+  border-right: 1px solid #ddd7ce;
+}
+
+.brand-pillars__title,
+.brand-pillars__description {
+  width: 100%;
+  margin: 0;
+  font-size: clamp(0.8125rem, 0.972vw, 1rem);
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.brand-pillars__title {
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.brand-pillars__description {
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+@media (max-width: 905px) {
+  .brand-pillars__list {
+    flex-wrap: wrap;
+  }
+
+  .brand-pillars__item {
+    flex: 1 1 calc(50% - (var(--pillars-gap) / 2));
+  }
+
+  .brand-pillars__item:not(:last-child) {
+    border-right: 0;
+  }
+
+  .brand-pillars__item:nth-child(odd) {
+    border-right: 1px solid #ddd7ce;
+  }
+
+  .brand-pillars__item:nth-child(-n + 2) {
+    padding-bottom: var(--pillars-gap);
+    border-bottom: 1px solid #ddd7ce;
+  }
+}
+
+@media (max-width: 600px) {
+  .brand-pillars {
+    --pillars-gap: 1.5rem;
+    padding-block: 2rem;
+  }
+
+  .brand-pillars__list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .brand-pillars__item {
+    flex: 1 1 auto;
+    width: 100%;
+    padding-right: 0;
+    padding-bottom: var(--pillars-gap);
+    gap: 0.75rem;
+  }
+
+  .brand-pillars__item:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .brand-pillars__item:not(:last-child) {
+    border-bottom: 1px solid #ddd7ce;
+  }
+
+  .brand-pillars__item:last-child {
+    padding-bottom: 0;
+  }
+}

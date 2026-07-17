@@ -1,0 +1,55 @@
+<section class="products-catalog" aria-labelledby="products-catalog-title">
+  <div class="products-catalog__content">
+    <h2 id="products-catalog-title" class="products-catalog__heading">
+      {{ 'PRODUCTS_CATALOG.TITLE' | translate }}
+    </h2>
+
+    <div class="products-catalog__body" #catalogRoot>
+      <div class="products-catalog__cards" role="list">
+        @for (product of visibleProducts(); track product.id; let index =
+        $index) {
+        <div
+          class="products-catalog__card"
+          role="listitem"
+          data-catalog-card
+          [attr.data-card-index]="index"
+        >
+          <org-product-card
+            [product]="product"
+            (productSelect)="selectProduct($event)"
+            (addToCart)="addToCart($event)"
+          />
+        </div>
+        }
+      </div>
+
+      <div
+        #loadSentinel
+        class="products-catalog__sentinel"
+        aria-hidden="true"
+      ></div>
+
+      @if (isMobile() && hasMoreProducts()) {
+      <button
+        class="products-catalog__load-more"
+        type="button"
+        (click)="loadNextBatch()"
+      >
+        <span>{{ 'PRODUCTS_CATALOG.LOAD_MORE' | translate }}</span>
+        <svg aria-hidden="true" viewBox="0 0 16 16">
+          <path d="m3 6 5 5 5-5" />
+        </svg>
+      </button>
+      }
+
+      <p class="sr-only" aria-live="polite" aria-atomic="true">
+        {{ visibleProducts().length }} de {{ catalogProducts().length }} {{
+        'PRODUCTS_CATALOG.TITLE' | translate }}
+      </p>
+
+      @if (canShowViewMore()) {
+      <span class="products-catalog__future-action" aria-hidden="true"></span>
+      }
+    </div>
+  </div>
+</section>
