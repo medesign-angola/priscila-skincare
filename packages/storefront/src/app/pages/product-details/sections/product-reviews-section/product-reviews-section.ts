@@ -6,10 +6,11 @@ import {
   signal,
 } from '@angular/core';
 import { Product } from '@org/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-reviews-section',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './product-reviews-section.html',
   styleUrl: './product-reviews-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

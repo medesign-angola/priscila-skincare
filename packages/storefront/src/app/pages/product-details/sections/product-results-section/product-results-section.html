@@ -1,7 +1,7 @@
 @let result = content();
 <section class="results" aria-labelledby="results-title">
   <div class="results__content">
-    <h2 id="results-title">Resultado</h2>
+    <h2 id="results-title">{{ 'PRODUCT_DETAILS.RESULTS.TITLE' | translate }}</h2>
     <div class="results__metrics">
       @for (item of result.data; track item.percentage) {
       <article>
@@ -16,7 +16,7 @@
     class="results__compare"
     role="slider"
     tabindex="0"
-    aria-label="Comparar antes e depois"
+    [attr.aria-label]="'PRODUCT_DETAILS.RESULTS.COMPARE' | translate"
     aria-valuemin="0"
     aria-valuemax="100"
     [attr.aria-valuenow]="position()"
@@ -26,7 +26,7 @@
   >
     <img
       [src]="result.images.before"
-      alt="Antes da utilização"
+      [alt]="'PRODUCT_DETAILS.RESULTS.BEFORE' | translate"
       draggable="false"
     />
     <div
@@ -35,7 +35,7 @@
     >
       <img
         [src]="result.images.after"
-        alt="Depois da utilização"
+        [alt]="'PRODUCT_DETAILS.RESULTS.AFTER' | translate"
         draggable="false"
       />
     </div>
@@ -45,10 +45,10 @@
       aria-hidden="true"
     ></span>
     <span class="results__label results__label--before"
-      >Antes da utilização</span
+      >{{ 'PRODUCT_DETAILS.RESULTS.BEFORE' | translate }}</span
     >
     <span class="results__label results__label--after"
-      >Depois da utilização</span
+      >{{ 'PRODUCT_DETAILS.RESULTS.AFTER' | translate }}</span
     >
     <span
       class="results__divider"

@@ -2,12 +2,12 @@
 <section class="reviews" aria-labelledby="reviews-title">
   <div class="reviews__summary">
     <h2 id="reviews-title">
-      O que nossos clientes dizem sobre os nossos produtos
+      {{ 'PRODUCT_DETAILS.REVIEWS.TITLE' | translate }}
     </h2>
     <strong>{{ reviewData.averageRating }}</strong>
     <div class="reviews__stars" aria-hidden="true">★★★★★</div>
     <button type="button">
-      <span>Deixa sua avaliação</span><span aria-hidden="true">→</span>
+      <span>{{ 'PRODUCT_DETAILS.REVIEWS.LEAVE_REVIEW' | translate }}</span><span aria-hidden="true">→</span>
     </button>
   </div>
   <div class="reviews__list">
@@ -21,7 +21,7 @@
         >
       </header>
       <div class="reviews__copy">
-        <strong>Excelente produto!</strong>
+        <strong>{{ 'PRODUCT_DETAILS.REVIEWS.EXCELLENT_PRODUCT' | translate }}</strong>
         <p>“{{ review.comment }}”</p>
       </div>
     </article>
@@ -31,7 +31,7 @@
       type="button"
       (click)="expanded.set(!expanded())"
     >
-      {{ expanded() ? 'Ver menos' : 'Carregar mais' }}
+      {{ (expanded() ? 'PRODUCT_DETAILS.REVIEWS.SHOW_LESS' : 'PRODUCT_DETAILS.REVIEWS.LOAD_MORE') | translate }}
       <span aria-hidden="true">{{ expanded() ? '↑' : '↓' }}</span>
     </button>
     }

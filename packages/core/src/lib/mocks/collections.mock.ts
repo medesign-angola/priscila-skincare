@@ -10,6 +10,10 @@ export const MOCK_COLLECTIONS: Collection[] = [
     thumbnailImage:
       '/assets/images/collections/thumbnails/snow-white-set-big.webp',
     productIds: ['prod-1', 'prod-3', 'prod-4'],
+    translations: {
+      pt: { name: 'Snow White Set Big', description: 'Ritual Snow White completo para limpar, hidratar e cuidar do rosto e do corpo.' },
+      fr: { name: 'Grand coffret Snow White', description: 'Rituel Snow White complet pour nettoyer, hydrater et prendre soin du visage et du corps.' },
+    },
     media: {
       type: 'video',
       url: '/assets/videos/collections/snow-white-hydration-spf30.mp4',
@@ -45,6 +49,10 @@ export const MOCK_COLLECTIONS: Collection[] = [
     thumbnailImage:
       '/assets/images/collections/thumbnails/snow-white-set-mini.webp',
     productIds: ['prod-1', 'prod-4'],
+    translations: {
+      pt: { name: 'Snow White Set Mini', description: 'Cuidados essenciais Snow White num conjunto compacto para uma rotina diária simples.' },
+      fr: { name: 'Petit coffret Snow White', description: 'Les soins essentiels Snow White dans un coffret compact pour un rituel quotidien simple.' },
+    },
   },
   {
     id: 'col-3',
@@ -54,6 +62,10 @@ export const MOCK_COLLECTIONS: Collection[] = [
       'Complete caramel care set created to nourish and hydrate the face and body.',
     thumbnailImage: '/assets/images/collections/thumbnails/caramel-set.webp',
     productIds: ['prod-5', 'prod-6'],
+    translations: {
+      pt: { name: 'Caramel Set', description: 'Conjunto completo de cuidados Caramel para nutrir e hidratar o rosto e o corpo.' },
+      fr: { name: 'Coffret Caramel', description: 'Coffret complet de soins Caramel conçu pour nourrir et hydrater le visage et le corps.' },
+    },
   },
   {
     id: 'col-4',
@@ -64,5 +76,9 @@ export const MOCK_COLLECTIONS: Collection[] = [
     thumbnailImage:
       '/assets/images/collections/thumbnails/caramel-set-mini.webp',
     productIds: ['prod-5', 'prod-6'],
+    translations: {
+      pt: { name: 'Caramel Set Mini', description: 'Conjunto compacto Caramel com os essenciais para uma pele hidratada.' },
+      fr: { name: 'Petit coffret Caramel', description: 'Coffret compact Caramel avec les essentiels pour une peau hydratée.' },
+    },
   },
 ];

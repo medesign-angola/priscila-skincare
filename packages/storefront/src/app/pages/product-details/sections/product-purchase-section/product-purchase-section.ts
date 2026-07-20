@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { HeaderService, Product, ProductFacade } from '@org/core';
 import { PriceFormatPipe } from '@org/shared';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-purchase-section',
-  imports: [PriceFormatPipe],
+  imports: [PriceFormatPipe, TranslatePipe],
   templateUrl: './product-purchase-section.html',
   styleUrl: './product-purchase-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

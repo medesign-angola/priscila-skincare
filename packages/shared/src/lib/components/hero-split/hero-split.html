@@ -8,7 +8,7 @@
   }
 
   <!-- Hidden image used solely to trigger the directive onload event -->
-  <img [src]="mediaUrl()" orgBlurUp #highRes="orgBlurUp" class="hidden" />
+  <img [src]="mediaUrl()" orgBlurUp #highRes="orgBlurUp" class="hidden" alt="" />
 
   <!-- Camada 1: Blurred Placeholder (Fades out when loaded) -->
   @if (placeholderUrl()) {

@@ -1,5 +1,5 @@
 <section class="related" aria-labelledby="related-title">
-  <h2 id="related-title">Produtos semelhantes</h2>
+  <h2 id="related-title">{{ 'PRODUCT_DETAILS.RELATED_PRODUCTS' | translate }}</h2>
   <div class="related__products">
     @for (item of products(); track item.id) {
     <org-product-card

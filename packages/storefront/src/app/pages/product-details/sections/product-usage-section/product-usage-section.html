@@ -1,6 +1,6 @@
 @let usage = content();
 <section class="usage" aria-labelledby="usage-title">
-  <div class="usage__heading"><h2 id="usage-title">Como usar</h2></div>
+  <div class="usage__heading"><h2 id="usage-title">{{ 'PRODUCT_DETAILS.HOW_TO_USE' | translate }}</h2></div>
   <div class="usage__content">
     <div class="usage__steps">
       @for (step of usage.steps.slice(0, 2); track step.order) {

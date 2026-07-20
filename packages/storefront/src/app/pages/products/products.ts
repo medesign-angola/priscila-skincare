@@ -17,6 +17,7 @@ import { HeaderService, Product, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { combineLatest, map } from 'rxjs';
 import { ShippingInformationSection } from '../product-details/sections/shipping-information-section/shipping-information-section';
+import { TranslatePipe } from '@ngx-translate/core';
 
 type CatalogContext = 'all' | 'collection' | 'category' | 'kit';
 type CatalogSort = 'default' | 'name-asc' | 'price-asc' | 'price-desc';
@@ -24,7 +25,9 @@ type CatalogSort = 'default' | 'name-asc' | 'price-asc' | 'price-desc';
 interface CatalogViewModel {
   context: CatalogContext;
   title: string;
+  titleIsKey?: boolean;
   parentLabel?: string;
+  parentLabelIsKey?: boolean;
   products: Product[];
   found: boolean;
 }
@@ -36,7 +39,7 @@ const MOBILE_PRODUCT_BATCH_SIZE = 3;
 
 @Component({
   selector: 'app-products',
-  imports: [RouterLink, ProductCard, ShippingInformationSection],
+  imports: [RouterLink, ProductCard, ShippingInformationSection, TranslatePipe],
   templateUrl: './products.html',
   styleUrl: './products.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,12 +75,14 @@ export class Products {
 
     if (context === 'collection') {
       const collection = this.facade
-        .collectionsWithProducts()
+        .localizedCollectionsWithProducts()
         .find((item) => item.id === identifier || item.slug === identifier);
       return {
         context,
-        title: collection?.name ?? 'Coleção',
-        parentLabel: 'Coleções',
+        title: collection?.name ?? 'PRODUCTS_PAGE.COLLECTION',
+        titleIsKey: !collection,
+        parentLabel: 'PRODUCTS_PAGE.COLLECTIONS',
+        parentLabelIsKey: true,
         products: this.uniqueProducts(collection?.products ?? []),
         found: Boolean(collection),
       };
@@ -92,8 +97,10 @@ export class Products {
         title:
           (category?.translations?.[language] as string | undefined) ??
           category?.name ??
-          'Categoria',
-        parentLabel: 'Categorias',
+          'PRODUCTS_PAGE.CATEGORY',
+        titleIsKey: !category,
+        parentLabel: 'PRODUCTS_PAGE.CATEGORIES',
+        parentLabelIsKey: true,
         products: this.uniqueProducts(
           category
             ? this.facade.products().filter((product) => product.categoryId === category.id)
@@ -105,12 +112,14 @@ export class Products {
 
     if (context === 'kit') {
       const kit = this.facade
-        .kitsWithProducts()
+        .localizedKitsWithProducts()
         .find((item) => item.id === identifier);
       return {
         context,
-        title: kit?.name ?? 'Kit',
-        parentLabel: 'Kits',
+        title: kit?.name ?? 'PRODUCTS_PAGE.KIT',
+        titleIsKey: !kit,
+        parentLabel: 'PRODUCTS_PAGE.KITS',
+        parentLabelIsKey: true,
         products: this.uniqueProducts(kit?.products ?? []),
         found: Boolean(kit),
       };
@@ -118,7 +127,8 @@ export class Products {
 
     return {
       context: 'all',
-      title: language === 'fr' ? 'Tous les produits' : 'Todos os produtos',
+      title: 'PRODUCTS_PAGE.ALL_PRODUCTS',
+      titleIsKey: true,
       products: this.uniqueProducts(this.facade.products()),
       found: true,
     };

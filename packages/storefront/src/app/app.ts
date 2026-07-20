@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Title } from '@angular/platform-browser';
 import {
   FooterComponent,
   FooterSocialLink,
@@ -24,6 +25,7 @@ export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
   private readonly translateService = inject(TranslateService);
+  private readonly documentTitle = inject(Title);
   private readonly router = inject(Router);
   readonly headerProducts = computed(() => {
     const language = this.facade.currentLanguage();
@@ -35,7 +37,7 @@ export class App {
     }));
   });
   readonly headerCollections = computed(() =>
-    this.facade.collectionsWithProducts().map((collection) => ({
+    this.facade.localizedCollectionsWithProducts().map((collection) => ({
       id: collection.id,
       name: collection.name,
       image: collection.thumbnailImage,
@@ -52,7 +54,7 @@ export class App {
     }));
   });
   readonly footerCollections = computed(() =>
-    this.facade.collectionsWithProducts().map((collection, index) => ({
+    this.facade.localizedCollectionsWithProducts().map((collection, index) => ({
       id: collection.id,
       index: String(index + 1).padStart(2, '0'),
       label: collection.name,
@@ -67,7 +69,9 @@ export class App {
 
   constructor() {
     effect(() => {
-      this.translateService.use(this.facade.currentLanguage());
+      this.translateService.use(this.facade.currentLanguage()).subscribe(() => {
+        this.documentTitle.setTitle(this.translateService.instant('GLOBAL.TITLE'));
+      });
     });
 
     afterNextRender(async () => {

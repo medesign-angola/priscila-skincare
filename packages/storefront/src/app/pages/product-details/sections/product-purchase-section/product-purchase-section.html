@@ -10,12 +10,12 @@
         height="1024"
       />
     </div>
-    <div class="purchase__thumbnails" aria-label="Imagens do produto">
+    <div class="purchase__thumbnails" [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.PRODUCT_IMAGES' | translate">
       @for (image of product().images; track image; let index = $index) {
       <button
         type="button"
         [class.is-active]="index === activeImageIndex()"
-        [attr.aria-label]="'Ver imagem ' + (index + 1) + ' de ' + product().images.length"
+        [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.VIEW_IMAGE' | translate: { current: index + 1, total: product().images.length }"
         [attr.aria-current]="index === activeImageIndex() ? 'true' : null"
         (click)="selectImage(index)"
       >
@@ -40,10 +40,10 @@
     </div>
     <div class="purchase__details">
       <h2 class="purchase__details-heading">
-        Mais detalhes sobre o produto <span aria-hidden="true">+</span>
+        {{ 'PRODUCT_DETAILS.PURCHASE.MORE_DETAILS' | translate }} <span aria-hidden="true">+</span>
       </h2>
       <p>{{ details.additionalDescription || details.description }}</p>
-      <h2>Destaques</h2>
+      <h2>{{ 'PRODUCT_DETAILS.PURCHASE.HIGHLIGHTS' | translate }}</h2>
       <ul>
         @for (highlight of details.highlights; track highlight) {
         <li>{{ highlight }}</li>
@@ -52,9 +52,9 @@
     </div>
     <div class="purchase__form">
       <label
-        >Tamanho
+        >{{ 'PRODUCT_DETAILS.PURCHASE.SIZE' | translate }}
         <select [value]="selectedSizeId()" (change)="selectSize($event)">
-          <option value="">Selecionar</option>
+          <option value="">{{ 'PRODUCT_DETAILS.PURCHASE.SELECT' | translate }}</option>
           @for (size of sizes(); track size.id) {
           <option [value]="size.id">{{ size.value }}</option>
           }
@@ -66,7 +66,7 @@
         [disabled]="product().commerce?.availability !== 'in-stock'"
         (click)="addToCart()"
       >
-        <span>Ad. ao carrinho</span
+        <span>{{ 'PRODUCT_DETAILS.PURCHASE.ADD_TO_CART' | translate }}</span
         ><span
           >{{ price() | priceFormat: header.currency() : language() }}</span
         >

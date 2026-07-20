@@ -5,6 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { ProductFacade } from '@org/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface GalleryImageViewModel {
   index: string;
@@ -23,7 +24,7 @@ interface EditorialGalleryViewModel {
 
 @Component({
   selector: 'app-product-editorial-gallery-section',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './product-editorial-gallery-section.html',
   styleUrl: './product-editorial-gallery-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -9,6 +9,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HeaderService, ProductFacade } from '@org/core';
 import { map } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProductPurchaseSection } from './sections/product-purchase-section/product-purchase-section';
 import { ShippingInformationSection } from './sections/shipping-information-section/shipping-information-section';
 import { ProductBenefitsSection } from './sections/product-benefits-section/product-benefits-section';
@@ -22,6 +23,7 @@ import { RelatedProductsSection } from './sections/related-products-section/rela
   selector: 'app-product-details',
   imports: [
     RouterLink,
+    TranslatePipe,
     ProductPurchaseSection,
     ShippingInformationSection,
     ProductBenefitsSection,

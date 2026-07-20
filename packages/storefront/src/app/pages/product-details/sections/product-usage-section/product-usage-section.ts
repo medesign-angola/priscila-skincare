@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Product } from '@org/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-product-usage-section',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './product-usage-section.html',
   styleUrl: './product-usage-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,6 +15,11 @@ export interface CollectionHomePresentation {
   translations: Record<'pt' | 'fr', CollectionHomeTranslation>;
 }
 
+export interface CollectionTranslation {
+  name: string;
+  description: string;
+}
+
 export interface Collection {
   id: string;
   name: string;
@@ -22,6 +27,7 @@ export interface Collection {
   description: string;
   thumbnailImage: string;
   productIds: string[];
+  translations: Record<'pt' | 'fr', CollectionTranslation>;
   media?: CollectionMedia;
   home?: CollectionHomePresentation;
 }

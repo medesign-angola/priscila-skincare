@@ -7,6 +7,7 @@ import {
   PriceFormatPipe,
 } from '@org/shared';
 import { inject } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-hero-section',
@@ -15,6 +16,7 @@ import { inject } from '@angular/core';
     HeroCoverComponent,
     HeroSplitComponent,
     PriceFormatPipe,
+    TranslatePipe,
   ],
   templateUrl: './hero-section.html',
   styleUrl: './hero-section.css',

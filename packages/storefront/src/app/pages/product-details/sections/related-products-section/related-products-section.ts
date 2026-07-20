@@ -8,10 +8,11 @@ import {
 import { Router } from '@angular/router';
 import { HeaderService, Product, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-related-products-section',
-  imports: [ProductCard],
+  imports: [ProductCard, TranslatePipe],
   templateUrl: './related-products-section.html',
   styleUrl: './related-products-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

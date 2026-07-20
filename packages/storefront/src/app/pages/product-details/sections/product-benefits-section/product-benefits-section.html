@@ -1,6 +1,6 @@
 @let benefits = content();
 <section class="detail-section benefits" aria-labelledby="benefits-title">
-  <h2 id="benefits-title">Benefícios</h2>
+  <h2 id="benefits-title">{{ 'PRODUCT_DETAILS.BENEFITS' | translate }}</h2>
   <img class="benefits__main" [src]="benefits.mainImage" alt="" width="900" height="900" loading="lazy" />
   <div class="benefits__content">
     @for (section of benefits.sections; track section.title; let first = $first) {

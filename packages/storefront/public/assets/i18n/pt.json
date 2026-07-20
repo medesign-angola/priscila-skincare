@@ -1,92 +1,107 @@
 {
-  "GLOBAL": {
-    "TITLE": "Priscila Skincare - Site Oficial"
-  },
+  "GLOBAL": { "TITLE": "Priscila Skincare - Site Oficial" },
+  "ACCESSIBILITY": { "GALLERY": "Galeria" },
   "HOME": {
     "WELCOME": "Bem-vindo ao mundo dos cuidados com a pele!",
+    "HERO": { "BUY_PRODUCTS": "Comprar produtos" },
     "BRAND_PILLARS": {
       "LABEL": "Os nossos compromissos",
-      "ACTIVE_FORMULAS": {
-        "TITLE": "Fórmulas com ativos",
-        "DESCRIPTION": "Nossas fórmulas têm ativos de cuidado da pele altamente concentrados."
-      },
-      "SENSITIVE_SKIN": {
-        "TITLE": "Peles sensíveis",
-        "DESCRIPTION": "Nossos produtos são testados para todos os tipos de pele, incluindo as sensíveis."
-      },
-      "MADE_IN_FRANCE": {
-        "TITLE": "Fabricado na França",
-        "DESCRIPTION": "Desenvolvemos e fabricamos nossas fórmulas na França."
-      },
-      "SAFETY_CERTIFIED": {
-        "TITLE": "Certificado de segurança",
-        "DESCRIPTION": "Todos os nossos produtos são certificados e feitos para sua segurança."
-      }
+      "ACTIVE_FORMULAS": { "TITLE": "Fórmulas com ativos", "DESCRIPTION": "Nossas fórmulas têm ativos de cuidado da pele altamente concentrados." },
+      "SENSITIVE_SKIN": { "TITLE": "Peles sensíveis", "DESCRIPTION": "Nossos produtos são testados para todos os tipos de pele, incluindo as sensíveis." },
+      "MADE_IN_FRANCE": { "TITLE": "Fabricado na França", "DESCRIPTION": "Desenvolvemos e fabricamos nossas fórmulas na França." },
+      "SAFETY_CERTIFIED": { "TITLE": "Certificado de segurança", "DESCRIPTION": "Todos os nossos produtos são certificados e feitos para sua segurança." }
     }
   },
-  "HEADER": {
-    "PRODUCTS": "Produtos",
-    "COLLECTIONS": "Coleção",
-    "ABOUT": "Sobre"
-  },
-  "NAVIGATION_MENU": {
-    "VIEW_ALL": "Ver todos"
-  },
+  "HEADER": { "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "ABOUT": "Sobre" },
+  "NAVIGATION_MENU": { "VIEW_ALL": "Ver todos" },
   "PREFERENCES": {
-    "TITLE": "Linguagem e moeda",
-    "CLOSE": "Fechar preferências",
-    "LANGUAGE_LABEL": "Idioma",
-    "PORTUGUESE": "Português",
-    "FRENCH": "Francês",
-    "CURRENCY_MARKET": "Moeda e mercado",
-    "ANGOLA": "Angola",
-    "EUROPE": "Europa",
-    "UPDATE": "Atualizar preferências"
+    "TITLE": "Linguagem e moeda", "CLOSE": "Fechar preferências", "LANGUAGE_LABEL": "Idioma",
+    "PORTUGUESE": "Português", "FRENCH": "Francês", "CURRENCY_MARKET": "Moeda e mercado",
+    "ANGOLA": "Angola", "EUROPE": "Europa", "UPDATE": "Atualizar preferências"
   },
   "FEATURED_PRODUCTS": {
-    "TITLE": "Destaques",
-    "CATEGORY": "Categoria",
-    "ADD_TO_CART": "Ad. ao carrinho",
-    "NEW": "Novo",
-    "COMING_SOON": "Em breve",
-    "UNAVAILABLE": "Indisponível",
+    "TITLE": "Destaques", "CATEGORY": "Categoria", "ADD_TO_CART": "Ad. ao carrinho", "NEW": "Novo",
+    "COMING_SOON": "Em breve", "UNAVAILABLE": "Indisponível",
     "RATING_LABEL": "Avaliação de {{rating}} em 5, baseada em {{reviews}} avaliações"
   },
-  "PRODUCTS_CATALOG": {
-    "TITLE": "Produtos",
-    "LOAD_MORE": "Carregar mais produtos"
-  },
-  "FEATURED_COLLECTION": {
-    "EXPLORE": "Explore nossa coleção"
-  },
+  "PRODUCTS_CATALOG": { "TITLE": "Produtos", "LOAD_MORE": "Carregar mais produtos" },
+  "FEATURED_COLLECTION": { "EXPLORE": "Explore nossa coleção" },
   "CUSTOMER_TESTIMONIALS": {
-    "LEAVE_REVIEW": "Deixa sua avaliação",
-    "PREVIOUS_PAGE": "Página anterior de avaliações",
-    "NEXT_PAGE": "Próxima página de avaliações",
-    "PLAY": "Reproduzir vídeo",
-    "PAUSE": "Pausar vídeo",
-    "MUTE": "Silenciar vídeo",
-    "UNMUTE": "Ativar som do vídeo",
+    "LEAVE_REVIEW": "Deixa sua avaliação", "PREVIOUS_PAGE": "Página anterior de avaliações",
+    "NEXT_PAGE": "Próxima página de avaliações", "PLAY": "Reproduzir vídeo", "PAUSE": "Pausar vídeo",
+    "MUTE": "Silenciar vídeo", "UNMUTE": "Ativar som do vídeo",
     "RATING_LABEL": "Avaliação geral de {{rating}} em 5, baseada em {{reviews}} avaliações"
   },
   "FOOTER": {
-    "PRODUCTS": "Produtos",
-    "COLLECTIONS": "Coleção",
-    "SOCIALS": "Redes sociais",
+    "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "SOCIALS": "Redes sociais",
     "NEWSLETTER_TITLE": "Cadastre-se para receber notícias e histórias exclusivas sobre nossos produtos",
-    "EMAIL": "Insira o seu email",
-    "SEND": "Enviar",
-    "EMAIL_ERROR": "Insira um endereço de email válido.",
+    "EMAIL": "Insira o seu email", "SEND": "Enviar", "EMAIL_ERROR": "Insira um endereço de email válido.",
     "CONSENT_PREFIX": "Ao se cadastrar, você concorda em receber e-mails de marketing da Priscila Araujo Skincare de acordo com nossos",
-    "TERMS": "Termos",
-    "CONSENT_JOIN": "e",
-    "PRIVACY": "Política de Privacidade",
-    "CONSENT_SUFFIX": "Cancele a assinatura a qualquer momento.",
-    "RIGHTS": "Todos os direitos reservados.",
+    "TERMS": "Termos", "CONSENT_JOIN": "e", "PRIVACY": "Política de Privacidade",
+    "CONSENT_SUFFIX": "Cancele a assinatura a qualquer momento.", "RIGHTS": "Todos os direitos reservados.",
     "BACK_TO_TOP": "Voltar ao topo"
   },
-  "KITS_SECTION": {
-    "FIND": "Encontrar",
-    "VIEW_PRODUCTS": "Ver produtos"
+  "KITS_SECTION": { "FIND": "Encontrar", "VIEW_PRODUCTS": "Ver produtos" },
+  "PRODUCTS_PAGE": {
+    "FILTER": "Filtrar", "SORT_PRODUCTS": "Ordenar produtos", "SORT": "Ordenar", "SORT_NAME": "Nome: A–Z",
+    "SORT_PRICE_ASC": "Preço: menor primeiro", "SORT_PRICE_DESC": "Preço: maior primeiro",
+    "EMPTY": "Nenhum produto foi encontrado neste contexto.", "VIEW_ALL": "Ver todos os produtos",
+    "LOAD_MORE": "Carregar mais produtos", "QUANTITY": "Quantidade", "COLLECTION_PRODUCTS": "Produtos de coleção",
+    "BREADCRUMB": "Navegação estrutural", "HOME": "Início", "ALL_PRODUCTS": "Todos os produtos",
+    "COLLECTION": "Coleção", "COLLECTIONS": "Coleções", "CATEGORY": "Categoria", "CATEGORIES": "Categorias",
+    "KIT": "Kit", "KITS": "Kits"
+  },
+  "PRODUCT_DETAILS": {
+    "NOT_FOUND": "Produto não encontrado", "BACK_HOME": "Voltar à página inicial", "BENEFITS": "Benefícios",
+    "HOW_TO_USE": "Como usar", "RELATED_PRODUCTS": "Produtos semelhantes",
+    "PURCHASE": {
+      "PRODUCT_IMAGES": "Imagens do produto", "VIEW_IMAGE": "Ver imagem {{current}} de {{total}}",
+      "MORE_DETAILS": "Mais detalhes sobre o produto", "HIGHLIGHTS": "Destaques", "SIZE": "Tamanho",
+      "SELECT": "Selecionar", "ADD_TO_CART": "Ad. ao carrinho"
+    },
+    "INGREDIENTS": { "TITLE": "Ingredientes", "VIEW_ALL": "Ver listagem completa", "COMPLEMENTARY_ACTIVES": "Ativos complementares" },
+    "RESULTS": { "TITLE": "Resultado", "COMPARE": "Comparar antes e depois", "BEFORE": "Antes da utilização", "AFTER": "Depois da utilização" },
+    "REVIEWS": {
+      "TITLE": "O que nossos clientes dizem sobre os nossos produtos", "LEAVE_REVIEW": "Deixa sua avaliação",
+      "EXCELLENT_PRODUCT": "Excelente produto!", "SHOW_LESS": "Ver menos", "LOAD_MORE": "Carregar mais"
+    }
+  },
+  "SHIPPING_INFORMATION": {
+    "TITLE": "Informação de envio", "PACKAGING_TITLE": "Embalagem",
+    "PACKAGING_DESCRIPTION": "Nossos produtos são cuidadosamente embalados para chegarem em ótimas condições.",
+    "DELIVERY_TITLE": "Prazo de entrega", "DELIVERY_DESCRIPTION": "O prazo estimado varia de 3 a 7 dias úteis, conforme a localização e o método escolhido.",
+    "INTERNATIONAL_TITLE": "Envio internacional", "INTERNATIONAL_DESCRIPTION": "Oferecemos opções de envio internacional para que nossos clientes recebam os produtos em todo o mundo."
+  },
+  "ABOUT": {
+    "HERO": {
+      "LABEL": "Sobre nós", "TITLE": "A ciência por trás do brilho que a sua pele merece hoje",
+      "DESCRIPTION": "Desperte todo o potencial da sua pele com nossos kits Snow White. Revitalize sua pele, jovem e resistente durante todo o dia, garantindo conforto e uma tonalidade radiante."
+    },
+    "BRAND": {
+      "LABEL": "A marca", "IMAGE_ALT": "Priscila Skin Care", "FOUNDATION_LABEL": "Fundação:",
+      "FOUNDATION_DESCRIPTION": "Início de uma jornada dedicada à ciência, inovação e cuidado com a pele.",
+      "PRODUCTS_LABEL": "Produtos:", "PRODUCTS_DESCRIPTION": "Fórmulas cuidadosamente desenvolvidas para oferecer resultados visíveis e uma experiência de cuidado completa.",
+      "CLIENTS_LABEL": "Clientes:", "CLIENTS_DESCRIPTION": "Uma comunidade crescente que escolhe diariamente a qualidade e a confiança da Priscila Skin Care.",
+      "FOOTER_TITLE": "Uma marca construída com propósito e ciência", "FOOTER_DESCRIPTION": "Ingredientes selecionados e tecnologia avançada para resultados visíveis."
+    },
+    "PILLARS": {
+      "TITLE": "Os nossos pilares",
+      "ACTIVE_FORMULAS": { "TITLE": "Fórmulas com Ativos", "DESCRIPTION": "Nossas fórmulas têm ativos de cuidado da pele altamente concentrados, garantindo resultados visíveis e duradouros para todos os tipos de pele." },
+      "SENSITIVE_SKIN": { "TITLE": "Peles Sensíveis", "DESCRIPTION": "Os nossos produtos são testados e aprovados dermatologicamente para todos os tipos de pele, incluindo as mais sensíveis e reativas." },
+      "SAFETY": { "TITLE": "Certificado de Segurança", "DESCRIPTION": "Todos os nossos produtos são certificados com os mais altos padrões de segurança, para que possa confiar em cada aplicação." }
+    },
+    "FOUNDER": {
+      "LABEL": "Fundadora", "IMAGE_ALT": "Priscila Araujo, fundadora", "BUY_PRODUCTS": "Comprar produtos",
+      "PARAGRAPH_ONE": "A Priscila Skin Care nasceu de uma visão simples mas profunda: criar produtos de cosmética de alta qualidade que respeitassem e realçassem a beleza natural da pele africana. Priscila Araujo cresceu a observar a riqueza das tradições de beleza angolanas e sentiu a necessidade de unir essa herança com a ciência cosmética moderna.",
+      "PARAGRAPH_TWO": "Com formação em cosmética e uma paixão inabalável pela saúde da pele, desenvolveu fórmulas únicas com ativos cuidadosamente selecionados — óleo de coco, papaína, vitamina C e salsinha — para criar produtos que hidratam, protegem e iluminam. Cada produto carrega a sua assinatura: eficácia real, ingredientes seguros e resultados visíveis todos os dias."
+    },
+    "CONTACT": {
+      "LABEL": "Contacto", "TITLE": "Onde nos encontras",
+      "DESCRIPTION": "Disponíveis em Angola e com envio internacional. Encontra os nossos produtos nos pontos de venda parceiros ou encomenda diretamente online.",
+      "LUANDA_TITLE": "Luanda, Angola", "LUANDA_DESCRIPTION": "Bairro Miramar, Luanda, Angola",
+      "ONLINE_TITLE": "Encomendar Online", "ONLINE_DESCRIPTION": "Entregas em todo o território angolano, 3 a 7 dias úteis",
+      "INTERNATIONAL_TITLE": "Envio Internacional", "INTERNATIONAL_DESCRIPTION": "Disponível para todo o mundo",
+      "IMAGE_ALT": "Localização Priscila Skin Care"
+    }
   }
 }

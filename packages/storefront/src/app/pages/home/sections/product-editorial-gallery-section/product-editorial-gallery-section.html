@@ -57,7 +57,7 @@
     </div>
   </div>
 
-  <div class="editorial-gallery__mobile-strip" aria-label="Galeria">
+  <div class="editorial-gallery__mobile-strip" [attr.aria-label]="'ACCESSIBILITY.GALLERY' | translate">
     <figure>
       <img
         [src]="gallery.coverImage"

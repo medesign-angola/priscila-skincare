@@ -1,6 +1,6 @@
 <section class="hero-container relative w-full h-screen overflow-hidden">
   <div class="hero-backgrounds absolute inset-0 w-full h-full z-0">
-    @for (kit of facade.featuredKits(); track kit.id; let index = $index) {
+    @for (kit of facade.localizedFeaturedKits(); track kit.id; let index = $index) {
     <div
       class="slide-wrapper"
       [class.active]="index === facade.activeKitIndex()"
@@ -27,7 +27,7 @@
     }
   </div>
 
-  @if (facade.activeKit(); as kit) {
+  @if (facade.localizedActiveKit(); as kit) {
   <div
     class="hero-content-layer absolute inset-0 w-full h-full z-10 flex items-center pointer-events-none"
   >
@@ -37,7 +37,7 @@
       <div class="hero--content flex justify-between items-end w-full">
         <div class="box-content flex flex-col gap-12 max-w-[37vw]">
           <div class="badges flex flex-col gap-4 justify-center">
-            @for (item of facade.featuredKits(); track item.id; let index =
+            @for (item of facade.localizedFeaturedKits(); track item.id; let index =
             $index) { @let isActive = facade.activeKitIndex() === index;
             <button
               type="button"
@@ -82,7 +82,7 @@
               (click)="buyKit(kit.id)"
               class="flex gap-5 items-center justify-between w-fit font-bold px-6 py-4 rounded-xs bg-white text-[#7D6645] hover:bg-slate-100 active:scale-[0.98] transition-all tracking-wider text-xs md:text-sm shadow-md cursor-pointer select-none"
             >
-              <span class="uppercase">Comprar produtos</span>
+              <span class="uppercase">{{ 'HOME.HERO.BUY_PRODUCTS' | translate }}</span>
               <span
                 >{{ kit.price | priceFormat: 'AOA' : facade.currentLanguage()
                 }}</span

@@ -39,6 +39,11 @@ export class ProductFacade {
     return list.length > 0 ? list[idx] : null;
   });
 
+  readonly localizedActiveKit = computed(() => {
+    const kit = this.activeKit();
+    return kit ? { ...kit, ...kit.translations[this.currentLanguage()] } : null;
+  });
+
   readonly mappedProducts = computed(
     () => new Map(this.products().map((product) => [product.id, product])),
   );
@@ -143,6 +148,14 @@ export class ProductFacade {
     }));
   });
 
+  readonly localizedCollectionsWithProducts = computed(() => {
+    const language = this.currentLanguage();
+    return this.collectionsWithProducts().map((collection) => ({
+      ...collection,
+      ...collection.translations[language],
+    }));
+  });
+
   readonly homeCollectionsWithProducts = computed(() => {
     const language = this.currentLanguage();
 
@@ -171,6 +184,22 @@ export class ProductFacade {
       products: kit.productIds
         .map((id) => mappedProducts.get(id))
         .filter((product): product is Product => product !== undefined),
+    }));
+  });
+
+  readonly localizedKitsWithProducts = computed(() => {
+    const language = this.currentLanguage();
+    return this.kitsWithProducts().map((kit) => ({
+      ...kit,
+      ...kit.translations[language],
+    }));
+  });
+
+  readonly localizedFeaturedKits = computed(() => {
+    const language = this.currentLanguage();
+    return this.featuredKits().map((kit) => ({
+      ...kit,
+      ...kit.translations[language],
     }));
   });
 

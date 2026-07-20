@@ -14,6 +14,10 @@ export const MOCK_KITS: Kit[] = [
     placeholderUrl: '/assets/images/home-hero-placeholder.png',
     productIds: ['prod-1', 'prod-2'], // Snow White Cream + Caramel Serum
     featured: true,
+    translations: {
+      pt: { name: 'Snow White', collection: 'Caramel Set', description: 'O brilho que a sua pele merece todos os dias' },
+      fr: { name: 'Snow White', collection: 'Coffret Caramel', description: "L'éclat que votre peau mérite chaque jour" },
+    },
     home: {
       order: 1,
       thumbnailImage: '/assets/images/kits/caramel-set.webp',
@@ -57,6 +61,10 @@ export const MOCK_KITS: Kit[] = [
     placeholderUrl: '/assets/images/video-placeholder.jpg',
     productIds: ['prod-3'], // Golden Radiance Oil
     featured: true,
+    translations: {
+      pt: { name: 'Golden Radiance', collection: 'Elixir de luxo', description: 'Nutrição para pele luminosa e uniforme' },
+      fr: { name: 'Golden Radiance', collection: 'Élixir de luxe', description: 'Nutrition pour une peau lumineuse et uniforme' },
+    },
     home: {
       order: 2,
       thumbnailImage: '/assets/images/kits/radiance-routine.webp',
@@ -98,6 +106,10 @@ export const MOCK_KITS: Kit[] = [
     placeholderUrl: '/assets/images/home-hero-placeholder.png',
     productIds: ['prod-1'],
     featured: false, // hidden on homepage banner slider
+    translations: {
+      pt: { name: 'Hydra Basic', collection: 'Cuidados diários', description: 'A rotina de hidratação diária essencial para a sua pele' },
+      fr: { name: 'Hydra Basic', collection: 'Soin quotidien', description: "La routine d'hydratation quotidienne essentielle pour votre peau" },
+    },
     home: {
       order: 3,
       thumbnailImage: '/assets/images/kits/clear-skin-routine.webp',
@@ -138,6 +150,10 @@ export const MOCK_KITS: Kit[] = [
     mediaStyle: 'cover',
     productIds: ['prod-4', 'prod-5'],
     featured: false,
+    translations: {
+      pt: { name: 'Aloe Balance', collection: 'Cuidado ativo', description: 'Cuidado calmante para uma pele equilibrada e confortável' },
+      fr: { name: 'Aloe Balance', collection: 'Soin actif', description: 'Soin apaisant pour une peau équilibrée et confortable' },
+    },
     home: {
       order: 4,
       thumbnailImage: '/assets/images/kits/aloe-routine.webp',

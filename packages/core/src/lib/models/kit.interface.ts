@@ -20,6 +20,12 @@ export interface KitHomePresentation {
   };
 }
 
+export interface KitTranslation {
+  name: string;
+  collection: string;
+  description: string;
+}
+
 export interface Kit {
   id: string;
   name: string;
@@ -33,6 +39,7 @@ export interface Kit {
   placeholderUrl?: string; // Stretched low-res blurred loading placeholder
   productIds: string[]; // referenced products
   featured: boolean; // featured on homepage hero slider
+  translations: Record<'pt' | 'fr', KitTranslation>;
   home?: KitHomePresentation;
 }
 
