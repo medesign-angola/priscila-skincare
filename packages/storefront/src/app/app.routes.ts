@@ -1,6 +1,26 @@
 import { Route } from '@angular/router';
+import { authGuard } from './pages/auth/auth.guard';
 
 export const appRoutes: Route[] = [
+  {
+    path: 'entrar',
+    loadComponent: () => import('./pages/auth/sign-in/sign-in').then((m) => m.SignIn),
+  },
+  {
+    path: 'verificar-codigo',
+    loadComponent: () => import('./pages/auth/otp/otp').then((m) => m.Otp),
+  },
+  {
+    path: 'conta',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/account/account-layout/account-layout').then((m) => m.AccountLayout),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'encomendas' },
+      { path: 'perfil', loadComponent: () => import('./pages/account/profile/profile').then((m) => m.Profile) },
+      { path: 'encomendas', loadComponent: () => import('./pages/account/orders/orders').then((m) => m.Orders) },
+      { path: 'encomendas/:orderId', loadComponent: () => import('./pages/account/order-details/order-details').then((m) => m.OrderDetails) },
+    ],
+  },
   {
     path: '',
     loadComponent: () =>

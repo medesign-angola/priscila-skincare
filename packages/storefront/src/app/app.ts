@@ -4,8 +4,11 @@ import {
   computed,
   effect,
   inject,
+  signal,
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { Title } from '@angular/platform-browser';
 import {
@@ -27,6 +30,8 @@ export class App {
   private readonly translateService = inject(TranslateService);
   private readonly documentTitle = inject(Title);
   private readonly router = inject(Router);
+  readonly shellMode = signal<'storefront' | 'auth' | 'account'>('storefront');
+  readonly showFooter = computed(() => this.shellMode() === 'storefront');
   readonly headerProducts = computed(() => {
     const language = this.facade.currentLanguage();
 
@@ -68,6 +73,8 @@ export class App {
   ];
 
   constructor() {
+    this.updateShellMode(this.router.url);
+    this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe((event) => this.updateShellMode(event.urlAfterRedirects));
     effect(() => {
       this.translateService.use(this.facade.currentLanguage()).subscribe(() => {
         this.documentTitle.setTitle(this.translateService.instant('GLOBAL.TITLE'));
@@ -91,6 +98,16 @@ export class App {
 
       gsap.ticker.lagSmoothing(0);
     });
+  }
+
+  private updateShellMode(url: string): void {
+    if (url.startsWith('/entrar') || url.startsWith('/verificar-codigo')) {
+      this.shellMode.set('auth');
+    } else if (url.startsWith('/conta')) {
+      this.shellMode.set('account');
+    } else {
+      this.shellMode.set('storefront');
+    }
   }
 
   handleFooterNavigation(selection: {

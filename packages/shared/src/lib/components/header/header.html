@@ -1,10 +1,13 @@
 <header
-  class="absolute top-0 left-0 w-full z-50 py-4 px-10 flex justify-between items-center transition-colors duration-300 pointer-events-auto"
+  class="site-header absolute top-0 left-0 w-full z-50 py-4 px-10 flex justify-between items-center transition-colors duration-300 pointer-events-auto"
+  [class.site-header--auth]="mode() === 'auth'"
+  [class.site-header--account]="mode() === 'account'"
   [class.text-white]="theme() === 'white'"
   [class.text-[#1a1917]]="theme() === 'black'"
 >
   <!-- 1. Esquerda: Navegação -->
-  <nav class="flex items-center gap-8 text-sm uppercase">
+  @if (mode() === 'storefront') {
+  <nav class="site-header__navigation flex items-center gap-8 text-sm uppercase">
     <button
       #productsMenuTrigger
       type="button"
@@ -31,9 +34,15 @@
       >{{ 'HEADER.ABOUT' | translate }}</a
     >
   </nav>
+  } @else if (mode() === 'account') {
+  <nav class="site-header__navigation site-header__account-navigation flex items-center gap-8 text-sm uppercase">
+    <a routerLink="/conta/encomendas" routerLinkActive="site-header__account-link--active">{{ 'ACCOUNT.NAV.ORDERS' | translate }}</a>
+    <a routerLink="/conta/perfil" routerLinkActive="site-header__account-link--active">{{ 'ACCOUNT.NAV.PROFILE' | translate }}</a>
+  </nav>
+  }
 
   <!-- 2. Centro: Logotipo SVG (fill com currentColor) -->
-  <div class="flex items-center justify-center cursor-pointer" routerLink="/">
+  <div class="site-header__logo flex items-center justify-center cursor-pointer" routerLink="/">
     <svg
       width="56"
       height="56"
@@ -72,6 +81,7 @@
     </svg>
   </div>
 
+  @if (mode() === 'storefront') {
   <div class="interation-container flex gap-4 items-center">
     <button
       #preferencesTrigger
@@ -134,7 +144,7 @@
     </button>
 
     <!-- Espaço para o Ícone de Usuário -->
-    <div class="flex items-center justify-center p-2.5 cursor-pointer">
+    <a routerLink="/entrar" class="flex items-center justify-center p-2.5 cursor-pointer" [attr.aria-label]="'AUTH.SIGN_IN.TITLE' | translate">
       <svg
         width="24"
         height="24"
@@ -164,7 +174,7 @@
           </clipPath>
         </defs>
       </svg>
-    </div>
+    </a>
 
     <!-- Espaço para o Ícone de Cesto (Bag) -->
     <div class="flex items-center justify-center p-2.5 cursor-pointer">
@@ -199,8 +209,9 @@
       </svg>
     </div>
   </div>
+  }
 
-  @if (navigationMenuInitialized()) {
+  @if (mode() === 'storefront' && navigationMenuInitialized()) {
   <section
     id="products-navigation-menu"
     class="products-menu"

@@ -45,6 +45,7 @@ export class HeaderComponent {
   private preferencesDialog?: ElementRef<HTMLElement>;
 
   theme = input<'white' | 'black'>('white');
+  mode = input<'storefront' | 'auth' | 'account'>('storefront');
   currentLanguage = input<'pt' | 'fr'>('pt');
   currency = input<'AOA' | 'EUR'>('AOA');
   products = input<readonly HeaderNavigationItem[]>([]);

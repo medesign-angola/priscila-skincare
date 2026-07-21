@@ -72,6 +72,18 @@
     "DELIVERY_TITLE": "Délai de livraison", "DELIVERY_DESCRIPTION": "Le délai estimé varie de 3 à 7 jours ouvrés selon la destination et le mode choisi.",
     "INTERNATIONAL_TITLE": "Livraison internationale", "INTERNATIONAL_DESCRIPTION": "Nous proposons la livraison internationale afin que nos clients puissent recevoir leurs produits partout dans le monde."
   },
+  "AUTH": {
+    "LEGAL": "Conditions générales et Politique de confidentialité.",
+    "SIGN_IN": { "TITLE": "Connexion", "SUBTITLE": "Connectez-vous ou créez un compte", "EMAIL": "Saisissez votre e-mail", "CONTINUE": "Continuer", "EMAIL_ERROR": "Saisissez une adresse e-mail valide.", "MARKETING": "Envoyez-moi des actualités et des offres par e-mail.", "CONSENT": "En continuant, vous acceptez nos conditions d'utilisation" },
+    "OTP": { "TITLE": "Saisissez le code", "SENT_TO": "Envoyé à {{email}}", "DIGIT": "Chiffre {{number}} du code", "INVALID": "Saisissez le code complet à six chiffres." }
+  },
+  "ACCOUNT": {
+    "NAV": { "ORDERS": "Commandes", "PROFILE": "Profil" },
+    "STATUS": { "CONFIRMED": "Confirmée", "PROCESSING": "En traitement", "SHIPPED": "Expédiée", "DELIVERED": "Livrée" },
+    "PROFILE": { "TITLE": "Profil", "NAME": "Saisissez votre nom", "EMAIL": "E-mail", "ADDRESSES": "Adresses", "ADD": "Ajouter", "NO_ADDRESS": "Aucune adresse ajoutée", "SELECT_ADDRESS": "Sélectionner une adresse", "SIGN_OUT": "Se déconnecter" },
+    "ORDERS": { "TITLE": "Commandes", "EMPTY_TITLE": "Aucune commande pour le moment", "EMPTY_DESCRIPTION": "Visitez la boutique pour passer votre première commande.", "SHOP": "Voir la boutique", "VIEW_DETAILS": "Voir les détails", "SIZE": "Format", "QUANTITY_SHORT": "Qté", "TOTAL": "Total" },
+    "DETAILS": { "STATUS": "État de la commande", "PRODUCTS": "Produits", "DELIVERY_ADDRESS": "Adresse de livraison", "PAYMENT_METHOD": "Mode de paiement", "ENTITY": "Entité", "REFERENCE": "Référence", "AMOUNT": "Montant", "SUMMARY": "Récapitulatif", "SUBTOTAL": "Sous-total", "SHIPPING": "Livraison", "FREE": "Gratuite", "REORDER": "Commander à nouveau", "NOT_FOUND": "Commande introuvable" }
+  },
   "ABOUT": {
     "HERO": {
       "LABEL": "À propos", "TITLE": "La science derrière l'éclat que votre peau mérite aujourd'hui",

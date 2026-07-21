@@ -2,12 +2,14 @@
   [products]="headerProducts()"
   [collections]="headerCollections()"
   [theme]="headerService.theme()"
+  [mode]="shellMode()"
   [currentLanguage]="facade.currentLanguage()"
   [currency]="headerService.currency()"
   (languageChange)="facade.currentLanguage.set($event)"
   (currencyChange)="headerService.currency.set($event)"
 ></org-header>
 <router-outlet></router-outlet>
+@if (showFooter()) {
 <org-footer
   [products]="footerProducts()"
   [collections]="footerCollections()"
@@ -15,3 +17,4 @@
   (navigationSelect)="handleFooterNavigation($event)"
   (newsletterSubmit)="handleNewsletterSubmit($event)"
 />
+}

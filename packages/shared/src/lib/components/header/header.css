@@ -338,3 +338,22 @@
     transition: none;
   }
 }
+.site-header--auth {
+  justify-content: center;
+  color: #7d6645;
+}
+
+.site-header--account {
+  justify-content: flex-start;
+  gap: clamp(2rem, 4vw, 4rem);
+  color: #7d6645;
+}
+
+.site-header--account .site-header__logo { order: -1; }
+.site-header__account-link--active { color: #7d6645; font-weight: 600; }
+
+@media (max-width: 600px) {
+  .site-header { padding-inline: 1.25rem; }
+  .site-header--account { gap: 1.5rem; }
+  .site-header__account-navigation { gap: 1rem; font-size: 0.75rem; }
+}

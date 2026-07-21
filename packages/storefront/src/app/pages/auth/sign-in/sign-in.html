@@ -1,0 +1,14 @@
+<main class="auth-page">
+  <form class="auth-form" (submit)="submit($event)" novalidate>
+    <header><h1>{{ 'AUTH.SIGN_IN.TITLE' | translate }}</h1><p>{{ 'AUTH.SIGN_IN.SUBTITLE' | translate }}</p></header>
+    <label class="auth-input" [class.auth-input--active]="emailFocused() || email.value">
+      <span>{{ 'AUTH.SIGN_IN.EMAIL' | translate }}</span>
+      <input type="email" autocomplete="email" [formControl]="email" [placeholder]="emailFocused() || email.value ? '' : ('AUTH.SIGN_IN.EMAIL' | translate)" (focus)="emailFocused.set(true)" (blur)="emailFocused.set(false)" />
+      <button type="submit" [attr.aria-label]="'AUTH.SIGN_IN.CONTINUE' | translate">→</button>
+    </label>
+    @if (email.invalid && email.touched) { <p class="auth-error">{{ 'AUTH.SIGN_IN.EMAIL_ERROR' | translate }}</p> }
+    <label class="auth-check"><input type="checkbox" [formControl]="marketing" /><span>{{ 'AUTH.SIGN_IN.MARKETING' | translate }}</span></label>
+    <p>{{ 'AUTH.SIGN_IN.CONSENT' | translate }}</p>
+  </form>
+  <a class="auth-legal" routerLink="/">{{ 'AUTH.LEGAL' | translate }}</a>
+</main>

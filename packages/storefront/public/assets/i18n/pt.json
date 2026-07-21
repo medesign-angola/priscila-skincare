@@ -72,6 +72,18 @@
     "DELIVERY_TITLE": "Prazo de entrega", "DELIVERY_DESCRIPTION": "O prazo estimado varia de 3 a 7 dias úteis, conforme a localização e o método escolhido.",
     "INTERNATIONAL_TITLE": "Envio internacional", "INTERNATIONAL_DESCRIPTION": "Oferecemos opções de envio internacional para que nossos clientes recebam os produtos em todo o mundo."
   },
+  "AUTH": {
+    "LEGAL": "Termos e Política de Privacidade.",
+    "SIGN_IN": { "TITLE": "Entrar", "SUBTITLE": "Faça login ou crie uma conta", "EMAIL": "Insira o seu email", "CONTINUE": "Continuar", "EMAIL_ERROR": "Insira um endereço de email válido.", "MARKETING": "Envie-me um e-mail com notícias e ofertas.", "CONSENT": "Ao continuar, você concorda com nossos termos de serviço" },
+    "OTP": { "TITLE": "Digite o código", "SENT_TO": "Enviado para {{email}}", "DIGIT": "Dígito {{number}} do código", "INVALID": "Insira o código completo de seis dígitos." }
+  },
+  "ACCOUNT": {
+    "NAV": { "ORDERS": "Encomendas", "PROFILE": "Perfil" },
+    "STATUS": { "CONFIRMED": "Confirmada", "PROCESSING": "Em processamento", "SHIPPED": "Expedida", "DELIVERED": "Entregue" },
+    "PROFILE": { "TITLE": "Perfil", "NAME": "Insira o seu nome", "EMAIL": "Email", "ADDRESSES": "Moradas", "ADD": "Adicionar", "NO_ADDRESS": "Nenhuma morada adicionada", "SELECT_ADDRESS": "Selecionar morada", "SIGN_OUT": "Terminar sessão" },
+    "ORDERS": { "TITLE": "Encomendas", "EMPTY_TITLE": "Nenhuma encomenda ainda", "EMPTY_DESCRIPTION": "Visite a loja para fazer a sua primeira encomenda.", "SHOP": "Ir à loja", "VIEW_DETAILS": "Ver detalhes", "SIZE": "Tamanho", "QUANTITY_SHORT": "Qtd", "TOTAL": "Total" },
+    "DETAILS": { "STATUS": "Estado da encomenda", "PRODUCTS": "Produtos", "DELIVERY_ADDRESS": "Morada de entrega", "PAYMENT_METHOD": "Método de pagamento", "ENTITY": "Entidade", "REFERENCE": "Referência", "AMOUNT": "Montante", "SUMMARY": "Resumo", "SUBTOTAL": "Subtotal", "SHIPPING": "Envio", "FREE": "Grátis", "REORDER": "Voltar a encomendar", "NOT_FOUND": "Encomenda não encontrada" }
+  },
   "ABOUT": {
     "HERO": {
       "LABEL": "Sobre nós", "TITLE": "A ciência por trás do brilho que a sua pele merece hoje",

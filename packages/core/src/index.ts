@@ -16,3 +16,6 @@ export * from './lib/mocks/testimonials.mock';
 export * from './lib/services/product.service';
 export * from './lib/services/header.service';
 export * from './lib/facades/product.facade';
+export * from './lib/models/account.interface';
+export * from './lib/mocks/account.mock';
+export * from './lib/facades/auth.facade';
