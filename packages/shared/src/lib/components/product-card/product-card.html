@@ -40,11 +40,13 @@
     <button
       type="button"
       class="product-card__add"
-      [disabled]="!product().available"
+      [class.product-card__add--added]="product().addedToCart"
+      [disabled]="!product().available || product().addedToCart"
       (click)="requestAddToCart()"
     >
       <span>
-        {{ (product().available ? 'FEATURED_PRODUCTS.ADD_TO_CART' :
+        {{ (product().addedToCart ? 'FEATURED_PRODUCTS.ADDED_TO_CART' :
+        product().available ? 'FEATURED_PRODUCTS.ADD_TO_CART' :
         'FEATURED_PRODUCTS.UNAVAILABLE' ) | translate }}
       </span>
       <span class="product-card__price">

@@ -19,8 +19,14 @@
     "PORTUGUESE": "Português", "FRENCH": "Francês", "CURRENCY_MARKET": "Moeda e mercado",
     "ANGOLA": "Angola", "EUROPE": "Europa", "UPDATE": "Atualizar preferências"
   },
+  "CART": {
+    "OPEN": "Abrir cesto de compras", "CLOSE": "Fechar", "TITLE": "Cesta de compras ({{count}})",
+    "SIZE": "Tamanho", "REMOVE": "Remover", "DECREASE": "Diminuir quantidade", "INCREASE": "Aumentar quantidade",
+    "TERMS_PREFIX": "Ao efetuar uma compra, aceita os", "TERMS_LINK": "termos e condições de venda",
+    "BUY": "Comprar", "EMPTY": "O seu cesto está vazio", "CONTINUE": "Continuar a comprar"
+  },
   "FEATURED_PRODUCTS": {
-    "TITLE": "Destaques", "CATEGORY": "Categoria", "ADD_TO_CART": "Ad. ao carrinho", "NEW": "Novo",
+    "TITLE": "Destaques", "CATEGORY": "Categoria", "ADD_TO_CART": "Ad. ao carrinho", "ADDED_TO_CART": "Adicionado ao carrinho", "NEW": "Novo",
     "COMING_SOON": "Em breve", "UNAVAILABLE": "Indisponível",
     "RATING_LABEL": "Avaliação de {{rating}} em 5, baseada em {{reviews}} avaliações"
   },

@@ -19,3 +19,5 @@ export * from './lib/facades/product.facade';
 export * from './lib/models/account.interface';
 export * from './lib/mocks/account.mock';
 export * from './lib/facades/auth.facade';
+export * from './lib/models/cart.interface';
+export * from './lib/facades/cart.facade';

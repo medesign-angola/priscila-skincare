@@ -15,8 +15,9 @@ import {
   FooterComponent,
   FooterSocialLink,
   HeaderComponent,
+  formatPrice,
 } from '@org/shared';
-import { ProductFacade, HeaderService } from '@org/core';
+import { CartFacade, ProductFacade, HeaderService } from '@org/core';
 
 @Component({
   imports: [RouterModule, HeaderComponent, FooterComponent],
@@ -27,6 +28,7 @@ import { ProductFacade, HeaderService } from '@org/core';
 export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
+  readonly cart = inject(CartFacade);
   private readonly translateService = inject(TranslateService);
   private readonly documentTitle = inject(Title);
   private readonly router = inject(Router);
@@ -48,6 +50,33 @@ export class App {
       image: collection.thumbnailImage,
     })),
   );
+  readonly headerCartItems = computed(() => {
+    const language = this.facade.currentLanguage();
+    const currency = this.headerService.currency();
+
+    return this.cart.resolvedItems().map((item) => ({
+      key: `${item.productId}:${item.sizeId}`,
+      productId: item.productId,
+      sizeId: item.sizeId,
+      name: item.product.translations[language].name,
+      image: item.product.thumbnailImage,
+      size: item.size?.value ?? '',
+      quantity: item.quantity,
+      price: formatPrice(
+        (item.product.commerce?.prices[currency] ?? 0) * item.quantity,
+        currency,
+        language,
+      ),
+    }));
+  });
+  readonly headerCartTotal = computed(() => {
+    const currency = this.headerService.currency();
+    return formatPrice(
+      this.cart.subtotal()[currency],
+      currency,
+      this.facade.currentLanguage(),
+    );
+  });
   readonly footerProducts = computed(() => {
     const language = this.facade.currentLanguage();
 
@@ -124,5 +153,12 @@ export class App {
 
   handleNewsletterSubmit(email: string): void {
     void email;
+  }
+
+  handleCartItem(
+    action: 'remove' | 'increment' | 'decrement',
+    item: { productId: string; sizeId: string },
+  ): void {
+    this.cart[action](item.productId, item.sizeId);
   }
 }

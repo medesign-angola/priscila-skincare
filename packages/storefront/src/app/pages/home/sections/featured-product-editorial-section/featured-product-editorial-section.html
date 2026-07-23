@@ -28,13 +28,14 @@
           <div class="product-editorial__action">
             <button
               type="button"
-              [disabled]="!product.available"
+              [class.product-editorial__added]="product.addedToCart"
+              [disabled]="!product.available || product.addedToCart"
               (click)="addToCart(product.id)"
               [attr.aria-label]="
                 ('FEATURED_PRODUCTS.ADD_TO_CART' | translate) + ': ' + product.name
               "
             >
-              <span>{{ 'FEATURED_PRODUCTS.ADD_TO_CART' | translate }}</span>
+              <span>{{ (product.addedToCart ? 'FEATURED_PRODUCTS.ADDED_TO_CART' : 'FEATURED_PRODUCTS.ADD_TO_CART') | translate }}</span>
               <span
                 >{{ product.price | priceFormat: product.currency :
                 product.language }}</span

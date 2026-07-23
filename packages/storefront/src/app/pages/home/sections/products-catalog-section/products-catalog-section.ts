@@ -11,7 +11,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { HeaderService, ProductFacade } from '@org/core';
+import { CartFacade, HeaderService, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -39,6 +39,7 @@ export class ProductsCatalogSection {
   private readonly facade = inject(ProductFacade);
   private readonly headerService = inject(HeaderService);
   private readonly router = inject(Router);
+  private readonly cart = inject(CartFacade);
   private readonly destroyRef = inject(DestroyRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly config = normalizeCatalogConfig(
@@ -94,6 +95,7 @@ export class ProductsCatalogSection {
               false,
             ),
             available: commerce.availability === 'in-stock',
+            addedToCart: this.cart.items().some((item) => item.productId === product.id),
             badge: commerce.badge,
           },
         ];
@@ -137,7 +139,7 @@ export class ProductsCatalogSection {
   }
 
   addToCart(productId: string): void {
-    console.log('Adicionar ao carrinho:', productId);
+    this.cart.add(productId);
   }
 
   loadNextBatch(): void {

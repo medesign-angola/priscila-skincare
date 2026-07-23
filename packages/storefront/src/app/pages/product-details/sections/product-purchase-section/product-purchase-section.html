@@ -63,10 +63,11 @@
       <button
         class="purchase__add"
         type="button"
-        [disabled]="product().commerce?.availability !== 'in-stock'"
+        [class.purchase__add--added]="addedToCart()"
+        [disabled]="product().commerce?.availability !== 'in-stock' || addedToCart()"
         (click)="addToCart()"
       >
-        <span>{{ 'PRODUCT_DETAILS.PURCHASE.ADD_TO_CART' | translate }}</span
+        <span>{{ (addedToCart() ? 'FEATURED_PRODUCTS.ADDED_TO_CART' : 'PRODUCT_DETAILS.PURCHASE.ADD_TO_CART') | translate }}</span
         ><span
           >{{ price() | priceFormat: header.currency() : language() }}</span
         >

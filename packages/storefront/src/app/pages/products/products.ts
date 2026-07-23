@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { HeaderService, Product, ProductFacade } from '@org/core';
+import { CartFacade, HeaderService, Product, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { combineLatest, map } from 'rxjs';
 import { ShippingInformationSection } from '../product-details/sections/shipping-information-section/shipping-information-section';
@@ -48,6 +48,7 @@ export class Products {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly facade = inject(ProductFacade);
+  private readonly cart = inject(CartFacade);
   private readonly header = inject(HeaderService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
@@ -206,7 +207,7 @@ export class Products {
   }
 
   addToCart(productId: string): void {
-    console.log('Adicionar ao carrinho:', productId);
+    this.cart.add(productId);
   }
 
   private observeLoadingSentinel(): void {
@@ -267,6 +268,7 @@ export class Products {
         currencyLabel: currency === 'AOA' ? 'Kz' : '€',
         priceLabel: formatPrice(product.commerce.prices[currency], currency, language, false),
         available: product.commerce.availability === 'in-stock',
+        addedToCart: this.cart.items().some((item) => item.productId === product.id),
         badge: product.commerce.badge,
       }];
     });

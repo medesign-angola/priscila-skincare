@@ -4,7 +4,7 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { HeaderService, ProductFacade } from '@org/core';
+import { CartFacade, HeaderService, ProductFacade } from '@org/core';
 import { HeroCoverComponent, PriceFormatPipe } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -22,6 +22,7 @@ interface EditorialProductViewModel {
   language: 'pt' | 'fr';
   price: number;
   available: boolean;
+  addedToCart: boolean;
 }
 
 @Component({
@@ -34,6 +35,7 @@ interface EditorialProductViewModel {
 export class FeaturedProductEditorialSection {
   private readonly facade = inject(ProductFacade);
   private readonly headerService = inject(HeaderService);
+  private readonly cart = inject(CartFacade);
 
   readonly product = computed<EditorialProductViewModel | null>(() => {
     const entry = this.facade.editorialCoverProducts()[0];
@@ -60,10 +62,11 @@ export class FeaturedProductEditorialSection {
       language,
       price: commerce.prices[currency],
       available: commerce.availability === 'in-stock',
+      addedToCart: this.cart.items().some((item) => item.productId === product.id),
     };
   });
 
   addToCart(productId: string): void {
-    console.log('Adicionar produto ao carrinho:', productId);
+    this.cart.add(productId);
   }
 }

@@ -19,8 +19,14 @@
     "PORTUGUESE": "Portugais", "FRENCH": "Français", "CURRENCY_MARKET": "Devise et marché",
     "ANGOLA": "Angola", "EUROPE": "Europe", "UPDATE": "Mettre à jour les préférences"
   },
+  "CART": {
+    "OPEN": "Ouvrir le panier", "CLOSE": "Fermer", "TITLE": "Panier ({{count}})",
+    "SIZE": "Taille", "REMOVE": "Retirer", "DECREASE": "Diminuer la quantité", "INCREASE": "Augmenter la quantité",
+    "TERMS_PREFIX": "En effectuant un achat, vous acceptez les", "TERMS_LINK": "conditions générales de vente",
+    "BUY": "Acheter", "EMPTY": "Votre panier est vide", "CONTINUE": "Continuer mes achats"
+  },
   "FEATURED_PRODUCTS": {
-    "TITLE": "À la une", "CATEGORY": "Catégorie", "ADD_TO_CART": "Ajouter au panier", "NEW": "Nouveau",
+    "TITLE": "À la une", "CATEGORY": "Catégorie", "ADD_TO_CART": "Ajouter au panier", "ADDED_TO_CART": "Ajouté au panier", "NEW": "Nouveau",
     "COMING_SOON": "Bientôt", "UNAVAILABLE": "Indisponible",
     "RATING_LABEL": "Note de {{rating}} sur 5, basée sur {{reviews}} avis"
   },

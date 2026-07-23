@@ -104,6 +104,13 @@
   opacity: 0.6;
 }
 
+.product-editorial__action button.product-editorial__added {
+  color: #1a1917;
+  background: #fff;
+  border: 1px solid #1a1917;
+  opacity: 1;
+}
+
 .product-editorial__action button:focus-visible {
   outline: 0.125rem solid currentColor;
   outline-offset: 0.25rem;

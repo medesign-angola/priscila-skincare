@@ -82,7 +82,11 @@
   </div>
 
   @if (mode() === 'storefront') {
-  <div class="interation-container flex gap-4 items-center">
+  <div
+    class="interation-container cart-shell"
+    [class.cart-shell--open]="cartOpen()"
+  >
+    <div class="cart-shell__toolbar">
     <button
       #preferencesTrigger
       type="button"
@@ -177,7 +181,18 @@
     </a>
 
     <!-- Espaço para o Ícone de Cesto (Bag) -->
-    <div class="flex items-center justify-center p-2.5 cursor-pointer">
+    <button
+      #cartTrigger
+      type="button"
+      class="cart-trigger"
+      [attr.aria-expanded]="cartOpen()"
+      aria-controls="shopping-cart-panel"
+      [attr.aria-label]="(cartOpen() ? 'CART.CLOSE' : 'CART.OPEN') | translate"
+      (click)="toggleCart()"
+    >
+      @if (cartOpen()) {
+        <span>{{ 'CART.CLOSE' | translate }}</span>
+      } @else {
       <svg
         width="24"
         height="24"
@@ -207,7 +222,66 @@
           </clipPath>
         </defs>
       </svg>
+      @if (cartCount() > 0) {
+        <span class="cart-trigger__count">{{ cartCount() }}</span>
+      }
+      }
+    </button>
     </div>
+
+    @if (cartInitialized()) {
+    <section
+      id="shopping-cart-panel"
+      class="cart-panel"
+      [class.cart-panel--open]="cartOpen()"
+      [attr.aria-hidden]="!cartOpen()"
+      [attr.inert]="cartOpen() ? null : ''"
+      data-lenis-prevent
+    >
+      <h2>{{ 'CART.TITLE' | translate: { count: cartCount() } }}</h2>
+
+      @if (cartItems().length > 0) {
+      <ul class="cart-panel__items">
+        @for (item of cartItems(); track item.key) {
+        <li class="cart-item">
+          <img [src]="item.image" [alt]="item.name" width="106" height="118" />
+          <div class="cart-item__content">
+            <div class="cart-item__heading">
+              <div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ 'CART.SIZE' | translate }}: {{ item.size }}</p>
+              </div>
+              <strong>{{ item.price }}</strong>
+            </div>
+            <div class="cart-item__actions">
+              <button type="button" (click)="cartRemove.emit({ productId: item.productId, sizeId: item.sizeId })">
+                {{ 'CART.REMOVE' | translate }}
+              </button>
+              <div class="cart-item__quantity">
+                <button type="button" [attr.aria-label]="'CART.DECREASE' | translate" (click)="cartDecrement.emit({ productId: item.productId, sizeId: item.sizeId })">−</button>
+                <span>{{ item.quantity }}</span>
+                <button type="button" [attr.aria-label]="'CART.INCREASE' | translate" (click)="cartIncrement.emit({ productId: item.productId, sizeId: item.sizeId })">+</button>
+              </div>
+            </div>
+          </div>
+        </li>
+        }
+      </ul>
+
+      <footer class="cart-panel__footer">
+        <p>{{ 'CART.TERMS_PREFIX' | translate }} <a href="#">{{ 'CART.TERMS_LINK' | translate }}</a>.</p>
+        <button type="button" class="cart-panel__checkout" (click)="cartCheckout.emit()">
+          {{ 'CART.BUY' | translate }} <span aria-hidden="true">—</span> {{ cartTotal() }}
+        </button>
+      </footer>
+      } @else {
+      <div class="cart-panel__empty">
+        <p>{{ 'CART.EMPTY' | translate }}</p>
+        <button type="button" (click)="closeCart()">{{ 'CART.CONTINUE' | translate }}</button>
+      </div>
+      }
+    </section>
+    }
   </div>
   }
 

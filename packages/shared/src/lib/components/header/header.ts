@@ -20,6 +20,17 @@ export interface HeaderNavigationItem {
   image: string;
 }
 
+export interface HeaderCartItem {
+  key: string;
+  productId: string;
+  sizeId: string;
+  name: string;
+  image: string;
+  size: string;
+  quantity: number;
+  price: string;
+}
+
 type HeaderNavigationMenu = 'products' | 'collections';
 
 @Component({
@@ -43,6 +54,8 @@ export class HeaderComponent {
   private preferencesCloseButton?: ElementRef<HTMLButtonElement>;
   @ViewChild('preferencesDialog')
   private preferencesDialog?: ElementRef<HTMLElement>;
+  @ViewChild('cartTrigger')
+  private cartTrigger?: ElementRef<HTMLButtonElement>;
 
   theme = input<'white' | 'black'>('white');
   mode = input<'storefront' | 'auth' | 'account'>('storefront');
@@ -50,6 +63,9 @@ export class HeaderComponent {
   currency = input<'AOA' | 'EUR'>('AOA');
   products = input<readonly HeaderNavigationItem[]>([]);
   collections = input<readonly HeaderNavigationItem[]>([]);
+  cartItems = input<readonly HeaderCartItem[]>([]);
+  cartCount = input(0);
+  cartTotal = input('');
 
   readonly activeNavigationMenu = signal<HeaderNavigationMenu | null>(null);
   readonly displayedNavigationMenu = signal<HeaderNavigationMenu>('products');
@@ -69,6 +85,8 @@ export class HeaderComponent {
   );
   readonly preferencesOpen = signal(false);
   readonly preferencesInitialized = signal(false);
+  readonly cartOpen = signal(false);
+  readonly cartInitialized = signal(false);
   readonly draftLanguage = signal<'pt' | 'fr'>('pt');
   readonly draftCurrency = signal<'AOA' | 'EUR'>('AOA');
   readonly currencyOptions = [
@@ -78,6 +96,10 @@ export class HeaderComponent {
 
   languageChange = output<'pt' | 'fr'>();
   currencyChange = output<'AOA' | 'EUR'>();
+  cartRemove = output<{ productId: string; sizeId: string }>();
+  cartIncrement = output<{ productId: string; sizeId: string }>();
+  cartDecrement = output<{ productId: string; sizeId: string }>();
+  cartCheckout = output<void>();
 
   navigationItemRoute(itemId: string): readonly string[] {
     return this.displayedNavigationMenu() === 'collections'
@@ -134,10 +156,37 @@ export class HeaderComponent {
 
       onCleanup(removeKeyListener);
     });
+
+    effect((onCleanup) => {
+      if (!this.cartOpen()) return;
+
+      const removeKeyListener = this.renderer.listen(
+        'document',
+        'keydown',
+        (event: KeyboardEvent) => {
+          if (event.key === 'Escape') this.closeCart(true);
+        },
+      );
+      const removeClickListener = this.renderer.listen(
+        'document',
+        'click',
+        (event: MouseEvent) => {
+          if (!this.elementRef.nativeElement.contains(event.target as Node)) {
+            this.closeCart();
+          }
+        },
+      );
+
+      onCleanup(() => {
+        removeKeyListener();
+        removeClickListener();
+      });
+    });
   }
 
   toggleNavigationMenu(menu: HeaderNavigationMenu): void {
     this.closePreferences(false);
+    this.closeCart();
     this.navigationMenuInitialized.set(true);
     this.displayedNavigationMenu.set(menu);
     this.activeNavigationMenu.update((activeMenu) =>
@@ -161,6 +210,7 @@ export class HeaderComponent {
 
   openPreferences(): void {
     this.closeNavigationMenu();
+    this.closeCart();
     this.preferencesInitialized.set(true);
     this.draftLanguage.set(this.currentLanguage());
     this.draftCurrency.set(this.currency());
@@ -182,6 +232,24 @@ export class HeaderComponent {
     this.languageChange.emit(this.draftLanguage());
     this.currencyChange.emit(this.draftCurrency());
     this.closePreferences();
+  }
+
+  toggleCart(): void {
+    if (this.cartOpen()) {
+      this.closeCart(true);
+      return;
+    }
+
+    this.closeNavigationMenu();
+    this.closePreferences(false);
+    this.cartInitialized.set(true);
+    this.cartOpen.set(true);
+  }
+
+  closeCart(restoreFocus = false): void {
+    if (!this.cartOpen()) return;
+    this.cartOpen.set(false);
+    if (restoreFocus) this.cartTrigger?.nativeElement.focus();
   }
 
   private keepFocusInPreferences(event: KeyboardEvent): void {

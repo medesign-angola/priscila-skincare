@@ -108,6 +108,13 @@
   opacity: 0.75;
 }
 
+.product-card__add.product-card__add--added {
+  color: #1a1917;
+  background: #fff;
+  border: 1px solid #1a1917;
+  opacity: 1;
+}
+
 .product-card__price {
   display: inline-flex;
   flex: 0 0 auto;

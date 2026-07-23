@@ -4,7 +4,7 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { HeaderService, ProductFacade } from '@org/core';
+import { CartFacade, HeaderService, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -20,6 +20,7 @@ export class FeaturedProductsSection {
   private readonly facade = inject(ProductFacade);
   private readonly headerService = inject(HeaderService);
   private readonly router = inject(Router);
+  private readonly cart = inject(CartFacade);
 
   readonly products = computed<ProductCardData[]>(() => {
     const language = this.facade.currentLanguage();
@@ -45,6 +46,7 @@ export class FeaturedProductsSection {
             false,
           ),
           available: commerce.availability === 'in-stock',
+          addedToCart: this.cart.items().some((item) => item.productId === product.id),
           badge: commerce.badge,
         },
       ];
@@ -56,6 +58,6 @@ export class FeaturedProductsSection {
   }
 
   addToCart(productId: string): void {
-    console.log('Adicionar ao carrinho:', productId);
+    this.cart.add(productId);
   }
 }

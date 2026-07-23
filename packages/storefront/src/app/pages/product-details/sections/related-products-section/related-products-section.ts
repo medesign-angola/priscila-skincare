@@ -6,7 +6,7 @@ import {
   input,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { HeaderService, Product, ProductFacade } from '@org/core';
+import { CartFacade, HeaderService, Product, ProductFacade } from '@org/core';
 import { formatPrice, ProductCard, ProductCardData } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -23,6 +23,7 @@ export class RelatedProductsSection {
   private readonly facade = inject(ProductFacade);
   private readonly header = inject(HeaderService);
   private readonly router = inject(Router);
+  private readonly cart = inject(CartFacade);
 
   readonly products = computed<ProductCardData[]>(() =>
     this.facade
@@ -59,6 +60,7 @@ export class RelatedProductsSection {
               false,
             ),
             available: commerce.availability === 'in-stock',
+            addedToCart: this.cart.items().some((item) => item.productId === candidate.id),
             badge: commerce.badge,
           },
         ];
@@ -67,5 +69,9 @@ export class RelatedProductsSection {
 
   openProduct(id: string): void {
     void this.router.navigate(['/produtos', id]);
+  }
+
+  addToCart(id: string): void {
+    this.cart.add(id);
   }
 }

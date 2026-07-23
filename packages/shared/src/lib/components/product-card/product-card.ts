@@ -23,6 +23,7 @@ export interface ProductCardData {
   currencyLabel: string;
   priceLabel: string;
   available: boolean;
+  addedToCart?: boolean;
   badge?: ProductCardBadge;
 }
 
@@ -47,7 +48,7 @@ export class ProductCard {
   }
 
   requestAddToCart(): void {
-    if (this.product().available) {
+    if (this.product().available && !this.product().addedToCart) {
       this.addToCart.emit(this.product().id);
     }
   }
