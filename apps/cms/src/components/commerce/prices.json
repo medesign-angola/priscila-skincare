@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_commerce_prices",
+  "info": {
+    "displayName": "Prices"
+  },
+  "attributes": {
+    "aoa": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "eur": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    }
+  }
+}

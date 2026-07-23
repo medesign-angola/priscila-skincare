@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_shared_media_presentations",
+  "info": {
+    "displayName": "Media presentation",
+    "description": "Responsive image/video presentation and focal point"
+  },
+  "attributes": {
+    "desktopImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "mobileImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["videos"]
+    },
+    "placeholder": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "alt": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "focalPointX": {
+      "type": "decimal",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "focalPointY": {
+      "type": "decimal",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "objectFit": {
+      "type": "enumeration",
+      "enum": ["cover", "contain"],
+      "default": "cover"
+    },
+    "hasNoise": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

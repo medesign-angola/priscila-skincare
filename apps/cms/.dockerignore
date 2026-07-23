@@ -1,0 +1,9 @@
+.cache
+.git
+.strapi
+build
+dist
+node_modules
+public/uploads
+.env
+npm-debug.log

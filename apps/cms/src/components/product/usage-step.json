@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_product_usage_steps",
+  "info": {
+    "displayName": "Usage step"
+  },
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_product_before_afters",
+  "info": {
+    "displayName": "Before and after"
+  },
+  "attributes": {
+    "before": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "after": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "beforeLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "afterLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    }
+  }
+}

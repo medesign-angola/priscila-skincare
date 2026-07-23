@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "optimize:product-images": "node tools/optimize-product-images.mjs"
+    "optimize:product-images": "node tools/optimize-product-images.mjs",
+    "cms:dev": "npm --prefix apps/cms run develop",
+    "cms:build": "npm --prefix apps/cms run build",
+    "cms:start": "npm --prefix apps/cms run start",
+    "cms:types": "npm --prefix apps/cms run types:generate"
   },
   "private": true,
   "devDependencies": {

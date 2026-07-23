@@ -49,3 +49,15 @@ Thumbs.db
 .nx/self-healing
 .nx/migrate-runs
 .angular
+
+# local environment and Strapi runtime data
+.env
+.env.*
+!.env.example
+!**/.env*.example
+apps/cms/.cache
+apps/cms/.strapi
+apps/cms/build
+apps/cms/dist
+apps/cms/public/uploads
+apps/cms/types/generated

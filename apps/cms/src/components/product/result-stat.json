@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_product_result_stats",
+  "info": {
+    "displayName": "Result statistic"
+  },
+  "attributes": {
+    "percentage": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 100
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    }
+  }
+}

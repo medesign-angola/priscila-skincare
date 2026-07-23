@@ -1,0 +1,62 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "Home page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": { "localized": true }
+  },
+  "attributes": {
+    "heroSlides": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::hero-slide.hero-slide"
+    },
+    "featuredProducts": {
+      "type": "component",
+      "repeatable": true,
+      "component": "home.product-slot"
+    },
+    "editorialCover": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.editorial-product"
+    },
+    "editorialGallery": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.editorial-product"
+    },
+    "featuredKit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::kit.kit"
+    },
+    "featuredCollection": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::collection.collection"
+    },
+    "ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
+    },
+    "testimonials": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::testimonial.testimonial"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

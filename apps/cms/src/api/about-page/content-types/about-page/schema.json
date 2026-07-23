@@ -1,0 +1,74 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "About page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": { "localized": true }
+  },
+  "attributes": {
+    "heroLabel": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "heroHeadline": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "heroDescription": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "heroMedia": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.media-presentation",
+      "required": true
+    },
+    "brandTimeline": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.text-item"
+    },
+    "founderName": {
+      "type": "string",
+      "required": true
+    },
+    "founderBiography": {
+      "type": "richtext",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "founderMedia": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.media-presentation",
+      "required": true
+    },
+    "ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

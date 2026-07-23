@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_shared_text_items",
+  "info": {
+    "displayName": "Text item"
+  },
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "cms",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "apps/cms",
+  "sourceRoot": "apps/cms/src",
+  "tags": ["type:app", "scope:cms"],
+  "targets": {
+    "develop": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run develop",
+        "cwd": "apps/cms"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "outputs": ["{workspaceRoot}/apps/cms/dist", "{workspaceRoot}/apps/cms/build"],
+      "options": {
+        "command": "npm run build",
+        "cwd": "apps/cms"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run start",
+        "cwd": "apps/cms"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "npm run typecheck",
+        "cwd": "apps/cms"
+      }
+    },
+    "generate-types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run types:generate",
+        "cwd": "apps/cms"
+      }
+    }
+  }
+}

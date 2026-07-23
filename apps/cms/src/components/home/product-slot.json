@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_home_product_slots",
+  "info": {
+    "displayName": "Product slot"
+  },
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product",
+      "required": true
+    }
+  }
+}

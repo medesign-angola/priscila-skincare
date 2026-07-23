@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_commerce_product_commerces",
+  "info": {
+    "displayName": "Product commerce"
+  },
+  "attributes": {
+    "prices": {
+      "type": "component",
+      "repeatable": false,
+      "component": "commerce.prices",
+      "required": true
+    },
+    "availability": {
+      "type": "enumeration",
+      "enum": ["in-stock", "coming-soon", "out-of-stock"],
+      "default": "in-stock",
+      "required": true
+    },
+    "stock": {
+      "type": "integer",
+      "min": 0
+    },
+    "badge": {
+      "type": "component",
+      "repeatable": false,
+      "component": "commerce.badge"
+    }
+  }
+}
