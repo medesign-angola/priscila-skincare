@@ -4,7 +4,7 @@
   "info": {
     "singularName": "hero-slide",
     "pluralName": "hero-slides",
-    "displayName": "Hero slide"
+    "displayName": "Banner da página inicial"
   },
   "options": {
     "draftAndPublish": true

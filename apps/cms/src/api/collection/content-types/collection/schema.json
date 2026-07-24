@@ -4,7 +4,7 @@
   "info": {
     "singularName": "collection",
     "pluralName": "collections",
-    "displayName": "Collection"
+    "displayName": "Coleção"
   },
   "options": {
     "draftAndPublish": true

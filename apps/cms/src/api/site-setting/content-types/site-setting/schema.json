@@ -4,7 +4,7 @@
   "info": {
     "singularName": "site-setting",
     "pluralName": "site-settings",
-    "displayName": "Site settings"
+    "displayName": "Configurações do site"
   },
   "options": {
     "draftAndPublish": true

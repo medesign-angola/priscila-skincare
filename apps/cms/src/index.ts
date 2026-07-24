@@ -1,4 +1,5 @@
 import type { Core } from '@strapi/strapi';
+import { applyPortugueseContentManager } from './admin/content-manager-portuguese';
 
 const PUBLIC_READ_CONTENT_TYPES = [
   'api::category.category',
@@ -79,6 +80,7 @@ export default {
   register() {},
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    await applyPortugueseContentManager(strapi);
     await ensureFrenchLocale(strapi);
     await ensurePublicReadPermissions(strapi);
     await seedBaseData(strapi);

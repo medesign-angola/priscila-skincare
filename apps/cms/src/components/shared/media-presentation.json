@@ -1,8 +1,8 @@
 {
   "collectionName": "components_shared_media_presentations",
   "info": {
-    "displayName": "Media presentation",
-    "description": "Responsive image/video presentation and focal point"
+    "displayName": "Apresentação de imagem ou vídeo",
+    "description": "Imagens e vídeos adaptados ao computador e ao telemóvel"
   },
   "attributes": {
     "desktopImage": {

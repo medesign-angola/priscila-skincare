@@ -1,7 +1,7 @@
 {
   "collectionName": "components_home_product_slots",
   "info": {
-    "displayName": "Product slot"
+    "displayName": "Produto destacado"
   },
   "attributes": {
     "order": {

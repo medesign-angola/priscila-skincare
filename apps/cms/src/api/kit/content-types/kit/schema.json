@@ -4,7 +4,7 @@
   "info": {
     "singularName": "kit",
     "pluralName": "kits",
-    "displayName": "Kit"
+    "displayName": "Kit de produtos"
   },
   "options": {
     "draftAndPublish": true

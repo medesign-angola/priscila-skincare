@@ -1,7 +1,7 @@
 {
   "collectionName": "components_commerce_product_commerces",
   "info": {
-    "displayName": "Product commerce"
+    "displayName": "Venda e disponibilidade"
   },
   "attributes": {
     "prices": {

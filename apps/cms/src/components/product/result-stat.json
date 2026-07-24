@@ -1,7 +1,7 @@
 {
   "collectionName": "components_product_result_stats",
   "info": {
-    "displayName": "Result statistic"
+    "displayName": "Dado de resultado"
   },
   "attributes": {
     "percentage": {

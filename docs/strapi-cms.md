@@ -44,6 +44,21 @@ stock reservations, and transactional orders remain outside the CMS boundary.
 Portuguese is configured as the initial/default locale and the bootstrap adds
 French on the first successful start.
 
+## Administrative interface
+
+The technical field identifiers used by the API are not exposed as guidance to
+the people who manage the store. On startup, the project automatically applies
+to the Content Manager:
+
+- Portuguese names for content types and reusable components;
+- clear Portuguese labels for catalog and editorial fields;
+- contextual instructions for media, relationships, ordering, and highlights;
+- Portuguese and French as available administration interface languages.
+
+This presentation is versioned with the project and is reproduced in new
+installations and production. Changing a visible label does not change the API
+field identifier or break Storefront integrations.
+
 ## Nx targets
 
 ```powershell
