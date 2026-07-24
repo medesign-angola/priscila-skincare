@@ -18,6 +18,7 @@ export class ProductPurchaseSection {
   private readonly cart = inject(CartFacade);
   readonly activeImageIndex = signal(0);
   readonly selectedSizeId = signal('');
+  readonly detailsExpanded = signal(false);
   readonly translation = computed(() => this.product().translations[this.language()]);
   readonly category = computed(() => this.facade.mappedCategories().get(this.product().categoryId));
   readonly sizes = computed(() => this.facade.getProductSizes(this.product()));
@@ -28,6 +29,7 @@ export class ProductPurchaseSection {
   );
 
   selectImage(index: number): void { this.activeImageIndex.set(index); }
+  toggleDetails(): void { this.detailsExpanded.update((expanded) => !expanded); }
   formatIndex(index: number): string { return String(index + 1).padStart(2, '0'); }
   selectSize(event: Event): void { this.selectedSizeId.set((event.target as HTMLSelectElement).value); }
   addToCart(): void { this.cart.add(this.product().id, this.selectedSizeId() || undefined); }

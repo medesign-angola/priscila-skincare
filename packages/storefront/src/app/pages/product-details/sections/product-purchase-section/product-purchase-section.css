@@ -112,8 +112,22 @@
 .purchase__details {
   gap: 1rem;
 }
-.purchase__details h2:nth-of-type(2) {
+.purchase__details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.purchase__details-content h2 {
   margin-top: 1rem;
+}
+.purchase__details-heading button {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
 }
 .purchase__details-heading span {
   display: none;
@@ -169,10 +183,20 @@
 .purchase select {
   width: 100%;
   min-height: 3rem;
-  padding: 0.75rem;
-  border: 1px solid #cfc6b9;
-  background: #fff;
+  padding: 0.75rem 3rem 0.75rem 0.75rem;
+  border: 1px solid #b8b0a5;
+  border-radius: 2px;
+  color: #6d675f;
+  background: #fff
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%236D675F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 1rem center / 1rem;
+  appearance: none;
   text-transform: uppercase;
+}
+.purchase select:focus,
+.purchase select:active {
+  outline: none;
+  box-shadow: none;
 }
 .purchase__add {
   display: flex;
@@ -269,16 +293,35 @@
     padding-top: 1.5rem;
   }
   .purchase__details-heading {
+    display: block;
+  }
+  .purchase__details-heading button {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
   }
   .purchase__details-heading span {
     display: inline;
     font-size: 1.25rem;
   }
-  .purchase__details h2:nth-of-type(2) {
+  .purchase__details-content h2 {
     margin-top: 0;
+  }
+  .purchase__details-content {
+    display: flex;
+    max-height: 0;
+    gap: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 280ms ease,
+      opacity 180ms ease;
+  }
+  .purchase__details-content.is-expanded {
+    max-height: 40rem;
+    gap: 1.5rem;
+    opacity: 1;
   }
   .purchase__details ul {
     flex-direction: column;
@@ -292,5 +335,8 @@
   }
   .purchase__add {
     min-height: 3.3125rem;
+  }
+  .purchase__image-number {
+    display: none;
   }
 }
