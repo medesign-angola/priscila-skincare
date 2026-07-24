@@ -45,6 +45,26 @@
   text-transform: uppercase;
 }
 
+.testimonial-card__timer {
+  position: absolute;
+  right: clamp(0.5rem, 0.556vw, 1rem);
+  bottom: clamp(3rem, 3.333vw, 4rem);
+  z-index: 1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.125rem;
+  color: #fff;
+  background: rgb(26 25 23 / 45%);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  backdrop-filter: blur(0.25rem);
+  transition: opacity 180ms ease;
+}
+
+.testimonial-card__timer.is-active {
+  opacity: 1;
+}
+
 .testimonials h2 {
   max-width: 18rem;
   padding-top: clamp(0.5rem, 0.833vw, 1rem);

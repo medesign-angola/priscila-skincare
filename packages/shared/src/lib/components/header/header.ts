@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   Renderer2,
   ViewChild,
@@ -11,8 +12,10 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 
 export interface HeaderNavigationItem {
   id: string;
@@ -43,6 +46,8 @@ type HeaderNavigationMenu = 'products' | 'collections';
 export class HeaderComponent {
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   @ViewChild('productsMenuTrigger')
   private productsMenuTrigger?: ElementRef<HTMLButtonElement>;
@@ -108,6 +113,17 @@ export class HeaderComponent {
   }
 
   constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationStart => event instanceof NavigationStart),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.closeNavigationMenu();
+        this.closePreferences(false);
+        this.closeCart();
+      });
+
     effect((onCleanup) => {
       if (!this.activeNavigationMenu()) return;
 

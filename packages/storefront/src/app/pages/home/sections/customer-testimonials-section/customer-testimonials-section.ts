@@ -41,6 +41,9 @@ export class CustomerTestimonialsSection {
   readonly activeTestimonialId = signal<string | null>(null);
   readonly playingVideoIds = signal<ReadonlySet<string>>(new Set());
   readonly unmutedVideoIds = signal<ReadonlySet<string>>(new Set());
+  readonly videoTimes = signal<
+    ReadonlyMap<string, { current: number; duration: number }>
+  >(new Map());
   readonly presentation = this.facade.homeTestimonials;
   readonly reviewsSummary = this.facade.globalReviewsSummary;
 
@@ -153,6 +156,24 @@ export class CustomerTestimonialsSection {
 
   onVideoPause(testimonialId: string): void {
     this.updatePlayingState(testimonialId, false);
+  }
+
+  updateVideoTime(testimonialId: string, video: HTMLVideoElement): void {
+    this.videoTimes.update((times) => {
+      const next = new Map(times);
+      next.set(testimonialId, {
+        current: Number.isFinite(video.currentTime) ? video.currentTime : 0,
+        duration: Number.isFinite(video.duration) ? video.duration : 0,
+      });
+      return next;
+    });
+  }
+
+  videoTimer(testimonialId: string): string {
+    const time = this.videoTimes().get(testimonialId);
+    return `${this.formatTime(time?.current ?? 0)} / ${this.formatTime(
+      time?.duration ?? 0,
+    )}`;
   }
 
   onVideoEnded(testimonialId: string, pageIndex: number): void {
@@ -276,5 +297,13 @@ export class CustomerTestimonialsSection {
       else nextIds.delete(testimonialId);
       return nextIds;
     });
+  }
+
+  private formatTime(seconds: number): string {
+    const rounded = Math.max(0, Math.floor(seconds));
+    const minutes = Math.floor(rounded / 60);
+    return `${String(minutes).padStart(2, '0')}:${String(
+      rounded % 60,
+    ).padStart(2, '0')}`;
   }
 }

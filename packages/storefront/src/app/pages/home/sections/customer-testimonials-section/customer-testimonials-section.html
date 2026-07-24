@@ -80,10 +80,17 @@
                 (play)="onVideoPlay(testimonial.id)"
                 (pause)="onVideoPause(testimonial.id)"
                 (ended)="onVideoEnded(testimonial.id, pageIndex)"
+                (loadedmetadata)="updateVideoTime(testimonial.id, testimonialVideo)"
+                (timeupdate)="updateVideoTime(testimonial.id, testimonialVideo)"
               ></video>
 
               <span class="testimonial-card__author"
                 >{{ testimonial.authorLabel }}</span
+              >
+              <span
+                class="testimonial-card__timer"
+                [class.is-active]="activeTestimonialId() === testimonial.id"
+                >{{ videoTimer(testimonial.id) }}</span
               >
 
               <button
