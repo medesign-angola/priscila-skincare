@@ -7,10 +7,11 @@ import {
 } from '@angular/core';
 import { Product } from '@org/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CountUpDirective } from '@org/shared';
 
 @Component({
   selector: 'app-product-results-section',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, CountUpDirective],
   templateUrl: './product-results-section.html',
   styleUrl: './product-results-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

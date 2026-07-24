@@ -2,5 +2,5 @@
   <div class="brand__noise"></div>
   <picture class="brand__picture"><source media="(max-width: 800px)" srcset="/assets/images/about/about-brand-mobile.webp" /><img class="brand__image" src="/assets/images/about/about-brand.webp" [alt]="'ABOUT.BRAND.IMAGE_ALT' | translate" width="1440" height="1722" loading="lazy" /></picture>
   <p class="brand__label">{{ 'ABOUT.BRAND.LABEL' | translate }}</p>
-  <div class="brand__content"><div class="brand__metrics">@for(metric of metrics;track metric.value){<article><strong>{{metric.value}}</strong><p><b>{{metric.labelKey | translate}}</b> {{metric.descriptionKey | translate}}</p></article>}</div><footer><h2>{{ 'ABOUT.BRAND.FOOTER_TITLE' | translate }}</h2><p>{{ 'ABOUT.BRAND.FOOTER_DESCRIPTION' | translate }}</p></footer></div>
+  <div class="brand__content"><div class="brand__metrics">@for(metric of metrics;track metric.value){<article><strong [orgCountUp]="metric.value">{{metric.value}}</strong><p><b>{{metric.labelKey | translate}}</b> {{metric.descriptionKey | translate}}</p></article>}</div><footer><h2>{{ 'ABOUT.BRAND.FOOTER_TITLE' | translate }}</h2><p>{{ 'ABOUT.BRAND.FOOTER_DESCRIPTION' | translate }}</p></footer></div>
 </section>

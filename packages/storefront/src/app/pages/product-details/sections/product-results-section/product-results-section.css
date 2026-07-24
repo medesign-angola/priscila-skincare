@@ -103,7 +103,7 @@
 }
 .results__divider::after {
   position: absolute;
-  top: 88%;
+  top: 50%;
   left: 50%;
   display: grid;
   width: 3rem;

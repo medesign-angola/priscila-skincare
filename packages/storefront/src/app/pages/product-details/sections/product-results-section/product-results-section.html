@@ -5,7 +5,7 @@
     <div class="results__metrics">
       @for (item of result.data; track item.percentage) {
       <article>
-        <strong>{{ item.percentage }}%</strong>
+        <strong [orgCountUp]="item.percentage + '%'">{{ item.percentage }}%</strong>
         <p>{{ item.description }}</p>
       </article>
       }
