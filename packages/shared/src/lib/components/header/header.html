@@ -2,9 +2,32 @@
   class="site-header absolute top-0 left-0 w-full z-50 py-4 px-10 flex justify-between items-center transition-colors duration-300 pointer-events-auto"
   [class.site-header--auth]="mode() === 'auth'"
   [class.site-header--account]="mode() === 'account'"
+  [class.site-header--mobile-open]="mobileMenuOpen()"
+  [class.site-header--mobile-submenu]="
+    mobileMenuRendered() && mobileNavigationPanel() !== 'main'
+  "
   [class.text-white]="theme() === 'white'"
   [class.text-[#1a1917]]="theme() === 'black'"
 >
+  <ng-template #mobileArrowRight>
+    <svg
+      class="mobile-navigation__arrow"
+      aria-hidden="true"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M5 12H19M13 6L19 12L13 18"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </ng-template>
+
   <!-- 1. Esquerda: Navegação -->
   @if (mode() === 'storefront') {
   <nav class="site-header__navigation flex items-center gap-8 text-sm uppercase">
@@ -80,6 +103,156 @@
       />
     </svg>
   </div>
+
+  @if (mode() === 'storefront') {
+  <div class="mobile-header__controls">
+    <button
+      type="button"
+      class="mobile-header__preferences"
+      (click)="openPreferences()"
+    >
+      <span>
+        {{ currentLanguage().toUpperCase() }} / {{ currency() === 'AOA' ? 'Kz' : '€' }}
+      </span>
+      <svg
+        aria-hidden="true"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M15.75 12C15.75 18 12 21 12 21C12 21 8.25 18 8.25 12C8.25 6 12 3 12 3C12 3 15.75 6 15.75 12Z"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path d="M3.51196 9H20.4882" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path d="M3.51196 15H20.4882" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="mobile-header__actions">
+      <button
+        type="button"
+        class="mobile-header__cart"
+        [attr.aria-label]="'CART.OPEN' | translate"
+        (click)="toggleCart()"
+      >
+        <span>{{ cartCount() }}</span>
+      </button>
+      <button
+        type="button"
+        class="mobile-header__toggle"
+        [attr.aria-label]="(mobileMenuOpen() ? 'HEADER.CLOSE_MENU' : 'HEADER.MENU') | translate"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        (click)="toggleMobileNavigation()"
+      >
+        @if (mobileMenuOpen()) {
+          <!-- <span class="mobile-header__close" aria-hidden="true"></span> -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_656_12853)">
+            <path d="M18.75 5.25L5.25 18.75" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.75 18.75L5.25 5.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_656_12853">
+            <rect width="24" height="24" fill="currentColor"/>
+            </clipPath>
+            </defs>
+          </svg>
+        } @else {
+          <!-- <span class="mobile-header__hamburger" aria-hidden="true"></span> -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_656_12994)">
+            <path d="M3.75 12H20.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.75 6H20.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.75 18H20.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_656_12994">
+            <rect width="24" height="24" fill="currentColor"/>
+            </clipPath>
+            </defs>
+          </svg>
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (mobileMenuRendered()) {
+  <section
+    class="mobile-navigation"
+    [class.mobile-navigation--open]="mobileMenuOpen()"
+    [class.mobile-navigation--submenu]="mobileNavigationPanel() !== 'main'"
+    [attr.aria-hidden]="!mobileMenuOpen()"
+    [attr.inert]="mobileMenuOpen() ? null : ''"
+    data-lenis-prevent
+  >
+    @if (mobileNavigationPanel() === 'main') {
+      <nav class="mobile-navigation__main">
+        <button type="button" (click)="openMobileSubmenu('products')">
+          <span class=" font-['cormorant']!">{{ 'HEADER.PRODUCTS' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </button>
+        <button type="button" (click)="openMobileSubmenu('collections')">
+          <span class=" font-['cormorant']!">{{ 'HEADER.COLLECTIONS' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </button>
+        <a routerLink="/sobre">
+          <span class=" font-['cormorant']!">{{ 'HEADER.ABOUT' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </a>
+      </nav>
+      <div class="mobile-navigation__footer">
+        <a routerLink="/produtos" class="px-6">
+          <span>{{ 'NAVIGATION_MENU.VIEW_ALL' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </a>
+        <a routerLink="/entrar" class="px-6">
+          <span>{{ 'HEADER.PERSONAL_AREA' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </a>
+      </div>
+    } @else {
+      <div class="mobile-navigation__submenu">
+        <button
+          type="button"
+          class="mobile-navigation__back"
+          [attr.aria-label]="'HEADER.BACK' | translate"
+          (click)="mobileNavigationPanel.set('main')"
+        >
+          <span class="mobile-navigation__back-icon">
+            <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+          </span>
+        </button>
+        <ul>
+          @for (item of navigationMenuItems(); track item.id; let index = $index) {
+          <li>
+            <a [routerLink]="navigationItemRoute(item.id)">
+              <span class="mobile-navigation__index">{{ formatIndex(index) }}</span>
+              <span class="mobile-navigation__name">{{ item.name }}</span>
+              <img [src]="item.image" [alt]="item.name" width="40" height="40" />
+            </a>
+          </li>
+          }
+        </ul>
+        <a class="mobile-navigation__all px-6" [routerLink]="navigationMenuRoute()">
+          <span>{{ 'NAVIGATION_MENU.VIEW_ALL' | translate }}</span>
+          <ng-container [ngTemplateOutlet]="mobileArrowRight" />
+        </a>
+      </div>
+    }
+  </section>
+  }
+  }
 
   @if (mode() === 'storefront') {
   <div

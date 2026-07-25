@@ -12,7 +12,7 @@
       "SAFETY_CERTIFIED": { "TITLE": "Certificado de segurança", "DESCRIPTION": "Todos os nossos produtos são certificados e feitos para sua segurança." }
     }
   },
-  "HEADER": { "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "ABOUT": "Sobre" },
+  "HEADER": { "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "ABOUT": "Sobre", "PERSONAL_AREA": "Área pessoal", "MENU": "Abrir menu", "CLOSE_MENU": "Fechar menu", "BACK": "Voltar" },
   "NAVIGATION_MENU": { "VIEW_ALL": "Ver todos" },
   "PREFERENCES": {
     "TITLE": "Linguagem e moeda", "CLOSE": "Fechar preferências", "LANGUAGE_LABEL": "Idioma",

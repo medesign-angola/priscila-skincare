@@ -2,6 +2,10 @@
   display: block;
 }
 
+.hero-cta__arrow {
+  display: none;
+}
+
 .hero-container {
   background: var(--burgundy-800, #5f4d35);
   isolation: isolate;
@@ -27,6 +31,10 @@
   pointer-events: auto;
   animation: hero-banner-reveal 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
   transition-delay: 0s;
+}
+
+.hero-slide-overlay {
+  display: none;
 }
 
 @keyframes hero-banner-reveal {
@@ -56,6 +64,22 @@ button,
   .slide-wrapper org-hero-split {
     width: 100%;
     height: 100%;
+  }
+
+  .hero-slide-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    pointer-events: none;
+    background:
+      linear-gradient(
+        180deg,
+        rgb(95 77 53 / 0.06) 16%,
+        rgb(95 77 53 / 0.18) 45%,
+        rgb(62 51 38 / 0.58) 76%,
+        rgb(62 51 38 / 0.78) 100%
+      );
   }
 
   .hero-content-layer > div {
@@ -100,6 +124,7 @@ button,
 
   .main-content h1 {
     max-width: min(100%, 20rem);
+    padding-left: 0.125rem;
     font-size: clamp(2.25rem, 10.667vw, 2.5rem) !important;
     text-wrap: balance;
   }
@@ -109,11 +134,23 @@ button,
     min-height: 3rem;
   }
 
-  .main-content > button span:last-child {
+  .main-content > button span:nth-child(2) {
     display: none;
   }
 
-  .hero--content > div:last-child {
+  .hero-cta__arrow {
+    display: block;
+  }
+
+  .hero-content-layer > div,
+  .hero--content,
+  .box-content,
+  .main-content {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  .hero-video-control {
     position: absolute;
     right: 1rem;
     bottom: 1.5rem;

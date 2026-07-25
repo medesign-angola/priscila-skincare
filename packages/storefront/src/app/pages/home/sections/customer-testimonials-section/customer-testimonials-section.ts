@@ -32,6 +32,10 @@ export class CustomerTestimonialsSection {
     viewChildren<ElementRef<HTMLVideoElement>>('testimonialVideo');
   private intersectionObserver: IntersectionObserver | null = null;
   private playbackTimeout: ReturnType<typeof setTimeout> | null = null;
+  private readonly pageScrollTimeouts = new Map<
+    number,
+    ReturnType<typeof setTimeout>
+  >();
   private isSectionVisible = false;
   private autoplayEnabled = true;
   private sequencePausedByUser = false;
@@ -88,6 +92,9 @@ export class CustomerTestimonialsSection {
       this.destroyed = true;
       this.intersectionObserver?.disconnect();
       if (this.playbackTimeout) clearTimeout(this.playbackTimeout);
+      for (const timeout of this.pageScrollTimeouts.values()) {
+        clearTimeout(timeout);
+      }
     });
   }
 
@@ -189,6 +196,48 @@ export class CustomerTestimonialsSection {
     const nextTestimonial = page[(currentIndex + 1) % page.length];
     this.activeTestimonialId.set(nextTestimonial.id);
     this.playSelectedVideo();
+  }
+
+  onPageScroll(pageIndex: number, container: HTMLElement): void {
+    const currentTimeout = this.pageScrollTimeouts.get(pageIndex);
+    if (currentTimeout) clearTimeout(currentTimeout);
+
+    this.pageScrollTimeouts.set(
+      pageIndex,
+      setTimeout(() => {
+        if (this.destroyed || pageIndex !== this.activePage()) return;
+
+        const cards = Array.from(
+          container.querySelectorAll<HTMLElement>('.testimonial-card'),
+        );
+        const containerCenter =
+          container.getBoundingClientRect().left + container.clientWidth / 2;
+        const centeredCard = cards.reduce<HTMLElement | null>(
+          (closest, card) => {
+            if (!closest) return card;
+            const cardDistance = Math.abs(
+              card.getBoundingClientRect().left +
+                card.clientWidth / 2 -
+                containerCenter,
+            );
+            const closestDistance = Math.abs(
+              closest.getBoundingClientRect().left +
+                closest.clientWidth / 2 -
+                containerCenter,
+            );
+            return cardDistance < closestDistance ? card : closest;
+          },
+          null,
+        );
+        const testimonialId = centeredCard?.dataset['testimonialId'];
+        if (!testimonialId || testimonialId === this.activeTestimonialId()) return;
+
+        this.sequencePausedByUser = false;
+        this.activeTestimonialId.set(testimonialId);
+        this.pauseAllVideos(testimonialId);
+        this.playSelectedVideo();
+      }, 120),
+    );
   }
 
   isPlaying(testimonialId: string): boolean {

@@ -205,7 +205,7 @@
 @media (max-width: 600px) {
   .product-card {
     gap: 1rem;
-    padding: 0.75rem;
+    padding: 0.5rem;
     border: 1.5px solid var(--border-default, #ddd7ce);
     border-radius: 0.125rem;
   }

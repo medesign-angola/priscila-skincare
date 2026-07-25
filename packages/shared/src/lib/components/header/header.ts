@@ -11,7 +11,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,6 +35,7 @@ export interface HeaderCartItem {
 }
 
 type HeaderNavigationMenu = 'products' | 'collections';
+type MobileNavigationPanel = 'main' | HeaderNavigationMenu;
 
 @Component({
   selector: 'org-header',
@@ -44,10 +45,13 @@ type HeaderNavigationMenu = 'products' | 'collections';
   styleUrl: './header.css',
 })
 export class HeaderComponent {
+  private static readonly mobileNavigationTransitionMs = 260;
+
   private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly renderer = inject(Renderer2);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   @ViewChild('productsMenuTrigger')
   private productsMenuTrigger?: ElementRef<HTMLButtonElement>;
@@ -92,6 +96,9 @@ export class HeaderComponent {
   readonly preferencesInitialized = signal(false);
   readonly cartOpen = signal(false);
   readonly cartInitialized = signal(false);
+  readonly mobileMenuOpen = signal(false);
+  readonly mobileMenuRendered = signal(false);
+  readonly mobileNavigationPanel = signal<MobileNavigationPanel>('main');
   readonly draftLanguage = signal<'pt' | 'fr'>('pt');
   readonly draftCurrency = signal<'AOA' | 'EUR'>('AOA');
   readonly currencyOptions = [
@@ -105,6 +112,8 @@ export class HeaderComponent {
   cartIncrement = output<{ productId: string; sizeId: string }>();
   cartDecrement = output<{ productId: string; sizeId: string }>();
   cartCheckout = output<void>();
+  private mobileNavigationCloseTimeout: ReturnType<typeof setTimeout> | null =
+    null;
 
   navigationItemRoute(itemId: string): readonly string[] {
     return this.displayedNavigationMenu() === 'collections'
@@ -113,6 +122,12 @@ export class HeaderComponent {
   }
 
   constructor() {
+    this.destroyRef.onDestroy(() => {
+      if (this.mobileNavigationCloseTimeout) {
+        clearTimeout(this.mobileNavigationCloseTimeout);
+      }
+    });
+
     this.router.events
       .pipe(
         filter((event): event is NavigationStart => event instanceof NavigationStart),
@@ -122,7 +137,14 @@ export class HeaderComponent {
         this.closeNavigationMenu();
         this.closePreferences(false);
         this.closeCart();
+        this.closeMobileNavigation();
       });
+
+    effect((onCleanup) => {
+      if (!this.mobileMenuRendered()) return;
+      this.renderer.setStyle(this.document.body, 'overflow', 'hidden');
+      onCleanup(() => this.renderer.removeStyle(this.document.body, 'overflow'));
+    });
 
     effect((onCleanup) => {
       if (!this.activeNavigationMenu()) return;
@@ -210,6 +232,43 @@ export class HeaderComponent {
     );
   }
 
+  toggleMobileNavigation(): void {
+    if (this.mobileMenuOpen()) {
+      this.closeMobileNavigation();
+      return;
+    }
+
+    this.closeNavigationMenu();
+    this.closePreferences(false);
+    this.closeCart();
+    if (this.mobileNavigationCloseTimeout) {
+      clearTimeout(this.mobileNavigationCloseTimeout);
+      this.mobileNavigationCloseTimeout = null;
+    }
+    this.mobileNavigationPanel.set('main');
+    this.mobileMenuRendered.set(true);
+    this.mobileMenuOpen.set(true);
+  }
+
+  openMobileSubmenu(menu: HeaderNavigationMenu): void {
+    this.displayedNavigationMenu.set(menu);
+    this.mobileNavigationPanel.set(menu);
+  }
+
+  closeMobileNavigation(): void {
+    if (!this.mobileMenuRendered()) return;
+
+    this.mobileMenuOpen.set(false);
+    if (this.mobileNavigationCloseTimeout) {
+      clearTimeout(this.mobileNavigationCloseTimeout);
+    }
+    this.mobileNavigationCloseTimeout = setTimeout(() => {
+      this.mobileMenuRendered.set(false);
+      this.mobileNavigationPanel.set('main');
+      this.mobileNavigationCloseTimeout = null;
+    }, HeaderComponent.mobileNavigationTransitionMs);
+  }
+
   closeNavigationMenu(restoreFocus = false): void {
     const activeMenu = this.activeNavigationMenu();
     if (!activeMenu) return;
@@ -225,6 +284,7 @@ export class HeaderComponent {
   }
 
   openPreferences(): void {
+    this.closeMobileNavigation();
     this.closeNavigationMenu();
     this.closeCart();
     this.preferencesInitialized.set(true);
@@ -256,6 +316,7 @@ export class HeaderComponent {
       return;
     }
 
+    this.closeMobileNavigation();
     this.closeNavigationMenu();
     this.closePreferences(false);
     this.cartInitialized.set(true);
