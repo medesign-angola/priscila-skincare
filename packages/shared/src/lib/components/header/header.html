@@ -405,12 +405,20 @@
     @if (cartInitialized()) {
     <section
       id="shopping-cart-panel"
-      class="cart-panel"
+      class="cart-panel px-4 pb-5"
       [class.cart-panel--open]="cartOpen()"
       [attr.aria-hidden]="!cartOpen()"
       [attr.inert]="cartOpen() ? null : ''"
       data-lenis-prevent
     >
+      <button
+        type="button"
+        class="text-(--primary) pt-8 uppercase font-semibold"
+        (click)="closeCart()"
+      >
+        {{ 'CART.CLOSE' | translate }}
+      </button>
+
       <h2>{{ 'CART.TITLE' | translate: { count: cartCount() } }}</h2>
 
       @if (cartItems().length > 0) {
