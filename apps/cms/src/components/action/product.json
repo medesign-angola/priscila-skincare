@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_action_products",
+  "info": {
+    "displayName": "Comprar ou ver um produto",
+    "description": "Leva o cliente diretamente para um produto do catálogo."
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "default": "COMPRAR PRODUTO",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product",
+      "required": true
+    }
+  }
+}

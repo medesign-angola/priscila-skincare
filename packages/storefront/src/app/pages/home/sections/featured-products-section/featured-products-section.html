@@ -8,7 +8,11 @@
       {{ 'FEATURED_PRODUCTS.TITLE' | translate }}
     </h2>
 
-    <div class="featured-products__cards" role="list">
+    <div
+      class="featured-products__cards"
+      [class.featured-products__cards--sparse]="products().length < 3"
+      role="list"
+    >
       @for (product of products(); track product.id) {
       <org-product-card
         role="listitem"

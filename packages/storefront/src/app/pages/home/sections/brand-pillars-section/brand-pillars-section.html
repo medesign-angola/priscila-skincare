@@ -4,10 +4,18 @@
   data-node-id="161:3390"
 >
   <h2 id="brand-pillars-title" class="sr-only">
-    {{ 'HOME.BRAND_PILLARS.LABEL' | translate }}
+    @if (content(); as section) { {{ section.title }} } @else { {{ 'HOME.BRAND_PILLARS.LABEL' | translate }} }
   </h2>
 
   <div class="brand-pillars__list" role="list">
+    @if (content(); as section) {
+    @for (pillar of section.items; track pillar.order) {
+    <article class="brand-pillars__item" role="listitem">
+      <h3 class="brand-pillars__title">{{ pillar.title }}</h3>
+      <p class="brand-pillars__description">{{ pillar.description }}</p>
+    </article>
+    }
+    } @else {
     @for (pillar of pillars; track pillar.titleKey) {
     <article class="brand-pillars__item" role="listitem">
       <h3 class="brand-pillars__title">{{ pillar.titleKey | translate }}</h3>
@@ -15,6 +23,7 @@
         {{ pillar.descriptionKey | translate }}
       </p>
     </article>
+    }
     }
   </div>
 </section>

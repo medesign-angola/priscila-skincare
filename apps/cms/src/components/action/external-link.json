@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_action_external_links",
+  "info": {
+    "displayName": "Abrir um endereço externo",
+    "description": "Utilize somente para páginas que não pertencem à loja."
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "url": {
+      "type": "string",
+      "required": true,
+      "regex": "^https?:\\/\\/.+"
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

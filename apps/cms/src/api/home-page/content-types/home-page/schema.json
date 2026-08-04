@@ -10,7 +10,9 @@
     "draftAndPublish": true
   },
   "pluginOptions": {
-    "i18n": { "localized": true }
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "heroSlides": {
@@ -20,18 +22,19 @@
     },
     "featuredProducts": {
       "type": "component",
+      "component": "home.product-slot",
       "repeatable": true,
-      "component": "home.product-slot"
+      "max": 4
     },
     "editorialCover": {
       "type": "component",
-      "repeatable": false,
-      "component": "home.editorial-product"
+      "component": "home.editorial-product",
+      "repeatable": false
     },
     "editorialGallery": {
       "type": "component",
-      "repeatable": false,
-      "component": "home.editorial-product"
+      "component": "home.editorial-gallery-product",
+      "repeatable": false
     },
     "featuredKit": {
       "type": "relation",
@@ -44,19 +47,24 @@
       "target": "api::collection.collection"
     },
     "ingredients": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::ingredient.ingredient"
+      "type": "component",
+      "component": "home.ingredients-presentation",
+      "repeatable": false
     },
     "testimonials": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::testimonial.testimonial"
+      "type": "component",
+      "component": "home.testimonials-presentation",
+      "repeatable": false
+    },
+    "brandPillars": {
+      "type": "component",
+      "component": "about.pillars-section",
+      "repeatable": false
     },
     "seo": {
       "type": "component",
-      "repeatable": false,
-      "component": "shared.seo"
+      "component": "shared.seo",
+      "repeatable": false
     }
   }
 }

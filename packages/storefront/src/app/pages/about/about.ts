@@ -7,5 +7,21 @@ import { AboutPillarsSection } from './sections/about-pillars-section/about-pill
 import { AboutFounderSection } from './sections/about-founder-section/about-founder-section';
 import { AboutLocationsSection } from './sections/about-locations-section/about-locations-section';
 
-@Component({selector:'app-about',imports:[AboutHeroSection,AboutBrandSection,AboutPillarsSection,AboutFounderSection,IngredientsSectionComponent,AboutLocationsSection],templateUrl:'./about.html',styleUrl:'./about.css',changeDetection:ChangeDetectionStrategy.OnPush})
-export class About { readonly ingredients = inject(ProductFacade).homeIngredients; }
+@Component({
+  selector: 'app-about',
+  standalone: true,
+  imports: [
+    AboutHeroSection,
+    AboutBrandSection,
+    AboutPillarsSection,
+    AboutFounderSection,
+    IngredientsSectionComponent,
+    AboutLocationsSection,
+  ],
+  templateUrl: './about.html',
+  styleUrl: './about.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class About {
+  readonly ingredients = inject(ProductFacade).aboutIngredients;
+}

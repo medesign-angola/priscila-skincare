@@ -5,9 +5,34 @@
   },
   "attributes": {
     "type": {
-      "type": "enumeration",
-      "enum": ["discount", "new", "coming-soon"],
-      "required": true
+      "type": "customField",
+      "required": true,
+      "default": "none",
+      "customField": "global::friendly-select",
+      "options": {
+        "choices": [
+          {
+            "value": "none",
+            "label": "Nenhum selo",
+            "description": "O produto será apresentado sem etiqueta adicional."
+          },
+          {
+            "value": "discount",
+            "label": "Produto com desconto",
+            "description": "Apresenta a percentagem de desconto no card do produto."
+          },
+          {
+            "value": "new",
+            "label": "Novo produto",
+            "description": "Identifica o produto como uma novidade."
+          },
+          {
+            "value": "coming-soon",
+            "label": "Disponível em breve",
+            "description": "Indica que o produto ainda não está disponível para compra."
+          }
+        ]
+      }
     },
     "percentage": {
       "type": "integer",

@@ -1,27 +1,59 @@
 @let ingredients = content();
 <section class="ingredients" aria-labelledby="ingredients-title">
   <div class="ingredients__heading">
-    <h2 id="ingredients-title">{{ 'PRODUCT_DETAILS.INGREDIENTS.TITLE' | translate }}</h2>
+    <h2 id="ingredients-title">
+      {{ 'PRODUCT_DETAILS.INGREDIENTS.TITLE' | translate }}
+    </h2>
   </div>
   <div class="ingredients__body">
     <div class="ingredients__content">
       <div class="ingredients__images">
-        @for (image of ingredients.mainIngredientsImages.slice(0, 2); track
-        image) {
-        <img [src]="image" alt="" loading="lazy" />
+        @for (
+          image of ingredients.mainIngredientsImages.slice(0, 2);
+          track image
+        ) {
+          <img [src]="image" alt="" loading="lazy" />
         }
       </div>
-      <div class="ingredients__items">
-        @for (item of items().slice(0, 4); track item.name) {
-        <article>
-          <h3>{{ item.name || ('PRODUCT_DETAILS.INGREDIENTS.COMPLEMENTARY_ACTIVES' | translate) }}</h3>
-          <p>{{ item.description }}</p>
-        </article>
+      <div
+        id="product-ingredients-list"
+        class="ingredients__items"
+        [class.ingredients__items--expanded]="expanded()"
+        [style.--ingredient-rows]="ingredientRows()"
+      >
+        @for (item of visibleItems(); track item.name) {
+          <article>
+            <h3>
+              {{
+                item.name ||
+                  ('PRODUCT_DETAILS.INGREDIENTS.COMPLEMENTARY_ACTIVES'
+                    | translate)
+              }}
+            </h3>
+            <p>{{ item.description }}</p>
+          </article>
         }
       </div>
-      <button type="button">
-        {{ 'PRODUCT_DETAILS.INGREDIENTS.VIEW_ALL' | translate }} <span aria-hidden="true">→</span>
-      </button>
+      @if (hasHiddenItems()) {
+        <button
+          type="button"
+          [attr.aria-expanded]="expanded()"
+          aria-controls="product-ingredients-list"
+          (click)="toggleIngredients()"
+        >
+          {{
+            (expanded()
+              ? 'PRODUCT_DETAILS.INGREDIENTS.SHOW_LESS'
+              : 'PRODUCT_DETAILS.INGREDIENTS.VIEW_ALL') | translate
+          }}
+          <span
+            class="ingredients__button-arrow"
+            [class.ingredients__button-arrow--expanded]="expanded()"
+            aria-hidden="true"
+            >→</span
+          >
+        </button>
+      }
     </div>
     <div class="ingredients__editorial-frame">
       <img

@@ -15,9 +15,6 @@
       "repeatable": false,
       "component": "shared.media-presentation",
       "required": true
-    },
-    "galleryImageIndexes": {
-      "type": "json"
     }
   }
 }

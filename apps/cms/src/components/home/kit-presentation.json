@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_home_kit_presentations",
+  "info": {
+    "displayName": "Apresentação do kit na página inicial",
+    "description": "Textos e posição usados na área editorial e na lista Encontrar."
+  },
+  "options": {},
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1
+    },
+    "editorialTitle": {
+      "type": "string"
+    },
+    "editorialDescription": {
+      "type": "text"
+    },
+    "editorialFootnote": {
+      "type": "text"
+    },
+    "finderDescription": {
+      "type": "string"
+    }
+  }
+}

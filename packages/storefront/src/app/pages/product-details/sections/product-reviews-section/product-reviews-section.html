@@ -1,37 +1,70 @@
 @let reviewData = reviews();
-<section class="reviews" aria-labelledby="reviews-title">
+<section id="avaliacoes" class="reviews" aria-labelledby="reviews-title">
   <div class="reviews__summary">
     <h2 id="reviews-title">
       {{ 'PRODUCT_DETAILS.REVIEWS.TITLE' | translate }}
     </h2>
-    <strong>{{ reviewData.averageRating }}</strong>
+    <strong>{{ reviewData.averageRating | number: '1.1-1' }}</strong>
     <div class="reviews__stars" aria-hidden="true">★★★★★</div>
-    <button type="button">
-      <span>{{ 'PRODUCT_DETAILS.REVIEWS.LEAVE_REVIEW' | translate }}</span><span aria-hidden="true">→</span>
-    </button>
+    <a class="reviews__action" [routerLink]="reviewRoute()">
+      <span>
+        {{ (ownReview()
+          ? 'PRODUCT_DETAILS.REVIEWS.EDIT_REVIEW'
+          : 'PRODUCT_DETAILS.REVIEWS.LEAVE_REVIEW') | translate }}
+      </span>
+      <span aria-hidden="true">→</span>
+    </a>
   </div>
+
   <div class="reviews__list">
-    @for (review of visibleReviews(); track $index; let index = $index) {
-    <article>
+    @for (review of visibleReviews(); track review.id ?? $index; let index = $index) {
+    <article [class.reviews__item--own]="review.isOwn">
       <header>
         <span class="reviews__index">{{ formatIndex(index) }}</span>
+
+        @if (review.isOwn) {
+        <div class="reviews__owner">
+          <div>
+            <span class="reviews__you">
+              {{ 'PRODUCT_DETAILS.REVIEWS.YOU' | translate }}
+            </span>
+            <span class="reviews__edited">
+              {{ 'PRODUCT_DETAILS.REVIEWS.EDITED_NOW' | translate }}
+            </span>
+          </div>
+          <time [attr.datetime]="review.updatedAt">
+            {{ review.updatedAt | date: 'dd/MM/yyyy' }}
+          </time>
+        </div>
+        } @else {
         <strong>{{ review.name }}</strong>
-        <span class="reviews__rating"
-          ><span aria-hidden="true">★★★★★</span> {{ review.rating }}</span
-        >
+        }
+
+        <span class="reviews__rating">
+          <span aria-hidden="true">★★★★★</span>
+          {{ review.rating }}
+        </span>
       </header>
+
       <div class="reviews__copy">
-        <strong>{{ 'PRODUCT_DETAILS.REVIEWS.EXCELLENT_PRODUCT' | translate }}</strong>
+        <strong>
+          {{ review.title
+            || ('PRODUCT_DETAILS.REVIEWS.EXCELLENT_PRODUCT' | translate) }}
+        </strong>
         <p>“{{ review.comment }}”</p>
       </div>
     </article>
-    } @if (reviewData.userReviews.length > 4) {
+    }
+
+    @if (reviewData.totalReviews > 4) {
     <button
       class="reviews__more"
       type="button"
-      (click)="expanded.set(!expanded())"
+      (click)="toggleExpanded()"
     >
-      {{ (expanded() ? 'PRODUCT_DETAILS.REVIEWS.SHOW_LESS' : 'PRODUCT_DETAILS.REVIEWS.LOAD_MORE') | translate }}
+      {{ (expanded()
+        ? 'PRODUCT_DETAILS.REVIEWS.SHOW_LESS'
+        : 'PRODUCT_DETAILS.REVIEWS.LOAD_MORE') | translate }}
       <span aria-hidden="true">{{ expanded() ? '↑' : '↓' }}</span>
     </button>
     }

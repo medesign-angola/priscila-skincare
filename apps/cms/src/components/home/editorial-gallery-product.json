@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_home_editorial_gallery_products",
+  "info": {
+    "displayName": "Produto da galeria editorial",
+    "description": "Escolha um produto que tenha o conteúdo da galeria editorial preenchido. As imagens são obtidas automaticamente da galeria principal do produto."
+  },
+  "attributes": {
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product",
+      "required": true
+    }
+  }
+}

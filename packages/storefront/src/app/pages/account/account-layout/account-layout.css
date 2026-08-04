@@ -1,1 +1,1 @@
-:host{display:block}.account-shell{min-height:100svh;padding:clamp(7.5rem,12vh,10rem) clamp(1.25rem,5vw,4rem) 5rem;color:#1a1917}
+:host{display:block}.account-shell{min-height:100svh;padding:clamp(7.5rem,12vh,10rem) clamp(1.25rem,5vw,4rem) 5rem;color:#1a1917;background:#fdfcf9}@media(max-width:600px){.account-shell{padding:8.625rem 1rem 3rem}}

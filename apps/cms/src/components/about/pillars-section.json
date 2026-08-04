@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_about_pillars_sections",
+  "info": { "displayName": "Pilares da marca" },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.text-item",
+      "required": true
+    }
+  }
+}

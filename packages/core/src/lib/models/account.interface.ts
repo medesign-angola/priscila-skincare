@@ -2,16 +2,26 @@ export type OrderStatus = 'confirmed' | 'processing' | 'shipped' | 'delivered';
 
 export interface CustomerAddress {
   id: string;
+  label: string;
   recipient: string;
-  street: string;
-  apartment?: string;
-  city: string;
+  phone: string;
   country: string;
+  province: string;
+  city: string;
+  neighborhood: string;
+  street: string;
+  houseNumber?: string;
+  apartment?: string;
+  postalCode?: string;
+  isDefault: boolean;
 }
+
+export type SaveCustomerAddress = Omit<CustomerAddress, 'id'>;
 
 export interface Customer {
   id: string;
   name: string;
+  phone: string;
   email: string;
   addresses: CustomerAddress[];
 }

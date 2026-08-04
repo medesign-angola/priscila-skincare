@@ -31,6 +31,13 @@
         "i18n": { "localized": true }
       }
     },
+    "footerBackground": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "termsUrl": { "type": "string" },
+    "privacyUrl": { "type": "string" },
     "defaultCurrency": {
       "type": "enumeration",
       "enum": ["AOA", "EUR"],

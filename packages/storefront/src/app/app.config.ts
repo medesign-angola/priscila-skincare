@@ -8,10 +8,11 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
+import { authInterceptor } from '@org/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +25,7 @@ export const appConfig: ApplicationConfig = {
         anchorScrolling: 'enabled',
       }),
     ),
-    provideHttpClient(),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideEnvironmentNgxMask(),
     provideTranslateService({
       loader: provideTranslateHttpLoader({

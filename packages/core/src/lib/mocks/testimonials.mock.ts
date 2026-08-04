@@ -13,7 +13,8 @@ export const MOCK_HOME_TESTIMONIALS: HomeTestimonialsPresentation = {
         'Fondés sur une science réelle pour la vie quotidienne, nos produits sont conçus pour simplifier chaque routine. Découvrez comment notre communauté les utilise, du rituel du matin aux moments de détente, et comment ils peuvent transformer votre peau.',
     },
   },
-  testimonials: [
+  testimonials: {
+    pt: [
     {
       id: 'testimonial-marroly-makiese',
       authorLabel: '@marrolymakiese',
@@ -44,5 +45,38 @@ export const MOCK_HOME_TESTIMONIALS: HomeTestimonialsPresentation = {
       videoUrl: '/assets/videos/testimonials/priscila-01.mp4',
       order: 5,
     },
-  ],
+    ],
+    fr: [
+      {
+        id: 'testimonial-marroly-makiese',
+        authorLabel: '@marrolymakiese',
+        videoUrl: '/assets/videos/testimonials/marroly-makiese.mp4',
+        order: 1,
+      },
+      {
+        id: 'testimonial-delma-silva',
+        authorLabel: '@delmasilva',
+        videoUrl: '/assets/videos/testimonials/delma-silva.mp4',
+        order: 2,
+      },
+      {
+        id: 'testimonial-jessica-pitbull-01',
+        authorLabel: '@jessicapitbull',
+        videoUrl: '/assets/videos/testimonials/jessica-pitbull-01.mp4',
+        order: 3,
+      },
+      {
+        id: 'testimonial-jessica-pitbull-02',
+        authorLabel: '@jessicapitbull',
+        videoUrl: '/assets/videos/testimonials/jessica-pitbull-02.mp4',
+        order: 4,
+      },
+      {
+        id: 'testimonial-priscila-01',
+        authorLabel: 'Priscila Skincare',
+        videoUrl: '/assets/videos/testimonials/priscila-01.mp4',
+        order: 5,
+      },
+    ],
+  },
 };

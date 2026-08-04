@@ -35,6 +35,7 @@ export class FooterComponent {
   backgroundUrl = input('/assets/images/footer/footer-background.webp');
   termsUrl = input<string>();
   privacyUrl = input<string>();
+  newsletterHeadline = input<string>();
   currentYear = input(new Date().getFullYear());
 
   navigationSelect = output<{ type: 'product' | 'collection'; id: string }>();

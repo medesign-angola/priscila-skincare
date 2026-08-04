@@ -1,1 +1,24 @@
-<main class="otp-page"><section class="otp-panel"><h1>{{ 'AUTH.OTP.TITLE' | translate }}</h1><p>{{ 'AUTH.OTP.SENT_TO' | translate:{ email: auth.pendingEmail() } }}</p><div class="otp-fields" (paste)="paste($event)">@for (_ of digits; track $index) {<input #digit inputmode="numeric" maxlength="1" [attr.aria-label]="('AUTH.OTP.DIGIT' | translate:{ number: $index + 1 })" (input)="update($index,$event)" (keydown)="keydown($index,$event)" />}</div>@if (invalid) {<p class="otp-error">{{ 'AUTH.OTP.INVALID' | translate }}</p>}</section><a class="otp-legal" routerLink="/">{{ 'AUTH.LEGAL' | translate }}</a></main>
+<main class="otp-page">
+  <section class="otp-panel" [attr.aria-busy]="submitting() || auth.loading()">
+    <h1>{{ 'AUTH.OTP.TITLE' | translate }}</h1>
+    <p>{{ 'AUTH.OTP.SENT_TO' | translate:{ email: auth.pendingEmail() } }}</p>
+    <p class="otp-delivery-hint">{{ 'AUTH.OTP.DELIVERY_HINT' | translate }}</p>
+    <div class="otp-fields" (paste)="paste($event)">
+      @for (_ of digits; track $index) {
+        <input #digit inputmode="numeric" maxlength="1" [disabled]="submitting() || auth.loading()" [attr.aria-label]="('AUTH.OTP.DIGIT' | translate:{ number: $index + 1 })" (input)="update($index,$event)" (keydown)="keydown($index,$event)" />
+      }
+    </div>
+    @if (invalid()) { <p class="otp-error">{{ 'AUTH.OTP.ERRORS.' + ((auth.errorCode() || 'otp_invalid') | uppercase) | translate }}</p> }
+    <button class="otp-resend" type="button" [disabled]="auth.resendSeconds() > 0 || auth.loading()" (click)="resend()">
+      @if (auth.resendSeconds() > 0) {
+        {{ 'AUTH.OTP.RESEND_IN' | translate:{ seconds: auth.resendSeconds() } }}
+      } @else {
+        {{ 'AUTH.OTP.RESEND' | translate }}
+      }
+    </button>
+    @if (submitting() || auth.loading()) {
+      <p class="otp-status" role="status"><span class="otp-spinner" aria-hidden="true"></span>{{ (submitting() ? 'AUTH.OTP.VERIFYING' : 'AUTH.OTP.SENDING') | translate }}</p>
+    }
+  </section>
+  <a class="otp-legal" routerLink="/">{{ 'AUTH.LEGAL' | translate }}</a>
+</main>

@@ -1,5 +1,6 @@
 import type { Core } from '@strapi/strapi';
 import { applyPortugueseContentManager } from './admin/content-manager-portuguese';
+import { registerHomeReadinessRelationFilter } from './home-readiness';
 
 const PUBLIC_READ_CONTENT_TYPES = [
   'api::category.category',
@@ -76,13 +77,37 @@ async function seedBaseData(strapi: Core.Strapi): Promise<void> {
   }
 }
 
+async function normalizeHeroSlidePresentation(
+  strapi: Core.Strapi,
+): Promise<void> {
+  await strapi.db.query('api::hero-slide.hero-slide').updateMany({
+    where: {
+      presentation: { $null: true },
+    },
+    data: {
+      presentation: 'split-right',
+    },
+  });
+}
+
 export default {
-  register() {},
+  register({ strapi }: { strapi: Core.Strapi }) {
+    strapi.customFields.register({
+      name: 'friendly-select',
+      type: 'string',
+      inputSize: {
+        default: 6,
+        isResizable: true,
+      },
+    });
+    registerHomeReadinessRelationFilter(strapi);
+  },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await applyPortugueseContentManager(strapi);
     await ensureFrenchLocale(strapi);
     await ensurePublicReadPermissions(strapi);
+    await normalizeHeroSlidePresentation(strapi);
     await seedBaseData(strapi);
   },
 };

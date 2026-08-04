@@ -43,13 +43,21 @@
       "repeatable": true,
       "component": "shared.text-item"
     },
+    "brand": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.brand-section"
+    },
+    "pillars": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.pillars-section"
+    },
     "founderName": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "founderBiography": {
       "type": "richtext",
-      "required": true,
       "pluginOptions": {
         "i18n": { "localized": true }
       }
@@ -57,13 +65,22 @@
     "founderMedia": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.media-presentation",
-      "required": true
+      "component": "shared.media-presentation"
+    },
+    "founder": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.founder-section"
+    },
+    "locations": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.locations-section"
     },
     "ingredients": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::ingredient.ingredient"
+      "type": "component",
+      "repeatable": false,
+      "component": "home.ingredients-presentation"
     },
     "seo": {
       "type": "component",

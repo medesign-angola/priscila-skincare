@@ -1,6 +1,77 @@
-<section class="brand max-[800px]:flex-col">
-  <div class="brand__noise"></div>
-  <picture class="brand__picture"><source media="(max-width: 800px)" srcset="/assets/images/about/about-brand-mobile.webp" /><img class="brand__image" src="/assets/images/about/about-brand.webp" [alt]="'ABOUT.BRAND.IMAGE_ALT' | translate" width="1440" height="1722" loading="lazy" /></picture>
-  <p class="brand__label">{{ 'ABOUT.BRAND.LABEL' | translate }}</p>
-  <div class="brand__content"><div class="brand__metrics">@for(metric of metrics;track metric.value){<article><strong [orgCountUp]="metric.value">{{metric.value}}</strong><p><b>{{metric.labelKey | translate}}</b> {{metric.descriptionKey | translate}}</p></article>}</div><footer><h2>{{ 'ABOUT.BRAND.FOOTER_TITLE' | translate }}</h2><p>{{ 'ABOUT.BRAND.FOOTER_DESCRIPTION' | translate }}</p></footer></div>
-</section>
+@if (content(); as brand) {
+  <section class="brand max-[800px]:flex-col">
+    <div class="brand__noise"></div>
+    <picture class="brand__picture">
+      @if (brand.mobileImageUrl) {
+        <source media="(max-width: 800px)" [srcset]="brand.mobileImageUrl" />
+      }
+      <img
+        class="brand__image"
+        [src]="brand.imageUrl"
+        [alt]="brand.imageAlt"
+        [style.object-position]="brand.objectPosition"
+        width="1440"
+        height="1722"
+        loading="lazy"
+      />
+    </picture>
+
+    <p class="brand__label">{{ brand.label }}</p>
+
+    <div class="brand__content">
+      <div class="brand__metrics">
+        @for (metric of brand.metrics; track metric.order) {
+          <article>
+            <strong [orgCountUp]="metric.value">{{ metric.value }}</strong>
+            <p>
+              @if (metric.label) {
+                <b>{{ metric.label }}:</b>
+              }
+              {{ metric.description }}
+            </p>
+          </article>
+        }
+      </div>
+      <footer>
+        <h2>{{ brand.footerTitle }}</h2>
+        <p>{{ brand.footerDescription }}</p>
+      </footer>
+    </div>
+  </section>
+} @else {
+  <section class="brand max-[800px]:flex-col">
+    <div class="brand__noise"></div>
+    <picture class="brand__picture">
+      <source
+        media="(max-width: 800px)"
+        srcset="/assets/images/about/about-brand-mobile.webp"
+      />
+      <img
+        class="brand__image"
+        src="/assets/images/about/about-brand.webp"
+        [alt]="'ABOUT.BRAND.IMAGE_ALT' | translate"
+        width="1440"
+        height="1722"
+        loading="lazy"
+      />
+    </picture>
+    <p class="brand__label">{{ 'ABOUT.BRAND.LABEL' | translate }}</p>
+    <div class="brand__content">
+      <div class="brand__metrics">
+        @for (metric of fallbackMetrics; track metric.value) {
+          <article>
+            <strong [orgCountUp]="metric.value">{{ metric.value }}</strong>
+            <p>
+              <b>{{ metric.labelKey | translate }}</b>
+              {{ metric.descriptionKey | translate }}
+            </p>
+          </article>
+        }
+      </div>
+      <footer>
+        <h2>{{ 'ABOUT.BRAND.FOOTER_TITLE' | translate }}</h2>
+        <p>{{ 'ABOUT.BRAND.FOOTER_DESCRIPTION' | translate }}</p>
+      </footer>
+    </div>
+  </section>
+}

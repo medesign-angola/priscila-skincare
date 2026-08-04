@@ -48,9 +48,23 @@
       "max": 100
     },
     "objectFit": {
-      "type": "enumeration",
-      "enum": ["cover", "contain"],
-      "default": "cover"
+      "type": "customField",
+      "customField": "global::friendly-select",
+      "default": "cover",
+      "options": {
+        "choices": [
+          {
+            "value": "cover",
+            "label": "Preencher toda a área",
+            "description": "A imagem ocupa todo o espaço disponível, mas algumas partes podem ser cortadas."
+          },
+          {
+            "value": "contain",
+            "label": "Mostrar a imagem completa",
+            "description": "A imagem aparece inteira, mas podem surgir espaços livres nas laterais ou em cima e em baixo."
+          }
+        ]
+      }
     },
     "hasNoise": {
       "type": "boolean",

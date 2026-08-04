@@ -14,7 +14,10 @@
     </header>
 
     <div class="catalog__body">
-      <h1 id="catalog-title">{{ catalog().titleIsKey ? (catalog().title | translate) : catalog().title }}</h1>
+      <div class="catalog__summary">
+        <h1 id="catalog-title">{{ catalog().titleIsKey ? (catalog().title | translate) : catalog().title }}</h1>
+        <p class="catalog__aside">{{ 'PRODUCTS_PAGE.QUANTITY' | translate }}: {{ productCards().length }}</p>
+      </div>
 
       <div class="catalog__content">
         @if (!catalog().found || productCards().length === 0) {
@@ -50,7 +53,6 @@
         }
       </div>
 
-      <p class="catalog__aside">{{ 'PRODUCTS_PAGE.QUANTITY' | translate }}: {{ productCards().length }}</p>
     </div>
   </section>
 

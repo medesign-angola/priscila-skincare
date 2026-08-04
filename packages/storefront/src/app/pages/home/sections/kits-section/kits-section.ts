@@ -7,9 +7,11 @@ import {
 import { KitWithProducts, ProductFacade } from '@org/core';
 import { HeroCoverComponent, HeroSplitComponent } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 interface HomeKitViewModel {
   id: string;
+  slug?: string;
   index: string;
   title: string;
   editorialDescription: string;
@@ -32,45 +34,61 @@ interface HomeKitViewModel {
 })
 export class KitsSection {
   private readonly facade = inject(ProductFacade);
+  private readonly router = inject(Router);
 
   readonly kits = computed<HomeKitViewModel[]>(() => {
     const language = this.facade.currentLanguage();
 
     return this.facade
       .homeKitsWithProducts()
-      .flatMap((kit, index) => this.toViewModel(kit, language, index));
+      .map((kit, index) => this.toViewModel(kit, language, index));
   });
 
-  readonly editorialKit = computed(() => this.kits()[0] ?? null);
+  readonly editorialKit = computed(() => {
+    const kit = this.facade.featuredHomeKitWithProducts();
+    if (!kit) return null;
 
-  viewProducts(kitId: string): void {
-    console.log('Ver produtos do kit:', kitId);
+    return this.toViewModel(
+      kit,
+      this.facade.currentLanguage(),
+      0,
+    );
+  });
+
+  viewProducts(identifier: string): void {
+    void this.router.navigate(['/produtos', 'kit', identifier]);
   }
 
   private toViewModel(
     kit: KitWithProducts,
     language: 'pt' | 'fr',
     index: number,
-  ): HomeKitViewModel[] {
-    if (!kit.home) return [];
+  ): HomeKitViewModel {
+    const baseTranslation = kit.translations[language];
+    const homeTranslation = kit.home?.translations[language];
 
-    const translation = kit.home.translations[language];
-
-    return [
-      {
-        id: kit.id,
-        index: String(index + 1).padStart(2, '0'),
-        title: translation.editorialTitle,
-        editorialDescription: translation.editorialDescription,
-        editorialFootnote: translation.editorialFootnote,
-        finderDescription: translation.finderDescription,
-        thumbnailImage: kit.home.thumbnailImage,
-        mediaType: kit.home.mediaType,
-        mediaUrl: kit.home.mediaUrl,
-        mediaStyle: kit.home.mediaStyle,
-        placeholderUrl: kit.home.placeholderUrl,
-        productCount: kit.products.length,
-      },
-    ];
+    return {
+      id: kit.id,
+      slug: kit.slug,
+      index: String(index + 1).padStart(2, '0'),
+      title: homeTranslation?.editorialTitle || baseTranslation.name,
+      editorialDescription:
+        homeTranslation?.editorialDescription ||
+        baseTranslation.description,
+      editorialFootnote: homeTranslation?.editorialFootnote || '',
+      finderDescription:
+        homeTranslation?.finderDescription ||
+        baseTranslation.description ||
+        baseTranslation.name,
+      thumbnailImage:
+        kit.home?.thumbnailImage ||
+        kit.thumbnailImage ||
+        kit.mediaUrl,
+      mediaType: kit.home?.mediaType ?? kit.mediaType,
+      mediaUrl: kit.home?.mediaUrl || kit.mediaUrl,
+      mediaStyle: kit.home?.mediaStyle ?? 'split-right',
+      placeholderUrl: kit.home?.placeholderUrl ?? kit.placeholderUrl,
+      productCount: kit.products.length,
+    };
   }
 }

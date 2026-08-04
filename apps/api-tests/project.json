@@ -1,0 +1,18 @@
+{
+  "name": "api-tests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "apps/api-tests",
+  "sourceRoot": "apps/api-tests",
+  "tags": ["type:test", "scope:backend"],
+  "implicitDependencies": ["api", "backend-domain"],
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["api:build"],
+      "outputs": ["{projectRoot}/TestResults"],
+      "options": { "command": "dotnet test apps/api-tests/PriscilaSkincare.Api.Tests.csproj --configuration Release --no-restore" }
+    }
+  }
+}

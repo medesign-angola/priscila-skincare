@@ -1,0 +1,16 @@
+{
+  "name": "backend-domain",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "root": "packages/backend-domain",
+  "sourceRoot": "packages/backend-domain",
+  "tags": ["type:domain", "scope:backend"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "outputs": ["{projectRoot}/bin"],
+      "options": { "command": "dotnet build packages/backend-domain/PriscilaSkincare.Domain.csproj --configuration Release --no-restore" }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customers",
+  "info": {
+    "singularName": "customer",
+    "pluralName": "customers",
+    "displayName": "Cliente",
+    "description": "Clientes sincronizados pela aplicação. Dados apenas para consulta."
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "externalCustomerId": { "type": "uid", "required": true, "unique": true },
+    "name": { "type": "string", "required": true },
+    "email": { "type": "email", "required": true, "unique": true, "private": true },
+    "phone": { "type": "string", "private": true },
+    "acceptsMarketing": { "type": "boolean", "default": false },
+    "isActive": { "type": "boolean", "default": true },
+    "registeredAt": { "type": "datetime", "required": true },
+    "sourceUpdatedAt": { "type": "datetime", "required": true },
+    "reviews": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::review.review",
+      "mappedBy": "customer"
+    }
+  }
+}

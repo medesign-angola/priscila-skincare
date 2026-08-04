@@ -56,6 +56,22 @@ export const appRoutes: Route[] = [
     data: { catalogContext: 'kit' },
   },
   {
+    path: 'produtos/:productId/avaliar',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/product-review/product-review').then(
+        (m) => m.ProductReview,
+      ),
+  },
+  {
+    path: 'produtos/:productId/avaliacao-enviada',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/product-review-success/product-review-success').then(
+        (m) => m.ProductReviewSuccess,
+      ),
+  },
+  {
     path: 'produtos/:productId',
     loadComponent: () =>
       import('./pages/product-details/product-details').then(

@@ -1,0 +1,12 @@
+{
+  "collectionName": "components_about_paragraphs",
+  "info": { "displayName": "Parágrafo" },
+  "attributes": {
+    "order": { "type": "integer", "required": true, "min": 1 },
+    "text": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

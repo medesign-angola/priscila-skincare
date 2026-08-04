@@ -235,6 +235,7 @@ const DEFAULT_REVIEWS_FR = {
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'prod-1',
+    sku: 'MOCK-PROD-001',
     featured: true,
     featuredOrder: 1,
     categoryId: 'cat-2',
@@ -283,6 +284,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-2',
+    sku: 'MOCK-PROD-002',
     featured: true,
     featuredOrder: 2,
     categoryId: 'cat-1',
@@ -327,6 +329,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-3',
+    sku: 'MOCK-PROD-003',
     featured: true,
     featuredOrder: 3,
     categoryId: 'cat-2',
@@ -379,6 +382,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-4',
+    sku: 'MOCK-PROD-004',
     featured: false,
     commerce: commerce(180000),
     homePlacements: [
@@ -437,6 +441,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-5',
+    sku: 'MOCK-PROD-005',
     featured: false,
     commerce: commerce(165000),
     categoryId: 'cat-2',
@@ -470,6 +475,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-6',
+    sku: 'MOCK-PROD-006',
     featured: false,
     commerce: {
       prices: { AOA: 150000, EUR: 150 },
@@ -531,6 +537,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-7',
+    sku: 'MOCK-PROD-007',
     featured: false,
     commerce: commerce(95000),
     categoryId: 'cat-1',
@@ -564,6 +571,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-8',
+    sku: 'MOCK-PROD-008',
     featured: false,
     commerce: commerce(85000),
     categoryId: 'cat-1',
@@ -597,6 +605,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-9',
+    sku: 'MOCK-PROD-009',
     featured: false,
     commerce: commerce(65000),
     categoryId: 'cat-3',
@@ -630,6 +639,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-10',
+    sku: 'MOCK-PROD-010',
     featured: false,
     commerce: commerce(175000),
     categoryId: 'cat-3',
@@ -671,6 +681,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-11',
+    sku: 'MOCK-PROD-011',
     featured: false,
     commerce: commerce(120000),
     categoryId: 'cat-2',
@@ -708,6 +719,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-12',
+    sku: 'MOCK-PROD-012',
     featured: false,
     commerce: commerce(190000),
     categoryId: 'cat-3',
@@ -745,6 +757,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-13',
+    sku: 'MOCK-PROD-013',
     featured: false,
     commerce: commerce(210000),
     categoryId: 'cat-2',
@@ -778,6 +791,7 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-14',
+    sku: 'MOCK-PROD-014',
     featured: false,
     commerce: commerce(220000),
     categoryId: 'cat-2',

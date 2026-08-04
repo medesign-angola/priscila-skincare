@@ -8,6 +8,28 @@ type FieldPresentation = {
 
 type ModelPresentation = Record<string, FieldPresentation>;
 
+const hiddenFieldsByContentType: Record<string, string[]> = {
+  'api::kit.kit': ['commerce'],
+  'api::about-page.about-page': [
+    'brandTimeline',
+    'founderName',
+    'founderBiography',
+    'founderMedia',
+  ],
+};
+
+const readOnlyFieldsByContentType: Record<string, string[]> = {
+  'api::review.review': [
+    'externalReviewId', 'customerId', 'name', 'productSku', 'title', 'comment',
+    'rating', 'recommends', 'reviewDate', 'submittedAt', 'sourceUpdatedAt',
+    'product', 'customer',
+  ],
+  'api::customer.customer': [
+    'externalCustomerId', 'name', 'email', 'phone', 'acceptsMarketing',
+    'isActive', 'registeredAt', 'sourceUpdatedAt', 'reviews',
+  ],
+};
+
 const field = (
   label: string,
   description?: string,
@@ -46,7 +68,14 @@ const contentTypes: Record<string, ModelPresentation> = {
     slug: field('Endereço da coleção', 'Gerado a partir do nome.'),
     description: field('Descrição', 'Apresente o conceito e o objetivo desta coleção.'),
     thumbnailImage: field('Imagem de miniatura', 'Utilizada no menu de coleções.'),
-    media: field('Imagem ou vídeo de apresentação', 'Conteúdo principal utilizado para apresentar a coleção.'),
+    media: field(
+      'Imagem ou vídeo para destaque na página inicial',
+      'Preencha somente quando esta coleção for utilizada como destaque na página inicial.',
+    ),
+    homePresentation: field(
+      'Apresentação na página inicial',
+      'Bloco opcional necessário quando a coleção for escolhida como destaque da Home.',
+    ),
     products: field('Produtos da coleção', 'Selecione todos os produtos que pertencem a esta coleção.'),
     seo: field('Pesquisa e partilha'),
   },
@@ -54,9 +83,20 @@ const contentTypes: Record<string, ModelPresentation> = {
     name: field('Nome do kit'),
     slug: field('Endereço do kit', 'Gerado a partir do nome.'),
     description: field('Descrição do kit'),
-    commerce: field('Preço, disponibilidade e stock'),
+    commerce: field('Dados comerciais antigos do kit'),
+    prices: field(
+      'Preço apresentado para o kit',
+      'Informe apenas os valores mostrados nos banners e nas apresentações do kit.',
+    ),
     thumbnailImage: field('Imagem de miniatura', 'Utilizada nos menus e listas compactas.'),
-    media: field('Imagem ou vídeo de apresentação'),
+    media: field(
+      'Imagem ou vídeo para destaque na página inicial',
+      'Preencha somente se este kit for utilizado como destaque principal da página inicial. Para a lista Encontrar, basta a imagem de miniatura.',
+    ),
+    homePresentation: field(
+      'Apresentação na página inicial',
+      'Preencha este bloco para apresentar o kit na área editorial e na lista Encontrar.',
+    ),
     products: field('Produtos incluídos', 'Selecione os produtos que compõem este kit.'),
     seo: field('Pesquisa e partilha'),
   },
@@ -76,23 +116,33 @@ const contentTypes: Record<string, ModelPresentation> = {
     products: field('Produtos que utilizam este ingrediente'),
   },
   'api::hero-slide.hero-slide': {
+    presentation: field(
+      'Apresentação do banner',
+      'Escolha imagem dividida à direita ou imagem em tela inteira.',
+    ),
     name: field('Nome interno do banner', 'Ajuda a identificar o banner no painel; não é apresentado ao público.'),
     label: field('Etiqueta'),
     headline: field('Título principal'),
     description: field('Descrição'),
     media: field('Imagem ou vídeo do banner', 'Defina também a versão mobile e o ponto de foco da imagem.'),
-    cta: field('Botão de ação'),
+    cta: field(
+      'Ação do botão',
+      'Escolha um único destino. O endereço e, quando aplicável, o preço serão obtidos automaticamente.',
+    ),
     order: field('Posição', 'Use 1 para o primeiro banner, 2 para o segundo e assim sucessivamente.'),
   },
   'api::home-page.home-page': {
     heroSlides: field('Banners principais', 'Selecione e ordene os banners apresentados no início da página.'),
-    featuredProducts: field('Produtos destacados', 'Produtos apresentados na seção de destaques. Não repita produtos usados nas áreas editoriais.'),
-    editorialCover: field('Produto editorial com vídeo ou imagem', 'Produto apresentado na área editorial de capa.'),
-    editorialGallery: field('Produto da galeria editorial', 'Produto apresentado na segunda área editorial.'),
-    featuredKit: field('Kit em destaque'),
-    featuredCollection: field('Coleção em destaque'),
-    ingredients: field('Ingredientes em destaque'),
-    testimonials: field('Testemunhos em vídeo'),
+    featuredProducts: field('Produtos destacados', 'Selecione no máximo quatro produtos com preços e imagem prontos para esta seção. Não repita produtos usados nas áreas editoriais.'),
+    editorialCover: field('Produto editorial com vídeo ou imagem', 'O seletor apresenta somente produtos com o bloco Conteúdo editorial preenchido.'),
+    editorialGallery: field('Produto da galeria editorial', 'O seletor apresenta somente produtos com o bloco Galeria editorial preenchido. As imagens são obtidas automaticamente da galeria principal do produto.'),
+    featuredKit: field('Kit em destaque', 'Somente kits completos para a apresentação na Home ficam disponíveis.'),
+    featuredCollection: field('Coleção em destaque', 'Somente coleções completas para a apresentação na Home ficam disponíveis.'),
+    ingredients: field('Apresentação dos ingredientes', 'Defina os textos e selecione os ingredientes apresentados na página inicial.'),
+    testimonials: field(
+      'Secção de testemunhos em vídeo',
+      'Defina os textos e escolha os vídeos apresentados na página inicial.',
+    ),
     seo: field('Pesquisa e partilha'),
   },
   'api::about-page.about-page': {
@@ -100,19 +150,46 @@ const contentTypes: Record<string, ModelPresentation> = {
     heroHeadline: field('Título principal'),
     heroDescription: field('Descrição da apresentação'),
     heroMedia: field('Imagem principal'),
+    brand: field(
+      'História e números da marca',
+      'Defina a imagem, os números animados e os textos apresentados nesta secção.',
+    ),
+    pillars: field('Pilares da marca'),
     brandTimeline: field('História e números da marca', 'Adicione os principais marcos e dados estatísticos.'),
     founderName: field('Nome da fundadora'),
     founderBiography: field('Biografia da fundadora'),
     founderMedia: field('Imagem da fundadora'),
-    ingredients: field('Ingredientes em destaque'),
+    founder: field('Apresentação da fundadora'),
+    locations: field('Locais e presença da marca'),
+    ingredients: field('Apresentação dos ingredientes', 'Defina os textos e selecione os ingredientes apresentados na página Sobre.'),
     seo: field('Pesquisa e partilha'),
   },
   'api::review.review': {
+    externalReviewId: field('Identificador interno', 'Gerado automaticamente pela aplicação. Não altere este valor.'),
+    customerId: field('Identificador do cliente'),
     name: field('Nome do cliente'),
+    productSku: field('Código do produto (SKU)'),
+    title: field('Título da avaliação'),
     comment: field('Comentário'),
     rating: field('Classificação', 'Valor de 1 a 5 estrelas.'),
+    recommends: field('Recomenda o produto'),
+    moderationStatus: field('Estado da moderação', 'Pendente, publicada ou rejeitada.'),
     reviewDate: field('Data da avaliação'),
+    submittedAt: field('Enviada em'),
+    sourceUpdatedAt: field('Última alteração do cliente'),
     product: field('Produto avaliado'),
+    customer: field('Cliente', 'Cliente autenticado que enviou a avaliação.'),
+  },
+  'api::customer.customer': {
+    externalCustomerId: field('Identificador interno', 'Gerado automaticamente pela aplicação.'),
+    name: field('Nome do cliente'),
+    email: field('E-mail'),
+    phone: field('Telefone'),
+    acceptsMarketing: field('Aceitou receber comunicações'),
+    isActive: field('Conta ativa'),
+    registeredAt: field('Cliente desde'),
+    sourceUpdatedAt: field('Última atualização na aplicação'),
+    reviews: field('Avaliações enviadas'),
   },
   'api::testimonial.testimonial': {
     name: field('Nome da pessoa'),
@@ -139,8 +216,76 @@ const contentTypes: Record<string, ModelPresentation> = {
 };
 
 const components: Record<string, ModelPresentation> = {
+  'about.brand-section': {
+    label: field('Etiqueta da secção'),
+    media: field('Imagem da história da marca'),
+    metrics: field(
+      'Números da marca',
+      'Adicione o número, o complemento, o destaque opcional e a descrição.',
+    ),
+    footerTitle: field('Título do texto final'),
+    footerDescription: field('Descrição do texto final'),
+  },
+  'about.brand-metric': {
+    order: field('Posição'),
+    value: field('Número', 'Informe apenas o número. Exemplo: 73.'),
+    suffix: field(
+      'Complemento do número',
+      'Opcional. Exemplos: +, K+ ou %.',
+    ),
+    label: field(
+      'Destaque',
+      'Opcional. Este texto aparece em negrito antes da descrição; os dois-pontos são adicionados automaticamente.',
+    ),
+    description: field('Descrição'),
+  },
+  'about.pillars-section': {
+    title: field('Título da secção'),
+    items: field(
+      'Pilares apresentados',
+      'Adicione e ordene os pilares apresentados na página Sobre.',
+    ),
+  },
+  'about.founder-section': {
+    label: field('Etiqueta da secção', 'Exemplo: Fundadora.'),
+    name: field('Nome da fundadora'),
+    paragraphs: field(
+      'Textos da biografia',
+      'Adicione os parágrafos e defina a ordem em que serão apresentados.',
+    ),
+    media: field(
+      'Imagem da fundadora',
+      'Defina a imagem para computador, a versão para telemóvel e o ponto de foco.',
+    ),
+    ctaLabel: field('Texto do botão', 'Exemplo: Comprar produtos.'),
+  },
+  'about.paragraph': {
+    order: field(
+      'Posição',
+      'Use 1 para o primeiro parágrafo, 2 para o segundo e assim sucessivamente.',
+    ),
+    text: field('Texto do parágrafo'),
+  },
+  'about.locations-section': {
+    label: field('Etiqueta da secção', 'Exemplo: Contacto.'),
+    headline: field('Título principal'),
+    description: field('Descrição introdutória'),
+    items: field(
+      'Locais e formas de atendimento',
+      'Adicione locais, canais de compra ou modalidades de entrega.',
+    ),
+    media: field(
+      'Imagem da secção',
+      'Defina a imagem para computador, a versão para telemóvel e o ponto de foco.',
+    ),
+  },
+  'about.location': {
+    order: field('Posição', 'Define a ordem em que o item será apresentado.'),
+    title: field('Nome do local ou serviço'),
+    description: field('Morada ou descrição'),
+  },
   'commerce.badge': {
-    type: field('Tipo de selo', 'Desconto, novidade ou produto disponível em breve.'),
+    type: field('Tipo de selo', 'Escolha nenhum selo, desconto, novidade ou produto disponível em breve.'),
     percentage: field('Percentagem de desconto', 'Preencha apenas quando o tipo for desconto.'),
   },
   'commerce.prices': {
@@ -154,13 +299,63 @@ const components: Record<string, ModelPresentation> = {
     badge: field('Selo apresentado no produto'),
   },
   'home.editorial-product': {
-    product: field('Produto'),
+    product: field('Produto', 'Apenas produtos com Conteúdo editorial preenchido ficam disponíveis.'),
     media: field('Imagem ou vídeo de apresentação'),
-    galleryImageIndexes: field('Imagens da galeria a utilizar', 'Informe as posições das imagens do produto que devem aparecer nesta área.'),
+  },
+  'home.editorial-gallery-product': {
+    product: field('Produto', 'Apenas produtos com Galeria editorial preenchida ficam disponíveis. As imagens serão obtidas da galeria principal do produto.'),
+  },
+  'home.ingredients-presentation': {
+    headline: field('Título da seção'),
+    description: field('Descrição introdutória'),
+    footnote: field('Texto complementar'),
+    ingredients: field('Ingredientes apresentados', 'Selecione e ordene os ingredientes. O primeiro será apresentado inicialmente.'),
+  },
+  'home.testimonials-presentation': {
+    title: field(
+      'Título da secção',
+      'Título apresentado ao lado dos vídeos de testemunhos.',
+    ),
+    description: field(
+      'Texto sobre as avaliações',
+      'Explique brevemente o significado das avaliações dos clientes.',
+    ),
+    testimonials: field(
+      'Vídeos apresentados',
+      'Selecione e ordene os testemunhos publicados que aparecerão na página inicial.',
+    ),
   },
   'home.product-slot': {
     order: field('Posição'),
     product: field('Produto destacado'),
+  },
+  'home.kit-presentation': {
+    order: field(
+      'Posição na área Encontrar',
+      'Defina a ordem do kit na lista apresentada abaixo da área editorial.',
+    ),
+    editorialTitle: field(
+      'Título da apresentação editorial',
+      'Se ficar vazio, será utilizado o nome do kit.',
+    ),
+    editorialDescription: field(
+      'Descrição da apresentação editorial',
+      'Se ficar vazia, será utilizada a descrição principal do kit.',
+    ),
+    editorialFootnote: field(
+      'Nota abaixo do botão',
+      'Texto complementar apresentado abaixo do botão Ver produtos.',
+    ),
+    finderDescription: field(
+      'Texto apresentado na área Encontrar',
+      'Descrição curta exibida junto à miniatura do kit.',
+    ),
+  },
+  'home.collection-presentation': {
+    order: field('Posição', 'Utilizada caso mais de uma coleção seja configurada no futuro.'),
+    title: field('Título da apresentação', 'Se ficar vazio, será utilizado o nome da coleção.'),
+    description: field('Descrição da apresentação', 'Se ficar vazia, será utilizada a descrição principal da coleção.'),
+    footnote: field('Nota abaixo do botão'),
   },
   'product.before-after': {
     before: field('Imagem de antes'),
@@ -196,6 +391,56 @@ const components: Record<string, ModelPresentation> = {
   'shared.link': {
     label: field('Texto do botão'),
     url: field('Endereço de destino'),
+    openInNewTab: field('Abrir numa nova janela'),
+  },
+  'action.product': {
+    label: field(
+      'Texto do botão',
+      'Texto apresentado antes do preço do produto.',
+    ),
+    product: field(
+      'Produto de destino',
+      'Selecione o produto que será aberto ao clicar no botão.',
+    ),
+  },
+  'action.kit': {
+    label: field(
+      'Texto do botão',
+      'Texto apresentado antes do preço do kit.',
+    ),
+    kit: field(
+      'Kit de destino',
+      'Selecione o kit que será aberto ao clicar no botão.',
+    ),
+  },
+  'action.collection': {
+    label: field('Texto do botão'),
+    collection: field(
+      'Coleção de destino',
+      'Selecione a coleção cujos produtos serão apresentados.',
+    ),
+  },
+  'action.category': {
+    label: field('Texto do botão'),
+    category: field(
+      'Categoria de destino',
+      'Selecione a categoria cujos produtos serão apresentados.',
+    ),
+  },
+  'action.internal-page': {
+    label: field('Texto do botão'),
+    page: field(
+      'Página de destino',
+      'Escolha uma página existente da loja; não é necessário escrever o endereço.',
+    ),
+  },
+  'action.external-link': {
+    label: field('Texto do botão'),
+    url: field(
+      'Endereço externo',
+      'Informe o endereço completo, começando por https://.',
+      'https://exemplo.com',
+    ),
     openInNewTab: field('Abrir numa nova janela'),
   },
   'shared.media-presentation': {
@@ -247,6 +492,8 @@ type ContentManagerConfiguration = {
 function withPortuguesePresentation(
   configuration: ContentManagerConfiguration,
   presentation: ModelPresentation,
+  hiddenFields: string[] = [],
+  readOnlyFields: string[] = [],
 ): ContentManagerConfiguration {
   const metadatas = { ...configuration.metadatas };
 
@@ -269,10 +516,60 @@ function withPortuguesePresentation(
     };
   }
 
+  for (const attribute of hiddenFields) {
+    const current = metadatas[attribute];
+    if (!current) continue;
+    metadatas[attribute] = {
+      ...current,
+      edit: {
+        ...current.edit,
+        visible: false,
+      },
+    };
+  }
+
+  for (const attribute of readOnlyFields) {
+    const current = metadatas[attribute];
+    if (!current) continue;
+    metadatas[attribute] = {
+      ...current,
+      edit: {
+        ...current.edit,
+        editable: false,
+      },
+    };
+  }
+
+  const hideFromEditLayout = (node: unknown): unknown => {
+    if (Array.isArray(node)) {
+      return node
+        .map(hideFromEditLayout)
+        .filter((item) => item !== null);
+    }
+
+    if (!node || typeof node !== 'object') return node;
+    const record = node as Record<string, unknown>;
+    if (typeof record.name === 'string' && hiddenFields.includes(record.name)) {
+      return null;
+    }
+
+    return Object.fromEntries(
+      Object.entries(record).map(([key, value]) => [
+        key,
+        hideFromEditLayout(value),
+      ]),
+    );
+  };
+
   return {
     settings: configuration.settings,
     metadatas,
-    layouts: configuration.layouts,
+    layouts: {
+      ...configuration.layouts,
+      ...(configuration.layouts.edit
+        ? { edit: hideFromEditLayout(configuration.layouts.edit) }
+        : {}),
+    },
     ...(configuration.options ? { options: configuration.options } : {}),
   };
 }
@@ -294,7 +591,12 @@ export async function applyPortugueseContentManager(
     const configuration = await contentTypeService.findConfiguration(model);
     await contentTypeService.updateConfiguration(
       model,
-      withPortuguesePresentation(configuration, presentation),
+      withPortuguesePresentation(
+        configuration,
+        presentation,
+        hiddenFieldsByContentType[uid] ?? [],
+        readOnlyFieldsByContentType[uid] ?? [],
+      ),
     );
   }
 

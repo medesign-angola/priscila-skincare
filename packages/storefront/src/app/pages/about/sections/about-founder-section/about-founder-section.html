@@ -1,1 +1,19 @@
+@if (content(); as founder) {
+<section class="founder">
+  <picture>
+    @if (founder.mobileImageUrl) {<source media="(max-width: 700px)" [srcset]="founder.mobileImageUrl" />}
+    <img [src]="founder.imageUrl" [alt]="founder.imageAlt" [style.object-position]="founder.objectPosition" width="1822" height="1602" loading="lazy" />
+  </picture>
+  <div class="founder__shade"></div>
+  <div class="founder__content">
+    <p class="founder__label">{{ founder.label }}</p>
+    <div class="founder__copy">
+      <h2>{{ founder.name }}</h2>
+      @for (paragraph of founder.paragraphs; track $index) {<p>{{ paragraph }}</p>}
+    </div>
+    <a routerLink="/produtos"><span>{{ founder.ctaLabel }}</span><span aria-hidden="true">→</span></a>
+  </div>
+</section>
+} @else {
 <section class="founder"><picture><source media="(max-width: 700px)" srcset="/assets/images/about/about-founder-mobile.webp" /><img src="/assets/images/about/about-founder.webp" [alt]="'ABOUT.FOUNDER.IMAGE_ALT' | translate" width="1822" height="1602" loading="lazy" /></picture><div class="founder__shade"></div><div class="founder__content"><p class="founder__label">{{ 'ABOUT.FOUNDER.LABEL' | translate }}</p><div class="founder__copy"><h2>Priscila<br />Araujo</h2><p>{{ 'ABOUT.FOUNDER.PARAGRAPH_ONE' | translate }}</p><p>{{ 'ABOUT.FOUNDER.PARAGRAPH_TWO' | translate }}</p></div><a routerLink="/produtos"><span>{{ 'ABOUT.FOUNDER.BUY_PRODUCTS' | translate }}</span><span aria-hidden="true">→</span></a></div></section>
+}

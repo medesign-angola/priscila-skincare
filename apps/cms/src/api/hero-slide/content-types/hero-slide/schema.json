@@ -37,6 +37,26 @@
         "i18n": { "localized": true }
       }
     },
+    "presentation": {
+      "type": "customField",
+      "customField": "global::friendly-select",
+      "default": "split-right",
+      "required": true,
+      "options": {
+        "choices": [
+          {
+            "value": "split-right",
+            "label": "Imagem dividida à direita",
+            "description": "O conteúdo aparece à esquerda e a imagem ocupa o lado direito do banner."
+          },
+          {
+            "value": "cover",
+            "label": "Imagem em tela inteira",
+            "description": "A imagem preenche todo o banner e o conteúdo é apresentado por cima dela."
+          }
+        ]
+      }
+    },
     "media": {
       "type": "component",
       "repeatable": false,
@@ -44,9 +64,16 @@
       "required": true
     },
     "cta": {
-      "type": "component",
-      "repeatable": false,
-      "component": "shared.link"
+      "type": "dynamiczone",
+      "components": [
+        "action.product",
+        "action.kit",
+        "action.collection",
+        "action.category",
+        "action.internal-page",
+        "action.external-link"
+      ],
+      "max": 1
     },
     "order": {
       "type": "integer",

@@ -1,14 +1,19 @@
 <main class="auth-page">
-  <form class="auth-form" (submit)="submit($event)" novalidate>
+  <a class="auth-back" routerLink="/">{{ 'AUTH.BACK_TO_STORE' | translate }} <span aria-hidden="true">→</span></a>
+  <form class="auth-form" (submit)="submit($event)" [attr.aria-busy]="auth.loading()" novalidate>
     <header><h1>{{ 'AUTH.SIGN_IN.TITLE' | translate }}</h1><p>{{ 'AUTH.SIGN_IN.SUBTITLE' | translate }}</p></header>
     <label class="auth-input" [class.auth-input--active]="emailFocused() || email.value">
       <span>{{ 'AUTH.SIGN_IN.EMAIL' | translate }}</span>
-      <input type="email" autocomplete="email" [formControl]="email" [placeholder]="emailFocused() || email.value ? '' : ('AUTH.SIGN_IN.EMAIL' | translate)" (focus)="emailFocused.set(true)" (blur)="emailFocused.set(false)" />
-      <button type="submit" [attr.aria-label]="'AUTH.SIGN_IN.CONTINUE' | translate">→</button>
+      <input type="email" autocomplete="email" [formControl]="email" [readonly]="auth.loading()" [placeholder]="emailFocused() || email.value ? '' : ('AUTH.SIGN_IN.EMAIL' | translate)" (focus)="emailFocused.set(true)" (blur)="emailFocused.set(false)" />
+      <button type="submit" [disabled]="auth.loading()" [attr.aria-label]="(auth.loading() ? 'AUTH.SIGN_IN.SENDING' : 'AUTH.SIGN_IN.CONTINUE') | translate">
+        @if (auth.loading()) { <span class="auth-spinner" aria-hidden="true"></span> } @else { <span aria-hidden="true">→</span> }
+      </button>
     </label>
     @if (email.invalid && email.touched) { <p class="auth-error">{{ 'AUTH.SIGN_IN.EMAIL_ERROR' | translate }}</p> }
+    @if (auth.errorCode()) { <p class="auth-error">{{ 'AUTH.ERRORS.' + (auth.errorCode() | uppercase) | translate }}</p> }
     <label class="auth-check"><input type="checkbox" [formControl]="marketing" /><span>{{ 'AUTH.SIGN_IN.MARKETING' | translate }}</span></label>
     <p>{{ 'AUTH.SIGN_IN.CONSENT' | translate }}</p>
+    @if (auth.loading()) { <p class="auth-status" role="status">{{ 'AUTH.SIGN_IN.SENDING' | translate }}</p> }
   </form>
   <a class="auth-legal" routerLink="/">{{ 'AUTH.LEGAL' | translate }}</a>
 </main>

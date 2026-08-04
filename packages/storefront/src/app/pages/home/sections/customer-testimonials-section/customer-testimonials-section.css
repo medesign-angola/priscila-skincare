@@ -2,6 +2,10 @@
   display: block;
 }
 
+.testimonials--empty {
+  display: none;
+}
+
 .testimonials {
   --section-padding: clamp(1.5rem, 2.222vw, 4rem);
   --summary-width: clamp(15rem, 19.306vw, 23rem);

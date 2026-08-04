@@ -24,7 +24,7 @@
             <div class="kits-editorial__action">
               <button
                 type="button"
-                (click)="viewProducts(kit.id)"
+                (click)="viewProducts(kit.slug ?? kit.id)"
                 [attr.aria-label]="
                   ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.title
                 "
@@ -68,7 +68,7 @@
             <div class="kits-editorial__action">
               <button
                 type="button"
-                (click)="viewProducts(kit.id)"
+                (click)="viewProducts(kit.slug ?? kit.id)"
                 [attr.aria-label]="
                   ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.title
                 "
@@ -104,7 +104,7 @@
           <button
             class="kit-card__media"
             type="button"
-            (click)="viewProducts(kit.id)"
+            (click)="viewProducts(kit.slug ?? kit.id)"
             [attr.aria-label]="
               ('KITS_SECTION.VIEW_PRODUCTS' | translate) + ': ' + kit.finderDescription
             "

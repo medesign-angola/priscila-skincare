@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_about_brand_sections",
+  "info": { "displayName": "História e números da marca" },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "media": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.media-presentation",
+      "required": true
+    },
+    "metrics": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.brand-metric",
+      "required": true
+    },
+    "footerTitle": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "footerDescription": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

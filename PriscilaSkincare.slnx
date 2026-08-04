@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/apps/" />
+  <Folder Name="/apps/api-tests/">
+    <Project Path="apps/api-tests/PriscilaSkincare.Api.Tests.csproj" />
+  </Folder>
+  <Folder Name="/apps/api/">
+    <Project Path="apps/api/PriscilaSkincare.Api.csproj" />
+  </Folder>
+  <Folder Name="/packages/" />
+  <Folder Name="/packages/backend-application/">
+    <Project Path="packages/backend-application/PriscilaSkincare.Application.csproj" />
+  </Folder>
+  <Folder Name="/packages/backend-domain/">
+    <Project Path="packages/backend-domain/PriscilaSkincare.Domain.csproj" />
+  </Folder>
+  <Folder Name="/packages/backend-infrastructure/">
+    <Project Path="packages/backend-infrastructure/PriscilaSkincare.Infrastructure.csproj" />
+  </Folder>
+</Solution>

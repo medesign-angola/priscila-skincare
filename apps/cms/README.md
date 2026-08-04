@@ -1,5 +1,12 @@
 # Priscila Skincare CMS
 
+## Dados administrativos projetados
+
+- **Clientes** são sincronizados pela API .NET e não podem ser editados no CMS.
+- **Avaliações** são criadas pela aplicação e somente o campo **Estado da moderação** pode ser alterado.
+- Produto e cliente aparecem como relações; UUID e SKU permanecem apenas como referências técnicas.
+- `APPLICATION_API_URL` e `REVIEW_INTEGRATION_SECRET` devem estar configurados para devolver a decisão de moderação à API.
+
 Strapi 5 content management application for the Priscila Skincare catalog and
 editorial pages.
 

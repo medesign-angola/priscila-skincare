@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_about_locations",
+  "info": { "displayName": "Local de atendimento" },
+  "attributes": {
+    "order": { "type": "integer", "required": true, "min": 1 },
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

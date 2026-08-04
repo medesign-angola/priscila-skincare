@@ -7,6 +7,9 @@
   padding: clamp(3rem, 5.556vw, 5rem) 2rem;
 }
 .related h2 {
+  position: sticky;
+  top: 1rem;
+  align-self: flex-start;
   flex: 0 0 12rem;
   margin: 0.75rem 2rem 0 0;
   font-size: 0.875rem;
@@ -17,11 +20,13 @@
 .related__products {
   display: flex;
   flex: 1;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 0.5rem;
   min-width: 0;
 }
 .related org-product-card {
-  flex: 1;
+  flex: 0 0 calc((100% - 1rem) / 3);
   min-width: 0;
 }
 @media (max-width: 800px) {
@@ -31,10 +36,20 @@
     padding-inline: 1rem;
   }
   .related h2 {
+    position: sticky;
+    top: 4rem;
+    z-index: 4;
+    width: calc(100% + 2rem);
+    min-height: 4.3125rem;
+    padding: 1.5rem 1rem;
+    margin-inline: -1rem;
     flex-basis: auto;
-    margin: 0;
+    color: #1a1917;
+    background: #fff;
+    border-bottom: 1px solid #ddd7ce;
   }
   .related__products {
+    flex-wrap: nowrap;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
   }
@@ -50,7 +65,11 @@
     padding: 1.25rem 0;
   }
   .related h2 {
-    margin-inline: 1.25rem;
+    top: 4rem;
+    width: 100%;
+    min-height: 4.3125rem;
+    padding-inline: 1.25rem;
+    margin: 0;
   }
   .related__products {
     gap: 1rem;

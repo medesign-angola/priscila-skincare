@@ -1,0 +1,10 @@
+<div
+  class="route-loader"
+  [class.route-loader--visible]="visible()"
+  [attr.aria-hidden]="!visible()"
+>
+  <span></span>
+</div>
+<span class="route-loader__announcement" aria-live="polite">
+  {{ visible() ? ('GLOBAL.LOADING' | translate) : '' }}
+</span>

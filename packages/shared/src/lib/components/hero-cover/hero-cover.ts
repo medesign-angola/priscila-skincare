@@ -28,6 +28,8 @@ export class HeroCoverComponent {
   overflowMode = input<'hidden' | 'clip'>('hidden');
   objectPosition = input<string>('center');
   mobileObjectPosition = input<string>();
+  objectFit = input<'cover' | 'contain'>('cover');
+  alt = input<string>('');
 
   // Query the active BlurUpDirective in the template
   highResMedia = viewChild(BlurUpDirective);

@@ -1,1 +1,19 @@
+@if (content(); as section) {
+<section class="locations">
+  <div class="locations__content">
+    <p class="locations__label">{{ section.label }}</p>
+    <div class="locations__body">
+      <header><h2>{{ section.headline }}</h2><p>{{ section.description }}</p></header>
+      <div class="locations__list">
+        @for(location of section.items; track location.order) {<article><h3>{{ location.title }}</h3><p>{{ location.description }}</p></article>}
+      </div>
+    </div>
+  </div>
+  <picture>
+    @if (section.mobileImageUrl) {<source media="(max-width: 700px)" [srcset]="section.mobileImageUrl" />}
+    <img [src]="section.imageUrl" [alt]="section.imageAlt" [style.object-position]="section.objectPosition" width="1300" height="880" loading="lazy" />
+  </picture>
+</section>
+} @else {
 <section class="locations"><div class="locations__content"><p class="locations__label">{{ 'ABOUT.CONTACT.LABEL' | translate }}</p><div class="locations__body"><header><h2>{{ 'ABOUT.CONTACT.TITLE' | translate }}</h2><p>{{ 'ABOUT.CONTACT.DESCRIPTION' | translate }}</p></header><div class="locations__list">@for(location of locations;track location.titleKey){<article><h3>{{location.titleKey | translate}}</h3><p>{{location.descriptionKey | translate}}</p></article>}</div></div></div><img src="/assets/images/about/about-location.webp" [alt]="'ABOUT.CONTACT.IMAGE_ALT' | translate" width="1300" height="880" loading="lazy" /></section>
+}

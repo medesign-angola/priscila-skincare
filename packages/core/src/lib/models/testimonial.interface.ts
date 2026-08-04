@@ -13,7 +13,7 @@ export interface HomeTestimonialsTranslation {
 
 export interface HomeTestimonialsPresentation {
   translations: Record<'pt' | 'fr', HomeTestimonialsTranslation>;
-  testimonials: VideoTestimonial[];
+  testimonials: Record<'pt' | 'fr', VideoTestimonial[]>;
 }
 
 export interface ReviewsSummary {

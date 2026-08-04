@@ -1,0 +1,119 @@
+:host {
+  display: block;
+}
+
+.review-success {
+  display: grid;
+  min-height: 100svh;
+  padding: 6.5rem 1rem 3rem;
+  place-items: center;
+  color: #1a1917;
+  background: #fff;
+}
+
+.review-success__content {
+  display: flex;
+  width: min(100%, 27.75rem);
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.review-success__icon {
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #f7f5f1;
+}
+
+.review-success__icon svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.review-success__icon path {
+  stroke: #8f887e;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.review-success__copy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review-success h1 {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.review-success p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.review-success__actions {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.review-success__primary {
+  display: grid;
+  width: 100%;
+  min-height: 3rem;
+  place-items: center;
+  border-radius: 2px;
+  color: #fff;
+  background: #7d6645;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 160ms ease;
+}
+
+.review-success__primary:hover {
+  background: #5f4d35;
+}
+
+.review-success__secondary {
+  color: #6d675f;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-underline-offset: 0.2rem;
+}
+
+@media (max-width: 600px) {
+  .review-success {
+    min-height: 100svh;
+    padding: 4.5rem 1rem 2rem;
+  }
+
+  .review-success__content {
+    width: min(100%, 21.4375rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-success__primary {
+    transition: none;
+  }
+}

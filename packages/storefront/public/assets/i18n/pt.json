@@ -1,5 +1,5 @@
 {
-  "GLOBAL": { "TITLE": "Priscila Skincare - Site Oficial" },
+  "GLOBAL": { "TITLE": "Priscila Skincare - Site Oficial", "LOADING": "A carregar" },
   "ACCESSIBILITY": { "GALLERY": "Galeria" },
   "HOME": {
     "WELCOME": "Bem-vindo ao mundo dos cuidados com a pele!",
@@ -12,7 +12,7 @@
       "SAFETY_CERTIFIED": { "TITLE": "Certificado de segurança", "DESCRIPTION": "Todos os nossos produtos são certificados e feitos para sua segurança." }
     }
   },
-  "HEADER": { "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "ABOUT": "Sobre", "PERSONAL_AREA": "Área pessoal", "MENU": "Abrir menu", "CLOSE_MENU": "Fechar menu", "BACK": "Voltar" },
+  "HEADER": { "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "ABOUT": "Sobre", "PERSONAL_AREA": "Área pessoal", "MENU": "Abrir menu", "CLOSE_MENU": "Fechar menu", "BACK": "Voltar", "GO_HOME": "Ir para a página inicial" },
   "NAVIGATION_MENU": { "VIEW_ALL": "Ver todos" },
   "PREFERENCES": {
     "TITLE": "Linguagem e moeda", "CLOSE": "Fechar preferências", "LANGUAGE_LABEL": "Idioma",
@@ -65,11 +65,28 @@
       "MORE_DETAILS": "Mais detalhes sobre o produto", "HIGHLIGHTS": "Destaques", "SIZE": "Tamanho",
       "SELECT": "Selecionar", "ADD_TO_CART": "Ad. ao carrinho"
     },
-    "INGREDIENTS": { "TITLE": "Ingredientes", "VIEW_ALL": "Ver listagem completa", "COMPLEMENTARY_ACTIVES": "Ativos complementares" },
+    "INGREDIENTS": { "TITLE": "Ingredientes", "VIEW_ALL": "Ver listagem completa", "SHOW_LESS": "Ver menos", "COMPLEMENTARY_ACTIVES": "Ativos complementares" },
     "RESULTS": { "TITLE": "Resultado", "COMPARE": "Comparar antes e depois", "BEFORE": "Antes da utilização", "AFTER": "Depois da utilização" },
     "REVIEWS": {
       "TITLE": "O que nossos clientes dizem sobre os nossos produtos", "LEAVE_REVIEW": "Deixa sua avaliação",
+      "EDIT_REVIEW": "Editar sua avaliação", "YOU": "Você", "EDITED_NOW": "Editado agora",
       "EXCELLENT_PRODUCT": "Excelente produto!", "SHOW_LESS": "Ver menos", "LOAD_MORE": "Carregar mais"
+    }
+  },
+  "PRODUCT_REVIEW": {
+    "TITLE": "Avaliar produto", "EDIT_TITLE": "Editar avaliação",
+    "DESCRIPTION": "Partilhe a sua experiência com este produto.",
+    "PRODUCT": "Produto", "YOUR_RATING": "Sua avaliação", "RATING_ARIA": "{{rating}} de 5 estrelas",
+    "REVIEW_TITLE": "Título da avaliação", "TITLE_PLACEHOLDER": "Resuma a sua experiência",
+    "YOUR_REVIEW": "Sua avaliação", "REVIEW_PLACEHOLDER": "Conte-nos como foi a sua experiência com o produto",
+    "RECOMMENDS": "Eu recomendaria este produto", "SUBMIT": "Enviar avaliação",
+    "SUBMITTING": "A enviar avaliação", "CANCEL": "Cancelar",
+    "RATING": { "EMPTY": "Selecione uma nota", "1": "Muito ruim", "2": "Ruim", "3": "Bom", "4": "Muito bom", "5": "Excelente" },
+    "ERRORS": { "RATING": "Selecione uma nota.", "TITLE": "Insira um título para a avaliação.", "COMMENT": "Escreva pelo menos 10 caracteres sobre a sua experiência.", "PRODUCT_NOT_FOUND": "Este produto já não está disponível para avaliação.", "CATALOG_UNAVAILABLE": "O catálogo está temporariamente indisponível. Tente novamente.", "CUSTOMER_NOT_FOUND": "Não foi possível identificar a sua conta.", "CUSTOMER_UNAVAILABLE": "A sua conta não está disponível.", "VALIDATION_ERROR": "Revise os dados informados.", "REQUEST_FAILED": "Não foi possível enviar a avaliação. Tente novamente." },
+    "SUCCESS": {
+      "TITLE": "Obrigado pela sua avaliação!",
+      "DESCRIPTION": "Sua avaliação foi enviada com sucesso e será publicada em breve após nossa moderação.",
+      "BACK_TO_SHOP": "Voltar às compras", "VIEW_REVIEWS": "Ver avaliações"
     }
   },
   "SHIPPING_INFORMATION": {
@@ -80,13 +97,20 @@
   },
   "AUTH": {
     "LEGAL": "Termos e Política de Privacidade.",
-    "SIGN_IN": { "TITLE": "Entrar", "SUBTITLE": "Faça login ou crie uma conta", "EMAIL": "Insira o seu email", "CONTINUE": "Continuar", "EMAIL_ERROR": "Insira um endereço de email válido.", "MARKETING": "Envie-me um e-mail com notícias e ofertas.", "CONSENT": "Ao continuar, você concorda com nossos termos de serviço" },
-    "OTP": { "TITLE": "Digite o código", "SENT_TO": "Enviado para {{email}}", "DIGIT": "Dígito {{number}} do código", "INVALID": "Insira o código completo de seis dígitos." }
+    "BACK_TO_STORE": "Voltar ao site",
+    "SIGN_IN": { "TITLE": "Entrar", "SUBTITLE": "Faça login ou crie uma conta", "EMAIL": "Insira o seu email", "CONTINUE": "Continuar", "SENDING": "A enviar código...", "EMAIL_ERROR": "Insira um endereço de email válido.", "MARKETING": "Envie-me um e-mail com notícias e ofertas.", "CONSENT": "Ao continuar, você concorda com nossos termos de serviço" },
+    "ERRORS": { "REQUEST_FAILED": "Não foi possível enviar o código. Tente novamente.", "OTP_RESEND_TOO_SOON": "Aguarde antes de pedir outro código.", "RATE_LIMIT_EXCEEDED": "Foram feitos demasiados pedidos. Aguarde alguns minutos." },
+    "OTP": { "TITLE": "Digite o código", "SENT_TO": "Enviado para {{email}}", "DELIVERY_HINT": "Não recebeu? Verifique também a pasta de spam ou lixo eletrónico.", "DIGIT": "Dígito {{number}} do código", "INVALID": "Insira o código completo de seis dígitos.", "RESEND": "Reenviar código", "RESEND_IN": "Reenviar em {{seconds}}s", "SENDING": "A enviar novo código...", "VERIFYING": "A verificar código...", "ERRORS": { "OTP_INVALID": "O código informado é inválido.", "OTP_EXPIRED": "O código expirou. Solicite um novo.", "RATE_LIMIT_EXCEEDED": "Foram feitas demasiadas tentativas. Aguarde alguns minutos.", "REQUEST_FAILED": "Não foi possível validar o código." } }
   },
   "ACCOUNT": {
     "NAV": { "ORDERS": "Encomendas", "PROFILE": "Perfil" },
     "STATUS": { "CONFIRMED": "Confirmada", "PROCESSING": "Em processamento", "SHIPPED": "Expedida", "DELIVERED": "Entregue" },
-    "PROFILE": { "TITLE": "Perfil", "NAME": "Insira o seu nome", "EMAIL": "Email", "ADDRESSES": "Moradas", "ADD": "Adicionar", "NO_ADDRESS": "Nenhuma morada adicionada", "SELECT_ADDRESS": "Selecionar morada", "SIGN_OUT": "Terminar sessão" },
+    "PROFILE": {
+      "TITLE": "Perfil", "NAME": "Insira o seu nome", "PHONE": "Telefone", "EMAIL": "Email", "ADDRESSES": "Moradas", "ADD": "Adicionar", "NO_ADDRESS": "Nenhuma morada adicionada", "SELECT_ADDRESS": "Selecionar morada", "SIGN_OUT": "Terminar sessão",
+      "ADDRESS": {
+        "ADD_TITLE": "Adicionar morada", "EDIT_TITLE": "Editar morada", "CLOSE": "Fechar", "LABEL": "Nome da morada", "RECIPIENT": "Destinatário", "PHONE": "Telefone", "COUNTRY": "País", "PROVINCE": "Província", "CITY": "Município ou cidade", "NEIGHBORHOOD": "Bairro", "STREET": "Rua ou endereço", "HOUSE_NUMBER": "Número da casa", "APARTMENT": "Complemento ou referência", "POSTAL_CODE": "Código postal", "SET_DEFAULT": "Definir como morada principal", "DEFAULT": "Principal", "EDIT": "Editar", "MAKE_DEFAULT": "Tornar principal", "REMOVE": "Remover", "CANCEL": "Cancelar", "SAVE": "Guardar morada", "SAVING": "A guardar...", "REQUIRED": "Preencha todos os campos obrigatórios.", "ERROR": "Não foi possível guardar a morada. Tente novamente."
+      }
+    },
     "ORDERS": { "TITLE": "Encomendas", "EMPTY_TITLE": "Nenhuma encomenda ainda", "EMPTY_DESCRIPTION": "Visite a loja para fazer a sua primeira encomenda.", "SHOP": "Ir à loja", "VIEW_DETAILS": "Ver detalhes", "SIZE": "Tamanho", "QUANTITY_SHORT": "Qtd", "TOTAL": "Total" },
     "DETAILS": { "STATUS": "Estado da encomenda", "PRODUCTS": "Produtos", "DELIVERY_ADDRESS": "Morada de entrega", "PAYMENT_METHOD": "Método de pagamento", "ENTITY": "Entidade", "REFERENCE": "Referência", "AMOUNT": "Montante", "SUMMARY": "Resumo", "SUBTOTAL": "Subtotal", "SHIPPING": "Envio", "FREE": "Grátis", "REORDER": "Voltar a encomendar", "NOT_FOUND": "Encomenda não encontrada" }
   },

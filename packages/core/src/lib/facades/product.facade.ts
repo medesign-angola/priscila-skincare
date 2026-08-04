@@ -10,6 +10,12 @@ import {
   Ingredient,
 } from '../models/ingredient.interface';
 import { HomeTestimonialsPresentation } from '../models/testimonial.interface';
+import { HomePageConfiguration } from '../models/home-page.interface';
+import {
+  LocalizedAboutBrandPresentation,
+  LocalizedAboutPagePresentation,
+} from '../models/about-page.interface';
+import { LocalizedSiteSettingPresentation } from '../models/site-setting.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -27,8 +33,17 @@ export class ProductFacade {
   readonly ingredients = signal<Ingredient[]>([]);
   readonly homeIngredientsPresentation =
     signal<HomeIngredientsPresentation | null>(null);
+  readonly aboutIngredientsPresentation =
+    signal<HomeIngredientsPresentation | null>(null);
   readonly homeTestimonialsPresentation =
     signal<HomeTestimonialsPresentation | null>(null);
+  readonly homePageConfiguration = signal<HomePageConfiguration | null>(null);
+  readonly aboutBrandPresentation =
+    signal<LocalizedAboutBrandPresentation | null>(null);
+  readonly aboutPagePresentation =
+    signal<LocalizedAboutPagePresentation | null>(null);
+  readonly siteSettingPresentation =
+    signal<LocalizedSiteSettingPresentation | null>(null);
   readonly activeKitIndex = signal<number>(0);
   readonly currentLanguage = signal<'pt' | 'fr'>('pt');
 
@@ -52,23 +67,89 @@ export class ProductFacade {
     () => new Map(this.categories().map((category) => [category.id, category])),
   );
 
-  readonly featuredProducts = computed(() =>
-    this.products()
+  readonly featuredProducts = computed(() => {
+    const configuredIds =
+      this.homePageConfiguration()?.featuredProductIds[
+        this.currentLanguage()
+      ] ?? [];
+    const mappedProducts = this.mappedProducts();
+
+    if (configuredIds.length > 0) {
+      return configuredIds
+        .map((id) => mappedProducts.get(id))
+        .filter((product): product is Product => product !== undefined);
+    }
+
+    return this.products()
       .filter((product) => product.featured)
       .sort(
         (firstProduct, secondProduct) =>
           (firstProduct.featuredOrder ?? Number.MAX_SAFE_INTEGER) -
           (secondProduct.featuredOrder ?? Number.MAX_SAFE_INTEGER),
-      ),
+      );
+  });
+
+  readonly homeBrandPillars = computed(
+    () =>
+      this.homePageConfiguration()?.brandPillars[this.currentLanguage()] ??
+      null,
   );
 
-  readonly editorialCoverProducts = computed(() =>
-    this.productsWithPlacement('editorial-cover'),
-  );
+  readonly editorialCoverProducts = computed(() => {
+    const language = this.currentLanguage();
+    const configuration = this.homePageConfiguration()?.editorialCover[language];
+    const product = configuration
+      ? this.mappedProducts().get(configuration.productId)
+      : undefined;
 
-  readonly editorialGalleryProducts = computed(() =>
-    this.productsWithPlacement('editorial-gallery'),
-  );
+    if (configuration && product) {
+      return [
+        {
+          product,
+          placement: {
+            type: 'editorial-cover' as const,
+            order: 1,
+            mediaType: configuration.mediaType,
+            mediaUrl: configuration.mediaUrl,
+            placeholderUrl: configuration.placeholderUrl,
+            hasNoise: configuration.hasNoise,
+          },
+        },
+      ];
+    }
+
+    return this.productService.useMockFallbacks
+      ? this.productsWithPlacement('editorial-cover')
+      : [];
+  });
+
+  readonly editorialGalleryProducts = computed(() => {
+    const language = this.currentLanguage();
+    const configuredId =
+      this.homePageConfiguration()?.editorialGalleryProductIds[language] ??
+      null;
+    const product = configuredId
+      ? this.mappedProducts().get(configuredId)
+      : undefined;
+
+    if (product && product.images.length >= 5) {
+      return [
+        {
+          product,
+          placement: {
+            type: 'editorial-gallery' as const,
+            order: 1,
+            coverImage: product.images[0],
+            imageIndexes: [0, 1, 2, 3, 4],
+          },
+        },
+      ];
+    }
+
+    return this.productService.useMockFallbacks
+      ? this.productsWithPlacement('editorial-gallery')
+      : [];
+  });
 
   readonly mappedIngredients = computed(
     () =>
@@ -77,8 +158,17 @@ export class ProductFacade {
       ),
   );
 
-  readonly homeIngredients = computed(() => {
-    const presentation = this.homeIngredientsPresentation();
+  readonly homeIngredients = computed(() =>
+    this.resolveIngredientsPresentation(this.homeIngredientsPresentation()),
+  );
+
+  readonly aboutIngredients = computed(() =>
+    this.resolveIngredientsPresentation(this.aboutIngredientsPresentation()),
+  );
+
+  private resolveIngredientsPresentation(
+    presentation: HomeIngredientsPresentation | null,
+  ) {
     if (!presentation) return null;
 
     const language = this.currentLanguage();
@@ -103,7 +193,7 @@ export class ProductFacade {
         ];
       }),
     };
-  });
+  }
 
   readonly globalReviewsSummary = computed(() => {
     const language = this.currentLanguage();
@@ -128,9 +218,11 @@ export class ProductFacade {
     const presentation = this.homeTestimonialsPresentation();
     if (!presentation) return null;
 
+    const language = this.currentLanguage();
+
     return {
-      ...presentation.translations[this.currentLanguage()],
-      testimonials: [...presentation.testimonials].sort(
+      ...presentation.translations[language],
+      testimonials: [...presentation.testimonials[language]].sort(
         (firstTestimonial, secondTestimonial) =>
           firstTestimonial.order - secondTestimonial.order,
       ),
@@ -187,6 +279,61 @@ export class ProductFacade {
     }));
   });
 
+  readonly aboutBrand = computed(
+    () =>
+      this.aboutBrandPresentation()?.translations[this.currentLanguage()] ??
+      null,
+  );
+
+  readonly aboutPage = computed(
+    () =>
+      this.aboutPagePresentation()?.translations[this.currentLanguage()] ??
+      null,
+  );
+
+  readonly siteSetting = computed(
+    () =>
+      this.siteSettingPresentation()?.translations[this.currentLanguage()] ??
+      null,
+  );
+
+  readonly featuredHomeCollectionWithProducts = computed(() => {
+    const configuredId =
+      this.homePageConfiguration()?.featuredCollectionIds[
+        this.currentLanguage()
+      ] ?? null;
+    const selectedCollection = configuredId
+      ? this.collectionsWithProducts().find(
+          (collection) => collection.id === configuredId,
+        )
+      : undefined;
+
+    if (
+      selectedCollection?.home &&
+      selectedCollection.media
+    ) {
+      return {
+        id: selectedCollection.id,
+        slug: selectedCollection.slug,
+        thumbnailImage: selectedCollection.thumbnailImage,
+        media: selectedCollection.media,
+        productCount: selectedCollection.products.length,
+        ...selectedCollection.home.translations[this.currentLanguage()],
+      };
+    }
+
+    return this.productService.useMockFallbacks
+      ? this.homeCollectionsWithProducts()[0] ?? null
+      : null;
+  });
+
+  readonly mappedKitsWithProducts = computed(
+    () =>
+      new Map(
+        this.kitsWithProducts().map((kit) => [kit.id, kit]),
+      ),
+  );
+
   readonly localizedKitsWithProducts = computed(() => {
     const language = this.currentLanguage();
     return this.kitsWithProducts().map((kit) => ({
@@ -213,6 +360,22 @@ export class ProductFacade {
       )
       .slice(0, 4),
   );
+
+  readonly featuredHomeKitWithProducts = computed(() => {
+    const configuredId =
+      this.homePageConfiguration()?.featuredKitIds[
+        this.currentLanguage()
+      ] ?? null;
+
+    if (configuredId) {
+      const configuredKit = this.mappedKitsWithProducts().get(configuredId);
+      if (configuredKit) return configuredKit;
+    }
+
+    return this.productService.useMockFallbacks
+      ? this.homeKitsWithProducts()[0] ?? null
+      : null;
+  });
 
   // Maps active kit's product IDs to actual Product objects dynamically
   readonly activeKitProducts = computed<Product[]>(() => {
@@ -243,6 +406,9 @@ export class ProductFacade {
 
   private loadAllData() {
     this.productService
+      .getHomePageConfiguration()
+      .subscribe((data) => this.homePageConfiguration.set(data));
+    this.productService
       .getProducts()
       .subscribe((data) => this.products.set(data));
     this.productService.getKits().subscribe((data) => this.kits.set(data));
@@ -262,6 +428,18 @@ export class ProductFacade {
     this.productService
       .getHomeIngredients()
       .subscribe((data) => this.homeIngredientsPresentation.set(data));
+    this.productService
+      .getAboutIngredients()
+      .subscribe((data) => this.aboutIngredientsPresentation.set(data));
+    this.productService
+      .getAboutBrand()
+      .subscribe((data) => this.aboutBrandPresentation.set(data));
+    this.productService
+      .getAboutPage()
+      .subscribe((data) => this.aboutPagePresentation.set(data));
+    this.productService
+      .getSiteSetting()
+      .subscribe((data) => this.siteSettingPresentation.set(data));
     this.productService
       .getHomeTestimonials()
       .subscribe((data) => this.homeTestimonialsPresentation.set(data));

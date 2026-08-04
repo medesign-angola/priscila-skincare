@@ -46,7 +46,8 @@
       orgBlurUp
       [style.mixBlendMode]="blendMode()"
       [style.objectPosition]="objectPosition()"
-      class="w-full h-full object-cover transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
+      [style.objectFit]="objectFit()"
+      class="w-full h-full transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
     ></video>
     } @else {
     <picture class="hero-cover-picture">
@@ -59,8 +60,9 @@
         [style.mixBlendMode]="blendMode()"
         [style.objectPosition]="objectPosition()"
         [style.--mobile-object-position]="mobileObjectPosition() || objectPosition()"
-        alt=""
-        class="w-full h-full object-cover transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
+        [style.objectFit]="objectFit()"
+        [alt]="alt()"
+        class="w-full h-full transition-opacity duration-500 ease-out opacity-0 [&.loaded]:opacity-100"
       />
     </picture>
     }

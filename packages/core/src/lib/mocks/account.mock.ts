@@ -3,17 +3,24 @@ import { Customer, Order } from '../models/account.interface';
 export const MOCK_CUSTOMER: Customer = {
   id: 'customer-1',
   name: 'Miguel Paulo',
+  phone: '+244 924 635 836',
   email: 'miguelpaulovida@gmail.com',
   addresses: [],
 };
 
 const deliveryAddress = {
   id: 'address-1',
+  label: 'Casa',
   recipient: 'Miguel Paulo',
+  phone: '+244 924 635 836',
+  country: 'Angola',
+  province: 'Luanda',
+  neighborhood: 'Coqueiros',
   street: 'Rua dos Coqueiros, 45',
+  houseNumber: '45',
   apartment: 'Apt. 3B',
   city: 'Luanda',
-  country: 'Angola',
+  isDefault: true,
 };
 
 export const MOCK_ORDERS: Order[] = [

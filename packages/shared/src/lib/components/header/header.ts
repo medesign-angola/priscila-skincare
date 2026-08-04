@@ -75,6 +75,7 @@ export class HeaderComponent {
   cartItems = input<readonly HeaderCartItem[]>([]);
   cartCount = input(0);
   cartTotal = input('');
+  accountRoute = input('/entrar');
 
   readonly activeNavigationMenu = signal<HeaderNavigationMenu | null>(null);
   readonly displayedNavigationMenu = signal<HeaderNavigationMenu>('products');

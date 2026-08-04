@@ -137,7 +137,7 @@
         aria-labelledby="footer-newsletter-title"
       >
         <h2 id="footer-newsletter-title">
-          {{ 'FOOTER.NEWSLETTER_TITLE' | translate }}
+          {{ newsletterHeadline() || ('FOOTER.NEWSLETTER_TITLE' | translate) }}
         </h2>
         <form (submit)="$event.preventDefault(); submitNewsletter()" novalidate>
           <div class="footer__newsletter-form">

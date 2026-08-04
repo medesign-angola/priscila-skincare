@@ -7,6 +7,7 @@ import {
 import { ProductFacade } from '@org/core';
 import { HeroCoverComponent } from '@org/shared';
 import { TranslatePipe } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-featured-collection-section',
@@ -17,12 +18,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class FeaturedCollectionSection {
   private readonly facade = inject(ProductFacade);
+  private readonly router = inject(Router);
 
   readonly collection = computed(
-    () => this.facade.homeCollectionsWithProducts()[0] ?? null,
+    () => this.facade.featuredHomeCollectionWithProducts(),
   );
 
   exploreCollection(slug: string): void {
-    console.log('Abrir coleção:', slug);
+    void this.router.navigate(['/produtos', 'colecao', slug]);
   }
 }

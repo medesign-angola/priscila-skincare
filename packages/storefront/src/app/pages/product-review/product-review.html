@@ -1,0 +1,112 @@
+@if (product(); as currentProduct) {
+<main class="review-page">
+  <form class="review-form" [formGroup]="form" (ngSubmit)="submit()">
+    <header class="review-form__heading">
+      <h1>
+        {{ (existingReview()
+          ? 'PRODUCT_REVIEW.EDIT_TITLE'
+          : 'PRODUCT_REVIEW.TITLE') | translate }}
+      </h1>
+      <p>{{ 'PRODUCT_REVIEW.DESCRIPTION' | translate }}</p>
+    </header>
+
+    <article class="review-form__product">
+      <img [src]="currentProduct.thumbnailImage" alt="" />
+      <div>
+        <span>{{ 'PRODUCT_REVIEW.PRODUCT' | translate }}</span>
+        <strong>
+          {{ currentProduct.translations[products.currentLanguage()].name }}
+        </strong>
+        <b>{{ price() }}</b>
+      </div>
+    </article>
+
+    <fieldset class="review-form__rating">
+      <legend>{{ 'PRODUCT_REVIEW.YOUR_RATING' | translate }}</legend>
+      <div>
+        <div
+          class="review-form__stars"
+          (mouseleave)="hoveredRating.set(0)"
+        >
+          @for (rating of [1, 2, 3, 4, 5]; track rating) {
+          <button
+            type="button"
+            [class.is-active]="rating <= (hoveredRating() || form.controls.rating.value)"
+            [attr.aria-label]="
+              'PRODUCT_REVIEW.RATING_ARIA' | translate: { rating }
+            "
+            [attr.aria-pressed]="form.controls.rating.value === rating"
+            (mouseenter)="hoveredRating.set(rating)"
+            (focus)="hoveredRating.set(rating)"
+            (blur)="hoveredRating.set(0)"
+            (click)="setRating(rating)"
+          >
+            ★
+          </button>
+          }
+        </div>
+        <span>{{ ratingLabelKey() | translate }}</span>
+      </div>
+      @if (form.controls.rating.invalid && form.controls.rating.touched) {
+      <small>{{ 'PRODUCT_REVIEW.ERRORS.RATING' | translate }}</small>
+      }
+    </fieldset>
+
+    <label class="review-form__field">
+      <span>{{ 'PRODUCT_REVIEW.REVIEW_TITLE' | translate }}</span>
+      <input
+        type="text"
+        formControlName="title"
+        [placeholder]="'PRODUCT_REVIEW.TITLE_PLACEHOLDER' | translate"
+        maxlength="80"
+      />
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+      <small>{{ 'PRODUCT_REVIEW.ERRORS.TITLE' | translate }}</small>
+      }
+    </label>
+
+    <label class="review-form__field">
+      <span>{{ 'PRODUCT_REVIEW.YOUR_REVIEW' | translate }}</span>
+      <textarea
+        formControlName="comment"
+        [placeholder]="'PRODUCT_REVIEW.REVIEW_PLACEHOLDER' | translate"
+        maxlength="1000"
+      ></textarea>
+      @if (form.controls.comment.invalid && form.controls.comment.touched) {
+      <small>{{ 'PRODUCT_REVIEW.ERRORS.COMMENT' | translate }}</small>
+      }
+    </label>
+
+    <label class="review-form__recommend">
+      <input type="checkbox" formControlName="recommends" />
+      <span>{{ 'PRODUCT_REVIEW.RECOMMENDS' | translate }}</span>
+    </label>
+
+    <div class="review-form__actions">
+      <button
+        class="review-form__submit"
+        type="submit"
+        [disabled]="submitting()"
+      >
+        {{ (submitting()
+          ? 'PRODUCT_REVIEW.SUBMITTING'
+          : 'PRODUCT_REVIEW.SUBMIT') | translate }}
+      </button>
+      <a
+        [routerLink]="['/produtos', currentProduct.slug ?? currentProduct.id]"
+        fragment="avaliacoes"
+      >
+        {{ 'PRODUCT_REVIEW.CANCEL' | translate }}
+      </a>
+    </div>
+    @if (reviewFacade.errorCode()) {
+      <p class="review-form__error" role="alert">{{ 'PRODUCT_REVIEW.ERRORS.' + (reviewFacade.errorCode() | uppercase) | translate }}</p>
+    }
+  </form>
+</main>
+} @else {
+<main class="review-page review-page--missing">
+  <p>{{ 'PRODUCT_DETAILS.NOT_FOUND' | translate }}</p>
+  <a routerLink="/produtos">{{ 'PRODUCT_DETAILS.BACK_HOME' | translate }}</a>
+</main>
+}

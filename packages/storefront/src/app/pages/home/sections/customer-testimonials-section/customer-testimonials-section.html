@@ -1,9 +1,10 @@
-@if (presentation(); as content) {
 <section
   #sectionRoot
   class="testimonials"
+  [class.testimonials--empty]="!presentation()"
   aria-labelledby="customer-testimonials-title"
 >
+  @if (presentation(); as content) {
   <div class="testimonials__content">
     <aside class="testimonials__summary">
       <h2 id="customer-testimonials-title">{{ content.title }}</h2>
@@ -194,5 +195,5 @@
       }
     </div>
   </div>
+  }
 </section>
-}

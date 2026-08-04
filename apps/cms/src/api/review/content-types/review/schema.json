@@ -7,30 +7,37 @@
     "displayName": "Avaliação"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "attributes": {
-    "name": {
-      "type": "string",
+    "externalReviewId": { "type": "uid", "required": true, "unique": true },
+    "customerId": { "type": "string", "required": true, "private": true },
+    "name": { "type": "string", "required": true },
+    "productSku": { "type": "string", "required": true },
+    "title": { "type": "string", "required": true, "maxLength": 80 },
+    "comment": { "type": "text", "required": true },
+    "rating": { "type": "integer", "required": true, "min": 1, "max": 5 },
+    "recommends": { "type": "boolean", "default": false },
+    "moderationStatus": {
+      "type": "enumeration",
+      "enum": ["pending", "published", "rejected"],
+      "default": "pending",
       "required": true
     },
-    "comment": {
-      "type": "text",
-      "required": true
-    },
-    "rating": {
-      "type": "integer",
-      "required": true,
-      "min": 1,
-      "max": 5
-    },
-    "reviewDate": {
-      "type": "date"
-    },
+    "reviewDate": { "type": "datetime" },
+    "submittedAt": { "type": "datetime", "required": true },
+    "sourceUpdatedAt": { "type": "datetime", "required": true },
     "product": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
+      "inversedBy": "reviews",
+      "required": true
+    },
+    "customer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::customer.customer",
       "inversedBy": "reviews",
       "required": true
     }

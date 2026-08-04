@@ -1,0 +1,27 @@
+<main class="review-success">
+  <div class="review-success__content" role="status">
+    <div class="review-success__icon" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none">
+        <path d="m10.5 20.5 6.5 6.5 13-14" />
+      </svg>
+    </div>
+
+    <div class="review-success__copy">
+      <h1>{{ 'PRODUCT_REVIEW.SUCCESS.TITLE' | translate }}</h1>
+      <p>{{ 'PRODUCT_REVIEW.SUCCESS.DESCRIPTION' | translate }}</p>
+    </div>
+
+    <div class="review-success__actions">
+      <a class="review-success__primary" routerLink="/produtos">
+        {{ 'PRODUCT_REVIEW.SUCCESS.BACK_TO_SHOP' | translate }}
+      </a>
+      <a
+        class="review-success__secondary"
+        [routerLink]="['/produtos', productId]"
+        fragment="avaliacoes"
+      >
+        {{ 'PRODUCT_REVIEW.SUCCESS.VIEW_REVIEWS' | translate }}
+      </a>
+    </div>
+  </div>
+</main>

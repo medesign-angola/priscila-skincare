@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_home_ingredients_presentations",
+  "info": {
+    "displayName": "Apresentação dos ingredientes",
+    "description": "Textos e ingredientes apresentados na seção interativa do site."
+  },
+  "attributes": {
+    "headline": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "footnote": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "ingredients": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ingredient.ingredient",
+      "required": true
+    }
+  }
+}

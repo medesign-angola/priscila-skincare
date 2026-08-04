@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_action_categories",
+  "info": {
+    "displayName": "Ver uma categoria",
+    "description": "Mostra os produtos pertencentes a uma categoria."
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "default": "VER CATEGORIA",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::category.category",
+      "required": true
+    }
+  }
+}

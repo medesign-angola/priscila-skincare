@@ -65,7 +65,7 @@
   }
 
   <!-- 2. Centro: Logotipo SVG (fill com currentColor) -->
-  <div class="site-header__logo flex items-center justify-center cursor-pointer" routerLink="/">
+  <a class="site-header__logo flex items-center justify-center cursor-pointer" routerLink="/" [attr.aria-label]="'HEADER.GO_HOME' | translate">
     <svg
       width="56"
       height="56"
@@ -102,7 +102,7 @@
         fill="currentColor"
       />
     </svg>
-  </div>
+  </a>
 
   @if (mode() === 'storefront') {
   <div class="mobile-header__controls">
@@ -216,7 +216,7 @@
           <span>{{ 'NAVIGATION_MENU.VIEW_ALL' | translate }}</span>
           <ng-container [ngTemplateOutlet]="mobileArrowRight" />
         </a>
-        <a routerLink="/entrar" class="px-6">
+        <a [routerLink]="accountRoute()" class="px-6">
           <span>{{ 'HEADER.PERSONAL_AREA' | translate }}</span>
           <ng-container [ngTemplateOutlet]="mobileArrowRight" />
         </a>
@@ -321,7 +321,7 @@
     </button>
 
     <!-- Espaço para o Ícone de Usuário -->
-    <a routerLink="/entrar" class="flex items-center justify-center p-2.5 cursor-pointer" [attr.aria-label]="'AUTH.SIGN_IN.TITLE' | translate">
+    <a [routerLink]="accountRoute()" class="flex items-center justify-center p-2.5 cursor-pointer" [attr.aria-label]="'AUTH.SIGN_IN.TITLE' | translate">
       <svg
         width="24"
         height="24"

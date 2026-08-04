@@ -1,1 +1,15 @@
+@if (content(); as section) {
+<section class="pillars" aria-labelledby="about-pillars-title">
+  <h2 id="about-pillars-title">{{ section.title }}</h2>
+  <div class="pillars__list">
+    @for (pillar of section.items; track pillar.order) {
+      <article>
+        <h3><span>{{ formatIndex(pillar.order) }}.</span> {{ pillar.title }}</h3>
+        <p>{{ pillar.description }}</p>
+      </article>
+    }
+  </div>
+</section>
+} @else {
 <section class="pillars" aria-labelledby="about-pillars-title"><h2 id="about-pillars-title">{{ 'ABOUT.PILLARS.TITLE' | translate }}</h2><div class="pillars__list">@for (pillar of pillars; track pillar.index) {<article><h3><span>{{ pillar.index }}.</span> {{ pillar.titleKey | translate }}</h3><p>{{ pillar.descriptionKey | translate }}</p></article>}</div></section>
+}

@@ -1,1 +1,80 @@
-<section class="account-page"><h1>{{'ACCOUNT.PROFILE.TITLE'|translate}}</h1><article class="profile-card"><input [formControl]="name" (blur)="saveName()" [placeholder]="'ACCOUNT.PROFILE.NAME'|translate" /><div class="email"><span>{{'ACCOUNT.PROFILE.EMAIL'|translate}}</span><strong>{{auth.customer()?.email}}</strong></div></article><article class="profile-card addresses"><header><h2>{{'ACCOUNT.PROFILE.ADDRESSES'|translate}}</h2><button type="button">+ {{'ACCOUNT.PROFILE.ADD'|translate}}</button></header><button class="address-select" type="button"><span>{{(auth.customer()?.addresses?.length ? 'ACCOUNT.PROFILE.SELECT_ADDRESS':'ACCOUNT.PROFILE.NO_ADDRESS')|translate}}</span><span>⌄</span></button></article><button class="sign-out" type="button" (click)="signOut()">{{'ACCOUNT.PROFILE.SIGN_OUT'|translate}}</button></section>
+<section class="account-page">
+  <h1>{{ 'ACCOUNT.PROFILE.TITLE' | translate }}</h1>
+
+  <article class="profile-card">
+    <input [formControl]="name" (blur)="saveProfile()" [placeholder]="'ACCOUNT.PROFILE.NAME' | translate" />
+    <div class="contact">
+      <div><span>{{ 'ACCOUNT.PROFILE.PHONE' | translate }}</span><input type="tel" [formControl]="phone" (blur)="saveProfile()" [placeholder]="'ACCOUNT.PROFILE.PHONE' | translate" /></div>
+      <div><span>{{ 'ACCOUNT.PROFILE.EMAIL' | translate }}</span><strong>{{ auth.customer()?.email }}</strong></div>
+    </div>
+  </article>
+
+  <article class="profile-card addresses">
+    <header>
+      <h2>{{ 'ACCOUNT.PROFILE.ADDRESSES' | translate }}</h2>
+      <button type="button" (click)="openAddAddress()" [disabled]="(auth.customer()?.addresses?.length ?? 0) >= 5">+ {{ 'ACCOUNT.PROFILE.ADD' | translate }}</button>
+    </header>
+
+    @if (auth.customer()?.addresses?.length) {
+      <div class="address-list">
+        @for (address of auth.customer()?.addresses; track address.id) {
+          <article class="address-card">
+            <div class="address-card__heading">
+              <strong>{{ address.label }}</strong>
+              @if (address.isDefault) { <span>{{ 'ACCOUNT.PROFILE.ADDRESS.DEFAULT' | translate }}</span> }
+            </div>
+            <p>{{ address.recipient }} · {{ address.phone }}</p>
+            <p>{{ address.street }}@if (address.houseNumber) {, {{ address.houseNumber }}} · {{ address.neighborhood }}, {{ address.city }}, {{ address.province }}</p>
+            <div class="address-card__actions">
+              <button type="button" (click)="openEditAddress(address)">{{ 'ACCOUNT.PROFILE.ADDRESS.EDIT' | translate }}</button>
+              @if (!address.isDefault) {
+                <button type="button" (click)="makeDefault(address)">{{ 'ACCOUNT.PROFILE.ADDRESS.MAKE_DEFAULT' | translate }}</button>
+              }
+              <button type="button" (click)="deleteAddress(address)">{{ 'ACCOUNT.PROFILE.ADDRESS.REMOVE' | translate }}</button>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="address-empty">{{ 'ACCOUNT.PROFILE.NO_ADDRESS' | translate }}</div>
+    }
+  </article>
+
+  <button class="sign-out" type="button" (click)="signOut()">{{ 'ACCOUNT.PROFILE.SIGN_OUT' | translate }}</button>
+</section>
+
+@if (modalOpen()) {
+  <div class="address-modal-backdrop" (click)="closeAddressModal()">
+    <section class="address-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'address-modal-title'" (click)="$event.stopPropagation()">
+      <header>
+        <h2 id="address-modal-title">{{ (editingAddress() ? 'ACCOUNT.PROFILE.ADDRESS.EDIT_TITLE' : 'ACCOUNT.PROFILE.ADDRESS.ADD_TITLE') | translate }}</h2>
+        <button type="button" (click)="closeAddressModal()" [attr.aria-label]="'ACCOUNT.PROFILE.ADDRESS.CLOSE' | translate">×</button>
+      </header>
+      <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+        <div class="address-fields">
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.LABEL' | translate }}</span><input formControlName="label" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }}</span><input formControlName="recipient" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }}</span><input type="tel" formControlName="phone" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }}</span><input formControlName="country" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PROVINCE' | translate }}</span><input formControlName="province" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.CITY' | translate }}</span><input formControlName="city" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.NEIGHBORHOOD' | translate }}</span><input formControlName="neighborhood" /></label>
+          <label class="address-fields__wide"><span>{{ 'ACCOUNT.PROFILE.ADDRESS.STREET' | translate }}</span><input formControlName="street" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.HOUSE_NUMBER' | translate }}</span><input formControlName="houseNumber" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.APARTMENT' | translate }}</span><input formControlName="apartment" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.POSTAL_CODE' | translate }}</span><input formControlName="postalCode" /></label>
+        </div>
+        <label class="address-default"><input type="checkbox" formControlName="isDefault" /><span>{{ 'ACCOUNT.PROFILE.ADDRESS.SET_DEFAULT' | translate }}</span></label>
+        @if (addressForm.invalid && addressForm.touched) { <p class="address-error">{{ 'ACCOUNT.PROFILE.ADDRESS.REQUIRED' | translate }}</p> }
+        @if (addressError()) { <p class="address-error">{{ 'ACCOUNT.PROFILE.ADDRESS.ERROR' | translate }}</p> }
+        <div class="address-modal__actions">
+          <button type="button" (click)="closeAddressModal()">{{ 'ACCOUNT.PROFILE.ADDRESS.CANCEL' | translate }}</button>
+          <button class="address-save" type="submit" [disabled]="addressSaving()">
+            @if (addressSaving()) { <span class="address-spinner" aria-hidden="true"></span> }
+            {{ (addressSaving() ? 'ACCOUNT.PROFILE.ADDRESS.SAVING' : 'ACCOUNT.PROFILE.ADDRESS.SAVE') | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}

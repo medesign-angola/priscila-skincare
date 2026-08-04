@@ -1,0 +1,18 @@
+{
+  "name": "backend-infrastructure",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "root": "packages/backend-infrastructure",
+  "sourceRoot": "packages/backend-infrastructure",
+  "tags": ["type:infrastructure", "scope:backend"],
+  "implicitDependencies": ["backend-domain", "backend-application"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/bin"],
+      "options": { "command": "dotnet build packages/backend-infrastructure/PriscilaSkincare.Infrastructure.csproj --configuration Release --no-restore" }
+    }
+  }
+}

@@ -28,6 +28,7 @@ export interface KitTranslation {
 
 export interface Kit {
   id: string;
+  slug?: string;
   name: string;
   collection: string; // Subtitle/Collection name
   description: string; // Kit description/tagline até 45 caracteres
@@ -36,6 +37,7 @@ export interface Kit {
   mediaType: 'image' | 'video';
   mediaUrl: string;
   mediaStyle: 'split-right' | 'cover';
+  thumbnailImage?: string;
   placeholderUrl?: string; // Stretched low-res blurred loading placeholder
   productIds: string[]; // referenced products
   featured: boolean; // featured on homepage hero slider

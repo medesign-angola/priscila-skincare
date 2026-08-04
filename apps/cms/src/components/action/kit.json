@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_action_kits",
+  "info": {
+    "displayName": "Comprar ou ver um kit",
+    "description": "Leva o cliente diretamente para um kit de produtos."
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "default": "COMPRAR KIT",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "kit": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::kit.kit",
+      "required": true
+    }
+  }
+}

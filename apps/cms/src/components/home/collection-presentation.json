@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_home_collection_presentations",
+  "info": {
+    "displayName": "Apresentação da coleção na página inicial",
+    "description": "Textos utilizados quando a coleção é destacada na página inicial."
+  },
+  "options": {},
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "required": true,
+      "default": 1,
+      "min": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "footnote": {
+      "type": "text"
+    }
+  }
+}

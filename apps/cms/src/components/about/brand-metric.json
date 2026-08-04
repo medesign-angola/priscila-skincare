@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_about_brand_metrics",
+  "info": {
+    "displayName": "Número da marca",
+    "description": "Número animado, complemento, destaque e explicação."
+  },
+  "attributes": {
+    "order": { "type": "integer", "required": true, "min": 1 },
+    "value": { "type": "integer", "required": true, "min": 0 },
+    "suffix": { "type": "string" },
+    "label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

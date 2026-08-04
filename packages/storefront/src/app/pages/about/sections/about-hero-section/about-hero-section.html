@@ -1,3 +1,23 @@
+@if (content(); as hero) {
+<org-hero-cover
+  mediaType="image"
+  [mediaUrl]="hero.imageUrl"
+  [mobileMediaUrl]="hero.mobileImageUrl || hero.imageUrl"
+  height="clamp(46rem, 59.722vw, 60rem)"
+  mobileHeight="47.875rem"
+  [objectPosition]="hero.objectPosition"
+  [mobileObjectPosition]="hero.objectPosition"
+>
+  <ng-template #heroContent>
+    <div class="about-hero__gradient" aria-hidden="true"></div>
+    <div class="about-hero__copy">
+      <p>{{ hero.label }}</p>
+      <h1 class="max-[600px]:leading-[100%]! max-[600px]:tracking-[-1.08px]!">{{ hero.headline }}</h1>
+      <p class="about-hero__description">{{ hero.description }}</p>
+    </div>
+  </ng-template>
+</org-hero-cover>
+} @else {
 <org-hero-cover
   mediaType="image"
   mediaUrl="/assets/images/about/about-hero.webp"
@@ -16,3 +36,4 @@
     </div>
   </ng-template>
 </org-hero-cover>
+}

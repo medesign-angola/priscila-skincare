@@ -114,7 +114,7 @@ export class Products {
     if (context === 'kit') {
       const kit = this.facade
         .localizedKitsWithProducts()
-        .find((item) => item.id === identifier);
+        .find((item) => item.id === identifier || item.slug === identifier);
       return {
         context,
         title: kit?.name ?? 'PRODUCTS_PAGE.KIT',

@@ -6,8 +6,88 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <style>
+      #preboot-route-loader {
+        position: fixed;
+        z-index: 10001;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+      }
+      #preboot-route-loader::after {
+        display: block;
+        width: 42%;
+        height: 100%;
+        border-radius: 0 999px 999px 0;
+        background: #7d6645;
+        animation: preboot-route-loading 1.1s
+          cubic-bezier(0.65, 0, 0.35, 1) infinite;
+        content: '';
+      }
+      html.preboot-route-loading #preboot-route-loader {
+        opacity: 1;
+      }
+      @keyframes preboot-route-loading {
+        from {
+          transform: translateX(-110%);
+        }
+        to {
+          transform: translateX(350%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #preboot-route-loader::after {
+          width: 100%;
+          animation: none;
+        }
+      }
+    </style>
+    <script>
+      (() => {
+        const onNavigation = (event) => {
+          if (
+            event.defaultPrevented ||
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+          )
+            return;
+
+          const target =
+            event.target instanceof Element ? event.target : null;
+          const anchor = target?.closest('a[href]');
+          if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download'))
+            return;
+
+          const destination = new URL(anchor.href, window.location.href);
+          if (
+            destination.origin === window.location.origin &&
+            destination.href !== window.location.href
+          ) {
+            document.documentElement.classList.add('preboot-route-loading');
+          }
+        };
+
+        document.addEventListener('click', onNavigation, true);
+        window.addEventListener(
+          'priscila-app-hydrated',
+          () => {
+            document.removeEventListener('click', onNavigation, true);
+            document.documentElement.classList.remove('preboot-route-loading');
+          },
+          { once: true },
+        );
+      })();
+    </script>
   </head>
   <body>
+    <div id="preboot-route-loader" aria-hidden="true"></div>
     <app-root></app-root>
   </body>
 </html>

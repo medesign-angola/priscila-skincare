@@ -1,3 +1,19 @@
+export type ProductReviewStatus = 'pending' | 'published' | 'rejected';
+
+export interface ProductReview {
+  id?: string;
+  customerId?: string;
+  name: string;
+  title?: string;
+  comment: string;
+  rating: number;
+  recommends?: boolean;
+  status?: ProductReviewStatus;
+  date?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface ProductTranslation {
   name: string;
   description: string;
@@ -54,12 +70,7 @@ export interface ProductTranslation {
   reviews: {
     averageRating: number;
     totalReviews: number;
-    userReviews: {
-      name: string;
-      comment: string;
-      rating: number;
-      date?: string;
-    }[];
+    userReviews: ProductReview[];
   };
 }
 
@@ -70,7 +81,7 @@ export type ProductBadge =
 
 export interface ProductCommerce {
   prices: { AOA: number; EUR: number };
-  availability: 'in-stock' | 'coming-soon';
+  availability: 'in-stock' | 'coming-soon' | 'out-of-stock';
   badge?: ProductBadge;
 }
 
@@ -96,6 +107,7 @@ export type ProductHomePlacement =
 
 export interface Product {
   id: string;
+  sku: string;
   slug?: string;
   featured: boolean;
   featuredOrder?: number;

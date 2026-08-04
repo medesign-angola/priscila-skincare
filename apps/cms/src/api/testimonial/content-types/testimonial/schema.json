@@ -10,7 +10,9 @@
     "draftAndPublish": true
   },
   "pluginOptions": {
-    "i18n": { "localized": true }
+    "i18n": {
+      "localized": true
+    }
   },
   "attributes": {
     "name": {
@@ -19,10 +21,12 @@
     },
     "message": {
       "type": "text",
-      "required": true,
       "pluginOptions": {
-        "i18n": { "localized": true }
-      }
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": false
     },
     "rating": {
       "type": "integer",
@@ -33,12 +37,16 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["videos"]
+      "allowedTypes": [
+        "videos"
+      ]
     },
     "poster": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "order": {
       "type": "integer",

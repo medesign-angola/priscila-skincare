@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_action_collections",
+  "info": {
+    "displayName": "Ver uma coleção",
+    "description": "Mostra os produtos pertencentes a uma coleção."
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "default": "VER COLEÇÃO",
+      "pluginOptions": {
+        "i18n": { "localized": true }
+      }
+    },
+    "collection": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::collection.collection",
+      "required": true
+    }
+  }
+}

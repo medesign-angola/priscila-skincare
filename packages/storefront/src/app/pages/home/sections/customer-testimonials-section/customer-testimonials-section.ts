@@ -6,13 +6,14 @@ import {
   computed,
   DestroyRef,
   ElementRef,
+  effect,
   inject,
   signal,
   viewChild,
   viewChildren,
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ProductFacade, VideoTestimonial } from '@org/core';
+import { ProductFacade, ReviewFacade, VideoTestimonial } from '@org/core';
 
 @Component({
   selector: 'app-customer-testimonials-section',
@@ -25,6 +26,7 @@ export class CustomerTestimonialsSection {
   private static readonly videosPerPage = 3;
 
   private readonly facade = inject(ProductFacade);
+  private readonly reviewFacade = inject(ReviewFacade);
   private readonly destroyRef = inject(DestroyRef);
   private readonly sectionRoot =
     viewChild<ElementRef<HTMLElement>>('sectionRoot');
@@ -49,7 +51,9 @@ export class CustomerTestimonialsSection {
     ReadonlyMap<string, { current: number; duration: number }>
   >(new Map());
   readonly presentation = this.facade.homeTestimonials;
-  readonly reviewsSummary = this.facade.globalReviewsSummary;
+  readonly reviewsSummary = computed(() =>
+    this.reviewFacade.globalSummary() ?? this.facade.globalReviewsSummary(),
+  );
 
   readonly pages = computed(() => {
     const testimonials = this.presentation()?.testimonials ?? [];
@@ -77,6 +81,30 @@ export class CustomerTestimonialsSection {
   );
 
   constructor() {
+    void this.reviewFacade.loadGlobalSummary();
+    effect(() => {
+      const pages = this.pages();
+      const pageIndex = this.activePage();
+
+      if (pages.length === 0) {
+        if (this.activeTestimonialId() !== null) {
+          this.activeTestimonialId.set(null);
+        }
+        return;
+      }
+
+      if (pageIndex >= pages.length) {
+        this.activePage.set(0);
+        return;
+      }
+
+      const activePage = pages[pageIndex] ?? [];
+      const currentId = this.activeTestimonialId();
+      if (!activePage.some((testimonial) => testimonial.id === currentId)) {
+        this.activeTestimonialId.set(activePage[0]?.id ?? null);
+      }
+    });
+
     afterNextRender(() => {
       const connection = (
         navigator as Navigator & { connection?: { saveData?: boolean } }

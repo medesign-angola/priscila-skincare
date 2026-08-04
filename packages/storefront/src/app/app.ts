@@ -17,10 +17,16 @@ import {
   HeaderComponent,
   formatPrice,
 } from '@org/shared';
-import { CartFacade, ProductFacade, HeaderService } from '@org/core';
+import { AuthFacade, CartFacade, ProductFacade, HeaderService } from '@org/core';
+import { RouteLoadingIndicator } from './components/route-loading-indicator/route-loading-indicator';
 
 @Component({
-  imports: [RouterModule, HeaderComponent, FooterComponent],
+  imports: [
+    RouterModule,
+    HeaderComponent,
+    FooterComponent,
+    RouteLoadingIndicator,
+  ],
   selector: 'app-root',
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -29,11 +35,15 @@ export class App {
   readonly facade = inject(ProductFacade);
   readonly headerService = inject(HeaderService);
   readonly cart = inject(CartFacade);
+  readonly auth = inject(AuthFacade);
   private readonly translateService = inject(TranslateService);
   private readonly documentTitle = inject(Title);
   private readonly router = inject(Router);
   readonly shellMode = signal<'storefront' | 'auth' | 'account'>('storefront');
   readonly showFooter = computed(() => this.shellMode() === 'storefront');
+  readonly accountRoute = computed(() =>
+    this.auth.isAuthenticated() ? '/conta/encomendas' : '/entrar',
+  );
   readonly headerProducts = computed(() => {
     const language = this.facade.currentLanguage();
 
@@ -95,22 +105,42 @@ export class App {
       imageUrl: collection.thumbnailImage,
     })),
   );
-  readonly footerSocialLinks: readonly FooterSocialLink[] = [
+  private readonly fallbackFooterSocialLinks: readonly FooterSocialLink[] = [
     { id: 'instagram', index: '01', label: 'Instagram' },
     { id: 'facebook', index: '02', label: 'Facebook' },
     { id: 'tiktok', index: '03', label: 'TikTok' },
   ];
+  readonly footerSocialLinks = computed<readonly FooterSocialLink[]>(() => {
+    const links = this.facade.siteSetting()?.socialLinks ?? [];
+    return links.length > 0
+      ? links.map((link, index) => ({
+          ...link,
+          index: String(index + 1).padStart(2, '0'),
+        }))
+      : this.fallbackFooterSocialLinks;
+  });
+  readonly footerBackgroundUrl = computed(
+    () =>
+      this.facade.siteSetting()?.footerBackgroundUrl ??
+      '/assets/images/footer/footer-background.webp',
+  );
 
   constructor() {
     this.updateShellMode(this.router.url);
     this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe((event) => this.updateShellMode(event.urlAfterRedirects));
     effect(() => {
-      this.translateService.use(this.facade.currentLanguage()).subscribe(() => {
-        this.documentTitle.setTitle(this.translateService.instant('GLOBAL.TITLE'));
+      const language = this.facade.currentLanguage();
+      const siteName = this.facade.siteSetting()?.siteName;
+      this.translateService.use(language).subscribe(() => {
+        this.documentTitle.setTitle(
+          siteName || this.translateService.instant('GLOBAL.TITLE'),
+        );
       });
     });
 
     afterNextRender(async () => {
+      await this.auth.ensureSession();
+
       const { default: Lenis } = await import('lenis');
       const { gsap } = await import('gsap');
       const { ScrollTrigger } = await import('gsap/ScrollTrigger');

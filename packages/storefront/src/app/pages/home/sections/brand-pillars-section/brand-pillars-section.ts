@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { ProductFacade } from '@org/core';
 
 @Component({
   selector: 'app-brand-pillars-section',
@@ -9,6 +10,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandPillarsSection {
+  readonly content = inject(ProductFacade).homeBrandPillars;
   readonly pillars = [
     {
       titleKey: 'HOME.BRAND_PILLARS.ACTIVE_FORMULAS.TITLE',

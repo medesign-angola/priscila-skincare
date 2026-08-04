@@ -1,3 +1,4 @@
+<app-route-loading-indicator />
 <org-header
   [products]="headerProducts()"
   [collections]="headerCollections()"
@@ -8,6 +9,7 @@
   [cartItems]="headerCartItems()"
   [cartCount]="cart.totalUnits()"
   [cartTotal]="headerCartTotal()"
+  [accountRoute]="accountRoute()"
   (languageChange)="facade.currentLanguage.set($event)"
   (currencyChange)="headerService.currency.set($event)"
   (cartRemove)="handleCartItem('remove', $event)"
@@ -19,7 +21,11 @@
 <org-footer
   [products]="footerProducts()"
   [collections]="footerCollections()"
-  [socialLinks]="footerSocialLinks"
+  [socialLinks]="footerSocialLinks()"
+  [backgroundUrl]="footerBackgroundUrl()"
+  [termsUrl]="facade.siteSetting()?.termsUrl"
+  [privacyUrl]="facade.siteSetting()?.privacyUrl"
+  [newsletterHeadline]="facade.siteSetting()?.newsletterHeadline"
   (navigationSelect)="handleFooterNavigation($event)"
   (newsletterSubmit)="handleNewsletterSubmit($event)"
 />

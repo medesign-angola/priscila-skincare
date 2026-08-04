@@ -43,6 +43,11 @@
       "repeatable": false,
       "component": "shared.media-presentation"
     },
+    "homePresentation": {
+      "type": "component",
+      "repeatable": false,
+      "component": "home.collection-presentation"
+    },
     "products": {
       "type": "relation",
       "relation": "manyToMany",
