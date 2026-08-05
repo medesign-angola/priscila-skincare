@@ -1,9 +1,0 @@
-{$API_DOMAIN} {
-    encode zstd gzip
-    reverse_proxy api:8080
-}
-
-{$CMS_DOMAIN} {
-    encode zstd gzip
-    reverse_proxy cms:1337
-}

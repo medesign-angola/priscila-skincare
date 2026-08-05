@@ -63,6 +63,8 @@ services:
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
     environment: *api-environment
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-8098}:8080"
     depends_on:
       mysql:
         condition: service_healthy
@@ -81,6 +83,8 @@ services:
       context: ./apps/cms
       dockerfile: Dockerfile
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:${CMS_HOST_PORT:-8099}:1337"
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
@@ -120,27 +124,6 @@ services:
       start_period: 60s
     networks: [private]
 
-  caddy:
-    image: caddy:2.10-alpine
-    restart: unless-stopped
-    environment:
-      API_DOMAIN: ${API_DOMAIN:?Defina API_DOMAIN}
-      CMS_DOMAIN: ${CMS_DOMAIN:?Defina CMS_DOMAIN}
-    ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-    volumes:
-      - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      api:
-        condition: service_healthy
-      cms:
-        condition: service_healthy
-    networks: [private]
-
 networks:
   private:
     driver: bridge
@@ -148,5 +131,3 @@ networks:
 volumes:
   mysql_data:
   strapi_uploads:
-  caddy_data:
-  caddy_config:
