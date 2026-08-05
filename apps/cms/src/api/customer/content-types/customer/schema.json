@@ -22,6 +22,12 @@
       "relation": "oneToMany",
       "target": "api::review.review",
       "mappedBy": "customer"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "customer"
     }
   }
 }

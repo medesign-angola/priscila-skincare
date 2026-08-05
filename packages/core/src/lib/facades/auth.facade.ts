@@ -4,8 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { API_CONFIG } from '../config/api.config';
-import { MOCK_ORDERS } from '../mocks/account.mock';
-import { Customer, CustomerAddress, Order, SaveCustomerAddress } from '../models/account.interface';
+import { CheckoutPreview, Customer, CustomerAddress, Order, SaveCustomerAddress } from '../models/account.interface';
 import { AuthenticationResponse, AuthSessionStore, SessionRefreshService } from '../services/auth-session.service';
 
 interface OtpRequestResponse {
@@ -34,7 +33,7 @@ export class AuthFacade {
   readonly pendingEmail = signal(this.readPendingEmail());
   readonly pendingMarketing = signal(this.readPendingMarketing());
   readonly customer = signal<Customer | null>(null);
-  readonly orders = signal<Order[]>(MOCK_ORDERS);
+  readonly orders = signal<Order[]>([]);
   readonly loading = signal(false);
   readonly errorCode = signal<string | null>(null);
   readonly resendSeconds = signal(0);
@@ -147,6 +146,29 @@ export class AuthFacade {
     await this.updateProfile(name, this.customer()?.phone);
   }
 
+  async loadOrders(): Promise<void> {
+    const orders = await firstValueFrom(this.http.get<ApiOrder[]>(`${this.config.baseUrl}/orders`));
+    this.orders.set(orders.map(mapOrder));
+  }
+
+  async loadOrder(id: string): Promise<Order | undefined> {
+    try {
+      const order = mapOrder(await firstValueFrom(this.http.get<ApiOrder>(`${this.config.baseUrl}/orders/${id}`)));
+      this.orders.update(items => [order, ...items.filter(item => item.id !== order.id)]);
+      return order;
+    } catch { return undefined; }
+  }
+
+  async checkoutPreview(addressId: string, currency: 'AOA'|'EUR', locale: string): Promise<CheckoutPreview> {
+    return firstValueFrom(this.http.post<CheckoutPreview>(`${this.config.baseUrl}/orders/preview`, { addressId, currency, locale }));
+  }
+
+  async createOrder(addressId: string, currency: 'AOA'|'EUR', locale: string, idempotencyKey: string): Promise<Order> {
+    const order = mapOrder(await firstValueFrom(this.http.post<ApiOrder>(`${this.config.baseUrl}/orders`, { addressId, currency, locale, idempotencyKey })));
+    this.orders.update(items => [order, ...items]);
+    return order;
+  }
+
   async signOut(): Promise<void> {
     try {
       await firstValueFrom(this.http.post<void>(
@@ -175,6 +197,7 @@ export class AuthFacade {
       firstValueFrom(this.http.get<CustomerAddress[]>(`${this.config.baseUrl}/customers/me/addresses`)),
     ]);
     this.customer.set(this.mapCustomer(customer, addresses));
+    await this.loadOrders();
   }
 
   private async loadAddresses(): Promise<void> {
@@ -212,3 +235,14 @@ export class AuthFacade {
     return 'request_failed';
   }
 }
+
+interface ApiOrder {
+  id: string; number: string; placedAt: string; status: Order['status']; currency: 'AOA'|'EUR'; subtotal: number; shipping: number; total: number;
+  items: { productSku: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
+  deliveryAddress: CustomerAddress; timeline: { status: Order['status']; occurredAt: string }[];
+}
+const mapOrder = (order: ApiOrder): Order => ({ id: order.id, number: order.number, placedAt: order.placedAt, status: order.status,
+  currency: order.currency, subtotal: order.subtotal, shippingPrice: order.shipping, total: order.total,
+  items: order.items.map(item => ({ productSku: item.productSku, productName: item.productName, imageUrl: item.imageUrl,
+    sizeLabel: item.variant ?? '', quantity: item.quantity, unitPrice: item.unitPrice })),
+  deliveryAddress: order.deliveryAddress, timeline: order.timeline });

@@ -15,6 +15,7 @@
   (cartRemove)="handleCartItem('remove', $event)"
   (cartIncrement)="handleCartItem('increment', $event)"
   (cartDecrement)="handleCartItem('decrement', $event)"
+  (cartCheckout)="handleCheckout()"
 ></org-header>
 <router-outlet></router-outlet>
 @if (showFooter()) {

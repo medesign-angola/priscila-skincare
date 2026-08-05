@@ -7,12 +7,12 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Repositories;
 
 internal sealed class OtpChallengeRepository(ApplicationDbContext dbContext) : IOtpChallengeRepository
 {
-    public Task<OtpChallenge?> FindLatestAsync(
+    public Task<OtpChallenge?> FindLatestSentAsync(
         EmailAddress email,
         CancellationToken cancellationToken = default) =>
         dbContext.OtpChallenges
-            .Where(challenge => challenge.Email == email)
-            .OrderByDescending(challenge => challenge.CreatedAt)
+            .Where(challenge => challenge.Email == email && challenge.DeliveryStatus == OtpDeliveryStatus.Sent)
+            .OrderByDescending(challenge => challenge.SentAt)
             .FirstOrDefaultAsync(cancellationToken);
 
     public void Add(OtpChallenge challenge) => dbContext.OtpChallenges.Add(challenge);

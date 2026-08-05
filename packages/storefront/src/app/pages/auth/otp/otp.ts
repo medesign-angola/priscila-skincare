@@ -2,11 +2,12 @@ import { UpperCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal, viewChildren } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthFacade } from '@org/core';
+import { AuthFacade, CartFacade } from '@org/core';
 
 @Component({ selector: 'app-otp', imports: [RouterLink, TranslatePipe, UpperCasePipe], templateUrl: './otp.html', styleUrl: './otp.css', changeDetection: ChangeDetectionStrategy.OnPush })
 export class Otp {
   readonly auth = inject(AuthFacade);
+  private readonly cart = inject(CartFacade);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly inputs = viewChildren<ElementRef<HTMLInputElement>>('digit');
@@ -62,6 +63,7 @@ export class Otp {
     this.invalid.set(!(await this.auth.verifyCode(this.digits.join(''))));
     this.submitting.set(false);
     if (!this.invalid()) {
+      await this.cart.synchronize();
       const requestedUrl = this.route.snapshot.queryParamMap.get('returnUrl');
       const returnUrl = requestedUrl?.startsWith('/') && !requestedUrl.startsWith('//')
         ? requestedUrl

@@ -6,7 +6,7 @@
 
   <header class="details-header">
     <div>
-      <h1>#{{ current.id }}</h1>
+      <h1>#{{ current.number }}</h1>
       <time>{{ current.placedAt | date: 'dd MMM y' }}</time>
     </div>
     <span class="status">
@@ -33,13 +33,12 @@
     <h2>
       {{ 'ACCOUNT.DETAILS.PRODUCTS' | translate }} ({{ current.items.length }})
     </h2>
-    @for (entry of items(); track entry.item.productId) {
-      @if (entry.product; as product) {
+    @for (entry of items(); track entry.item.productSku) {
       <div class="product">
-        <img [src]="product.thumbnailImage" alt="" />
+        <img [src]="entry.product?.thumbnailImage || entry.item.imageUrl" alt="" />
         <div class="product__copy">
           <strong>
-            {{ product.translations[products.currentLanguage()].name }}
+            {{ entry.product?.translations?.[products.currentLanguage()]?.name || entry.item.productName }}
           </strong>
           <span>
             {{ 'ACCOUNT.ORDERS.SIZE' | translate }}:
@@ -54,7 +53,6 @@
           </strong>
         </div>
       </div>
-      }
     }
   </article>
 
@@ -69,6 +67,7 @@
         {{ current.deliveryAddress.country }}
       </p>
       <hr />
+      @if (current.payment) {
       <h2>{{ 'ACCOUNT.DETAILS.PAYMENT_METHOD' | translate }}</h2>
       <dl>
         <div>
@@ -84,6 +83,7 @@
           <dd>{{ price(subtotal() + current.shippingPrice) }}</dd>
         </div>
       </dl>
+      }
     </article>
 
     <article class="summary">
@@ -103,7 +103,7 @@
         </div>
         <div class="total">
           <dt>{{ 'ACCOUNT.ORDERS.TOTAL' | translate }}</dt>
-          <dd>{{ price(subtotal() + current.shippingPrice) }}</dd>
+          <dd>{{ price(current.total) }}</dd>
         </div>
       </dl>
       <button type="button">

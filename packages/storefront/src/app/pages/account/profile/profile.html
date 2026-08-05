@@ -52,14 +52,14 @@
       </header>
       <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
         <div class="address-fields">
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.LABEL' | translate }}</span><input formControlName="label" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }}</span><input formControlName="recipient" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }}</span><input type="tel" formControlName="phone" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }}</span><input formControlName="country" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PROVINCE' | translate }}</span><input formControlName="province" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.CITY' | translate }}</span><input formControlName="city" /></label>
-          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.NEIGHBORHOOD' | translate }}</span><input formControlName="neighborhood" /></label>
-          <label class="address-fields__wide"><span>{{ 'ACCOUNT.PROFILE.ADDRESS.STREET' | translate }}</span><input formControlName="street" /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.LABEL' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="label" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="recipient" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input type="tel" formControlName="phone" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="country" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PROVINCE' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="province" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.CITY' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="city" required /></label>
+          <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.NEIGHBORHOOD' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="neighborhood" required /></label>
+          <label class="address-fields__wide"><span>{{ 'ACCOUNT.PROFILE.ADDRESS.STREET' | translate }} <b class="address-required" aria-hidden="true">*</b></span><input formControlName="street" required /></label>
           <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.HOUSE_NUMBER' | translate }}</span><input formControlName="houseNumber" /></label>
           <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.APARTMENT' | translate }}</span><input formControlName="apartment" /></label>
           <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.POSTAL_CODE' | translate }}</span><input formControlName="postalCode" /></label>

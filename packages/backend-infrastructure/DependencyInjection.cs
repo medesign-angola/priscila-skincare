@@ -5,6 +5,7 @@ using PriscilaSkincare.Application.Abstractions;
 using PriscilaSkincare.Application.Authentication;
 using PriscilaSkincare.Application.Customers;
 using PriscilaSkincare.Application.Reviews;
+using PriscilaSkincare.Application.Orders;
 using PriscilaSkincare.Infrastructure.Authentication;
 using PriscilaSkincare.Infrastructure.Catalog;
 using PriscilaSkincare.Infrastructure.Email;
@@ -32,9 +33,13 @@ public static class DependencyInjection
         services.AddScoped<IOtpChallengeRepository, OtpChallengeRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<CustomerAddressService>();
         services.AddScoped<ReviewService>();
+        services.AddScoped<CartService>();
+        services.AddScoped<OrderService>();
         services.AddSingleton<IOtpCodeGenerator, OtpCodeGenerator>();
         AddEmailDelivery(services, configuration);
         AddStrapiIntegration(services, configuration);
@@ -71,7 +76,8 @@ public static class DependencyInjection
             Username = section["Username"] ?? string.Empty,
             Password = section["Password"] ?? string.Empty,
             FromEmail = section["FromEmail"] ?? string.Empty,
-            FromName = section["FromName"] ?? string.Empty
+            FromName = section["FromName"] ?? string.Empty,
+            TimeoutSeconds = ReadPositiveInt(configuration, "Email:TimeoutSeconds", 30)
         };
 
         if (!string.Equals(options.DeliveryMode, "Smtp", StringComparison.OrdinalIgnoreCase))
@@ -112,6 +118,11 @@ public static class DependencyInjection
         {
             client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/");
             client.Timeout = TimeSpan.FromSeconds(5);
+        });
+        services.AddHttpClient<IOrderProjection, StrapiOrderProjection>(client =>
+        {
+            client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(8);
         });
     }
 }

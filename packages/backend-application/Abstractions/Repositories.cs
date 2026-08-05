@@ -23,7 +23,7 @@ public interface ICustomerAddressRepository
 
 public interface IOtpChallengeRepository
 {
-    Task<OtpChallenge?> FindLatestAsync(EmailAddress email, CancellationToken cancellationToken = default);
+    Task<OtpChallenge?> FindLatestSentAsync(EmailAddress email, CancellationToken cancellationToken = default);
     void Add(OtpChallenge challenge);
 }
 
@@ -47,5 +47,14 @@ public sealed record ReviewReadModel(ProductReview Review, string CustomerName);
 public interface IOrderRepository
 {
     Task<Order?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Order?> FindByIdAsync(Guid customerId, Guid id, CancellationToken cancellationToken = default);
+    Task<Order?> FindByIdempotencyKeyAsync(Guid customerId, string key, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Order>> ListAsync(Guid customerId, CancellationToken cancellationToken = default);
     void Add(Order order);
+}
+
+public interface IShoppingCartRepository
+{
+    Task<ShoppingCart?> FindAsync(Guid customerId, CancellationToken cancellationToken = default);
+    void Add(ShoppingCart cart);
 }

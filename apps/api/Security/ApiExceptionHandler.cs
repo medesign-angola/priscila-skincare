@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PriscilaSkincare.Application.Authentication;
 using PriscilaSkincare.Application.Customers;
 using PriscilaSkincare.Application.Reviews;
+using PriscilaSkincare.Application.Orders;
 
 namespace PriscilaSkincare.Api.Security;
 
@@ -27,6 +28,10 @@ public sealed class ApiExceptionHandler(
                 (StatusCodes.Status404NotFound, reviewException.Message, reviewException.Code),
             ReviewException reviewException =>
                 (StatusCodes.Status400BadRequest, reviewException.Message, reviewException.Code),
+            CommerceException commerceException when commerceException.Code.EndsWith("not_found") =>
+                (StatusCodes.Status404NotFound, commerceException.Message, commerceException.Code),
+            CommerceException commerceException =>
+                (StatusCodes.Status400BadRequest, commerceException.Message, commerceException.Code),
             ArgumentException argumentException =>
                 (StatusCodes.Status400BadRequest, argumentException.Message, "validation_error"),
             _ =>

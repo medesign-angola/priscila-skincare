@@ -12,6 +12,8 @@ export interface ProductReview {
   date?: string;
   createdAt?: string;
   updatedAt?: string;
+  editedAt?: string;
+  moderatedAt?: string;
 }
 
 export interface ProductTranslation {

@@ -26,6 +26,7 @@
     },
     "reviewDate": { "type": "datetime" },
     "submittedAt": { "type": "datetime", "required": true },
+    "sourceEditedAt": { "type": "datetime" },
     "sourceUpdatedAt": { "type": "datetime", "required": true },
     "product": {
       "type": "relation",

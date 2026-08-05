@@ -18,6 +18,7 @@ type ReviewPayload = {
   recommends: boolean;
   moderationStatus: 'pending' | 'published' | 'rejected';
   submittedAt: string;
+  editedAt?: string | null;
   updatedAt: string;
 };
 
@@ -64,6 +65,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       moderationStatus: payload.moderationStatus,
       reviewDate: payload.submittedAt,
       submittedAt: payload.submittedAt,
+      sourceEditedAt: payload.editedAt ?? null,
       sourceUpdatedAt: payload.updatedAt,
       product: product.documentId,
       customer: customer.documentId,

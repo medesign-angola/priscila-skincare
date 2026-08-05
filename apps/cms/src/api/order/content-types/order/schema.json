@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "application_orders",
+  "info": { "singularName": "order", "pluralName": "orders", "displayName": "Encomenda", "description": "Encomendas sincronizadas pela loja" },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "externalOrderId": { "type": "string", "required": true, "unique": true },
+    "number": { "type": "string", "required": true, "unique": true },
+    "customer": { "type": "relation", "relation": "manyToOne", "target": "api::customer.customer", "inversedBy": "orders", "required": true },
+    "customerName": { "type": "string", "required": true },
+    "customerEmail": { "type": "email", "required": true },
+    "status": { "type": "enumeration", "enum": ["pending", "confirmed", "paid", "processing", "shipped", "delivered", "cancelled"], "default": "pending", "required": true },
+    "currency": { "type": "enumeration", "enum": ["AOA", "EUR"], "required": true },
+    "subtotal": { "type": "decimal", "required": true },
+    "shipping": { "type": "decimal", "required": true },
+    "total": { "type": "decimal", "required": true },
+    "placedAt": { "type": "datetime", "required": true },
+    "deliveryAddress": { "type": "json", "required": true },
+    "items": { "type": "json", "required": true },
+    "timeline": { "type": "json", "required": true }
+  }
+}

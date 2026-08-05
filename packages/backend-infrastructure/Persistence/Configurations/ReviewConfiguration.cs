@@ -24,6 +24,7 @@ public sealed class ReviewConfiguration : IEntityTypeConfiguration<ProductReview
         builder.Property(review => review.SyncStatus).HasColumnName("sync_status").HasConversion<string>().HasMaxLength(24);
         builder.Property(review => review.CreatedAt).HasColumnName("created_at");
         builder.Property(review => review.UpdatedAt).HasColumnName("updated_at");
+        builder.Property(review => review.EditedAt).HasColumnName("edited_at");
         builder.Property(review => review.ModeratedAt).HasColumnName("moderated_at");
         builder.Property(review => review.LastSyncAttemptAt).HasColumnName("last_sync_attempt_at");
         builder.Property(review => review.LastSyncError).HasColumnName("last_sync_error").HasMaxLength(500);

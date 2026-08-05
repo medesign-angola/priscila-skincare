@@ -11,4 +11,5 @@ internal sealed class SmtpEmailOptions
     public string Password { get; init; } = string.Empty;
     public string FromEmail { get; init; } = string.Empty;
     public string FromName { get; init; } = string.Empty;
+    public int TimeoutSeconds { get; init; } = 30;
 }

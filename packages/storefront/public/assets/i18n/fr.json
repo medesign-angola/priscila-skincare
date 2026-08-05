@@ -99,12 +99,13 @@
     "LEGAL": "Conditions générales et Politique de confidentialité.",
     "BACK_TO_STORE": "Retour au site",
     "SIGN_IN": { "TITLE": "Connexion", "SUBTITLE": "Connectez-vous ou créez un compte", "EMAIL": "Saisissez votre e-mail", "CONTINUE": "Continuer", "SENDING": "Envoi du code...", "EMAIL_ERROR": "Saisissez une adresse e-mail valide.", "MARKETING": "Envoyez-moi des actualités et des offres par e-mail.", "CONSENT": "En continuant, vous acceptez nos conditions d'utilisation" },
-    "ERRORS": { "REQUEST_FAILED": "Impossible d'envoyer le code. Réessayez.", "OTP_RESEND_TOO_SOON": "Veuillez patienter avant de demander un nouveau code.", "RATE_LIMIT_EXCEEDED": "Trop de demandes ont été effectuées. Patientez quelques minutes." },
+    "ERRORS": { "REQUEST_FAILED": "Impossible d'envoyer le code. Réessayez.", "INTERNAL_ERROR": "Impossible de terminer la demande pour le moment. Réessayez.", "OTP_DELIVERY_FAILED": "Impossible d'envoyer le code pour le moment. Réessayez.", "OTP_DELIVERY_TIMEOUT": "L'envoi a pris plus de temps que prévu. Vous pouvez réessayer.", "OTP_RESEND_TOO_SOON": "Veuillez patienter avant de demander un nouveau code.", "RATE_LIMIT_EXCEEDED": "Trop de demandes ont été effectuées. Patientez quelques minutes." },
     "OTP": { "TITLE": "Saisissez le code", "SENT_TO": "Envoyé à {{email}}", "DELIVERY_HINT": "Vous ne l’avez pas reçu ? Vérifiez également le dossier spam ou courrier indésirable.", "DIGIT": "Chiffre {{number}} du code", "INVALID": "Saisissez le code complet à six chiffres.", "RESEND": "Renvoyer le code", "RESEND_IN": "Renvoyer dans {{seconds}}s", "SENDING": "Envoi d’un nouveau code...", "VERIFYING": "Vérification du code...", "ERRORS": { "OTP_INVALID": "Le code saisi est incorrect.", "OTP_EXPIRED": "Le code a expiré. Demandez-en un nouveau.", "RATE_LIMIT_EXCEEDED": "Trop de tentatives ont été effectuées. Patientez quelques minutes.", "REQUEST_FAILED": "Impossible de vérifier le code." } }
   },
+  "CHECKOUT": { "LABEL": "Finaliser l'achat", "TITLE": "Confirmez votre commande", "ADDRESS": "Adresse de livraison", "NO_ADDRESS": "Ajoutez une adresse avant de continuer.", "ADD_ADDRESS": "Ajouter une adresse", "SUMMARY": "Résumé", "CONFIRM": "Confirmer la commande", "PROCESSING": "Traitement...", "CONTINUE_SHOPPING": "Continuer les achats", "ERROR": "Impossible de finaliser. Vérifiez les produits et réessayez." },
   "ACCOUNT": {
     "NAV": { "ORDERS": "Commandes", "PROFILE": "Profil" },
-    "STATUS": { "CONFIRMED": "Confirmée", "PROCESSING": "En traitement", "SHIPPED": "Expédiée", "DELIVERED": "Livrée" },
+    "STATUS": { "PENDING": "En attente", "CONFIRMED": "Confirmée", "PAID": "Payée", "PROCESSING": "En traitement", "SHIPPED": "Expédiée", "DELIVERED": "Livrée", "CANCELLED": "Annulée" },
     "PROFILE": {
       "TITLE": "Profil", "NAME": "Saisissez votre nom", "PHONE": "Téléphone", "EMAIL": "E-mail", "ADDRESSES": "Adresses", "ADD": "Ajouter", "NO_ADDRESS": "Aucune adresse ajoutée", "SELECT_ADDRESS": "Sélectionner une adresse", "SIGN_OUT": "Se déconnecter",
       "ADDRESS": {

@@ -1,6 +1,10 @@
 import type { Core } from '@strapi/strapi';
 
-type ReviewEvent = { result?: { externalReviewId?: string; moderationStatus?: string } };
+type ReviewEvent = {
+  params?: { data?: Record<string, unknown> };
+  result?: { externalReviewId?: string; moderationStatus?: string };
+  state?: { notifyModeration?: boolean };
+};
 
 function isInternalSync(): boolean {
   const context = globalThis.strapi.requestContext.get();
@@ -32,12 +36,17 @@ export default {
   beforeCreate() {
     if (!isInternalSync()) throw new Error('As avaliações são criadas exclusivamente pela aplicação.');
   },
-  beforeUpdate(event: { params: { data: Record<string, unknown> } }) {
+  beforeUpdate(event: ReviewEvent) {
+    const data = event.params?.data ?? {};
+    event.state = {
+      notifyModeration: !isInternalSync() && data.moderationStatus !== undefined,
+    };
     if (isInternalSync()) return;
-    const moderationStatus = event.params.data.moderationStatus;
-    event.params.data = moderationStatus === undefined ? {} : { moderationStatus };
+    const moderationStatus = data.moderationStatus;
+    if (event.params) event.params.data = moderationStatus === undefined ? {} : { moderationStatus };
   },
   async afterUpdate(event: ReviewEvent) {
+    if (!event.state?.notifyModeration) return;
     const strapi = globalThis.strapi as Core.Strapi;
     await notifyModeration(strapi, event);
   },

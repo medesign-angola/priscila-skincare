@@ -1,0 +1,17 @@
+<main class="checkout-page">
+  <a routerLink="/produtos" class="checkout-back">← {{ 'CHECKOUT.CONTINUE_SHOPPING' | translate }}</a>
+  <header><span>{{ 'CHECKOUT.LABEL' | translate }}</span><h1>{{ 'CHECKOUT.TITLE' | translate }}</h1></header>
+  <div class="checkout-layout">
+    <section>
+      <h2>{{ 'CHECKOUT.ADDRESS' | translate }}</h2>
+      @if(addresses().length){<div class="address-list">@for(address of addresses();track address.id){<button type="button" [class.selected]="selectedAddressId()===address.id" (click)="select(address.id)"><strong>{{address.label}}</strong><span>{{address.recipient}}</span><span>{{address.street}}, {{address.city}}</span><span>{{address.phone}}</span></button>}</div>}
+      @else {<p>{{ 'CHECKOUT.NO_ADDRESS' | translate }}</p><a routerLink="/conta/perfil">{{ 'CHECKOUT.ADD_ADDRESS' | translate }} →</a>}
+    </section>
+    <aside>
+      <h2>{{ 'CHECKOUT.SUMMARY' | translate }}</h2>
+      @if(preview();as data){<ul>@for(item of data.items;track item.productSku){<li><div><strong>{{item.productName}}</strong><span>{{item.variant}} · {{item.quantity}}x</span></div><strong>{{price(item.total)}}</strong></li>}</ul><dl><div><dt>{{'ACCOUNT.DETAILS.SUBTOTAL'|translate}}</dt><dd>{{price(data.subtotal)}}</dd></div><div><dt>{{'ACCOUNT.DETAILS.SHIPPING'|translate}}</dt><dd>{{data.shipping===0?('ACCOUNT.DETAILS.FREE'|translate):price(data.shipping)}}</dd></div><div class="total"><dt>{{'ACCOUNT.ORDERS.TOTAL'|translate}}</dt><dd>{{price(data.total)}}</dd></div></dl>}
+      @if(errorCode()){<p class="error">{{ 'CHECKOUT.ERROR' | translate }}</p>}
+      <button type="button" [disabled]="loading()||!preview()" (click)="confirm()">{{(loading()?'CHECKOUT.PROCESSING':'CHECKOUT.CONFIRM')|translate}} <span>→</span></button>
+    </aside>
+  </div>
+</main>

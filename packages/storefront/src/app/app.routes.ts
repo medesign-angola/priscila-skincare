@@ -56,6 +56,11 @@ export const appRoutes: Route[] = [
     data: { catalogContext: 'kit' },
   },
   {
+    path: 'checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
+  },
+  {
     path: 'produtos/:productId/avaliar',
     canActivate: [authGuard],
     loadComponent: () =>

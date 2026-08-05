@@ -30,6 +30,7 @@ internal sealed class StrapiReviewProjection(HttpClient httpClient, StrapiOption
                 recommends = review.Recommends,
                 moderationStatus = review.Status.ToString().ToLowerInvariant(),
                 submittedAt = review.CreatedAt,
+                editedAt = review.EditedAt,
                 updatedAt = review.UpdatedAt
             })
         };

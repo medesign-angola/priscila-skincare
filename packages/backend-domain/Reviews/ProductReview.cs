@@ -32,6 +32,7 @@ public sealed class ProductReview : AggregateRoot<Guid>
     public ReviewSyncStatus SyncStatus { get; private set; } = ReviewSyncStatus.Pending;
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
+    public DateTimeOffset? EditedAt { get; private set; }
     public DateTimeOffset? ModeratedAt { get; private set; }
     public DateTimeOffset? LastSyncAttemptAt { get; private set; }
     public string? LastSyncError { get; private set; }
@@ -53,6 +54,7 @@ public sealed class ProductReview : AggregateRoot<Guid>
         Status = ReviewStatus.Pending;
         ModeratedAt = null;
         UpdatedAt = now;
+        EditedAt = now;
         SyncStatus = ReviewSyncStatus.Pending;
     }
 
@@ -78,7 +80,6 @@ public sealed class ProductReview : AggregateRoot<Guid>
     {
         Status = status;
         ModeratedAt = now;
-        UpdatedAt = now;
     }
 
     private static void Validate(int rating, string title, string comment)

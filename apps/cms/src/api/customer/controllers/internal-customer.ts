@@ -11,6 +11,13 @@ export type CustomerSyncPayload = {
   sourceUpdatedAt: string;
 };
 
+function sameInstant(left: unknown, right: string): boolean {
+  if (typeof left !== 'string') return false;
+  const leftTime = Date.parse(left);
+  const rightTime = Date.parse(right);
+  return Number.isFinite(leftTime) && Number.isFinite(rightTime) && leftTime === rightTime;
+}
+
 export async function upsertCustomer(strapi: Core.Strapi, payload: CustomerSyncPayload) {
   const existing = await strapi.documents('api::customer.customer').findMany({
     filters: { externalCustomerId: { $eq: payload.externalCustomerId } } as never,
@@ -26,13 +33,20 @@ export async function upsertCustomer(strapi: Core.Strapi, payload: CustomerSyncP
     registeredAt: payload.registeredAt,
     sourceUpdatedAt: payload.sourceUpdatedAt,
   } as never;
-  const customer = existing[0]
-    ? strapi.documents('api::customer.customer').update({ documentId: existing[0].documentId, data })
-    : strapi.documents('api::customer.customer').create({ data });
-  const synchronized = await customer;
+  const current = existing[0] as (typeof existing)[number] & { sourceUpdatedAt?: string } | undefined;
+  const synchronized = current
+    ? sameInstant(current.sourceUpdatedAt, payload.sourceUpdatedAt)
+      ? current
+      : await strapi.documents('api::customer.customer').update({ documentId: current.documentId, data })
+    : await strapi.documents('api::customer.customer').create({ data });
   if (!synchronized) throw new Error('Não foi possível sincronizar o cliente.');
   const legacyReviews = await strapi.documents('api::review.review').findMany({
-    filters: { customerId: { $eq: payload.externalCustomerId } } as never,
+    filters: {
+      $and: [
+        { customerId: { $eq: payload.externalCustomerId } },
+        { customer: { $null: true } },
+      ],
+    } as never,
   });
   for (const review of legacyReviews) {
     await strapi.documents('api::review.review').update({

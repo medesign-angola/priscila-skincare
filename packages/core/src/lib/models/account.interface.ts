@@ -1,4 +1,4 @@
-export type OrderStatus = 'confirmed' | 'processing' | 'shipped' | 'delivered';
+export type OrderStatus = 'pending' | 'confirmed' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 export interface CustomerAddress {
   id: string;
@@ -27,7 +27,10 @@ export interface Customer {
 }
 
 export interface OrderItem {
-  productId: string;
+  productId?: string;
+  productSku: string;
+  productName: string;
+  imageUrl?: string;
   sizeLabel: string;
   quantity: number;
   unitPrice: number;
@@ -40,11 +43,20 @@ export interface OrderTimelineEntry {
 
 export interface Order {
   id: string;
+  number: string;
   placedAt: string;
   status: OrderStatus;
+  currency: 'AOA' | 'EUR';
   items: OrderItem[];
   timeline: OrderTimelineEntry[];
   deliveryAddress: CustomerAddress;
-  payment: { entity: string; reference: string };
+  payment?: { entity: string; reference: string };
   shippingPrice: number;
+  subtotal: number;
+  total: number;
 }
+
+export interface CheckoutPreview {
+  addressId: string; currency: 'AOA' | 'EUR'; subtotal: number; shipping: number; total: number; items: ApiOrderItem[];
+}
+export interface ApiOrderItem { productSku: string; productName: string; variant?: string; quantity: number; unitPrice: number; total: number; imageUrl?: string; }

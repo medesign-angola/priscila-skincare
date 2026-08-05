@@ -81,6 +81,16 @@ export class ProductReviewsSection {
     return String(index + 1).padStart(2, '0');
   }
 
+  wasEdited(review: ProductReview): boolean {
+    return !!review.editedAt;
+  }
+
+  reviewDate(review: ProductReview): string {
+    return (this.wasEdited(review) ? review.editedAt : review.createdAt)
+      ?? review.date
+      ?? '';
+  }
+
   toggleExpanded(): void {
     this.expanded.update((value) => !value);
   }

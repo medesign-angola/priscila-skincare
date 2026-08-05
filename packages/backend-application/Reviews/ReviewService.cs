@@ -87,9 +87,16 @@ public sealed class ReviewService(
     {
         var review = await reviews.FindByIdAsync(command.ReviewId, cancellationToken)
             ?? throw new ReviewException("review_not_found", "Avaliação não encontrada.");
-        if (command.Status.Equals("published", StringComparison.OrdinalIgnoreCase)) review.Publish(clock.UtcNow);
-        else if (command.Status.Equals("rejected", StringComparison.OrdinalIgnoreCase)) review.Reject(clock.UtcNow);
-        else throw new ReviewException("invalid_review_status", "O estado da avaliação é inválido.");
+        var targetStatus = command.Status.ToLowerInvariant() switch
+        {
+            "published" => ReviewStatus.Published,
+            "rejected" => ReviewStatus.Rejected,
+            _ => throw new ReviewException("invalid_review_status", "O estado da avaliação é inválido.")
+        };
+        if (review.Status == targetStatus) return;
+
+        if (targetStatus == ReviewStatus.Published) review.Publish(clock.UtcNow);
+        else review.Reject(clock.UtcNow);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
@@ -110,7 +117,7 @@ public sealed class ReviewService(
     private static ReviewResult Map(ProductReview review, string customerName) => new(
         review.Id, review.ProductSku.Value, customerName, review.Rating, review.Title,
         review.Comment, review.Recommends, review.Status.ToString().ToLowerInvariant(),
-        review.CreatedAt, review.UpdatedAt);
+        review.CreatedAt, review.UpdatedAt, review.EditedAt, review.ModeratedAt);
 
     private static string DisplayName(string? name) => string.IsNullOrWhiteSpace(name) ? "Cliente" : name.Trim();
 }

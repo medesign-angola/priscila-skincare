@@ -24,11 +24,11 @@ public sealed class AuthenticationService(
     {
         var email = EmailAddress.Create(command.Email);
         var now = clock.UtcNow;
-        var latest = await otpChallenges.FindLatestAsync(email, cancellationToken);
+        var latest = await otpChallenges.FindLatestSentAsync(email, cancellationToken);
 
         if (latest is not null)
         {
-            var retryAt = latest.CreatedAt.AddSeconds(options.ResendCooldownSeconds);
+            var retryAt = latest.SentAt!.Value.AddSeconds(options.ResendCooldownSeconds);
             if (retryAt > now)
             {
                 throw new AuthenticationException(
@@ -49,12 +49,27 @@ public sealed class AuthenticationService(
                 new OtpEmail(email, code, NormalizeLocale(command.Locale), options.OtpLifetimeMinutes),
                 cancellationToken);
         }
-        catch
+        catch (OperationCanceledException)
         {
-            challenge.Consume(now);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            throw;
+            challenge.MarkDeliveryFailed();
+            await unitOfWork.SaveChangesAsync(CancellationToken.None);
+            if (cancellationToken.IsCancellationRequested) throw;
+
+            throw new AuthenticationException(
+                "otp_delivery_timeout",
+                "O envio do código demorou mais do que o esperado. Tente novamente.");
         }
+        catch (Exception)
+        {
+            challenge.MarkDeliveryFailed();
+            await unitOfWork.SaveChangesAsync(CancellationToken.None);
+            throw new AuthenticationException(
+                "otp_delivery_failed",
+                "Não foi possível enviar o código agora. Tente novamente.");
+        }
+
+        challenge.MarkSent(clock.UtcNow);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new OtpRequestResult(challenge.ExpiresAt, options.ResendCooldownSeconds);
     }
@@ -65,7 +80,7 @@ public sealed class AuthenticationService(
     {
         var email = EmailAddress.Create(command.Email);
         var now = clock.UtcNow;
-        var challenge = await otpChallenges.FindLatestAsync(email, cancellationToken);
+        var challenge = await otpChallenges.FindLatestSentAsync(email, cancellationToken);
 
         if (challenge is null || !challenge.IsUsableAt(now))
         {

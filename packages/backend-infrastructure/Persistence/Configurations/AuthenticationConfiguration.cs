@@ -20,6 +20,13 @@ public sealed class OtpChallengeConfiguration : IEntityTypeConfiguration<OtpChal
         builder.Property(challenge => challenge.CreatedAt).HasColumnName("created_at");
         builder.Property(challenge => challenge.ExpiresAt).HasColumnName("expires_at");
         builder.Property(challenge => challenge.ConsumedAt).HasColumnName("consumed_at");
+        builder.Property(challenge => challenge.DeliveryStatus)
+            .HasConversion<string>()
+            .HasColumnName("delivery_status")
+            .HasMaxLength(16)
+            .IsRequired();
+        builder.Property(challenge => challenge.SentAt).HasColumnName("sent_at");
+        builder.HasIndex(challenge => new { challenge.Email, challenge.DeliveryStatus, challenge.SentAt });
     }
 }
 

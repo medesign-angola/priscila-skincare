@@ -1,11 +1,16 @@
 using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
+using PriscilaSkincare.Domain.Orders;
 using PriscilaSkincare.Domain.Reviews;
 
 namespace PriscilaSkincare.Application.Abstractions;
 
-public sealed record CatalogProduct(ProductSku Sku, string Name, decimal AoaPrice, decimal EurPrice, bool IsAvailable);
+public sealed record CatalogVariant(string Id, string Label);
+public sealed record CatalogProduct(
+    ProductSku Sku, string Name, decimal AoaPrice, decimal EurPrice,
+    bool IsAvailable, int? Stock = null, string? ImageUrl = null,
+    IReadOnlyList<CatalogVariant>? Variants = null);
 
 public interface ICatalogGateway
 {
@@ -20,6 +25,11 @@ public interface IReviewProjection
 public interface ICustomerProjection
 {
     Task UpsertAsync(Customer customer, CancellationToken cancellationToken = default);
+}
+
+public interface IOrderProjection
+{
+    Task<string?> UpsertAsync(Order order, Customer customer, CancellationToken cancellationToken = default);
 }
 
 public interface IOtpSender

@@ -140,6 +140,7 @@ export class App {
 
     afterNextRender(async () => {
       await this.auth.ensureSession();
+      await this.cart.synchronize();
 
       const { default: Lenis } = await import('lenis');
       const { gsap } = await import('gsap');
@@ -190,5 +191,11 @@ export class App {
     item: { productId: string; sizeId: string },
   ): void {
     this.cart[action](item.productId, item.sizeId);
+  }
+
+  handleCheckout(): void {
+    void this.router.navigate([this.auth.isAuthenticated() ? '/checkout' : '/entrar'], {
+      queryParams: this.auth.isAuthenticated() ? undefined : { returnUrl: '/checkout' },
+    });
   }
 }

@@ -7,7 +7,7 @@ internal sealed record RenderedOtpEmail(string Subject, string Html, string Text
 
 internal static class OtpEmailTemplate
 {
-    public static RenderedOtpEmail Render(OtpEmail message, string heroContentId)
+    public static RenderedOtpEmail Render(OtpEmail message)
     {
         var french = message.Locale == "fr";
         var copy = french
@@ -39,7 +39,6 @@ internal static class OtpEmailTemplate
               <style>
                 @media only screen and (max-width: 620px) {
                   .shell { width: 100% !important; }
-                  .hero-cell { display: none !important; }
                   .content-cell { padding: 38px 26px !important; }
                   .headline { font-size: 34px !important; }
                 }
@@ -51,7 +50,7 @@ internal static class OtpEmailTemplate
                 <tr><td align="center">
                   <table role="presentation" class="shell" width="680" cellspacing="0" cellpadding="0" style="width:680px;max-width:100%;background:#ffffff;border-collapse:collapse;box-shadow:0 12px 38px rgba(54,42,28,.12);">
                     <tr>
-                      <td class="content-cell" width="60%" valign="top" style="padding:48px 42px;">
+                      <td class="content-cell" width="100%" valign="top" style="padding:48px 42px;border-right:12px solid #806a49;">
                         <div style="color:#806a49;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:58px;">PRISCILA ARAUJO<br>SKINCARE</div>
                         <div style="font-size:14px;font-weight:700;margin-bottom:18px;">{{WebUtility.HtmlEncode(copy.Greeting)}}</div>
                         <h1 class="headline" style="font-family:Georgia,'Times New Roman',serif;font-size:42px;line-height:.95;font-weight:500;letter-spacing:-1.3px;margin:0 0 24px;">{{WebUtility.HtmlEncode(copy.Title)}}</h1>
@@ -59,12 +58,9 @@ internal static class OtpEmailTemplate
                         <div style="border:1.5px solid #806a49;background:#fbfaf8;padding:20px 18px;text-align:center;font-size:34px;font-weight:700;letter-spacing:10px;color:#806a49;">{{code}}</div>
                         <p style="font-size:13px;line-height:1.55;margin:18px 0 0;color:#6d675f;">{{WebUtility.HtmlEncode(copy.Expiry)}}</p>
                       </td>
-                      <td class="hero-cell" width="40%" valign="bottom" style="background:#806a49;text-align:center;overflow:hidden;">
-                        <img src="cid:{{heroContentId}}" width="270" alt="Priscila Skincare" style="display:block;width:270px;max-width:100%;height:auto;margin:0 auto;">
-                      </td>
                     </tr>
                     <tr>
-                      <td colspan="2" style="background:#1d1c1a;color:#ffffff;padding:24px 42px;">
+                      <td style="background:#1d1c1a;color:#ffffff;padding:24px 42px;">
                         <p style="font-size:12px;line-height:1.5;margin:0 0 7px;color:#d8d2c9;">{{WebUtility.HtmlEncode(copy.Warning)}}</p>
                         <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;margin:0;">{{WebUtility.HtmlEncode(copy.Footer)}}</p>
                       </td>

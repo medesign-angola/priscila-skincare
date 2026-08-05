@@ -28,12 +28,14 @@
             <span class="reviews__you">
               {{ 'PRODUCT_DETAILS.REVIEWS.YOU' | translate }}
             </span>
+            @if (wasEdited(review)) {
             <span class="reviews__edited">
               {{ 'PRODUCT_DETAILS.REVIEWS.EDITED_NOW' | translate }}
             </span>
+            }
           </div>
-          <time [attr.datetime]="review.updatedAt">
-            {{ review.updatedAt | date: 'dd/MM/yyyy' }}
+          <time [attr.datetime]="reviewDate(review)">
+            {{ reviewDate(review) | date: 'dd/MM/yyyy' }}
           </time>
         </div>
         } @else {

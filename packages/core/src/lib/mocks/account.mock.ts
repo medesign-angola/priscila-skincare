@@ -26,11 +26,13 @@ const deliveryAddress = {
 export const MOCK_ORDERS: Order[] = [
   {
     id: 'ORD-2026-0042',
+    number: 'ORD-2026-0042',
+    currency: 'AOA',
     placedAt: '2026-06-15T09:12:00',
     status: 'delivered',
     items: [
-      { productId: 'prod-1', sizeLabel: '500ml', quantity: 2, unitPrice: 270000 },
-      { productId: 'prod-3', sizeLabel: '250ml', quantity: 1, unitPrice: 185000 },
+      { productId: 'prod-1', productSku: 'MOCK-1', productName: 'Produto', sizeLabel: '500ml', quantity: 2, unitPrice: 270000 },
+      { productId: 'prod-3', productSku: 'MOCK-3', productName: 'Produto', sizeLabel: '250ml', quantity: 1, unitPrice: 185000 },
     ],
     timeline: [
       { status: 'confirmed', occurredAt: '2026-06-15T09:12:00' },
@@ -41,12 +43,16 @@ export const MOCK_ORDERS: Order[] = [
     deliveryAddress,
     payment: { entity: '00011', reference: '999 123 456' },
     shippingPrice: 0,
+    subtotal: 725000,
+    total: 725000,
   },
   {
     id: 'ORD-2026-0031',
+    number: 'ORD-2026-0031',
+    currency: 'AOA',
     placedAt: '2026-05-02T10:00:00',
     status: 'delivered',
-    items: [{ productId: 'prod-2', sizeLabel: '30ml', quantity: 1, unitPrice: 320000 }],
+    items: [{ productId: 'prod-2', productSku: 'MOCK-2', productName: 'Produto', sizeLabel: '30ml', quantity: 1, unitPrice: 320000 }],
     timeline: [
       { status: 'confirmed', occurredAt: '2026-05-02T10:00:00' },
       { status: 'processing', occurredAt: '2026-05-02T15:00:00' },
@@ -56,5 +62,7 @@ export const MOCK_ORDERS: Order[] = [
     deliveryAddress,
     payment: { entity: '00011', reference: '888 654 321' },
     shippingPrice: 0,
+    subtotal: 320000,
+    total: 320000,
   },
 ];

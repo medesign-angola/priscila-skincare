@@ -35,6 +35,21 @@ public sealed class ProductReviewTests
 
         Assert.Equal(ReviewStatus.Pending, review.Status);
         Assert.Null(review.ModeratedAt);
+        Assert.Equal(now.AddMinutes(2), review.EditedAt);
         Assert.False(review.Recommends);
+    }
+
+    [Fact]
+    public void Moderation_DoesNotChangeCustomerContentUpdatedAt()
+    {
+        var createdAt = DateTimeOffset.UtcNow;
+        var review = ProductReview.Submit(Guid.NewGuid(), ProductSku.Create("SNOW-001"), 5,
+            "Título", "Comentário válido", true, createdAt);
+
+        review.Publish(createdAt.AddHours(1));
+
+        Assert.Equal(createdAt, review.UpdatedAt);
+        Assert.Null(review.EditedAt);
+        Assert.Equal(createdAt.AddHours(1), review.ModeratedAt);
     }
 }

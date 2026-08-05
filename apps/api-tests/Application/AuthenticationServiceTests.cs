@@ -79,10 +79,27 @@ public sealed class AuthenticationServiceTests
     {
         var fixture = new AuthenticationFixture(senderShouldFail: true);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await Assert.ThrowsAsync<AuthenticationException>(() =>
             fixture.Service.RequestOtpAsync(new RequestOtpCommand("cliente@example.com")));
 
+        Assert.Equal("otp_delivery_failed", exception.Code);
         Assert.False(fixture.OtpChallenges.Items[0].IsUsableAt(Now));
+        Assert.Equal(OtpDeliveryStatus.Failed, fixture.OtpChallenges.Items[0].DeliveryStatus);
+    }
+
+    [Fact]
+    public async Task RequestOtp_AfterDeliveryFailure_CanRetryImmediately()
+    {
+        var fixture = new AuthenticationFixture(senderShouldFail: true);
+        await Assert.ThrowsAsync<AuthenticationException>(() =>
+            fixture.Service.RequestOtpAsync(new RequestOtpCommand("cliente@example.com")));
+
+        fixture.Sender.ShouldFail = false;
+        var result = await fixture.Service.RequestOtpAsync(new RequestOtpCommand("cliente@example.com"));
+
+        Assert.Equal(60, result.ResendAfterSeconds);
+        Assert.Equal(2, fixture.OtpChallenges.Items.Count);
+        Assert.Equal(OtpDeliveryStatus.Sent, fixture.OtpChallenges.Items[1].DeliveryStatus);
     }
 
     private sealed class AuthenticationFixture
@@ -125,8 +142,11 @@ public sealed class AuthenticationServiceTests
     private sealed class OtpMemoryRepository : IOtpChallengeRepository
     {
         public List<OtpChallenge> Items { get; } = [];
-        public Task<OtpChallenge?> FindLatestAsync(EmailAddress email, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Items.Where(item => item.Email == email).OrderByDescending(item => item.CreatedAt).FirstOrDefault());
+        public Task<OtpChallenge?> FindLatestSentAsync(EmailAddress email, CancellationToken cancellationToken = default) =>
+            Task.FromResult(Items
+                .Where(item => item.Email == email && item.DeliveryStatus == OtpDeliveryStatus.Sent)
+                .OrderByDescending(item => item.SentAt)
+                .FirstOrDefault());
         public void Add(OtpChallenge challenge) => Items.Add(challenge);
     }
 

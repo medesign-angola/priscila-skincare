@@ -2,10 +2,12 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PriscilaSkincare.Application.Abstractions;
 using PriscilaSkincare.Api.Security;
 using PriscilaSkincare.Infrastructure;
+using PriscilaSkincare.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +89,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+if (args.Contains("--migrate", StringComparer.OrdinalIgnoreCase))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var database = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await database.Database.MigrateAsync();
+    return;
+}
+
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseExceptionHandler();
@@ -95,6 +105,7 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" })).AllowAnonymous();
 
 app.Run();
 

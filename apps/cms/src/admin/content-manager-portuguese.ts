@@ -21,12 +21,17 @@ const hiddenFieldsByContentType: Record<string, string[]> = {
 const readOnlyFieldsByContentType: Record<string, string[]> = {
   'api::review.review': [
     'externalReviewId', 'customerId', 'name', 'productSku', 'title', 'comment',
-    'rating', 'recommends', 'reviewDate', 'submittedAt', 'sourceUpdatedAt',
+    'rating', 'recommends', 'reviewDate', 'submittedAt', 'sourceEditedAt', 'sourceUpdatedAt',
     'product', 'customer',
   ],
   'api::customer.customer': [
     'externalCustomerId', 'name', 'email', 'phone', 'acceptsMarketing',
-    'isActive', 'registeredAt', 'sourceUpdatedAt', 'reviews',
+    'isActive', 'registeredAt', 'sourceUpdatedAt', 'reviews', 'orders',
+  ],
+  'api::order.order': [
+    'externalOrderId', 'number', 'customer', 'customerName', 'customerEmail',
+    'currency', 'subtotal', 'shipping', 'total', 'placedAt', 'deliveryAddress',
+    'items', 'timeline',
   ],
 };
 
@@ -176,6 +181,7 @@ const contentTypes: Record<string, ModelPresentation> = {
     moderationStatus: field('Estado da moderação', 'Pendente, publicada ou rejeitada.'),
     reviewDate: field('Data da avaliação'),
     submittedAt: field('Enviada em'),
+    sourceEditedAt: field('Editada pelo cliente em', 'Fica vazio enquanto o cliente não alterar a avaliação.'),
     sourceUpdatedAt: field('Última alteração do cliente'),
     product: field('Produto avaliado'),
     customer: field('Cliente', 'Cliente autenticado que enviou a avaliação.'),
@@ -190,6 +196,23 @@ const contentTypes: Record<string, ModelPresentation> = {
     registeredAt: field('Cliente desde'),
     sourceUpdatedAt: field('Última atualização na aplicação'),
     reviews: field('Avaliações enviadas'),
+    orders: field('Encomendas'),
+  },
+  'api::order.order': {
+    externalOrderId: field('Identificador interno'),
+    number: field('Número da encomenda'),
+    customer: field('Cliente'),
+    customerName: field('Nome do cliente'),
+    customerEmail: field('E-mail do cliente'),
+    status: field('Estado da encomenda', 'Este é o único campo operacional que pode ser alterado.'),
+    currency: field('Moeda'),
+    subtotal: field('Subtotal'),
+    shipping: field('Entrega'),
+    total: field('Total'),
+    placedAt: field('Realizada em'),
+    deliveryAddress: field('Morada de entrega'),
+    items: field('Produtos da encomenda'),
+    timeline: field('Histórico de estados'),
   },
   'api::testimonial.testimonial': {
     name: field('Nome da pessoa'),
