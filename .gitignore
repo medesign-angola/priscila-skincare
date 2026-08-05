@@ -62,6 +62,7 @@ Thumbs.db
 .env.*
 !.env.example
 !**/.env*.example
+.env.staging
 apps/cms/.cache
 apps/cms/.strapi
 apps/cms/build
