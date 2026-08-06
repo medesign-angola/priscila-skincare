@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "optimize:product-images": "node tools/optimize-product-images.mjs",
+    "storefront:runtime-config": "node tools/generate-storefront-runtime-config.mjs",
     "cms:dev": "npm --prefix apps/cms run develop",
     "cms:build": "npm --prefix apps/cms run build",
     "cms:start": "npm --prefix apps/cms run start",

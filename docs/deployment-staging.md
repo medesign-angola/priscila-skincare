@@ -111,3 +111,24 @@ curl http://127.0.0.1:8099/_health
 Os uploads do Strapi e as duas bases ficam em volumes persistentes. Antes de
 produção, configure backups automáticos de `mysql_data` e `strapi_uploads`,
 SMTP oficial e monitorização externa dos dois domínios.
+
+## Storefront na Vercel
+
+Configure as seguintes variáveis nos ambientes desejados da Vercel:
+
+```env
+STOREFRONT_API_URL=https://priscila-stg-api.medesign-angola.com/api/v1
+STOREFRONT_CMS_URL=https://priscila-stg-cms.medesign-angola.com
+STOREFRONT_USE_MOCK_FALLBACKS=false
+```
+
+O build da Vercel gera `runtime-config.js` antes de compilar o storefront. Em
+desenvolvimento local, o ficheiro usa `http://localhost:5041/api/v1` e
+`http://localhost:1337` por padrão.
+
+Na VPS, `STOREFRONT_ORIGIN` deve conter a origem exata do deploy da Vercel,
+sem barra no final. Depois de alterá-la, recrie API e CMS para atualizar o CORS:
+
+```bash
+docker compose --env-file .env.staging -f docker-compose.staging.yml up -d --force-recreate api cms
+```

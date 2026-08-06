@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "npx nx run storefront:build:production",
+  "buildCommand": "node tools/generate-storefront-runtime-config.mjs && npx nx run storefront:build:production",
   "outputDirectory": "dist/packages/storefront/browser",
   "rewrites": [
     {
