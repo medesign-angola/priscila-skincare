@@ -197,7 +197,13 @@ export class AuthFacade {
       firstValueFrom(this.http.get<CustomerAddress[]>(`${this.config.baseUrl}/customers/me/addresses`)),
     ]);
     this.customer.set(this.mapCustomer(customer, addresses));
-    await this.loadOrders();
+    try {
+      await this.loadOrders();
+    } catch {
+      // A sessão e o perfil continuam válidos mesmo quando o histórico de
+      // encomendas está temporariamente indisponível.
+      this.orders.set([]);
+    }
   }
 
   private async loadAddresses(): Promise<void> {
