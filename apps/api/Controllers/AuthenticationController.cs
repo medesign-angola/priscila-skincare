@@ -9,7 +9,8 @@ namespace PriscilaSkincare.Api.Controllers;
 [Route("api/v1/auth")]
 public sealed class AuthenticationController(
     AuthenticationService authentication,
-    AuthenticationOptions options) : ControllerBase
+    AuthenticationOptions options,
+    IWebHostEnvironment environment) : ControllerBase
 {
     private const string RefreshTokenCookie = "psc_refresh";
 
@@ -74,14 +75,18 @@ public sealed class AuthenticationController(
     private void WriteRefreshTokenCookie(string refreshToken) =>
         Response.Cookies.Append(RefreshTokenCookie, refreshToken, CookieOptions(DateTimeOffset.UtcNow.AddDays(options.RefreshTokenDays)));
 
-    private CookieOptions CookieOptions(DateTimeOffset? expires = null) => new()
+    private CookieOptions CookieOptions(DateTimeOffset? expires = null)
     {
-        HttpOnly = true,
-        Secure = Request.IsHttps,
-        SameSite = SameSiteMode.Lax,
-        Path = "/api/v1/auth",
-        Expires = expires
-    };
+        var crossSite = !environment.IsDevelopment();
+        return new()
+        {
+            HttpOnly = true,
+            Secure = crossSite || Request.IsHttps,
+            SameSite = crossSite ? SameSiteMode.None : SameSiteMode.Lax,
+            Path = "/api/v1/auth",
+            Expires = expires
+        };
+    }
 }
 
 public sealed record RequestOtpRequest(string Email, string Locale = "pt");
