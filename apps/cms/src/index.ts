@@ -100,6 +100,16 @@ export default {
         isResizable: true,
       },
     });
+    for (const name of ['order-address', 'order-items', 'order-timeline']) {
+      strapi.customFields.register({
+        name,
+        type: 'json',
+        inputSize: {
+          default: 12,
+          isResizable: false,
+        },
+      });
+    }
     registerHomeReadinessRelationFilter(strapi);
   },
 

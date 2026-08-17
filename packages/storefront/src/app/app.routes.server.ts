@@ -22,6 +22,22 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    path: 'kits/:bundleId',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'colecoes/:bundleId',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'avaliar',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'avaliacao-enviada',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: 'produtos/:productId/avaliar',
     renderMode: RenderMode.Client,
   },

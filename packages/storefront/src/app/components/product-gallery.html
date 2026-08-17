@@ -1,0 +1,8 @@
+<div class="gallery">
+  <div class="gallery__stage"><img class="gallery__main" [src]="activeImage()" [alt]="alt()" width="900" height="1024" /></div>
+  <div class="gallery__thumbnails" [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.PRODUCT_IMAGES' | translate">
+    @for (image of images(); track image; let index = $index) {
+      <button type="button" [class.is-active]="index === activeImageIndex()" [attr.aria-current]="index === activeImageIndex() ? 'true' : null" [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.VIEW_IMAGE' | translate: { current: index + 1, total: images().length }" (click)="selectImage(index)"><span>{{ formatIndex(index) }}</span><img [src]="image" alt="" width="40" height="40" /></button>
+    }
+  </div>
+</div>

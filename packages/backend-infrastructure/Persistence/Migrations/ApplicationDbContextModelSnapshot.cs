@@ -392,6 +392,12 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(500)")
                         .HasColumnName("image_url");
 
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("item_type");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("char(36)")
                         .HasColumnName("order_id");
@@ -402,15 +408,15 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(200)")
                         .HasColumnName("product_name");
 
-                    b.Property<string>("ProductSku")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)")
-                        .HasColumnName("product_sku");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("item_reference");
 
                     b.Property<decimal>("UnitPriceAmount")
                         .HasPrecision(18, 2)
@@ -456,6 +462,64 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.ToTable("order_status_history", (string)null);
                 });
 
+            modelBuilder.Entity("PriscilaSkincare.Domain.Orders.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("order_id");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)")
+                        .HasColumnName("provider");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("reference");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.ToTable("payments", (string)null);
+                });
+
             modelBuilder.Entity("PriscilaSkincare.Domain.Orders.ShoppingCart", b =>
                 {
                     b.Property<Guid>("Id")
@@ -492,15 +556,21 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("cart_id");
 
-                    b.Property<string>("ProductSku")
+                    b.Property<string>("ItemType")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("varchar(64)")
-                        .HasColumnName("product_sku");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("item_type");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int")
                         .HasColumnName("quantity");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("item_reference");
 
                     b.Property<string>("VariantId")
                         .HasMaxLength(64)
@@ -514,10 +584,50 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId", "ProductSku", "VariantId")
+                    b.HasIndex("CartId", "ItemType", "Reference", "VariantId")
                         .IsUnique();
 
                     b.ToTable("shopping_cart_items", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Orders.StockMovement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("order_id");
+
+                    b.Property<string>("ProductSku")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("product_sku");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductSku");
+
+                    b.HasIndex("OrderId", "ProductSku", "Type")
+                        .IsUnique();
+
+                    b.ToTable("stock_movements", (string)null);
                 });
 
             modelBuilder.Entity("PriscilaSkincare.Domain.Reviews.ProductReview", b =>

@@ -61,6 +61,25 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
   },
   {
+    path: 'kits/:bundleId',
+    loadComponent: () => import('./pages/bundle-details/bundle-details').then((m) => m.BundleDetails),
+    data: { bundleType: 'kit' },
+  },
+  {
+    path: 'colecoes/:bundleId',
+    loadComponent: () => import('./pages/bundle-details/bundle-details').then((m) => m.BundleDetails),
+    data: { bundleType: 'collection' },
+  },
+  {
+    path: 'avaliar', canActivate: [authGuard],
+    loadComponent: () => import('./pages/product-review/product-review').then((m) => m.ProductReview),
+    data: { genericReview: true },
+  },
+  {
+    path: 'avaliacao-enviada', canActivate: [authGuard],
+    loadComponent: () => import('./pages/product-review-success/product-review-success').then((m) => m.ProductReviewSuccess),
+  },
+  {
     path: 'produtos/:productId/avaliar',
     canActivate: [authGuard],
     loadComponent: () =>

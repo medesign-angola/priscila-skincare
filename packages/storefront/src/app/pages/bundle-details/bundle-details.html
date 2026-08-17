@@ -1,0 +1,37 @@
+@if (bundle(); as bundle) {
+<main class="bundle-details">
+  <section class="bundle-hero">
+    <app-product-gallery class="bundle-hero__gallery" [images]="images()" [alt]="content()?.name ?? ''" />
+    <div class="bundle-hero__copy">
+      <div class="bundle-hero__body">
+        <div class="bundle-hero__summary">
+          <p class="bundle-hero__category">{{ (type === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</p>
+          <h1>{{ content()?.name }}</h1>
+          <p>{{ content()?.description }}</p>
+          <div class="bundle-hero__rating"><span aria-hidden="true">★★★★★</span> {{ rating().average.toFixed(1) }} ({{ rating().total }})</div>
+        </div>
+        <div class="bundle-hero__included">
+          <h2>{{ bundle.products.length }} {{ 'BUNDLE_DETAILS.INCLUDES' | translate }}</h2>
+          <ul>@for (product of bundle.products; track product.id) {<li>{{ product.translations[facade.currentLanguage()].name }}</li>}</ul>
+        </div>
+      </div>
+      <button type="button" (click)="addBundle()"><span>{{ 'PRODUCT_DETAILS.PURCHASE.ADD_TO_CART' | translate }}</span><span>{{ price() | priceFormat: header.currency() : facade.currentLanguage() }}</span></button>
+    </div>
+  </section>
+
+  <app-shipping-information-section />
+
+  <section class="bundle-products">
+    <h2>{{ 'BUNDLE_DETAILS.RECEIVE' | translate }}</h2>
+    <div class="bundle-products__scroller">@for (card of includedCards(); track card.id) {<org-product-card [product]="card" (productSelect)="openProduct($event)" (addToCart)="addProduct($event)" />}</div>
+  </section>
+
+  @if (sectionProduct(); as product) {
+    <app-product-usage-section [product]="product" [language]="facade.currentLanguage()" />
+    <div class="bundle-results"><app-product-results-section [product]="product" [language]="facade.currentLanguage()" /></div>
+    @if (relatedProducts().length) {<app-related-products-section [product]="product" [language]="facade.currentLanguage()" [candidates]="relatedProducts()" />}
+  }
+</main>
+} @else {
+<main class="bundle-not-found"><h1>{{ 'PRODUCT_DETAILS.NOT_FOUND' | translate }}</h1></main>
+}

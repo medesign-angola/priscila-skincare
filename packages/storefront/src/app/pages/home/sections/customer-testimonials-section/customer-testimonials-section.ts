@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProductFacade, ReviewFacade, VideoTestimonial } from '@org/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-customer-testimonials-section',
@@ -27,6 +28,7 @@ export class CustomerTestimonialsSection {
 
   private readonly facade = inject(ProductFacade);
   private readonly reviewFacade = inject(ReviewFacade);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly sectionRoot =
     viewChild<ElementRef<HTMLElement>>('sectionRoot');
@@ -285,7 +287,7 @@ export class CustomerTestimonialsSection {
   }
 
   leaveReview(): void {
-    console.log('Abrir formulário de avaliação');
+    void this.router.navigate(['/avaliar']);
   }
 
   private goToPage(pageIndex: number): void {

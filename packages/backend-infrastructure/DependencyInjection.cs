@@ -8,6 +8,7 @@ using PriscilaSkincare.Application.Reviews;
 using PriscilaSkincare.Application.Orders;
 using PriscilaSkincare.Infrastructure.Authentication;
 using PriscilaSkincare.Infrastructure.Catalog;
+using PriscilaSkincare.Infrastructure.Commerce;
 using PriscilaSkincare.Infrastructure.Email;
 using PriscilaSkincare.Infrastructure.Persistence;
 using PriscilaSkincare.Infrastructure.Persistence.Repositories;
@@ -35,6 +36,10 @@ public static class DependencyInjection
         services.AddScoped<IReviewRepository, ReviewRepository>();
         services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IStockMovementRepository, StockMovementRepository>();
+        services.AddScoped<IPaymentGateway, SimulatedPaymentGateway>();
+        services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<CustomerAddressService>();
         services.AddScoped<ReviewService>();

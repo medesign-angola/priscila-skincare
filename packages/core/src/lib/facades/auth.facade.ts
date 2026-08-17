@@ -238,11 +238,11 @@ export class AuthFacade {
 
 interface ApiOrder {
   id: string; number: string; placedAt: string; status: Order['status']; currency: 'AOA'|'EUR'; subtotal: number; shipping: number; total: number;
-  items: { productSku: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
+  items: { itemType?:'product'|'kit'|'collection'; reference?:string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
   deliveryAddress: CustomerAddress; timeline: { status: Order['status']; occurredAt: string }[];
 }
 const mapOrder = (order: ApiOrder): Order => ({ id: order.id, number: order.number, placedAt: order.placedAt, status: order.status,
   currency: order.currency, subtotal: order.subtotal, shippingPrice: order.shipping, total: order.total,
-  items: order.items.map(item => ({ productSku: item.productSku, productName: item.productName, imageUrl: item.imageUrl,
+  items: order.items.map(item => ({ itemType:item.itemType,reference:item.reference,productSku:item.reference??item.productSku??'', productName: item.productName, imageUrl: item.imageUrl,
     sizeLabel: item.variant ?? '', quantity: item.quantity, unitPrice: item.unitPrice })),
   deliveryAddress: order.deliveryAddress, timeline: order.timeline });

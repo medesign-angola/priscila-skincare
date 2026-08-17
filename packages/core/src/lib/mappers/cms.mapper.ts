@@ -3,6 +3,7 @@ import {
   CmsAboutBrandSection,
   CmsAboutPillarsSection,
   CmsAboutPage,
+  CmsBundleDetails,
   CmsCategory,
   CmsHeroAction,
   CmsHeroSlide,
@@ -58,6 +59,25 @@ const INTERNAL_PAGE_ROUTES: Record<string, string> = {
 };
 
 const EMPTY_MEDIA = '';
+
+function mapBundleDetails(details: CmsBundleDetails | null | undefined, baseUrl: string) {
+  const before = mediaUrl(baseUrl, details?.results?.comparison?.before);
+  const after = mediaUrl(baseUrl, details?.results?.comparison?.after);
+  return {
+    images: (details?.images ?? []).map((image) => mediaUrl(baseUrl, image)).filter(Boolean),
+    howToUse: {
+      editorialImage: mediaPresentationUrl(baseUrl, details?.usageMedia) || undefined,
+      steps: [...(details?.usageSteps ?? [])].sort((a, b) => a.order - b.order).map((step) => ({
+        order: step.order, name: step.name, description: step.description,
+      })),
+    },
+    result: {
+      data: (details?.results?.statistics ?? []).map((stat) => ({ percentage: stat.percentage, description: stat.description })),
+      description: details?.results?.description ?? '',
+      images: { before, after },
+    },
+  };
+}
 
 function asNumber(value: number | string | null | undefined): number {
   const parsed = Number(value);
@@ -438,6 +458,7 @@ export function mapCmsKit(
     collection: '',
     description: ptKit.description,
     price: asNumber(ptKit.prices?.aoa ?? ptKit.commerce?.prices?.aoa),
+    prices: { AOA: asNumber(ptKit.prices?.aoa ?? ptKit.commerce?.prices?.aoa), EUR: asNumber(ptKit.prices?.eur ?? ptKit.commerce?.prices?.eur) },
     currency: 'Kz',
     mediaType: videoUrl ? 'video' : 'image',
     mediaUrl: mediaUrlValue,
@@ -448,6 +469,11 @@ export function mapCmsKit(
     productIds: (ptKit.products ?? []).map(
       (product) => product.documentId || String(product.id),
     ),
+    relatedProductIds: (ptKit.relatedProducts ?? []).map((product) => product.documentId || String(product.id)),
+    details: ptKit.details ? {
+      pt: mapBundleDetails(ptKit.details, baseUrl),
+      fr: mapBundleDetails(frKit?.details ?? ptKit.details, baseUrl),
+    } : undefined,
     featured: false,
     translations: {
       pt: mapKitTranslation(ptKit),
@@ -577,6 +603,12 @@ export function mapCmsCollection(
     productIds: (ptCollection.products ?? []).map(
       (product) => product.documentId || String(product.id),
     ),
+    prices: ptCollection.prices ? { AOA: asNumber(ptCollection.prices.aoa), EUR: asNumber(ptCollection.prices.eur) } : undefined,
+    relatedProductIds: (ptCollection.relatedProducts ?? []).map((product) => product.documentId || String(product.id)),
+    details: ptCollection.details ? {
+      pt: mapBundleDetails(ptCollection.details, baseUrl),
+      fr: mapBundleDetails(frCollection?.details ?? ptCollection.details, baseUrl),
+    } : undefined,
     translations: {
       pt: mapCollectionTranslation(ptCollection),
       fr: frCollection

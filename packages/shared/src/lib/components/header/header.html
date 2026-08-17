@@ -435,13 +435,13 @@
               <strong>{{ item.price }}</strong>
             </div>
             <div class="cart-item__actions">
-              <button type="button" (click)="cartRemove.emit({ productId: item.productId, sizeId: item.sizeId })">
+              <button type="button" (click)="cartRemove.emit({ itemType: item.itemType, reference: item.reference, productId: item.productId, sizeId: item.sizeId })">
                 {{ 'CART.REMOVE' | translate }}
               </button>
               <div class="cart-item__quantity">
-                <button type="button" [attr.aria-label]="'CART.DECREASE' | translate" (click)="cartDecrement.emit({ productId: item.productId, sizeId: item.sizeId })">−</button>
+                <button type="button" [attr.aria-label]="'CART.DECREASE' | translate" (click)="cartDecrement.emit({ itemType: item.itemType, reference: item.reference, productId: item.productId, sizeId: item.sizeId })">−</button>
                 <span>{{ item.quantity }}</span>
-                <button type="button" [attr.aria-label]="'CART.INCREASE' | translate" (click)="cartIncrement.emit({ productId: item.productId, sizeId: item.sizeId })">+</button>
+                <button type="button" [attr.aria-label]="'CART.INCREASE' | translate" (click)="cartIncrement.emit({ itemType: item.itemType, reference: item.reference, productId: item.productId, sizeId: item.sizeId })">+</button>
               </div>
             </div>
           </div>

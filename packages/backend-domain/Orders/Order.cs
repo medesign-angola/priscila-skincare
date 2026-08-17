@@ -3,7 +3,7 @@ using PriscilaSkincare.Domain.Common;
 
 namespace PriscilaSkincare.Domain.Orders;
 
-public enum OrderStatus { Pending, Confirmed, Paid, Processing, Shipped, Delivered, Cancelled }
+public enum OrderStatus { Pending, Confirmed, Paid, PaymentFailed, Processing, Shipped, Delivered, Cancelled, Refunded }
 
 public sealed class Order : AggregateRoot<Guid>
 {
@@ -61,12 +61,12 @@ public sealed class Order : AggregateRoot<Guid>
     public static Order Create(Guid customerId, DateTimeOffset now) =>
         Create(customerId, $"PSC-{now:yyyyMMddHHmmss}", "AOA", new OrderAddress("Cliente", "N/D", "Angola", "N/D", "N/D", "N/D", "N/D", null, null, null), now);
 
-    public void AddItem(ProductSku sku, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null)
+    public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null)
     {
         if (Status != OrderStatus.Pending) throw new InvalidOperationException("A encomenda já não pode ser alterada.");
         if (unitPrice.Currency != Currency) throw new InvalidOperationException("Todos os itens devem usar a moeda da encomenda.");
         if (quantity < 1) throw new ArgumentOutOfRangeException(nameof(quantity));
-        _items.Add(OrderItem.Create(Id, sku, productName, variant, unitPrice, quantity, imageUrl));
+        _items.Add(OrderItem.Create(Id, itemType, reference, productName, variant, unitPrice, quantity, imageUrl));
         Recalculate();
     }
 
@@ -82,9 +82,10 @@ public sealed class Order : AggregateRoot<Guid>
         if (Status == status) return;
         var valid = Status switch
         {
-            OrderStatus.Pending => status is OrderStatus.Confirmed or OrderStatus.Cancelled,
-            OrderStatus.Confirmed => status is OrderStatus.Paid or OrderStatus.Processing or OrderStatus.Cancelled,
-            OrderStatus.Paid => status is OrderStatus.Processing or OrderStatus.Cancelled,
+            OrderStatus.Pending => status is OrderStatus.Confirmed or OrderStatus.PaymentFailed or OrderStatus.Cancelled,
+            OrderStatus.PaymentFailed => status is OrderStatus.Confirmed or OrderStatus.Cancelled,
+            OrderStatus.Confirmed => status is OrderStatus.Paid or OrderStatus.PaymentFailed or OrderStatus.Cancelled,
+            OrderStatus.Paid => status is OrderStatus.Processing or OrderStatus.Cancelled or OrderStatus.Refunded,
             OrderStatus.Processing => status is OrderStatus.Shipped or OrderStatus.Cancelled,
             OrderStatus.Shipped => status is OrderStatus.Delivered,
             _ => false,
@@ -110,13 +111,14 @@ public sealed record OrderAddress(string Recipient, string Phone, string Country
 public sealed class OrderItem : Entity<Guid>
 {
     private OrderItem() : base(Guid.Empty) { }
-    private OrderItem(Guid id, Guid orderId, ProductSku sku, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) : base(id)
+    private OrderItem(Guid id, Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) : base(id)
     {
-        OrderId = orderId; ProductSku = sku; ProductName = productName.Trim(); Variant = variant?.Trim();
+        OrderId = orderId; ItemType = itemType; Reference = reference; ProductName = productName.Trim(); Variant = variant?.Trim();
         UnitPriceAmount = unitPrice.Amount; Currency = unitPrice.Currency; Quantity = quantity; ImageUrl = imageUrl?.Trim();
     }
     public Guid OrderId { get; private set; }
-    public ProductSku ProductSku { get; private set; } = null!;
+    public CommerceItemType ItemType { get; private set; }
+    public CommerceItemReference Reference { get; private set; } = null!;
     public string ProductName { get; private set; } = string.Empty;
     public string? Variant { get; private set; }
     public decimal UnitPriceAmount { get; private set; }
@@ -124,8 +126,8 @@ public sealed class OrderItem : Entity<Guid>
     public int Quantity { get; private set; }
     public string? ImageUrl { get; private set; }
     public Money UnitPrice => Money.Create(UnitPriceAmount, Currency);
-    internal static OrderItem Create(Guid orderId, ProductSku sku, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) =>
-        new(Guid.NewGuid(), orderId, sku, productName, variant, unitPrice, quantity, imageUrl);
+    internal static OrderItem Create(Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) =>
+        new(Guid.NewGuid(), orderId, itemType, reference, productName, variant, unitPrice, quantity, imageUrl);
 }
 
 public sealed class OrderStatusEntry : Entity<Guid>

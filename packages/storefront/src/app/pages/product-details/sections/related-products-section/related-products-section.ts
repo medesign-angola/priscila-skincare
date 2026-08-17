@@ -20,18 +20,18 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class RelatedProductsSection {
   readonly product = input.required<Product>();
   readonly language = input.required<'pt' | 'fr'>();
+  readonly candidates = input<readonly Product[] | null>(null);
   private readonly facade = inject(ProductFacade);
   private readonly header = inject(HeaderService);
   private readonly router = inject(Router);
   private readonly cart = inject(CartFacade);
 
   readonly products = computed<ProductCardData[]>(() =>
-    this.facade
-      .products()
+    (this.candidates() ?? this.facade.products())
       .filter(
         (candidate) =>
           candidate.id !== this.product().id &&
-          candidate.categoryId === this.product().categoryId,
+          (this.candidates() !== null || candidate.categoryId === this.product().categoryId),
       )
       .slice(0, 3)
       .flatMap((candidate) => {

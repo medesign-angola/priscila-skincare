@@ -348,7 +348,14 @@ export class CmsService {
       .set('populate[media][populate][video]', 'true')
       .set('populate[media][populate][placeholder]', 'true')
       .set('populate[homePresentation]', 'true')
-      .set('populate[products]', 'true');
+      .set('populate[products]', 'true')
+      .set('populate[relatedProducts]', 'true')
+      .set('populate[details][populate][images]', 'true')
+      .set('populate[details][populate][usageSteps]', 'true')
+      .set('populate[details][populate][usageMedia][populate][desktopImage]', 'true')
+      .set('populate[details][populate][results][populate][statistics]', 'true')
+      .set('populate[details][populate][results][populate][comparison][populate][before]', 'true')
+      .set('populate[details][populate][results][populate][comparison][populate][after]', 'true');
   }
 
   private collectionParams(locale: CmsLocale): HttpParams {
@@ -356,12 +363,20 @@ export class CmsService {
       .set('locale', locale)
       .set('sort[0]', 'name:asc')
       .set('pagination[pageSize]', '100')
+      .set('populate[prices]', 'true')
       .set('populate[thumbnailImage]', 'true')
       .set('populate[media][populate][desktopImage]', 'true')
       .set('populate[media][populate][mobileImage]', 'true')
       .set('populate[media][populate][video]', 'true')
       .set('populate[media][populate][placeholder]', 'true')
       .set('populate[homePresentation]', 'true')
-      .set('populate[products]', 'true');
+      .set('populate[products]', 'true')
+      .set('populate[relatedProducts]', 'true')
+      .set('populate[details][populate][images]', 'true')
+      .set('populate[details][populate][usageSteps]', 'true')
+      .set('populate[details][populate][usageMedia][populate][desktopImage]', 'true')
+      .set('populate[details][populate][results][populate][statistics]', 'true')
+      .set('populate[details][populate][results][populate][comparison][populate][before]', 'true')
+      .set('populate[details][populate][results][populate][comparison][populate][after]', 'true');
   }
 }

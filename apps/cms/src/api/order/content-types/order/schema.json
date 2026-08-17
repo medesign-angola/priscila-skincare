@@ -9,14 +9,32 @@
     "customer": { "type": "relation", "relation": "manyToOne", "target": "api::customer.customer", "inversedBy": "orders", "required": true },
     "customerName": { "type": "string", "required": true },
     "customerEmail": { "type": "email", "required": true },
-    "status": { "type": "enumeration", "enum": ["pending", "confirmed", "paid", "processing", "shipped", "delivered", "cancelled"], "default": "pending", "required": true },
+    "status": {
+      "type": "customField",
+      "customField": "global::friendly-select",
+      "default": "pending",
+      "required": true,
+      "options": {
+        "choices": [
+          { "value": "pending", "label": "Pendente", "description": "A encomenda foi recebida e aguarda confirmação." },
+          { "value": "confirmed", "label": "Confirmada", "description": "A encomenda foi confirmada pela loja." },
+          { "value": "paid", "label": "Paga", "description": "O pagamento da encomenda foi confirmado." },
+          { "value": "processing", "label": "Em preparação", "description": "Os produtos estão a ser preparados para envio." },
+          { "value": "shipped", "label": "Enviada", "description": "A encomenda saiu para entrega." },
+          { "value": "delivered", "label": "Entregue", "description": "O cliente já recebeu a encomenda." },
+          { "value": "cancelled", "label": "Cancelada", "description": "A encomenda foi cancelada." },
+          { "value": "paymentfailed", "label": "Pagamento não aprovado", "description": "O pagamento não foi aprovado." },
+          { "value": "refunded", "label": "Reembolsada", "description": "O valor da encomenda foi devolvido ao cliente." }
+        ]
+      }
+    },
     "currency": { "type": "enumeration", "enum": ["AOA", "EUR"], "required": true },
     "subtotal": { "type": "decimal", "required": true },
     "shipping": { "type": "decimal", "required": true },
     "total": { "type": "decimal", "required": true },
     "placedAt": { "type": "datetime", "required": true },
-    "deliveryAddress": { "type": "json", "required": true },
-    "items": { "type": "json", "required": true },
-    "timeline": { "type": "json", "required": true }
+    "deliveryAddress": { "type": "customField", "customField": "global::order-address", "required": true },
+    "items": { "type": "customField", "customField": "global::order-items", "required": true },
+    "timeline": { "type": "customField", "customField": "global::order-timeline", "required": true }
   }
 }

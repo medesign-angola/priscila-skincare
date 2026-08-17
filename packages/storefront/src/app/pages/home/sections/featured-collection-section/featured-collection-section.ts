@@ -25,6 +25,6 @@ export class FeaturedCollectionSection {
   );
 
   exploreCollection(slug: string): void {
-    void this.router.navigate(['/produtos', 'colecao', slug]);
+    void this.router.navigate(['/colecoes', slug]);
   }
 }

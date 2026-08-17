@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { UpperCasePipe } from '@angular/common';
+import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -28,7 +28,7 @@ import { map } from 'rxjs';
 
 @Component({
   selector: 'app-product-review',
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, UpperCasePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, UpperCasePipe, NgTemplateOutlet],
   templateUrl: './product-review.html',
   styleUrl: './product-review.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +48,7 @@ export class ProductReview {
     this.route.paramMap.pipe(map((params) => params.get('productId'))),
     { initialValue: null },
   );
+  readonly generic = this.route.snapshot.data['genericReview'] === true;
   readonly product = computed(() => {
     const identifier = this.productIdentifier();
     return (
@@ -134,18 +135,16 @@ export class ProductReview {
     }
 
     const product = this.product();
-    if (!product || !this.auth.customer() || this.submitting()) return;
+    if ((!product && !this.generic) || !this.auth.customer() || this.submitting()) return;
 
     this.submitting.set(true);
     try {
       await this.reviewFacade.submit({
-        productSku: product.sku,
+        productSku: product?.sku,
         locale: this.products.currentLanguage(),
         ...this.form.getRawValue(),
       });
-      await this.router.navigate([
-        '/produtos', product.slug ?? product.id, 'avaliacao-enviada',
-      ]);
+      await this.router.navigate(this.generic ? ['/avaliacao-enviada'] : ['/produtos', product!.slug ?? product!.id, 'avaliacao-enviada']);
     } catch {
       // A fachada mantém o código de erro traduzível apresentado no template.
     } finally {

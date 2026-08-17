@@ -13,7 +13,8 @@
     "externalReviewId": { "type": "uid", "required": true, "unique": true },
     "customerId": { "type": "string", "required": true, "private": true },
     "name": { "type": "string", "required": true },
-    "productSku": { "type": "string", "required": true },
+    "reviewType": { "type": "enumeration", "enum": ["product", "platform"], "default": "product", "required": true },
+    "productSku": { "type": "string" },
     "title": { "type": "string", "required": true, "maxLength": 80 },
     "comment": { "type": "text", "required": true },
     "rating": { "type": "integer", "required": true, "min": 1, "max": 5 },
@@ -22,7 +23,7 @@
       "type": "enumeration",
       "enum": ["pending", "published", "rejected"],
       "default": "pending",
-      "required": true
+      "required": false
     },
     "reviewDate": { "type": "datetime" },
     "submittedAt": { "type": "datetime", "required": true },

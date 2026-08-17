@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_catalog_bundle_details",
+  "info": {
+    "displayName": "Conteúdo da página de detalhes",
+    "description": "Informações das páginas de detalhes de kits e coleções"
+  },
+  "options": {},
+  "attributes": {
+    "images": { "type": "media", "multiple": true, "required": true, "allowedTypes": ["images"] },
+    "usageSteps": { "type": "component", "repeatable": true, "component": "product.usage-step" },
+    "usageMedia": { "type": "component", "repeatable": false, "component": "shared.media-presentation" },
+    "results": { "type": "component", "repeatable": false, "component": "product.results" }
+  }
+}

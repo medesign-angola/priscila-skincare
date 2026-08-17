@@ -223,6 +223,13 @@ export interface CmsKitProductReference extends CmsEntity {
   slug: string;
 }
 
+export interface CmsBundleDetails {
+  images?: CmsMedia[] | null;
+  usageSteps?: CmsUsageStep[] | null;
+  usageMedia?: CmsMediaPresentation | null;
+  results?: CmsResults | null;
+}
+
 export interface CmsKitHomePresentation {
   id?: number;
   order: number;
@@ -242,6 +249,8 @@ export interface CmsKit extends CmsEntity {
   media?: CmsMediaPresentation | null;
   homePresentation?: CmsKitHomePresentation | null;
   products?: CmsKitProductReference[] | null;
+  details?: CmsBundleDetails | null;
+  relatedProducts?: CmsKitProductReference[] | null;
 }
 
 export interface CmsCollectionHomePresentation {
@@ -256,10 +265,13 @@ export interface CmsProductCollection extends CmsEntity {
   name: string;
   slug: string;
   description: string;
+  prices?: CmsPrices | null;
   thumbnailImage?: CmsMedia | null;
   media?: CmsMediaPresentation | null;
   homePresentation?: CmsCollectionHomePresentation | null;
   products?: CmsKitProductReference[] | null;
+  details?: CmsBundleDetails | null;
+  relatedProducts?: CmsKitProductReference[] | null;
 }
 
 export interface CmsFeaturedProductSlot {

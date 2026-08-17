@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Infrastructure.Persistence.Configurations;
@@ -46,7 +45,8 @@ public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     {
         builder.ToTable("order_items"); builder.HasKey(x => x.Id);
         builder.Property(x => x.OrderId).HasColumnName("order_id");
-        builder.Property(x => x.ProductSku).HasConversion(x => x.Value, x => ProductSku.Create(x)).HasColumnName("product_sku").HasMaxLength(64);
+        builder.Property(x => x.ItemType).HasColumnName("item_type").HasConversion<string>().HasMaxLength(20);
+        builder.Property(x => x.Reference).HasConversion(x => x.Value, x => CommerceItemReference.Create(x)).HasColumnName("item_reference").HasMaxLength(100);
         builder.Property(x => x.ProductName).HasColumnName("product_name").HasMaxLength(200);
         builder.Property(x => x.Variant).HasColumnName("variant").HasMaxLength(80);
         builder.Property(x => x.UnitPriceAmount).HasColumnName("unit_price").HasPrecision(18, 2);

@@ -73,7 +73,7 @@ export class ProductService {
       .getHomePage('pt')
       .pipe(catchError(() => of(null as CmsHomePage | null))),
     fr: this.cms
-      .getHomePage('fr')
+      .getHomePage('pt')
       .pipe(catchError(() => of(null as CmsHomePage | null))),
   }).pipe(shareReplay({ bufferSize: 1, refCount: false }));
   private readonly localizedAboutPages$ = forkJoin({
@@ -81,7 +81,7 @@ export class ProductService {
       .getAboutPage('pt')
       .pipe(catchError(() => of(null as CmsAboutPage | null))),
     fr: this.cms
-      .getAboutPage('fr')
+      .getAboutPage('pt')
       .pipe(catchError(() => of(null as CmsAboutPage | null))),
   }).pipe(shareReplay({ bufferSize: 1, refCount: false }));
   private readonly localizedSiteSettings$ = forkJoin({
@@ -89,7 +89,7 @@ export class ProductService {
       .getSiteSetting('pt')
       .pipe(catchError(() => of(null as CmsSiteSetting | null))),
     fr: this.cms
-      .getSiteSetting('fr')
+      .getSiteSetting('pt')
       .pipe(catchError(() => of(null as CmsSiteSetting | null))),
   }).pipe(shareReplay({ bufferSize: 1, refCount: false }));
 

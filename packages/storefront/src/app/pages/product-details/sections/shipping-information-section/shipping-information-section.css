@@ -4,11 +4,14 @@
 .shipping {
   display: flex;
   gap: 2rem;
-  padding: clamp(3rem, 5.556vw, 5rem) 2rem;
-  border-bottom: 1px solid #ddd7ce;
+  padding: 5rem 2rem;
+  border-bottom: 1px solid #b8b0a5;
 }
 .shipping h2 {
-  flex: 0 0 12.5rem;
+  position: sticky;
+  top: 1rem;
+  align-self: flex-start;
+  flex: 0 0 7.5625rem;
   margin: 0;
   font-size: 0.875rem;
   font-weight: 600;
@@ -17,11 +20,15 @@
 .shipping__items {
   display: flex;
   flex: 1;
+  gap: 2rem;
 }
 .shipping article {
   flex: 1;
-  padding-inline: 2rem;
-  border-left: 1px solid #ddd7ce;
+  padding-right: 1rem;
+  border-right: 1px solid #ddd7ce;
+}
+.shipping article:last-child {
+  border-right: 0;
 }
 .shipping h3,
 .shipping p {
@@ -43,6 +50,7 @@
     padding: 1.5rem 0;
     border-top: 1px solid #ddd7ce;
     border-left: 0;
+    border-right: 0;
   }
 }
 @media (max-width: 600px) {

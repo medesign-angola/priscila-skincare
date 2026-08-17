@@ -22,7 +22,7 @@ public sealed class ReviewService(
         var locale = command.Locale.Equals("fr", StringComparison.OrdinalIgnoreCase) ? "fr" : "pt";
         try
         {
-            if (await catalog.FindBySkuAsync(sku, locale, cancellationToken) is null)
+            if (sku.Value != "PLATFORM" && await catalog.FindBySkuAsync(sku, locale, cancellationToken) is null)
                 throw new ReviewException("product_not_found", "O produto não foi encontrado.");
         }
         catch (ReviewException)

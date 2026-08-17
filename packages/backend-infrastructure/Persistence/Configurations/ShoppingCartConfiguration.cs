@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Infrastructure.Persistence.Configurations;
@@ -25,10 +24,11 @@ public sealed class ShoppingCartItemConfiguration : IEntityTypeConfiguration<Sho
     {
         builder.ToTable("shopping_cart_items"); builder.HasKey(x => x.Id);
         builder.Property(x => x.CartId).HasColumnName("cart_id");
-        builder.Property(x => x.ProductSku).HasConversion(x => x.Value, x => ProductSku.Create(x)).HasColumnName("product_sku").HasMaxLength(64);
+        builder.Property(x => x.ItemType).HasColumnName("item_type").HasConversion<string>().HasMaxLength(20);
+        builder.Property(x => x.Reference).HasConversion(x => x.Value, x => CommerceItemReference.Create(x)).HasColumnName("item_reference").HasMaxLength(100);
         builder.Property(x => x.VariantId).HasColumnName("variant_id").HasMaxLength(64);
         builder.Property(x => x.VariantLabel).HasColumnName("variant_label").HasMaxLength(80);
         builder.Property(x => x.Quantity).HasColumnName("quantity");
-        builder.HasIndex(x => new { x.CartId, x.ProductSku, x.VariantId }).IsUnique();
+        builder.HasIndex(x => new { x.CartId, x.ItemType, x.Reference, x.VariantId }).IsUnique();
     }
 }

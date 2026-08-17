@@ -32,6 +32,12 @@
         "i18n": { "localized": true }
       }
     },
+    "prices": {
+      "type": "component",
+      "component": "commerce.prices",
+      "repeatable": false,
+      "required": true
+    },
     "thumbnailImage": {
       "type": "media",
       "multiple": false,
@@ -53,6 +59,17 @@
       "relation": "manyToMany",
       "target": "api::product.product",
       "inversedBy": "collections"
+    },
+    "details": {
+      "type": "component",
+      "component": "catalog.bundle-details",
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "relatedProducts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product"
     },
     "seo": {
       "type": "component",

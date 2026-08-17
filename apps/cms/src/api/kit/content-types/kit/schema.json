@@ -81,6 +81,17 @@
       "target": "api::product.product",
       "inversedBy": "kits"
     },
+    "details": {
+      "type": "component",
+      "component": "catalog.bundle-details",
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "relatedProducts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product.product"
+    },
     "seo": {
       "type": "component",
       "component": "shared.seo",

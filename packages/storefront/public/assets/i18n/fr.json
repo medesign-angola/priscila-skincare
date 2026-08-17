@@ -74,7 +74,7 @@
     }
   },
   "PRODUCT_REVIEW": {
-    "TITLE": "Évaluer le produit", "EDIT_TITLE": "Modifier l'avis",
+    "TITLE": "Évaluer le produit", "EDIT_TITLE": "Modifier l'avis", "GENERIC_TITLE": "Laissez votre avis", "GENERIC_DESCRIPTION": "Partagez votre expérience avec notre communauté Skincare.",
     "DESCRIPTION": "Partagez votre expérience avec ce produit.",
     "PRODUCT": "Produit", "YOUR_RATING": "Votre note", "RATING_ARIA": "{{rating}} étoiles sur 5",
     "REVIEW_TITLE": "Titre de l'avis", "TITLE_PLACEHOLDER": "Résumez votre expérience",
@@ -102,7 +102,7 @@
     "ERRORS": { "REQUEST_FAILED": "Impossible d'envoyer le code. Réessayez.", "INTERNAL_ERROR": "Impossible de terminer la demande pour le moment. Réessayez.", "OTP_DELIVERY_FAILED": "Impossible d'envoyer le code pour le moment. Réessayez.", "OTP_DELIVERY_TIMEOUT": "L'envoi a pris plus de temps que prévu. Vous pouvez réessayer.", "OTP_RESEND_TOO_SOON": "Veuillez patienter avant de demander un nouveau code.", "RATE_LIMIT_EXCEEDED": "Trop de demandes ont été effectuées. Patientez quelques minutes." },
     "OTP": { "TITLE": "Saisissez le code", "SENT_TO": "Envoyé à {{email}}", "DELIVERY_HINT": "Vous ne l’avez pas reçu ? Vérifiez également le dossier spam ou courrier indésirable.", "DIGIT": "Chiffre {{number}} du code", "INVALID": "Saisissez le code complet à six chiffres.", "RESEND": "Renvoyer le code", "RESEND_IN": "Renvoyer dans {{seconds}}s", "SENDING": "Envoi d’un nouveau code...", "VERIFYING": "Vérification du code...", "ERRORS": { "OTP_INVALID": "Le code saisi est incorrect.", "OTP_EXPIRED": "Le code a expiré. Demandez-en un nouveau.", "RATE_LIMIT_EXCEEDED": "Trop de tentatives ont été effectuées. Patientez quelques minutes.", "REQUEST_FAILED": "Impossible de vérifier le code." } }
   },
-  "CHECKOUT": { "LABEL": "Finaliser l'achat", "TITLE": "Confirmez votre commande", "ADDRESS": "Adresse de livraison", "NO_ADDRESS": "Ajoutez une adresse avant de continuer.", "ADD_ADDRESS": "Ajouter une adresse", "SUMMARY": "Résumé", "CONFIRM": "Confirmer la commande", "PROCESSING": "Traitement...", "CONTINUE_SHOPPING": "Continuer les achats", "ERROR": "Impossible de finaliser. Vérifiez les produits et réessayez." },
+  "CHECKOUT": { "LABEL": "Finaliser l'achat", "TITLE": "Confirmez votre commande", "ADDRESS": "Adresse de livraison", "NO_ADDRESS": "Ajoutez une adresse avant de continuer.", "ADD_ADDRESS": "Ajouter une adresse", "SUMMARY": "Résumé", "CONFIRM": "Confirmer la commande", "PROCESSING": "Traitement...", "CONTINUE_SHOPPING": "Continuer les achats", "ERROR": "Impossible de finaliser. Vérifiez les produits et réessayez.", "CART_SYNC_ERROR": "Impossible de synchroniser votre panier. Réessayez.", "PREVIEW_ERROR": "Impossible de calculer le récapitulatif. Vérifiez les produits et l'adresse.", "CREATE_ERROR": "Impossible de confirmer la commande. Aucun achat n'a été enregistré." },
   "ACCOUNT": {
     "NAV": { "ORDERS": "Commandes", "PROFILE": "Profil" },
     "STATUS": { "PENDING": "En attente", "CONFIRMED": "Confirmée", "PAID": "Payée", "PROCESSING": "En traitement", "SHIPPED": "Expédiée", "DELIVERED": "Livrée", "CANCELLED": "Annulée" },
@@ -115,6 +115,7 @@
     "ORDERS": { "TITLE": "Commandes", "EMPTY_TITLE": "Aucune commande pour le moment", "EMPTY_DESCRIPTION": "Visitez la boutique pour passer votre première commande.", "SHOP": "Voir la boutique", "VIEW_DETAILS": "Voir les détails", "SIZE": "Format", "QUANTITY_SHORT": "Qté", "TOTAL": "Total" },
     "DETAILS": { "STATUS": "État de la commande", "PRODUCTS": "Produits", "DELIVERY_ADDRESS": "Adresse de livraison", "PAYMENT_METHOD": "Mode de paiement", "ENTITY": "Entité", "REFERENCE": "Référence", "AMOUNT": "Montant", "SUMMARY": "Récapitulatif", "SUBTOTAL": "Sous-total", "SHIPPING": "Livraison", "FREE": "Gratuite", "REORDER": "Commander à nouveau", "NOT_FOUND": "Commande introuvable" }
   },
+  "BUNDLE_DETAILS": { "KIT": "Kit", "COLLECTION": "Collection", "INCLUDES": "Produits inclus", "RECEIVE": "Ce que vous allez recevoir" },
   "ABOUT": {
     "HERO": {
       "LABEL": "À propos", "TITLE": "La science derrière l'éclat que votre peau mérite aujourd'hui",

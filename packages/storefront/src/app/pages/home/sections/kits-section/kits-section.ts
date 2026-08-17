@@ -56,7 +56,7 @@ export class KitsSection {
   });
 
   viewProducts(identifier: string): void {
-    void this.router.navigate(['/produtos', 'kit', identifier]);
+    void this.router.navigate(['/kits', identifier]);
   }
 
   private toViewModel(

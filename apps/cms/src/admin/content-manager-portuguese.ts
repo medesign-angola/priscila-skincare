@@ -82,6 +82,9 @@ const contentTypes: Record<string, ModelPresentation> = {
       'Bloco opcional necessário quando a coleção for escolhida como destaque da Home.',
     ),
     products: field('Produtos da coleção', 'Selecione todos os produtos que pertencem a esta coleção.'),
+    prices: field('Preço da coleção', 'Informe o preço final apresentado ao cliente.'),
+    details: field('Conteúdo da página de detalhes', 'Galeria, modo de utilização e resultados da coleção.'),
+    relatedProducts: field('Produtos relacionados', 'Produtos recomendados no final da página.'),
     seo: field('Pesquisa e partilha'),
   },
   'api::kit.kit': {
@@ -103,6 +106,8 @@ const contentTypes: Record<string, ModelPresentation> = {
       'Preencha este bloco para apresentar o kit na área editorial e na lista Encontrar.',
     ),
     products: field('Produtos incluídos', 'Selecione os produtos que compõem este kit.'),
+    details: field('Conteúdo da página de detalhes', 'Galeria, modo de utilização e resultados do kit.'),
+    relatedProducts: field('Produtos relacionados', 'Produtos recomendados no final da página.'),
     seo: field('Pesquisa e partilha'),
   },
   'api::category.category': {
@@ -148,6 +153,10 @@ const contentTypes: Record<string, ModelPresentation> = {
       'Secção de testemunhos em vídeo',
       'Defina os textos e escolha os vídeos apresentados na página inicial.',
     ),
+    brandPillars: field(
+      'Pilares da marca',
+      'Defina o título e os pilares apresentados logo depois do banner principal.',
+    ),
     seo: field('Pesquisa e partilha'),
   },
   'api::about-page.about-page': {
@@ -170,6 +179,7 @@ const contentTypes: Record<string, ModelPresentation> = {
     seo: field('Pesquisa e partilha'),
   },
   'api::review.review': {
+    reviewType: field('Tipo de avaliação', 'Indica se a avaliação é sobre a plataforma ou sobre um produto.'),
     externalReviewId: field('Identificador interno', 'Gerado automaticamente pela aplicação. Não altere este valor.'),
     customerId: field('Identificador do cliente'),
     name: field('Nome do cliente'),
@@ -204,10 +214,16 @@ const contentTypes: Record<string, ModelPresentation> = {
     customer: field('Cliente'),
     customerName: field('Nome do cliente'),
     customerEmail: field('E-mail do cliente'),
-    status: field('Estado da encomenda', 'Este é o único campo operacional que pode ser alterado.'),
+    status: field(
+      'Estado da encomenda',
+      'Atualize este campo à medida que a encomenda for preparada, enviada e entregue.',
+    ),
     currency: field('Moeda'),
     subtotal: field('Subtotal'),
-    shipping: field('Entrega'),
+    shipping: field(
+      'Custo de entrega',
+      'Valor cobrado pelo envio. O valor 0 significa entrega gratuita.',
+    ),
     total: field('Total'),
     placedAt: field('Realizada em'),
     deliveryAddress: field('Morada de entrega'),
@@ -233,12 +249,42 @@ const contentTypes: Record<string, ModelPresentation> = {
     contactEmail: field('E-mail de contacto'),
     socialLinks: field('Redes sociais'),
     newsletterHeadline: field('Mensagem da newsletter'),
+    footerBackground: field(
+      'Imagem de fundo do rodapé',
+      'Imagem decorativa apresentada no rodapé do site.',
+    ),
+    termsUrl: field(
+      'Endereço dos Termos e Condições',
+      'Informe o endereço da página com os Termos e Condições.',
+    ),
+    privacyUrl: field(
+      'Endereço da Política de Privacidade',
+      'Informe o endereço da página com a Política de Privacidade.',
+    ),
     defaultCurrency: field('Moeda predefinida'),
     logo: field('Logótipo'),
   },
 };
 
 const components: Record<string, ModelPresentation> = {
+  'catalog.bundle-details': {
+    images: field(
+      'Galeria de imagens',
+      'Adicione as imagens apresentadas no topo da página do kit ou da coleção.',
+    ),
+    usageSteps: field(
+      'Como utilizar',
+      'Adicione os passos de utilização na ordem em que devem ser apresentados.',
+    ),
+    usageMedia: field(
+      'Imagem ou vídeo do modo de utilização',
+      'Conteúdo visual apresentado ao lado das instruções de utilização.',
+    ),
+    results: field(
+      'Resultados',
+      'Configure os números e as imagens de antes e depois apresentados nesta página.',
+    ),
+  },
   'about.brand-section': {
     label: field('Etiqueta da secção'),
     media: field('Imagem da história da marca'),

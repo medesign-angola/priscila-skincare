@@ -60,9 +60,9 @@ export class ReviewFacade {
     try {
       const review = await firstValueFrom(this.http.post<CustomerProductReview>(
         `${this.config.baseUrl}/reviews`,
-        submission,
+        { ...submission, productSku: submission.productSku ?? 'PLATFORM' },
       ));
-      this.ownReviews.update((items) => ({ ...items, [submission.productSku]: review }));
+      this.ownReviews.update((items) => ({ ...items, [submission.productSku ?? 'PLATFORM']: review }));
       return review;
     } catch (error) {
       this.errorCode.set(this.problemCode(error));

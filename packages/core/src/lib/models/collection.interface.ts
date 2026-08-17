@@ -20,6 +20,8 @@ export interface CollectionTranslation {
   description: string;
 }
 
+import type { BundleDetailsTranslation } from './kit.interface';
+
 export interface Collection {
   id: string;
   name: string;
@@ -27,6 +29,9 @@ export interface Collection {
   description: string;
   thumbnailImage: string;
   productIds: string[];
+  prices?: { AOA: number; EUR: number };
+  relatedProductIds?: string[];
+  details?: Record<'pt' | 'fr', BundleDetailsTranslation>;
   translations: Record<'pt' | 'fr', CollectionTranslation>;
   media?: CollectionMedia;
   home?: CollectionHomePresentation;

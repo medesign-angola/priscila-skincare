@@ -16,7 +16,7 @@ public sealed class OrdersController(OrderService orders) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OrderResult>> Create(CreateOrderRequest request, CancellationToken token)
     {
-        var result = await orders.CreateAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale, request.IdempotencyKey), token);
+        var result = await orders.CreateAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale, request.IdempotencyKey, request.PaymentMethod), token);
         return Created($"/api/v1/orders/{result.Id}", result);
     }
 
@@ -31,4 +31,4 @@ public sealed class OrdersController(OrderService orders) : ControllerBase
 }
 
 public sealed record CheckoutRequest(Guid AddressId, string Currency = "AOA", string Locale = "pt");
-public sealed record CreateOrderRequest(Guid AddressId, string Currency, string Locale, string IdempotencyKey);
+public sealed record CreateOrderRequest(Guid AddressId, string Currency, string Locale, string IdempotencyKey, string PaymentMethod = "simulated");

@@ -58,3 +58,16 @@ public interface IShoppingCartRepository
     Task<ShoppingCart?> FindAsync(Guid customerId, CancellationToken cancellationToken = default);
     void Add(ShoppingCart cart);
 }
+
+public interface IPaymentRepository
+{
+    Task<Payment?> FindByOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
+    void Add(Payment payment);
+}
+
+public interface IStockMovementRepository
+{
+    Task<int> NetDebitedAsync(string productSku, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<StockMovement>> ListByOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
+    void Add(StockMovement movement);
+}

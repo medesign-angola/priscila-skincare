@@ -1,7 +1,7 @@
 import { ProductReview, ProductReviewStatus } from './product.interface';
 
 export interface ReviewSubmission {
-  productSku: string;
+  productSku?: string;
   rating: number;
   title: string;
   comment: string;

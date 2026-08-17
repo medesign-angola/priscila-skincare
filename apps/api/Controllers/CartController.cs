@@ -14,11 +14,11 @@ public sealed class CartController(CartService cart) : ControllerBase
 
     [HttpPost("items")]
     public async Task<ActionResult<CartResult>> Add(AddCartItemRequest request, [FromQuery] string locale = "pt", CancellationToken token = default) =>
-        Ok(await cart.AddAsync(CustomerId(), new(request.ProductSku, request.VariantId, request.VariantLabel, request.Quantity), locale, token));
+        Ok(await cart.AddAsync(CustomerId(), new(request.ItemType, request.Reference, request.VariantId, request.VariantLabel, request.Quantity), locale, token));
 
     [HttpPost("merge")]
     public async Task<ActionResult<CartResult>> Merge(MergeCartRequest request, [FromQuery] string locale = "pt", CancellationToken token = default) =>
-        Ok(await cart.MergeAsync(CustomerId(), request.Items.Select(x => new MergeCartItem(x.ProductSku, x.VariantId, x.VariantLabel, x.Quantity)).ToArray(), locale, token));
+        Ok(await cart.MergeAsync(CustomerId(), request.Items.Select(x => new MergeCartItem(x.ItemType, x.Reference, x.VariantId, x.VariantLabel, x.Quantity)).ToArray(), locale, token));
 
     [HttpPut("items/{itemId:guid}")]
     public async Task<ActionResult<CartResult>> Quantity(Guid itemId, ChangeCartQuantityRequest request, [FromQuery] string locale = "pt", CancellationToken token = default) =>
@@ -35,6 +35,6 @@ public sealed class CartController(CartService cart) : ControllerBase
         ? id : throw new AuthenticationException("invalid_identity", "A sessão não contém um cliente válido.");
 }
 
-public sealed record AddCartItemRequest(string ProductSku, string? VariantId, string? VariantLabel, int Quantity = 1);
+public sealed record AddCartItemRequest(string Reference, string ItemType = "product", string? VariantId = null, string? VariantLabel = null, int Quantity = 1);
 public sealed record MergeCartRequest(IReadOnlyList<AddCartItemRequest> Items);
 public sealed record ChangeCartQuantityRequest(int Quantity);

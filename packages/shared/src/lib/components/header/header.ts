@@ -25,6 +25,8 @@ export interface HeaderNavigationItem {
 
 export interface HeaderCartItem {
   key: string;
+  itemType: 'product' | 'kit' | 'collection';
+  reference: string;
   productId: string;
   sizeId: string;
   name: string;
@@ -109,16 +111,16 @@ export class HeaderComponent {
 
   languageChange = output<'pt' | 'fr'>();
   currencyChange = output<'AOA' | 'EUR'>();
-  cartRemove = output<{ productId: string; sizeId: string }>();
-  cartIncrement = output<{ productId: string; sizeId: string }>();
-  cartDecrement = output<{ productId: string; sizeId: string }>();
+  cartRemove = output<Pick<HeaderCartItem, 'itemType' | 'reference' | 'productId' | 'sizeId'>>();
+  cartIncrement = output<Pick<HeaderCartItem, 'itemType' | 'reference' | 'productId' | 'sizeId'>>();
+  cartDecrement = output<Pick<HeaderCartItem, 'itemType' | 'reference' | 'productId' | 'sizeId'>>();
   cartCheckout = output<void>();
   private mobileNavigationCloseTimeout: ReturnType<typeof setTimeout> | null =
     null;
 
   navigationItemRoute(itemId: string): readonly string[] {
     return this.displayedNavigationMenu() === 'collections'
-      ? ['/produtos', 'colecao', itemId]
+      ? ['/colecoes', itemId]
       : ['/produtos', itemId];
   }
 

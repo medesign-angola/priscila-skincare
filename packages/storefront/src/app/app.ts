@@ -64,8 +64,10 @@ export class App {
     const language = this.facade.currentLanguage();
     const currency = this.headerService.currency();
 
-    return this.cart.resolvedItems().map((item) => ({
+    return [...this.cart.resolvedItems().map((item) => ({
       key: `${item.productId}:${item.sizeId}`,
+      itemType: 'product' as const,
+      reference: item.productSku,
       productId: item.productId,
       sizeId: item.sizeId,
       name: item.product.translations[language].name,
@@ -77,7 +79,7 @@ export class App {
         currency,
         language,
       ),
-    }));
+    })), ...this.cart.bundles().map((item) => ({ key: `${item.type}:${item.id}`, itemType: item.type, reference: item.id, productId: item.id, sizeId: '', name: item.name, image: item.image, size: `${item.productCount} produtos`, quantity: item.quantity, price: formatPrice(item.prices[currency] * item.quantity, currency, language) }))];
   });
   readonly headerCartTotal = computed(() => {
     const currency = this.headerService.currency();
@@ -179,7 +181,7 @@ export class App {
       return;
     }
 
-    void this.router.navigate(['/produtos', 'colecao', selection.id]);
+    void this.router.navigate(['/colecoes', selection.id]);
   }
 
   handleNewsletterSubmit(email: string): void {
@@ -188,8 +190,14 @@ export class App {
 
   handleCartItem(
     action: 'remove' | 'increment' | 'decrement',
-    item: { productId: string; sizeId: string },
+    item: { itemType: 'product' | 'kit' | 'collection'; reference: string; productId: string; sizeId: string },
   ): void {
+    if (item.itemType === 'kit' || item.itemType === 'collection') {
+      if (action === 'remove') this.cart.removeBundle(item.reference, item.itemType);
+      if (action === 'increment') this.cart.incrementBundle(item.reference, item.itemType);
+      if (action === 'decrement') this.cart.decrementBundle(item.reference, item.itemType);
+      return;
+    }
     this.cart[action](item.productId, item.sizeId);
   }
 

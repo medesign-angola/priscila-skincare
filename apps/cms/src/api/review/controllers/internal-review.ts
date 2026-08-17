@@ -47,7 +47,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       limit: 1,
     });
     const product = products[0];
-    if (!product) return ctx.badRequest('O produto da avaliação não existe no catálogo.');
+    const isPlatform = payload.productSku === 'PLATFORM';
+    if (!product && !isPlatform) return ctx.badRequest('O produto da avaliação não existe no catálogo.');
 
     const existing = await strapi.documents('api::review.review').findMany({
       filters: { externalReviewId: { $eq: payload.externalReviewId } } as never,
@@ -57,7 +58,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       externalReviewId: payload.externalReviewId,
       customerId: payload.customerId,
       name: payload.customerName || 'Cliente',
-      productSku: payload.productSku,
+      reviewType: isPlatform ? 'platform' : 'product',
+      productSku: isPlatform ? null : payload.productSku,
       title: payload.title,
       comment: payload.comment,
       rating: payload.rating,
@@ -67,7 +69,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       submittedAt: payload.submittedAt,
       sourceEditedAt: payload.editedAt ?? null,
       sourceUpdatedAt: payload.updatedAt,
-      product: product.documentId,
+      product: product?.documentId ?? null,
       customer: customer.documentId,
     } as never;
 

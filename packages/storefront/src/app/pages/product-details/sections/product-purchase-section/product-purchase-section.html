@@ -1,30 +1,6 @@
 @let details = translation();
 <section class="purchase" aria-labelledby="product-title">
-  <div class="purchase__gallery">
-    <div class="purchase__image-stage">
-      <img
-        class="purchase__main-image"
-        [src]="activeImage()"
-        [alt]="details.name"
-        width="900"
-        height="1024"
-      />
-    </div>
-    <div class="purchase__thumbnails" [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.PRODUCT_IMAGES' | translate">
-      @for (image of product().images; track image; let index = $index) {
-      <button
-        type="button"
-        [class.is-active]="index === activeImageIndex()"
-        [attr.aria-label]="'PRODUCT_DETAILS.PURCHASE.VIEW_IMAGE' | translate: { current: index + 1, total: product().images.length }"
-        [attr.aria-current]="index === activeImageIndex() ? 'true' : null"
-        (click)="selectImage(index)"
-      >
-        <span class="purchase__image-number">{{ formatIndex(index) }}</span>
-        <img [src]="image" alt="" width="40" height="40" />
-      </button>
-      }
-    </div>
-  </div>
+  <app-product-gallery class="purchase__gallery" [images]="product().images" [alt]="details.name" />
 
   <div class="purchase__information">
     <div class="purchase__summary">

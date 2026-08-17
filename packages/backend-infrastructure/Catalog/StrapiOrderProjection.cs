@@ -26,7 +26,7 @@ internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions optio
             total = order.TotalAmount,
             placedAt = order.CreatedAt,
             deliveryAddress = new { order.Recipient, order.Phone, order.Country, order.Province, order.City, order.Neighborhood, order.Street, order.HouseNumber, order.Apartment, order.PostalCode },
-            items = order.Items.Select(item => new { productSku = item.ProductSku.Value, productName = item.ProductName, item.Variant, unitPrice = item.UnitPriceAmount, item.Quantity, item.ImageUrl }),
+            items = order.Items.Select(item => new { itemType = item.ItemType.ToString().ToLowerInvariant(), reference = item.Reference.Value, productSku = item.Reference.Value, productName = item.ProductName, item.Variant, unitPrice = item.UnitPriceAmount, item.Quantity, item.ImageUrl }),
             timeline = order.Timeline.Select(entry => new { status = entry.Status.ToString().ToLowerInvariant(), entry.OccurredAt })
         });
         using var response = await http.SendAsync(request, token);
