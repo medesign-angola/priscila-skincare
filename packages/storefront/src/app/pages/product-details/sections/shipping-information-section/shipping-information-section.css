@@ -11,10 +11,11 @@
   position: sticky;
   top: 1rem;
   align-self: flex-start;
-  flex: 0 0 7.5625rem;
+  flex: 0 0 clamp(10rem, 13.333vw, 12rem);
   margin: 0;
   font-size: 0.875rem;
   font-weight: 600;
+  white-space: nowrap;
   text-transform: uppercase;
 }
 .shipping__items {
@@ -51,6 +52,9 @@
     border-top: 1px solid #ddd7ce;
     border-left: 0;
     border-right: 0;
+  }
+  .shipping h2 {
+    flex-basis: auto;
   }
 }
 @media (max-width: 600px) {

@@ -94,6 +94,19 @@ function formatAmount(value?: number): string {
   }).format(value);
 }
 
+function resolveImageUrl(value?: string): string | undefined {
+  if (!value || typeof window === 'undefined') return value;
+  try {
+    const url = new URL(value, window.location.origin);
+    if (['localhost', '127.0.0.1', 'cms'].includes(url.hostname)) {
+      return `${window.location.origin}${url.pathname}${url.search}${url.hash}`;
+    }
+    return url.toString();
+  } catch {
+    return value;
+  }
+}
+
 const cardStyle = {
   border: '1px solid #dcdce4',
   borderRadius: '4px',
@@ -145,10 +158,16 @@ export const OrderAddressInput = forwardRef<HTMLDivElement, OrderFieldProps>(
           </Typography>
           <Box paddingTop={3}>
             <Typography tag="p">{street || 'Rua não informada'}</Typography>
-            {address.apartment ? <Typography tag="p">Referência: {address.apartment}</Typography> : null}
-            <Typography tag="p">{locality || 'Localidade não informada'}</Typography>
+            {address.apartment ? (
+              <Typography tag="p">Referência: {address.apartment}</Typography>
+            ) : null}
             <Typography tag="p">
-              {[address.country, address.postalCode].filter(Boolean).join(' · ')}
+              {locality || 'Localidade não informada'}
+            </Typography>
+            <Typography tag="p">
+              {[address.country, address.postalCode]
+                .filter(Boolean)
+                .join(' · ')}
             </Typography>
           </Box>
         </Box>
@@ -163,30 +182,53 @@ export const OrderItemsInput = forwardRef<HTMLDivElement, OrderFieldProps>(
     return (
       <ReadOnlyField {...props}>
         <Flex ref={ref} direction="column" alignItems="stretch" gap={3}>
-          {items.length ? items.map((item, index) => (
-            <Box key={`${item.reference ?? item.productSku}-${index}`} padding={3} style={cardStyle}>
-              <Flex gap={4} alignItems="center">
-                {item.imageUrl ? (
-                  <img
-                    src={item.imageUrl}
-                    alt=""
-                    style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 2 }}
-                  />
-                ) : null}
-                <Box style={{ flex: 1 }}>
-                  <Typography fontWeight="bold">{item.productName || 'Produto sem nome'}</Typography>
-                  <Typography tag="p" variant="pi" textColor="neutral600">
-                    {item.variant ? `Tamanho: ${item.variant} · ` : ''}Quantidade: {item.quantity ?? 0}
+          {items.length ? (
+            items.map((item, index) => (
+              <Box
+                key={`${item.reference ?? item.productSku}-${index}`}
+                padding={3}
+                style={cardStyle}
+              >
+                <Flex gap={4} alignItems="center">
+                  {item.imageUrl ? (
+                    <img
+                      src={resolveImageUrl(item.imageUrl)}
+                      alt={
+                        item.productName
+                          ? `Imagem de ${item.productName}`
+                          : 'Imagem do produto da encomenda'
+                      }
+                      style={{
+                        width: 72,
+                        height: 72,
+                        objectFit: 'cover',
+                        borderRadius: 2,
+                      }}
+                    />
+                  ) : null}
+                  <Box style={{ flex: 1 }}>
+                    <Typography fontWeight="bold">
+                      {item.productName || 'Produto sem nome'}
+                    </Typography>
+                    <Typography tag="p" variant="pi" textColor="neutral600">
+                      {item.variant ? `Tamanho: ${item.variant} · ` : ''}
+                      Quantidade: {item.quantity ?? 0}
+                    </Typography>
+                    <Typography tag="p" variant="pi" textColor="neutral600">
+                      Referência:{' '}
+                      {item.reference || item.productSku || 'Não informada'}
+                    </Typography>
+                  </Box>
+                  <Typography fontWeight="semiBold">
+                    {formatAmount(item.unitPrice)}
                   </Typography>
-                  <Typography tag="p" variant="pi" textColor="neutral600">
-                    Referência: {item.reference || item.productSku || 'Não informada'}
-                  </Typography>
-                </Box>
-                <Typography fontWeight="semiBold">{formatAmount(item.unitPrice)}</Typography>
-              </Flex>
+                </Flex>
+              </Box>
+            ))
+          ) : (
+            <Box padding={4} style={cardStyle}>
+              <Typography>Nenhum produto registado.</Typography>
             </Box>
-          )) : (
-            <Box padding={4} style={cardStyle}><Typography>Nenhum produto registado.</Typography></Box>
           )}
         </Flex>
       </ReadOnlyField>
@@ -199,20 +241,37 @@ export const OrderTimelineInput = forwardRef<HTMLDivElement, OrderFieldProps>(
     const entries = normalize<TimelineValue[]>(props.value, []);
     return (
       <ReadOnlyField {...props}>
-        <Flex ref={ref} direction="column" alignItems="stretch" gap={2}>
-          {entries.length ? entries.map((entry, index) => (
-            <Box key={`${entry.status}-${entry.occurredAt}-${index}`} padding={3} style={cardStyle}>
-              <Flex justifyContent="space-between" gap={4}>
-                <Typography fontWeight="semiBold">
-                  {statusLabels[(entry.status ?? '').toLowerCase()] ?? entry.status ?? 'Estado não informado'}
-                </Typography>
-                <Typography variant="pi" textColor="neutral600">{formatDate(entry.occurredAt)}</Typography>
-              </Flex>
-            </Box>
-          )) : (
-            <Box padding={4} style={cardStyle}><Typography>Nenhum estado registado.</Typography></Box>
-          )}
-        </Flex>
+        <Box ref={ref}>
+          <Typography tag="p" fontWeight="bold">
+            Histórico de estados da encomenda
+          </Typography>
+          <Flex direction="column" alignItems="stretch" gap={2} paddingTop={2}>
+            {entries.length ? (
+              entries.map((entry, index) => (
+                <Box
+                  key={`${entry.status}-${entry.occurredAt}-${index}`}
+                  padding={3}
+                  style={cardStyle}
+                >
+                  <Flex justifyContent="space-between" gap={4}>
+                    <Typography fontWeight="semiBold">
+                      {statusLabels[(entry.status ?? '').toLowerCase()] ??
+                        entry.status ??
+                        'Estado não informado'}
+                    </Typography>
+                    <Typography variant="pi" textColor="neutral600">
+                      {formatDate(entry.occurredAt)}
+                    </Typography>
+                  </Flex>
+                </Box>
+              ))
+            ) : (
+              <Box padding={4} style={cardStyle}>
+                <Typography>Nenhum estado registado.</Typography>
+              </Box>
+            )}
+          </Flex>
+        </Box>
       </ReadOnlyField>
     );
   },
