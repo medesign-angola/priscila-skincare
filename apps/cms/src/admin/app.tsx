@@ -1,20 +1,85 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
+import { Layout, ShoppingCart, Star, Store } from '@strapi/icons';
+import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
+import './styles/admin.css';
+
+const contentLink = (uid: string) => `/content-manager/collection-types/${uid}`;
 
 export default {
   config: {
+    auth: { logo: '/admin/priscila-logo.svg' },
+    menu: { logo: '/admin/priscila-logo.svg' },
     locales: ['pt', 'fr'],
+    notifications: { releases: false },
+    tutorials: false,
+    theme: {
+      light: priscilaLightTheme,
+      dark: priscilaDarkTheme,
+    },
     translations: {
       pt: {
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
-        'app.components.LeftMenu.navbrand.workplace': 'Gestão de conteúdos',
+        'app.components.LeftMenu.navbrand.workplace': 'Gestão da loja',
+        'Auth.form.welcome.title': 'Bem-vindo ao painel Priscila Skincare',
+        'Auth.form.welcome.subtitle': 'Entre para gerir a loja, os conteúdos e as encomendas.',
       },
       fr: {
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
-        'app.components.LeftMenu.navbrand.workplace': 'Gestion de contenu',
+        'app.components.LeftMenu.navbrand.workplace': 'Gestion de la boutique',
       },
     },
   },
   register(app: StrapiApp) {
+    app.addMenuLink({
+      to: contentLink('api::product.product'),
+      icon: Store,
+      intlLabel: { id: 'priscila.menu.catalog', defaultMessage: 'Produtos' },
+      permissions: [],
+      position: 2,
+    });
+    app.addMenuLink({
+      to: contentLink('api::order.order'),
+      icon: ShoppingCart,
+      intlLabel: { id: 'priscila.menu.orders', defaultMessage: 'Encomendas' },
+      permissions: [],
+      position: 3,
+    });
+    app.addMenuLink({
+      to: contentLink('api::review.review'),
+      icon: Star,
+      intlLabel: { id: 'priscila.menu.reviews', defaultMessage: 'Avaliações' },
+      permissions: [],
+      position: 4,
+    });
+    app.addMenuLink({
+      to: '/content-manager/single-types/api::home-page.home-page',
+      icon: Layout,
+      intlLabel: { id: 'priscila.menu.homepage', defaultMessage: 'Página inicial' },
+      permissions: [],
+      position: 5,
+    });
+
+    app.widgets.register([
+      {
+        id: 'store-overview',
+        title: { id: 'priscila.widgets.overview.title', defaultMessage: 'Visão geral da loja' },
+        icon: Store,
+        component: async () => (await import('./components/StoreOverviewWidget')).default,
+      },
+      {
+        id: 'quick-actions',
+        title: { id: 'priscila.widgets.actions.title', defaultMessage: 'Ações rápidas' },
+        icon: Layout,
+        component: async () => (await import('./components/QuickActionsWidget')).default,
+      },
+      {
+        id: 'content-guide',
+        title: { id: 'priscila.widgets.guide.title', defaultMessage: 'Antes de publicar' },
+        icon: Star,
+        component: async () => (await import('./components/ContentGuideWidget')).default,
+      },
+    ]);
+
     app.customFields.register({
       name: 'friendly-select',
       type: 'string',

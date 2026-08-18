@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Priscila Cormorant';
+  src: url('/admin/fonts/cormorant-garamond.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --priscila-brown: #7d6645;
+  --priscila-brown-dark: #5f4d35;
+  --priscila-cream: #f7f3ed;
+  --priscila-ink: #1a1917;
+}
+
+html {
+  scrollbar-color: #b49667 #f1ebe2;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  color: #fff;
+  background: var(--priscila-brown);
+}
+
+*:focus-visible {
+  outline-color: var(--priscila-brown);
+}
