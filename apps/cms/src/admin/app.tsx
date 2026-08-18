@@ -1,5 +1,5 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
-import { House, Layout, ShoppingCart, Star, Store } from '@strapi/icons';
+import { Layout, ShoppingCart, Star, Store } from '@strapi/icons';
 import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
 import './styles/admin.css';
 
@@ -18,12 +18,24 @@ export default {
     },
     translations: {
       pt: {
+        'HomePage.head.title': 'Início',
+        'Content Manager': 'Conteúdos da loja',
+        'global.content-manager': 'Conteúdos da loja',
+        'global.plugins.content-manager': 'Conteúdos da loja',
+        'Content Type Builder': 'Estrutura técnica',
+        'global.plugins.content-type-builder': 'Estrutura técnica',
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
         'app.components.LeftMenu.navbrand.workplace': 'Gestão da loja',
         'Auth.form.welcome.title': 'Bem-vindo ao painel Priscila Skincare',
         'Auth.form.welcome.subtitle': 'Entre para gerir a loja, os conteúdos e as encomendas.',
       },
       fr: {
+        'HomePage.head.title': 'Accueil',
+        'Content Manager': 'Contenus de la boutique',
+        'global.content-manager': 'Contenus de la boutique',
+        'global.plugins.content-manager': 'Contenus de la boutique',
+        'Content Type Builder': 'Structure technique',
+        'global.plugins.content-type-builder': 'Structure technique',
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
         'app.components.LeftMenu.navbrand.workplace': 'Gestion de la boutique',
       },
@@ -43,13 +55,6 @@ export default {
       ),
     );
 
-    app.addMenuLink({
-      to: '/',
-      icon: House,
-      intlLabel: { id: 'priscila.menu.home', defaultMessage: 'Início' },
-      permissions: [],
-      position: 1,
-    });
     app.addMenuLink({
       to: contentLink('api::product.product'),
       icon: Store,

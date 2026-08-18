@@ -15,6 +15,31 @@ interface DashboardMetrics {
   orders: number | null;
   pendingReviews: number | null;
   unavailableProducts: number | null;
+  kits: number | null;
+  collections: number | null;
+  ingredients: number | null;
+  categories: number | null;
+  customers: number | null;
+  banners: number | null;
+  draftProducts: number | null;
+  productsWithoutIngredients: number | null;
+  productsWithoutUsage: number | null;
+  pendingTranslations: number | null;
+}
+
+interface OrderEntry {
+  documentId?: string;
+  id?: number;
+  number?: string;
+  customerName?: string;
+  total?: number | string;
+  currency?: string;
+  status?: string;
+  placedAt?: string;
+}
+
+interface OrdersResponse extends CollectionResponse {
+  results?: OrderEntry[];
 }
 
 const contentLink = (uid: string) => `/content-manager/collection-types/${uid}`;
@@ -113,6 +138,58 @@ const MetricValue = styled.span`
   line-height: 0.9;
 `;
 
+const SectionHeading = styled.div`
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const ContentStatsGrid = styled.section`
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  border-radius: 0.3125rem;
+  background: ${({ theme }) => theme.colors.neutral0};
+
+  @media (max-width: 72rem) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 42rem) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+`;
+
+const ContentStatLink = styled(Link)`
+  display: grid;
+  gap: 0.4rem;
+  min-height: 5.75rem;
+  padding: 1rem;
+  border-right: 1px solid ${({ theme }) => theme.colors.neutral200};
+  color: ${({ theme }) => theme.colors.neutral800};
+  text-decoration: none;
+
+  &:last-child { border-right: 0; }
+  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
+
+  @media (max-width: 72rem) {
+    &:nth-child(3n) { border-right: 0; }
+    &:nth-child(-n + 3) { border-bottom: 1px solid ${({ theme }) => theme.colors.neutral200}; }
+  }
+
+  @media (max-width: 42rem) {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.neutral200};
+    &:nth-child(3n) { border-right: 1px solid ${({ theme }) => theme.colors.neutral200}; }
+    &:nth-child(2n) { border-right: 0; }
+    &:nth-last-child(-n + 2) { border-bottom: 0; }
+  }
+`;
+
+const ContentStatValue = styled.span`
+  font-family: 'Priscila Cormorant', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+`;
+
 const WorkGrid = styled.section`
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 0.7fr);
@@ -176,6 +253,63 @@ const ActionList = styled.div`
   padding: 0.75rem;
 `;
 
+const QualityItem = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
+  color: ${({ theme }) => theme.colors.neutral800};
+  text-decoration: none;
+
+  &:last-child { border-bottom: 0; }
+  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
+`;
+
+const QualityCount = styled.span`
+  flex: 0 0 auto;
+  min-width: 2.25rem;
+  color: ${({ theme }) => theme.colors.primary700};
+  font-weight: 700;
+  text-align: right;
+`;
+
+const OrderList = styled.div`
+  display: grid;
+`;
+
+const OrderRow = styled(Link)`
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.7fr) minmax(9rem, 1.2fr) minmax(7rem, 0.7fr) minmax(7rem, 0.7fr);
+  gap: 1rem;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
+  color: ${({ theme }) => theme.colors.neutral800};
+  text-decoration: none;
+
+  &:last-child { border-bottom: 0; }
+  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
+
+  @media (max-width: 46rem) {
+    grid-template-columns: 1fr auto;
+    & > :nth-child(2) { grid-column: 1; }
+    & > :nth-child(3) { grid-column: 2; grid-row: 1; }
+    & > :nth-child(4) { grid-column: 2; grid-row: 2; }
+  }
+`;
+
+const StatusLabel = styled.span`
+  justify-self: start;
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  color: ${({ theme }) => theme.colors.primary700};
+  background: ${({ theme }) => theme.colors.primary100};
+  font-size: 0.72rem;
+  font-weight: 600;
+`;
+
 const actionStyles = `
   display: flex;
   align-items: center;
@@ -221,10 +355,57 @@ function formatMetric(value: number | null): string {
   return value === null ? '—' : new Intl.NumberFormat('pt-AO').format(value);
 }
 
+async function translationGap(
+  get: ReturnType<typeof useFetchClient>['get'],
+  uid: string,
+): Promise<number | null> {
+  const [portuguese, french] = await Promise.all([
+    countFor(get, uid, { locale: 'pt' }),
+    countFor(get, uid, { locale: 'fr' }),
+  ]);
+  if (portuguese === null || french === null) return null;
+  return Math.max(0, portuguese - french);
+}
+
+async function fetchRecentOrders(
+  get: ReturnType<typeof useFetchClient>['get'],
+): Promise<OrderEntry[]> {
+  try {
+    const response = await get<OrdersResponse>(contentLink('api::order.order'), {
+      params: { page: 1, pageSize: 5, sort: 'placedAt:DESC' },
+    });
+    return response.data.results ?? [];
+  } catch {
+    return [];
+  }
+}
+
+const orderStatus: Record<string, string> = {
+  pending: 'Pendente',
+  confirmed: 'Confirmada',
+  paid: 'Paga',
+  processing: 'Em preparação',
+  shipped: 'Enviada',
+  delivered: 'Entregue',
+  cancelled: 'Cancelada',
+  paymentfailed: 'Pagamento não aprovado',
+  refunded: 'Reembolsada',
+};
+
+function formatMoney(value?: number | string, currency = 'AOA'): string {
+  const numericValue = Number(value ?? 0);
+  return new Intl.NumberFormat('pt-AO', {
+    style: 'currency',
+    currency,
+    maximumFractionDigits: currency === 'AOA' ? 0 : 2,
+  }).format(Number.isFinite(numericValue) ? numericValue : 0);
+}
+
 export default function StoreDashboardPage() {
   const { get } = useFetchClient();
   const user = useAuth('StoreDashboardPage', (state) => state.user);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [recentOrders, setRecentOrders] = useState<OrderEntry[]>([]);
 
   useEffect(() => {
     let active = true;
@@ -233,14 +414,80 @@ export default function StoreDashboardPage() {
       countFor(get, 'api::order.order', { 'filters[status][$eq]': 'pending' }),
       countFor(get, 'api::review.review', { 'filters[moderationStatus][$eq]': 'pending' }),
       countFor(get, 'api::product.product', { 'filters[commerce][availability][$eq]': 'out-of-stock' }),
-    ]).then(([products, orders, pendingReviews, unavailableProducts]) => {
-      if (active) setMetrics({ products, orders, pendingReviews, unavailableProducts });
+      countFor(get, 'api::kit.kit'),
+      countFor(get, 'api::collection.collection'),
+      countFor(get, 'api::ingredient.ingredient'),
+      countFor(get, 'api::category.category'),
+      countFor(get, 'api::customer.customer'),
+      countFor(get, 'api::hero-slide.hero-slide'),
+      countFor(get, 'api::product.product', { status: 'draft' }),
+      countFor(get, 'api::product.product', { 'filters[ingredients][$null]': 'true' }),
+      countFor(get, 'api::product.product', { 'filters[usageSteps][$null]': 'true' }),
+      Promise.all([
+        translationGap(get, 'api::product.product'),
+        translationGap(get, 'api::kit.kit'),
+        translationGap(get, 'api::collection.collection'),
+      ]),
+      fetchRecentOrders(get),
+    ]).then(([
+      products,
+      orders,
+      pendingReviews,
+      unavailableProducts,
+      kits,
+      collections,
+      ingredients,
+      categories,
+      customers,
+      banners,
+      draftProducts,
+      productsWithoutIngredients,
+      productsWithoutUsage,
+      translationGaps,
+      ordersList,
+    ]) => {
+      if (!active) return;
+      const knownGaps = translationGaps.filter((value): value is number => value !== null);
+      setMetrics({
+        products,
+        orders,
+        pendingReviews,
+        unavailableProducts,
+        kits,
+        collections,
+        ingredients,
+        categories,
+        customers,
+        banners,
+        draftProducts,
+        productsWithoutIngredients,
+        productsWithoutUsage,
+        pendingTranslations: knownGaps.length === translationGaps.length
+          ? knownGaps.reduce((total, value) => total + value, 0)
+          : null,
+      });
+      setRecentOrders(ordersList);
     });
     return () => { active = false; };
   }, [get]);
 
   const firstName = user?.firstname?.trim() || user?.username?.trim() || 'equipa';
-  const data = metrics ?? { products: null, orders: null, pendingReviews: null, unavailableProducts: null };
+  const data = metrics ?? {
+    products: null,
+    orders: null,
+    pendingReviews: null,
+    unavailableProducts: null,
+    kits: null,
+    collections: null,
+    ingredients: null,
+    categories: null,
+    customers: null,
+    banners: null,
+    draftProducts: null,
+    productsWithoutIngredients: null,
+    productsWithoutUsage: null,
+    pendingTranslations: null,
+  };
   const attentionItems = [
     { icon: ShoppingCart, title: `${formatMetric(data.orders)} encomendas aguardam confirmação`, detail: 'Confirme os produtos e avance a preparação da entrega.', href: `${contentLink('api::order.order')}?filters%5Bstatus%5D%5B%24eq%5D=pending` },
     { icon: Star, title: `${formatMetric(data.pendingReviews)} avaliações aguardam aprovação`, detail: 'Leia e escolha quais avaliações podem aparecer no site.', href: `${contentLink('api::review.review')}?filters%5BmoderationStatus%5D%5B%24eq%5D=pending` },
@@ -265,6 +512,21 @@ export default function StoreDashboardPage() {
           <MetricLink to={contentLink('api::product.product')}><Typography variant="pi" textColor="neutral600">Produtos indisponíveis</Typography><MetricValue>{formatMetric(data.unavailableProducts)}</MetricValue></MetricLink>
         </MetricsGrid>
 
+        <SectionHeading>
+          <Box>
+            <Typography tag="h2" fontWeight="semiBold">Conteúdos cadastrados</Typography>
+            <Typography tag="p" variant="pi" textColor="neutral600">Resumo do conteúdo disponível para montar a loja.</Typography>
+          </Box>
+        </SectionHeading>
+        <ContentStatsGrid aria-label="Conteúdos cadastrados">
+          <ContentStatLink to={contentLink('api::kit.kit')}><Typography variant="pi" textColor="neutral600">Kits</Typography><ContentStatValue>{formatMetric(data.kits)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::collection.collection')}><Typography variant="pi" textColor="neutral600">Coleções</Typography><ContentStatValue>{formatMetric(data.collections)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::ingredient.ingredient')}><Typography variant="pi" textColor="neutral600">Ingredientes</Typography><ContentStatValue>{formatMetric(data.ingredients)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::category.category')}><Typography variant="pi" textColor="neutral600">Categorias</Typography><ContentStatValue>{formatMetric(data.categories)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::customer.customer')}><Typography variant="pi" textColor="neutral600">Clientes</Typography><ContentStatValue>{formatMetric(data.customers)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::hero-slide.hero-slide')}><Typography variant="pi" textColor="neutral600">Banners</Typography><ContentStatValue>{formatMetric(data.banners)}</ContentStatValue></ContentStatLink>
+        </ContentStatsGrid>
+
         <WorkGrid>
           <Panel>
             <PanelHeader><Typography tag="h2" fontWeight="semiBold">Precisa da sua atenção</Typography><QuietLink to={contentLink('api::order.order')}>Ver encomendas</QuietLink></PanelHeader>
@@ -282,6 +544,46 @@ export default function StoreDashboardPage() {
               <ActionLink to={contentLink('api::order.order')}><span>Gerir encomendas</span><ArrowRight aria-hidden /></ActionLink>
               <ExternalActionLink href={storefrontUrl} target="_blank" rel="noreferrer"><span>Ver o site</span><ExternalLink aria-hidden /></ExternalActionLink>
             </ActionList>
+          </Panel>
+        </WorkGrid>
+
+        <WorkGrid>
+          <Panel>
+            <PanelHeader>
+              <Box>
+                <Typography tag="h2" fontWeight="semiBold">Encomendas recentes</Typography>
+                <Typography tag="p" variant="pi" textColor="neutral600">As cinco encomendas mais recentes da loja.</Typography>
+              </Box>
+              <QuietLink to={contentLink('api::order.order')}>Ver todas</QuietLink>
+            </PanelHeader>
+            <OrderList>
+              {recentOrders.length ? recentOrders.map((order) => {
+                const identifier = order.documentId ?? order.id;
+                return (
+                  <OrderRow key={String(identifier ?? order.number)} to={`${contentLink('api::order.order')}/${identifier}`}>
+                    <Typography fontWeight="semiBold">{order.number || 'Sem número'}</Typography>
+                    <Typography variant="pi" textColor="neutral600">{order.customerName || 'Cliente não identificado'}</Typography>
+                    <StatusLabel>{orderStatus[order.status ?? ''] ?? order.status ?? 'Sem estado'}</StatusLabel>
+                    <Typography fontWeight="semiBold">{formatMoney(order.total, order.currency)}</Typography>
+                  </OrderRow>
+                );
+              }) : (
+                <Box padding={5}><Typography textColor="neutral600">Ainda não existem encomendas para apresentar.</Typography></Box>
+              )}
+            </OrderList>
+          </Panel>
+
+          <Panel>
+            <PanelHeader>
+              <Box>
+                <Typography tag="h2" fontWeight="semiBold">Qualidade do catálogo</Typography>
+                <Typography tag="p" variant="pi" textColor="neutral600">Conteúdos que podem precisar de revisão.</Typography>
+              </Box>
+            </PanelHeader>
+            <QualityItem to={contentLink('api::product.product')}><span>Produtos em rascunho</span><QualityCount>{formatMetric(data.draftProducts)}</QualityCount></QualityItem>
+            <QualityItem to={contentLink('api::product.product')}><span>Sem ingredientes associados</span><QualityCount>{formatMetric(data.productsWithoutIngredients)}</QualityCount></QualityItem>
+            <QualityItem to={contentLink('api::product.product')}><span>Sem instruções de utilização</span><QualityCount>{formatMetric(data.productsWithoutUsage)}</QualityCount></QualityItem>
+            <QualityItem to={contentLink('api::product.product')}><span>Traduções em francês pendentes</span><QualityCount>{formatMetric(data.pendingTranslations)}</QualityCount></QualityItem>
           </Panel>
         </WorkGrid>
 
