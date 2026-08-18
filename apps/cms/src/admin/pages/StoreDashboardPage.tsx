@@ -82,6 +82,11 @@ const DashboardContent = styled.div`
   @media (max-width: 48rem) { padding: 0 1.5rem 2rem; }
 `;
 
+const SupportingText = styled(Typography)`
+  font-size: 0.875rem;
+  line-height: 1.45;
+`;
+
 const PrimaryLink = styled(Link)`
   display: inline-flex;
   align-items: center;
@@ -217,7 +222,7 @@ const PanelHeader = styled.header`
 
 const QuietLink = styled(Link)`
   color: ${({ theme }) => theme.colors.primary600};
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
   &:hover { text-decoration: underline; }
@@ -306,7 +311,7 @@ const StatusLabel = styled.span`
   border-radius: 999px;
   color: ${({ theme }) => theme.colors.primary700};
   background: ${({ theme }) => theme.colors.primary100};
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   font-weight: 600;
 `;
 
@@ -506,25 +511,25 @@ export default function StoreDashboardPage() {
 
       <DashboardContent>
         <MetricsGrid aria-label="Resumo da loja">
-          <MetricLink to={contentLink('api::product.product')}><Typography variant="pi" textColor="neutral600">Produtos no catálogo</Typography><MetricValue>{formatMetric(data.products)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::order.order')}><Typography variant="pi" textColor="neutral600">Novas encomendas</Typography><MetricValue>{formatMetric(data.orders)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::review.review')}><Typography variant="pi" textColor="neutral600">Avaliações pendentes</Typography><MetricValue>{formatMetric(data.pendingReviews)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::product.product')}><Typography variant="pi" textColor="neutral600">Produtos indisponíveis</Typography><MetricValue>{formatMetric(data.unavailableProducts)}</MetricValue></MetricLink>
+          <MetricLink to={contentLink('api::product.product')}><SupportingText textColor="neutral600">Produtos no catálogo</SupportingText><MetricValue>{formatMetric(data.products)}</MetricValue></MetricLink>
+          <MetricLink to={contentLink('api::order.order')}><SupportingText textColor="neutral600">Novas encomendas</SupportingText><MetricValue>{formatMetric(data.orders)}</MetricValue></MetricLink>
+          <MetricLink to={contentLink('api::review.review')}><SupportingText textColor="neutral600">Avaliações pendentes</SupportingText><MetricValue>{formatMetric(data.pendingReviews)}</MetricValue></MetricLink>
+          <MetricLink to={contentLink('api::product.product')}><SupportingText textColor="neutral600">Produtos indisponíveis</SupportingText><MetricValue>{formatMetric(data.unavailableProducts)}</MetricValue></MetricLink>
         </MetricsGrid>
 
         <SectionHeading>
           <Box>
             <Typography tag="h2" fontWeight="semiBold">Conteúdos cadastrados</Typography>
-            <Typography tag="p" variant="pi" textColor="neutral600">Resumo do conteúdo disponível para montar a loja.</Typography>
+            <SupportingText tag="p" textColor="neutral600">Resumo do conteúdo disponível para montar a loja.</SupportingText>
           </Box>
         </SectionHeading>
         <ContentStatsGrid aria-label="Conteúdos cadastrados">
-          <ContentStatLink to={contentLink('api::kit.kit')}><Typography variant="pi" textColor="neutral600">Kits</Typography><ContentStatValue>{formatMetric(data.kits)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::collection.collection')}><Typography variant="pi" textColor="neutral600">Coleções</Typography><ContentStatValue>{formatMetric(data.collections)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::ingredient.ingredient')}><Typography variant="pi" textColor="neutral600">Ingredientes</Typography><ContentStatValue>{formatMetric(data.ingredients)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::category.category')}><Typography variant="pi" textColor="neutral600">Categorias</Typography><ContentStatValue>{formatMetric(data.categories)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::customer.customer')}><Typography variant="pi" textColor="neutral600">Clientes</Typography><ContentStatValue>{formatMetric(data.customers)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::hero-slide.hero-slide')}><Typography variant="pi" textColor="neutral600">Banners</Typography><ContentStatValue>{formatMetric(data.banners)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::kit.kit')}><SupportingText textColor="neutral600">Kits</SupportingText><ContentStatValue>{formatMetric(data.kits)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::collection.collection')}><SupportingText textColor="neutral600">Coleções</SupportingText><ContentStatValue>{formatMetric(data.collections)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::ingredient.ingredient')}><SupportingText textColor="neutral600">Ingredientes</SupportingText><ContentStatValue>{formatMetric(data.ingredients)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::category.category')}><SupportingText textColor="neutral600">Categorias</SupportingText><ContentStatValue>{formatMetric(data.categories)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::customer.customer')}><SupportingText textColor="neutral600">Clientes</SupportingText><ContentStatValue>{formatMetric(data.customers)}</ContentStatValue></ContentStatLink>
+          <ContentStatLink to={contentLink('api::hero-slide.hero-slide')}><SupportingText textColor="neutral600">Banners</SupportingText><ContentStatValue>{formatMetric(data.banners)}</ContentStatValue></ContentStatLink>
         </ContentStatsGrid>
 
         <WorkGrid>
@@ -532,7 +537,7 @@ export default function StoreDashboardPage() {
             <PanelHeader><Typography tag="h2" fontWeight="semiBold">Precisa da sua atenção</Typography><QuietLink to={contentLink('api::order.order')}>Ver encomendas</QuietLink></PanelHeader>
             {attentionItems.map((item) => {
               const Icon = item.icon;
-              return <AttentionLink key={item.title} to={item.href}><AttentionIcon><Icon aria-hidden /></AttentionIcon><Box><Typography tag="p" fontWeight="semiBold">{item.title}</Typography><Typography tag="p" variant="pi" textColor="neutral600">{item.detail}</Typography></Box></AttentionLink>;
+              return <AttentionLink key={item.title} to={item.href}><AttentionIcon><Icon aria-hidden /></AttentionIcon><Box><Typography tag="p" fontWeight="semiBold">{item.title}</Typography><SupportingText tag="p" textColor="neutral600">{item.detail}</SupportingText></Box></AttentionLink>;
             })}
           </Panel>
 
@@ -552,7 +557,7 @@ export default function StoreDashboardPage() {
             <PanelHeader>
               <Box>
                 <Typography tag="h2" fontWeight="semiBold">Encomendas recentes</Typography>
-                <Typography tag="p" variant="pi" textColor="neutral600">As cinco encomendas mais recentes da loja.</Typography>
+                <SupportingText tag="p" textColor="neutral600">As cinco encomendas mais recentes da loja.</SupportingText>
               </Box>
               <QuietLink to={contentLink('api::order.order')}>Ver todas</QuietLink>
             </PanelHeader>
@@ -562,7 +567,7 @@ export default function StoreDashboardPage() {
                 return (
                   <OrderRow key={String(identifier ?? order.number)} to={`${contentLink('api::order.order')}/${identifier}`}>
                     <Typography fontWeight="semiBold">{order.number || 'Sem número'}</Typography>
-                    <Typography variant="pi" textColor="neutral600">{order.customerName || 'Cliente não identificado'}</Typography>
+                    <SupportingText textColor="neutral600">{order.customerName || 'Cliente não identificado'}</SupportingText>
                     <StatusLabel>{orderStatus[order.status ?? ''] ?? order.status ?? 'Sem estado'}</StatusLabel>
                     <Typography fontWeight="semiBold">{formatMoney(order.total, order.currency)}</Typography>
                   </OrderRow>
@@ -577,7 +582,7 @@ export default function StoreDashboardPage() {
             <PanelHeader>
               <Box>
                 <Typography tag="h2" fontWeight="semiBold">Qualidade do catálogo</Typography>
-                <Typography tag="p" variant="pi" textColor="neutral600">Conteúdos que podem precisar de revisão.</Typography>
+                <SupportingText tag="p" textColor="neutral600">Conteúdos que podem precisar de revisão.</SupportingText>
               </Box>
             </PanelHeader>
             <QualityItem to={contentLink('api::product.product')}><span>Produtos em rascunho</span><QualityCount>{formatMetric(data.draftProducts)}</QualityCount></QualityItem>
@@ -588,7 +593,7 @@ export default function StoreDashboardPage() {
         </WorkGrid>
 
         <Panel>
-          <PanelHeader><Flex gap={3} alignItems="center"><CheckCircle aria-hidden /><Box><Typography tag="h2" fontWeight="semiBold">Antes de publicar</Typography><Typography tag="p" variant="pi" textColor="neutral600">Confirme as traduções, use imagens otimizadas e reveja o conteúdo no site.</Typography></Box></Flex></PanelHeader>
+          <PanelHeader><Flex gap={3} alignItems="center"><CheckCircle aria-hidden /><Box><Typography tag="h2" fontWeight="semiBold">Antes de publicar</Typography><SupportingText tag="p" textColor="neutral600">Confirme as traduções, use imagens otimizadas e reveja o conteúdo no site.</SupportingText></Box></Flex></PanelHeader>
         </Panel>
       </DashboardContent>
     </DashboardMain>
