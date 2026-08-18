@@ -1,5 +1,5 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
-import { Layout, ShoppingCart, Star, Store } from '@strapi/icons';
+import { House, Layout, ShoppingCart, Star, Store } from '@strapi/icons';
 import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
 import './styles/admin.css';
 
@@ -30,6 +30,26 @@ export default {
     },
   },
   register(app: StrapiApp) {
+    app.router.addRoute((routes) =>
+      routes.map((route) =>
+        route.index
+          ? {
+              ...route,
+              lazy: async () => ({
+                Component: (await import('./pages/StoreDashboardPage')).default,
+              }),
+            }
+          : route,
+      ),
+    );
+
+    app.addMenuLink({
+      to: '/',
+      icon: House,
+      intlLabel: { id: 'priscila.menu.home', defaultMessage: 'Início' },
+      permissions: [],
+      position: 1,
+    });
     app.addMenuLink({
       to: contentLink('api::product.product'),
       icon: Store,

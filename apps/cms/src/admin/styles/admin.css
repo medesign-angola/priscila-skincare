@@ -27,3 +27,13 @@ body {
 *:focus-visible {
   outline-color: var(--priscila-brown);
 }
+
+/* Mantém a navegação do Strapi discreta e coerente com a loja. */
+nav[aria-label] a,
+nav[aria-label] button {
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+nav[aria-label] a[aria-current='page'] {
+  font-weight: 600;
+}
