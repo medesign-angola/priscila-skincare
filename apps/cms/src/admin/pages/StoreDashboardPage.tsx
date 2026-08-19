@@ -48,6 +48,7 @@ const storefrontUrl = import.meta.env.STRAPI_ADMIN_STOREFRONT_URL || 'http://loc
 const DashboardMain = styled(Main)`
   min-height: 100%;
   background: ${({ theme }) => theme.colors.neutral100};
+  font-size: 14px;
 `;
 
 const DashboardHeader = styled.header`
@@ -68,7 +69,7 @@ const DashboardTitle = styled.h1`
   margin: 0 0 0.375rem;
   color: ${({ theme }) => theme.colors.neutral800};
   font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-size: clamp(32px, 3.2vw, 48px);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -83,8 +84,8 @@ const DashboardContent = styled.div`
 `;
 
 const SupportingText = styled(Typography)`
-  font-size: 0.875rem;
-  line-height: 1.45;
+  font-size: 14px !important;
+  line-height: 20px !important;
 `;
 
 const PrimaryLink = styled(Link)`
@@ -97,6 +98,7 @@ const PrimaryLink = styled(Link)`
   border-radius: 0.1875rem;
   color: ${({ theme }) => theme.colors.buttonNeutral0};
   background: ${({ theme }) => theme.colors.primary600};
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
@@ -138,7 +140,7 @@ const MetricLink = styled(Link)`
 const MetricValue = styled.span`
   align-self: end;
   font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.625rem);
+  font-size: clamp(32px, 3vw, 42px);
   font-weight: 600;
   line-height: 0.9;
 `;
@@ -190,7 +192,7 @@ const ContentStatLink = styled(Link)`
 
 const ContentStatValue = styled.span`
   font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: 2rem;
+  font-size: 32px;
   font-weight: 600;
   line-height: 1;
 `;
@@ -222,7 +224,7 @@ const PanelHeader = styled.header`
 
 const QuietLink = styled(Link)`
   color: ${({ theme }) => theme.colors.primary600};
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   &:hover { text-decoration: underline; }
@@ -266,6 +268,8 @@ const QualityItem = styled(Link)`
   padding: 0.9rem 1.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
   color: ${({ theme }) => theme.colors.neutral800};
+  font-size: 14px;
+  line-height: 20px;
   text-decoration: none;
 
   &:last-child { border-bottom: 0; }
@@ -276,6 +280,7 @@ const QualityCount = styled.span`
   flex: 0 0 auto;
   min-width: 2.25rem;
   color: ${({ theme }) => theme.colors.primary700};
+  font-size: 14px;
   font-weight: 700;
   text-align: right;
 `;
@@ -292,6 +297,7 @@ const OrderRow = styled(Link)`
   padding: 0.9rem 1.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
   color: ${({ theme }) => theme.colors.neutral800};
+  font-size: 14px;
   text-decoration: none;
 
   &:last-child { border-bottom: 0; }
@@ -311,7 +317,7 @@ const StatusLabel = styled.span`
   border-radius: 999px;
   color: ${({ theme }) => theme.colors.primary700};
   background: ${({ theme }) => theme.colors.primary100};
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 600;
 `;
 
@@ -331,6 +337,7 @@ const ActionLink = styled(Link)`
   ${actionStyles}
   border: 1px solid ${({ theme }) => theme.colors.neutral200};
   color: ${({ theme }) => theme.colors.neutral800};
+  font-size: 14px;
   &:hover { border-color: ${({ theme }) => theme.colors.primary500}; color: ${({ theme }) => theme.colors.primary700}; }
 `;
 
@@ -338,6 +345,7 @@ const ExternalActionLink = styled.a`
   ${actionStyles}
   border: 1px solid ${({ theme }) => theme.colors.neutral200};
   color: ${({ theme }) => theme.colors.neutral800};
+  font-size: 14px;
   &:hover { border-color: ${({ theme }) => theme.colors.primary500}; color: ${({ theme }) => theme.colors.primary700}; }
 `;
 
