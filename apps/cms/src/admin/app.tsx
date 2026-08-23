@@ -1,9 +1,7 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
-import { Layout, ShoppingCart, Star, Store } from '@strapi/icons';
+import { Layout, Star, Store } from '@strapi/icons';
 import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
 import './styles/admin.css';
-
-const contentLink = (uid: string) => `/content-manager/collection-types/${uid}`;
 
 export default {
   config: {
@@ -54,35 +52,6 @@ export default {
           : route,
       ),
     );
-
-    app.addMenuLink({
-      to: contentLink('api::product.product'),
-      icon: Store,
-      intlLabel: { id: 'priscila.menu.catalog', defaultMessage: 'Produtos' },
-      permissions: [],
-      position: 2,
-    });
-    app.addMenuLink({
-      to: contentLink('api::order.order'),
-      icon: ShoppingCart,
-      intlLabel: { id: 'priscila.menu.orders', defaultMessage: 'Encomendas' },
-      permissions: [],
-      position: 3,
-    });
-    app.addMenuLink({
-      to: contentLink('api::review.review'),
-      icon: Star,
-      intlLabel: { id: 'priscila.menu.reviews', defaultMessage: 'Avaliações' },
-      permissions: [],
-      position: 4,
-    });
-    app.addMenuLink({
-      to: '/content-manager/single-types/api::home-page.home-page',
-      icon: Layout,
-      intlLabel: { id: 'priscila.menu.homepage', defaultMessage: 'Página inicial' },
-      permissions: [],
-      position: 5,
-    });
 
     app.widgets.register([
       {
