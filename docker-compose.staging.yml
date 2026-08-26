@@ -48,6 +48,10 @@ services:
       Email__FromEmail: ${SMTP_FROM_EMAIL:-}
       Email__FromName: ${SMTP_FROM_NAME:-Priscila Skin Care}
       Email__TimeoutSeconds: ${SMTP_TIMEOUT_SECONDS:-30}
+      Email__OrderConfirmationEnabled: ${ORDER_CONFIRMATION_EMAIL_ENABLED:-true}
+      Email__StorefrontUrl: ${STOREFRONT_ORIGIN:?Defina STOREFRONT_ORIGIN}
+      Email__SupportEmail: ${EMAIL_SUPPORT_ADDRESS:-}
+      Email__OutboxPollSeconds: ${EMAIL_OUTBOX_POLL_SECONDS:-10}
       Strapi__BaseUrl: http://cms:1337
       Strapi__IntegrationSecret: ${INTEGRATION_SECRET:?Defina INTEGRATION_SECRET}
       Cors__AllowedOrigins__0: ${STOREFRONT_ORIGIN:?Defina STOREFRONT_ORIGIN}

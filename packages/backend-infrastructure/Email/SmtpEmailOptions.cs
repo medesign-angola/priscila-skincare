@@ -12,4 +12,8 @@ internal sealed class SmtpEmailOptions
     public string FromEmail { get; init; } = string.Empty;
     public string FromName { get; init; } = string.Empty;
     public int TimeoutSeconds { get; init; } = 30;
+    public bool OrderConfirmationEnabled { get; init; } = true;
+    public string StorefrontUrl { get; init; } = "http://localhost:4300";
+    public string SupportEmail { get; init; } = string.Empty;
+    public int OutboxPollSeconds { get; init; } = 10;
 }

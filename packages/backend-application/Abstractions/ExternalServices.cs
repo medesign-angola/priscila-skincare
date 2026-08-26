@@ -56,6 +56,26 @@ public interface IOtpSender
 
 public sealed record OtpEmail(EmailAddress Recipient, string Code, string Locale, int LifetimeMinutes);
 
+public sealed record OrderConfirmationEmailItem(string Name, string? Variant, int Quantity,
+    decimal UnitPrice, decimal Total);
+public sealed record OrderConfirmationEmailAddress(string Recipient, string Phone, string Country,
+    string Province, string City, string Neighborhood, string Street, string? HouseNumber,
+    string? Apartment, string? PostalCode);
+public sealed record OrderConfirmationEmail(Guid OrderId, string OrderNumber, string RecipientEmail,
+    string? CustomerName, string Locale, DateTimeOffset PlacedAt, string Status, string PaymentStatus,
+    string Currency, decimal Subtotal, decimal Shipping, decimal Total,
+    IReadOnlyList<OrderConfirmationEmailItem> Items, OrderConfirmationEmailAddress Address);
+
+public interface IOrderEmailOutbox
+{
+    void Enqueue(OrderConfirmationEmail message, DateTimeOffset now);
+}
+
+public interface IOrderEmailSender
+{
+    Task SendAsync(OrderConfirmationEmail message, CancellationToken cancellationToken = default);
+}
+
 public interface IOtpCodeGenerator
 {
     string Generate();
