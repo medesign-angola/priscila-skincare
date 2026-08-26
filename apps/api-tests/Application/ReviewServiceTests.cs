@@ -3,6 +3,7 @@ using PriscilaSkincare.Application.Reviews;
 using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
+using PriscilaSkincare.Domain.Orders;
 using PriscilaSkincare.Domain.Reviews;
 
 namespace PriscilaSkincare.Api.Tests.Application;
@@ -109,6 +110,9 @@ public sealed class ReviewServiceTests
     {
         public Task<CatalogProduct?> FindBySkuAsync(ProductSku sku, string locale, CancellationToken cancellationToken = default) =>
             Task.FromResult(exists ? new CatalogProduct(sku, "Produto", 0, 0, true) : null);
+        public Task<CatalogItem?> FindAsync(CommerceItemType type, CommerceItemReference reference,
+            string locale, CancellationToken cancellationToken = default) =>
+            Task.FromResult<CatalogItem?>(null);
     }
 
     private sealed class ProjectionStub : IReviewProjection

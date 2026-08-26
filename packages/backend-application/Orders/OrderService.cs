@@ -6,7 +6,7 @@ namespace PriscilaSkincare.Application.Orders;
 public sealed class OrderService(IOrderRepository orders, IShoppingCartRepository carts,
     ICustomerRepository customers, ICustomerAddressRepository addresses, ICatalogGateway catalog,
     IOrderProjection projection, IPaymentRepository payments, IPaymentGateway paymentGateway,
-    IInventoryService inventory, IUnitOfWork unitOfWork, IClock clock)
+    IInventoryService inventory, IOrderEmailOutbox emailOutbox, IUnitOfWork unitOfWork, IClock clock)
 {
     public async Task<CheckoutPreviewResult> PreviewAsync(Guid customerId, CheckoutPreviewRequest request, CancellationToken cancellationToken = default)
     {
@@ -35,7 +35,15 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         var payment = Payment.Create(order.Id, decision.Provider, decision.Reference, Money.Create(order.TotalAmount, order.Currency), now);
         orders.Add(order);
         payments.Add(payment);
-        if (decision.Approved) { await inventory.DebitAsync(order.Id, stockRequests, cancellationToken); payment.ChangeStatus(PaymentStatus.Approved, now); order.ChangeStatus(OrderStatus.Confirmed, now); order.ChangeStatus(OrderStatus.Paid, now); cart.Clear(now); }
+        if (decision.Approved)
+        {
+            await inventory.DebitAsync(order.Id, stockRequests, cancellationToken);
+            payment.ChangeStatus(PaymentStatus.Approved, now);
+            order.ChangeStatus(OrderStatus.Confirmed, now);
+            order.ChangeStatus(OrderStatus.Paid, now);
+            cart.Clear(now);
+            emailOutbox.Enqueue(CreateConfirmationEmail(order, payment, customer, command.Locale), now);
+        }
         else { payment.ChangeStatus(PaymentStatus.Rejected, now); order.ChangeStatus(OrderStatus.PaymentFailed, now); }
         await unitOfWork.SaveChangesAsync(cancellationToken);
         try
@@ -107,4 +115,14 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
 
     private async Task<IReadOnlyList<InventoryRequest>> BuildInventoryRequests(Order order,string locale,CancellationToken token)
     {var totals=new Dictionary<string,InventoryRequest>(StringComparer.OrdinalIgnoreCase);foreach(var item in order.Items){var entry=await catalog.FindAsync(item.ItemType,item.Reference,locale,token)??throw new CommerceException("catalog_item_not_found",$"O item {item.Reference.Value} deixou de existir.");foreach(var component in entry.Components){var product=await catalog.FindBySkuAsync(component.Sku,locale,token)??throw new CommerceException("product_not_found",$"O produto {component.Sku.Value} deixou de existir.");var quantity=component.Quantity*item.Quantity;totals[component.Sku.Value]=totals.TryGetValue(component.Sku.Value,out var current)?current with{Quantity=current.Quantity+quantity}:new(component.Sku.Value,quantity,product.Stock);}}return totals.Values.ToArray();}
+
+    private static OrderConfirmationEmail CreateConfirmationEmail(Order order, Payment payment,
+        Domain.Customers.Customer customer, string locale) => new(
+        order.Id, order.Number, customer.Email.Value, customer.Name, locale, order.CreatedAt,
+        order.Status.ToString(), payment.Status.ToString(), order.Currency, order.SubtotalAmount,
+        order.ShippingAmount, order.TotalAmount,
+        order.Items.Select(item => new OrderConfirmationEmailItem(item.ProductName, item.Variant,
+            item.Quantity, item.UnitPriceAmount, item.UnitPriceAmount * item.Quantity)).ToArray(),
+        new(order.Recipient, order.Phone, order.Country, order.Province, order.City, order.Neighborhood,
+            order.Street, order.HouseNumber, order.Apartment, order.PostalCode));
 }

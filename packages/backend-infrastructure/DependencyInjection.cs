@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IStockMovementRepository, StockMovementRepository>();
+        services.AddScoped<IOrderEmailOutbox, OrderEmailOutbox>();
         services.AddScoped<IPaymentGateway, SimulatedPaymentGateway>();
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<AuthenticationService>();
@@ -82,12 +83,22 @@ public static class DependencyInjection
             Password = section["Password"] ?? string.Empty,
             FromEmail = section["FromEmail"] ?? string.Empty,
             FromName = section["FromName"] ?? string.Empty,
-            TimeoutSeconds = ReadPositiveInt(configuration, "Email:TimeoutSeconds", 30)
+            TimeoutSeconds = ReadPositiveInt(configuration, "Email:TimeoutSeconds", 30),
+            OrderConfirmationEnabled = !bool.TryParse(section["OrderConfirmationEnabled"], out var enabled) || enabled,
+            StorefrontUrl = section["StorefrontUrl"] ?? "http://localhost:4300",
+            SupportEmail = string.IsNullOrWhiteSpace(section["SupportEmail"])
+                ? section["FromEmail"] ?? string.Empty
+                : section["SupportEmail"]!,
+            OutboxPollSeconds = ReadPositiveInt(configuration, "Email:OutboxPollSeconds", 10)
         };
+
+        services.AddSingleton(options);
+        services.AddHostedService<OrderEmailOutboxWorker>();
 
         if (!string.Equals(options.DeliveryMode, "Smtp", StringComparison.OrdinalIgnoreCase))
         {
             services.AddSingleton<IOtpSender, DevelopmentOtpSender>();
+            services.AddSingleton<IOrderEmailSender, DevelopmentOrderEmailSender>();
             return;
         }
 
@@ -102,8 +113,8 @@ public static class DependencyInjection
                 "Guarde Email:Password nos User Secrets e confirme os restantes dados SMTP.");
         }
 
-        services.AddSingleton(options);
         services.AddSingleton<IOtpSender, SmtpOtpSender>();
+        services.AddSingleton<IOrderEmailSender, SmtpOrderEmailSender>();
     }
 
     private static void AddStrapiIntegration(IServiceCollection services, IConfiguration configuration)

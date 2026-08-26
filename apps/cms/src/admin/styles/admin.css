@@ -1,0 +1,109 @@
+@font-face {
+  font-family: 'Priscila Cormorant';
+  src: url('/admin/fonts/cormorant-garamond.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --priscila-brown: #7d6645;
+  --priscila-brown-dark: #5f4d35;
+  --priscila-cream: #f7f3ed;
+  --priscila-ink: #1a1917;
+}
+
+html {
+  scrollbar-color: #b49667 #f1ebe2;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  color: #fff;
+  background: var(--priscila-brown);
+}
+
+*:focus-visible {
+  outline-color: var(--priscila-brown);
+}
+
+/* Mantém a navegação do Strapi discreta e coerente com a loja. */
+nav[aria-label] a,
+nav[aria-label] button {
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+nav[aria-label] a[aria-current='page'] {
+  font-weight: 600;
+}
+
+/*
+ * Em ecrãs largos, a navegação global deixa de ocupar uma segunda sidebar e
+ * passa a funcionar como barra superior. A navegação contextual do Content
+ * Manager permanece como a única sidebar da página.
+ */
+@media (min-width: 64rem) {
+  div:has(> nav:has(img[src*='priscila-logo.svg'])) {
+    flex-direction: column !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) {
+    position: relative !important;
+    z-index: 5;
+    flex-direction: row !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 64px !important;
+    max-height: 64px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--priscila-cream) !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) > div:first-child {
+    flex: 0 0 auto;
+    padding: 8px 18px !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) > div:nth-of-type(2) {
+    flex: 1 1 auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    overflow: visible !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) ul {
+    flex: 1 1 auto !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    padding: 8px 12px !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) ul a,
+  nav:has(img[src*='priscila-logo.svg']) ul button {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  nav:has(img[src*='priscila-logo.svg']) > div:nth-of-type(2) > div:last-child {
+    display: flex !important;
+    flex: 0 0 auto;
+    align-items: center;
+    height: 64px;
+    padding: 8px 18px !important;
+    border-top: 0 !important;
+    border-left: 1px solid var(--priscila-cream) !important;
+  }
+
+  div:has(> nav:has(img[src*='priscila-logo.svg'])) > div:last-child {
+    width: 100% !important;
+    height: calc(100dvh - 64px) !important;
+  }
+}

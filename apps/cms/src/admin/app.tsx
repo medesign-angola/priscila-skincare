@@ -1,20 +1,79 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
+import { Layout, Star, Store } from '@strapi/icons';
+import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
+import './styles/admin.css';
 
 export default {
   config: {
+    auth: { logo: '/admin/priscila-logo.svg' },
+    menu: { logo: '/admin/priscila-logo.svg' },
     locales: ['pt', 'fr'],
+    notifications: { releases: false },
+    tutorials: false,
+    theme: {
+      light: priscilaLightTheme,
+      dark: priscilaDarkTheme,
+    },
     translations: {
       pt: {
+        'HomePage.head.title': 'Início',
+        'Content Manager': 'Conteúdos da loja',
+        'global.content-manager': 'Conteúdos da loja',
+        'global.plugins.content-manager': 'Conteúdos da loja',
+        'Content Type Builder': 'Estrutura técnica',
+        'global.plugins.content-type-builder': 'Estrutura técnica',
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
-        'app.components.LeftMenu.navbrand.workplace': 'Gestão de conteúdos',
+        'app.components.LeftMenu.navbrand.workplace': 'Gestão da loja',
+        'Auth.form.welcome.title': 'Bem-vindo ao painel Priscila Skincare',
+        'Auth.form.welcome.subtitle': 'Entre para gerir a loja, os conteúdos e as encomendas.',
       },
       fr: {
+        'HomePage.head.title': 'Accueil',
+        'Content Manager': 'Contenus de la boutique',
+        'global.content-manager': 'Contenus de la boutique',
+        'global.plugins.content-manager': 'Contenus de la boutique',
+        'Content Type Builder': 'Structure technique',
+        'global.plugins.content-type-builder': 'Structure technique',
         'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
-        'app.components.LeftMenu.navbrand.workplace': 'Gestion de contenu',
+        'app.components.LeftMenu.navbrand.workplace': 'Gestion de la boutique',
       },
     },
   },
   register(app: StrapiApp) {
+    app.router.addRoute((routes) =>
+      routes.map((route) =>
+        route.index
+          ? {
+              ...route,
+              lazy: async () => ({
+                Component: (await import('./pages/StoreDashboardPage')).default,
+              }),
+            }
+          : route,
+      ),
+    );
+
+    app.widgets.register([
+      {
+        id: 'store-overview',
+        title: { id: 'priscila.widgets.overview.title', defaultMessage: 'Visão geral da loja' },
+        icon: Store,
+        component: async () => (await import('./components/StoreOverviewWidget')).default,
+      },
+      {
+        id: 'quick-actions',
+        title: { id: 'priscila.widgets.actions.title', defaultMessage: 'Ações rápidas' },
+        icon: Layout,
+        component: async () => (await import('./components/QuickActionsWidget')).default,
+      },
+      {
+        id: 'content-guide',
+        title: { id: 'priscila.widgets.guide.title', defaultMessage: 'Antes de publicar' },
+        icon: Star,
+        component: async () => (await import('./components/ContentGuideWidget')).default,
+      },
+    ]);
+
     app.customFields.register({
       name: 'friendly-select',
       type: 'string',
