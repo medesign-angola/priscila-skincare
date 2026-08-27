@@ -5,8 +5,8 @@ import './styles/admin.css';
 
 export default {
   config: {
-    auth: { logo: '/admin/priscila-logo.svg' },
-    menu: { logo: '/admin/priscila-logo.svg' },
+    auth: { logo: '/priscila-logo.svg' },
+    menu: { logo: '/priscila-logo.svg' },
     locales: ['pt', 'fr'],
     notifications: { releases: false },
     tutorials: false,
