@@ -1,2 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss';
+
+@font-face { font-family: 'Inter'; src: url('/fonts/inter/inter.ttf') format('truetype'); font-weight: 100 900; font-style: normal; font-display: swap; }
+:root { font-family: 'Inter', Arial, Helvetica, sans-serif; font-size: 16px; color-scheme: light; }
+* { box-sizing: border-box; }
+html { min-width: 320px; background: #fff; }
+body { min-height: 100dvh; margin: 0; background: #fff; color: #1a1917; }
+button, input, select, textarea { font: inherit; }
+button:focus-visible, a:focus-visible { outline: 2px solid #7d6645; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }

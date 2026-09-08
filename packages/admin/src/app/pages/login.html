@@ -1,0 +1,70 @@
+<main class="login-page">
+  <section class="login-column" aria-labelledby="login-title">
+    <header class="login-navbar">
+      <a href="/" class="logo-link" aria-label="Priscila Skincare">
+        <img src="/assets/login/logo.svg" alt="Priscila Skincare" width="74" height="56" />
+      </a>
+      <button class="language-button" type="button" aria-label="Alterar idioma e moeda">
+        <span>PT / €</span>
+        <img src="/assets/login/language.svg" alt="" width="24" height="24" aria-hidden="true" />
+      </button>
+    </header>
+
+    <div class="login-content">
+      <div class="login-introduction">
+        <h1 id="login-title">Bem-vindo (a)</h1>
+        <p>Entre para gerir a loja, os conteúdos e as encomendas da Priscila Skincare.</p>
+      </div>
+
+      <form class="login-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="admin-email">Email <span aria-hidden="true">*</span></label>
+          <input id="admin-email" type="email" formControlName="email" autocomplete="username"
+            placeholder="e.g. kai@doe.com" [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <small>Insira um endereço de email válido.</small>
+          }
+        </div>
+
+        <div class="field">
+          <label for="admin-password">Palavra-passe <span aria-hidden="true">*</span></label>
+          <div class="password-field">
+            <input id="admin-password" [type]="passwordVisible() ? 'text' : 'password'"
+              formControlName="password" autocomplete="current-password"
+              [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+            <button type="button" (click)="passwordVisible.set(!passwordVisible())"
+              [attr.aria-label]="passwordVisible() ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'">
+              <img src="/assets/login/password-visibility.svg" alt="" width="24" height="24" aria-hidden="true" />
+            </button>
+          </div>
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <small>Insira a sua palavra-passe.</small>
+          }
+        </div>
+
+        <label class="remember-option">
+          <input type="checkbox" formControlName="rememberMe" />
+          <span class="checkbox-visual" aria-hidden="true">
+            @if (!form.controls.rememberMe.value) {
+              <img src="/assets/login/checkbox.svg" alt="" width="24" height="24" />
+            }
+          </span>
+          <span>Lembrar-me</span>
+        </label>
+
+        <div class="form-actions">
+          <button class="submit-button" type="submit">
+            <span>Entrar</span>
+            <img src="/assets/login/arrow-right.svg" alt="" width="24" height="24" aria-hidden="true" />
+          </button>
+          <button class="forgot-password" type="button">Esqueceu-se da palavra-passe?</button>
+        </div>
+
+      </form>
+    </div>
+  </section>
+
+  <aside class="login-visual" aria-label="Imagem da Priscila Skincare">
+    <img src="/assets/login/hero.webp" alt="Mulher aplicando cuidados de pele" />
+  </aside>
+</main>
