@@ -5,6 +5,7 @@ using PriscilaSkincare.Domain.Customers;
 using PriscilaSkincare.Domain.Orders;
 using PriscilaSkincare.Domain.Notifications;
 using PriscilaSkincare.Domain.Reviews;
+using PriscilaSkincare.Domain.Integration;
 
 namespace PriscilaSkincare.Infrastructure.Persistence;
 
@@ -24,6 +25,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
     public DbSet<EmailOutboxMessage> EmailOutboxMessages => Set<EmailOutboxMessage>();
+    public DbSet<IntegrationOutboxMessage> IntegrationOutboxMessages => Set<IntegrationOutboxMessage>();
+    public DbSet<IntegrationInboxMessage> IntegrationInboxMessages => Set<IntegrationInboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) =>
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

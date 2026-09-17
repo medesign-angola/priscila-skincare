@@ -3,6 +3,7 @@ using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
 using PriscilaSkincare.Domain.Orders;
 using PriscilaSkincare.Domain.Reviews;
+using PriscilaSkincare.Domain.Integration;
 
 namespace PriscilaSkincare.Application.Abstractions;
 
@@ -25,6 +26,17 @@ public interface ICatalogGateway
 public sealed record PaymentRequest(Guid OrderId, Money Amount, string IdempotencyKey);
 public sealed record PaymentDecision(string Provider, string Reference, bool Approved, string? FailureCode = null);
 public interface IPaymentGateway { Task<PaymentDecision> AuthorizeAsync(PaymentRequest request, CancellationToken cancellationToken = default); }
+
+public interface IIntegrationOutbox
+{
+    void Add(IntegrationOutboxMessage message);
+}
+
+public interface IIntegrationInbox
+{
+    Task<bool> ContainsAsync(Guid eventId, CancellationToken cancellationToken = default);
+    void Add(IntegrationInboxMessage message);
+}
 
 public interface IInventoryService
 {

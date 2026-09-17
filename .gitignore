@@ -71,3 +71,6 @@ apps/cms/public/uploads
 apps/cms/types/generated
 apps/cms/.strapi-updater.json
 .codex-runtime/
+
+# autonomous services are maintained in independent repositories
+/standalone-services/

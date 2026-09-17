@@ -1,12 +1,16 @@
+using System.Text.Json;
 using PriscilaSkincare.Application.Abstractions;
+using PriscilaSkincare.Application.Integration;
+using PriscilaSkincare.Domain.Integration;
 using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Application.Orders;
 
 public sealed class OrderService(IOrderRepository orders, IShoppingCartRepository carts,
     ICustomerRepository customers, ICustomerAddressRepository addresses, ICatalogGateway catalog,
-    IOrderProjection projection, IPaymentRepository payments, IPaymentGateway paymentGateway,
-    IInventoryService inventory, IOrderEmailOutbox emailOutbox, IUnitOfWork unitOfWork, IClock clock)
+    IOrderProjection projection, IPaymentRepository payments, IIntegrationOutbox integrationOutbox,
+    IIntegrationInbox integrationInbox, IInventoryService inventory, IOrderEmailOutbox emailOutbox,
+    IUnitOfWork unitOfWork, IClock clock)
 {
     public async Task<CheckoutPreviewResult> PreviewAsync(Guid customerId, CheckoutPreviewRequest request, CancellationToken cancellationToken = default)
     {
@@ -31,20 +35,16 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         order.SetShipping(Money.Create(preview.Shipping, preview.Currency));
         var stockRequests = await BuildInventoryRequests(order, command.Locale, cancellationToken);
         await inventory.ValidateAsync(stockRequests, cancellationToken);
-        var decision = await paymentGateway.AuthorizeAsync(new(order.Id, Money.Create(order.TotalAmount, order.Currency), command.IdempotencyKey), cancellationToken);
-        var payment = Payment.Create(order.Id, decision.Provider, decision.Reference, Money.Create(order.TotalAmount, order.Currency), now);
+        var payment = Payment.Create(order.Id, command.PaymentMethod,
+            $"PENDING-{order.Id:N}", Money.Create(order.TotalAmount, order.Currency), now);
         orders.Add(order);
         payments.Add(payment);
-        if (decision.Approved)
-        {
-            await inventory.DebitAsync(order.Id, stockRequests, cancellationToken);
-            payment.ChangeStatus(PaymentStatus.Approved, now);
-            order.ChangeStatus(OrderStatus.Confirmed, now);
-            order.ChangeStatus(OrderStatus.Paid, now);
-            cart.Clear(now);
-            emailOutbox.Enqueue(CreateConfirmationEmail(order, payment, customer, command.Locale), now);
-        }
-        else { payment.ChangeStatus(PaymentStatus.Rejected, now); order.ChangeStatus(OrderStatus.PaymentFailed, now); }
+        var eventId = Guid.NewGuid();
+        var paymentEvent = new IntegrationEvent<PaymentRequestedEvent>(eventId,
+            "payment.requested.v1", now, new(order.Id, order.TotalAmount, order.Currency,
+                command.IdempotencyKey, NormalizeLocale(command.Locale)));
+        integrationOutbox.Add(IntegrationOutboxMessage.Create(eventId, paymentEvent.Type,
+            "payments", JsonSerializer.Serialize(paymentEvent), now));
         await unitOfWork.SaveChangesAsync(cancellationToken);
         try
         {
@@ -53,6 +53,46 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         }
         catch { /* a encomenda local não pode ser descartada por indisponibilidade do painel */ }
         return Map(order, payment);
+    }
+
+    public async Task ApplyPaymentResultAsync(Guid eventId, PaymentResultEvent result,
+        CancellationToken cancellationToken = default)
+    {
+        if (await integrationInbox.ContainsAsync(eventId, cancellationToken)) return;
+        var order = await orders.FindByIdAsync(result.OrderId, cancellationToken)
+            ?? throw new CommerceException("order_not_found", "Encomenda não encontrada.");
+        var payment = await payments.FindByOrderAsync(order.Id, cancellationToken)
+            ?? throw new CommerceException("payment_not_found", "Pagamento não encontrado.");
+        var now = clock.UtcNow;
+
+        if (result.Approved)
+        {
+            var stockRequests = await BuildInventoryRequests(order, result.Locale, cancellationToken);
+            await inventory.DebitAsync(order.Id, stockRequests, cancellationToken);
+            payment.Complete(result.Provider, result.Reference, PaymentStatus.Approved, now);
+            order.ChangeStatus(OrderStatus.Confirmed, now);
+            order.ChangeStatus(OrderStatus.Paid, now);
+            var cart = await carts.FindAsync(order.CustomerId, cancellationToken);
+            cart?.Clear(now);
+            var customer = await customers.FindByIdAsync(order.CustomerId, cancellationToken)
+                ?? throw new CommerceException("customer_not_found", "Cliente não encontrado.");
+            emailOutbox.Enqueue(CreateConfirmationEmail(order, payment, customer, result.Locale), now);
+        }
+        else
+        {
+            payment.Complete(result.Provider, result.Reference, PaymentStatus.Rejected, now);
+            order.ChangeStatus(OrderStatus.PaymentFailed, now);
+        }
+
+        integrationInbox.Add(IntegrationInboxMessage.Receive(eventId, "payment.result.v1", now));
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var owner = await customers.FindByIdAsync(order.CustomerId, cancellationToken);
+        if (owner is not null)
+        {
+            try { await projection.UpsertAsync(order, owner, cancellationToken); }
+            catch { /* a confirmação do pagamento permanece local e será reconciliada */ }
+        }
     }
 
     public async Task<IReadOnlyList<OrderResult>> ListAsync(Guid customerId, CancellationToken cancellationToken = default) =>
@@ -72,6 +112,14 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         order.ChangeStatus(target, clock.UtcNow);
         if (target is OrderStatus.Cancelled or OrderStatus.Refunded && previous is OrderStatus.Paid or OrderStatus.Processing)
             await inventory.CreditAsync(order.Id, cancellationToken);
+        if (target == OrderStatus.Delivered)
+        {
+            var deliveredCustomer = await customers.FindByIdAsync(order.CustomerId, cancellationToken)
+                ?? throw new CommerceException("customer_not_found", "Cliente não encontrado.");
+            var payment = await payments.FindByOrderAsync(order.Id, cancellationToken)
+                ?? throw new CommerceException("payment_not_found", "Pagamento não encontrado.");
+            emailOutbox.Enqueue(CreateConfirmationEmail(order, payment, deliveredCustomer, "pt"), clock.UtcNow);
+        }
         await unitOfWork.SaveChangesAsync(cancellationToken);
         var customer = await customers.FindByIdAsync(order.CustomerId, cancellationToken);
         if (customer is not null) await projection.UpsertAsync(order, customer, cancellationToken);
@@ -125,4 +173,7 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
             item.Quantity, item.UnitPriceAmount, item.UnitPriceAmount * item.Quantity)).ToArray(),
         new(order.Recipient, order.Phone, order.Country, order.Province, order.City, order.Neighborhood,
             order.Street, order.HouseNumber, order.Apartment, order.PostalCode));
+
+    private static string NormalizeLocale(string locale) =>
+        locale.StartsWith("fr", StringComparison.OrdinalIgnoreCase) ? "fr" : "pt";
 }

@@ -9,8 +9,11 @@ internal sealed class OrderEmailOutbox(ApplicationDbContext db) : IOrderEmailOut
 {
     public void Enqueue(OrderConfirmationEmail message, DateTimeOffset now)
     {
+        var kind = string.Equals(message.Status, "Delivered", StringComparison.OrdinalIgnoreCase)
+            ? "order-delivered"
+            : "order-confirmation";
         db.EmailOutboxMessages.Add(EmailOutboxMessage.Create(
-            "order-confirmation", message.OrderId, message.RecipientEmail,
+            kind, message.OrderId, message.RecipientEmail,
             JsonSerializer.Serialize(message), now));
     }
 }
