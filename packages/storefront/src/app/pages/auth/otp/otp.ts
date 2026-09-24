@@ -63,7 +63,9 @@ export class Otp {
     this.invalid.set(!(await this.auth.verifyCode(this.digits.join(''))));
     this.submitting.set(false);
     if (!this.invalid()) {
-      await this.cart.synchronize();
+      // O login já foi concluído. A sincronização do cesto não deve atrasar
+      // nem impedir a navegação quando esse serviço estiver indisponível.
+      void this.cart.synchronize();
       const requestedUrl = this.route.snapshot.queryParamMap.get('returnUrl');
       const returnUrl = requestedUrl?.startsWith('/') && !requestedUrl.startsWith('//')
         ? requestedUrl
