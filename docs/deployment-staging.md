@@ -117,14 +117,18 @@ SMTP oficial e monitorização externa dos dois domínios.
 Configure as seguintes variáveis nos ambientes desejados da Vercel:
 
 ```env
-STOREFRONT_API_URL=https://priscila-stg-api.medesign-angola.com/api/v1
+STOREFRONT_API_URL=/api/v1
+STOREFRONT_API_PROXY_ORIGIN=https://priscila-stg-api.medesign-angola.com
 STOREFRONT_CMS_URL=https://priscila-stg-cms.medesign-angola.com
 STOREFRONT_USE_MOCK_FALLBACKS=false
 ```
 
-O build da Vercel gera `runtime-config.js` antes de compilar o storefront. Em
-desenvolvimento local, o ficheiro usa `http://localhost:5041/api/v1` e
-`http://localhost:1337` por padrão.
+O build da Vercel gera `runtime-config.js` antes de compilar o storefront.
+`STOREFRONT_API_URL=/api/v1` faz o browser comunicar sempre com a mesma origem
+do storefront. A regra em `vercel.mjs` encaminha todos os pedidos `/api/*` para
+`STOREFRONT_API_PROXY_ORIGIN`, preservando o cookie HttpOnly da sessão e evitando
+dependência de cookies third-party. Em desenvolvimento local, o ficheiro usa
+`http://localhost:5041/api/v1` e `http://localhost:1337` por padrão.
 
 Na VPS, `STOREFRONT_ORIGIN` deve conter a origem exata do deploy da Vercel,
 sem barra no final. Depois de alterá-la, recrie API e CMS para atualizar o CORS:
