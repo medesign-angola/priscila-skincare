@@ -104,17 +104,11 @@ public static class DependencyInjection
     private static void AddStrapiIntegration(IServiceCollection services, IConfiguration configuration)
     {
         var baseUrl = configuration["Strapi:BaseUrl"] ?? "http://localhost:1337";
-        var publicBaseUrl = configuration["Strapi:PublicBaseUrl"] ?? baseUrl;
         var secret = configuration["Strapi:IntegrationSecret"] ?? string.Empty;
         if (secret.Length < 32)
             throw new InvalidOperationException("Strapi:IntegrationSecret deve ter pelo menos 32 caracteres.");
 
-        var options = new StrapiOptions
-        {
-            BaseUrl = baseUrl,
-            PublicBaseUrl = publicBaseUrl,
-            IntegrationSecret = secret
-        };
+        var options = new StrapiOptions { BaseUrl = baseUrl, IntegrationSecret = secret };
         services.AddSingleton(options);
         services.AddHttpClient<ICatalogGateway, StrapiCatalogGateway>(client =>
             client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/"));

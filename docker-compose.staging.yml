@@ -59,7 +59,6 @@ services:
       Email__SupportEmail: ${EMAIL_SUPPORT_ADDRESS:-}
       Email__OutboxPollSeconds: ${EMAIL_OUTBOX_POLL_SECONDS:-10}
       Strapi__BaseUrl: http://cms:1337
-      Strapi__PublicBaseUrl: ${STOREFRONT_CMS_URL:?Defina STOREFRONT_CMS_URL}
       Strapi__IntegrationSecret: ${INTEGRATION_SECRET:?Defina INTEGRATION_SECRET}
       Payments__BaseUrl: http://payments:8080
       Payments__InternalApiKey: ${PAYMENTS_INTERNAL_API_KEY:?Defina PAYMENTS_INTERNAL_API_KEY}

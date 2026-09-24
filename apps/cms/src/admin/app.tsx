@@ -14,7 +14,28 @@ const redirectRegistrationToLogin = () => {
   window.location.replace(loginPath);
 };
 
+const syncAuthenticationMarker = () => {
+  if (typeof window === 'undefined') return;
+  const isAuthenticationRoute = /\/auth\/(?:login|forgot-password|reset-password)\/?$/.test(
+    window.location.pathname,
+  );
+  const existingMarker = document.querySelector<HTMLInputElement>(
+    'input[data-priscila-auth-marker]',
+  );
+
+  if (isAuthenticationRoute && !existingMarker) {
+    const marker = document.createElement('input');
+    marker.type = 'hidden';
+    marker.name = 'rememberMe';
+    marker.dataset.priscilaAuthMarker = 'true';
+    (document.body ?? document.documentElement).append(marker);
+  } else if (!isAuthenticationRoute) {
+    existingMarker?.remove();
+  }
+};
+
 redirectRegistrationToLogin();
+syncAuthenticationMarker();
 
 export default {
   config: {
@@ -406,22 +427,7 @@ export default {
   bootstrap() {
     const identifyNativeLogin = () => {
       redirectRegistrationToLogin();
-      const isAuthenticationRoute = /\/auth\/(?:login|forgot-password|reset-password)\/?$/.test(
-        window.location.pathname,
-      );
-      const existingMarker = document.querySelector<HTMLInputElement>(
-        'input[data-priscila-auth-marker]',
-      );
-
-      if (isAuthenticationRoute && !existingMarker) {
-        const marker = document.createElement('input');
-        marker.type = 'hidden';
-        marker.name = 'rememberMe';
-        marker.dataset.priscilaAuthMarker = 'true';
-        document.body.append(marker);
-      } else if (!isAuthenticationRoute) {
-        existingMarker?.remove();
-      }
+      syncAuthenticationMarker();
 
       const form = document.querySelector('form');
       const email = form?.querySelector("input[name='email']");
