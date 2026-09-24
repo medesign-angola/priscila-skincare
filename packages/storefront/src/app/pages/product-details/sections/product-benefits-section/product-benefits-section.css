@@ -42,11 +42,14 @@
   display: flex;
   gap: 0.5rem;
   margin-top: 3rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
 }
 .benefits__gallery img {
-  flex: 1;
-  min-width: 0;
-  aspect-ratio: 1;
+  flex: 0 0 138px;
+  width: 138px;
+  height: 138px;
   object-fit: cover;
 }
 @media (max-width: 800px) {
@@ -82,7 +85,8 @@
     margin-top: 1.5rem;
   }
   .benefits__gallery img {
-    aspect-ratio: 109 / 100;
+    width: 138px;
+    height: 138px;
     border-radius: 0.125rem;
   }
 }

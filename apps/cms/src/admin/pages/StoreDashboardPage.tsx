@@ -1,13 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Box, Flex, Main, Typography } from '@strapi/design-system';
-import { ArrowRight, CheckCircle, ExternalLink, Plus, ShoppingCart, Star, WarningCircle } from '@strapi/icons';
+import { useEffect, useMemo, useState } from 'react';
+import { Main } from '@strapi/design-system';
 import { useAuth, useFetchClient } from '@strapi/strapi/admin';
+import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import {
+  contentLink,
+  iconPath,
+  productCreateLink,
+  productListLink,
+  storeListLink,
+  StoreLayout,
+  StorePage,
+  StoreSidebar,
+} from '../components/StoreSidebar';
 
 interface CollectionResponse {
   pagination?: { total?: number };
-  results?: unknown[];
+  results?: Array<Record<string, unknown>>;
 }
 
 interface DashboardMetrics {
@@ -18,7 +28,6 @@ interface DashboardMetrics {
   kits: number | null;
   collections: number | null;
   ingredients: number | null;
-  categories: number | null;
   customers: number | null;
   banners: number | null;
   draftProducts: number | null;
@@ -35,318 +44,523 @@ interface OrderEntry {
   total?: number | string;
   currency?: string;
   status?: string;
-  placedAt?: string;
+  orderStatus?: string;
+  timeline?: unknown;
 }
 
 interface OrdersResponse extends CollectionResponse {
   results?: OrderEntry[];
 }
 
-const contentLink = (uid: string) => `/content-manager/collection-types/${uid}`;
-const storefrontUrl = import.meta.env.STRAPI_ADMIN_STOREFRONT_URL || 'http://localhost:4300';
+const storefrontUrl =
+  import.meta.env.STRAPI_ADMIN_STOREFRONT_URL || 'http://localhost:4300';
 
-const DashboardMain = styled(Main)`
-  min-height: 100%;
-  background: ${({ theme }) => theme.colors.neutral100};
-  font-size: 14px;
+const frenchCopy: Record<string, string> = {
+  Dashboard: 'Tableau de bord',
+  Encomendas: 'Commandes',
+  Produtos: 'Produits',
+  Avaliações: 'Avis',
+  Clientes: 'Clients',
+  'Kit de produtos': 'Kits de produits',
+  Categorias: 'Catégories',
+  Coleções: 'Collections',
+  Ingredientes: 'Ingrédients',
+  Tamanhos: 'Formats',
+  'Banner página inicial': "Bannière de la page d'accueil",
+  'Testemunho em vídeo': 'Témoignage vidéo',
+  Usuários: 'Utilisateurs',
+  'Configurações do site': 'Paramètres du site',
+  'Página inicial': "Page d'accueil",
+  'Página sobre': 'Page à propos',
+  'Aqui está o que precisa da sua atenção hoje.':
+    "Voici ce qui requiert votre attention aujourd'hui.",
+  'Alterar idioma e moeda': 'Modifier la langue et la devise',
+  Pesquisar: 'Rechercher',
+  'Pesquisar no painel': 'Rechercher dans le tableau de bord',
+  'Novo produto': 'Nouveau produit',
+  'Resumo da loja': 'Résumé de la boutique',
+  'Produtos no catálogo': 'Produits au catalogue',
+  'Novas encomendas': 'Nouvelles commandes',
+  'Avaliações pendentes': 'Avis en attente',
+  'Produtos indisponíveis': 'Produits indisponibles',
+  'Conteúdos cadastrados': 'Contenus enregistrés',
+  Kits: 'Kits',
+  Banners: 'Bannières',
+  'Encomendas recentes': 'Commandes récentes',
+  'Ver todas': 'Voir toutes',
+  Preço: 'Prix',
+  Estado: 'Statut',
+  'Sem número': 'Sans numéro',
+  'Cliente não identificado': 'Client non identifié',
+  'Sem estado': 'Sans statut',
+  'Ainda não existem encomendas para apresentar.':
+    "Il n'y a pas encore de commandes à afficher.",
+  'Qualidade do catálogo': 'Qualité du catalogue',
+  'Produtos em rascunho': 'Produits en brouillon',
+  'Sem ingredientes associados': 'Sans ingrédients associés',
+  'Sem instruções de utilização': "Sans instructions d'utilisation",
+  'Traduções em francês pendentes': 'Traductions françaises en attente',
+  'Ações rápidas': 'Actions rapides',
+  'Adicionar produto': 'Ajouter un produit',
+  'Atualizar página inicial': "Mettre à jour la page d'accueil",
+  'Gerir encomendas': 'Gérer les commandes',
+  'Ver o site': 'Voir le site',
+  Pendente: 'En attente',
+  Confirmada: 'Confirmée',
+  Paga: 'Payée',
+  'Em preparação': 'En préparation',
+  Enviada: 'Expédiée',
+  Entregue: 'Livrée',
+  Cancelada: 'Annulée',
+  'Pagamento não aprovado': 'Paiement refusé',
+  Reembolsada: 'Remboursée',
+  Registada: 'Enregistrée',
+  Rascunho: 'Brouillon',
+};
+
+const Shell = styled(Main)`
+  min-height: 100vh;
+  color: #1a1917;
+  background: #f7f5f2;
+  font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 
-const DashboardHeader = styled.header`
+const Header = styled.header`
+  box-sizing: border-box;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 2.5rem 3rem 1.75rem;
+  gap: 24px;
+  min-height: 93px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #ece8e1;
+  background: #fafafa;
 
-  @media (max-width: 48rem) {
+  @media (max-width: 44rem) {
     align-items: flex-start;
+    padding: 20px;
     flex-direction: column;
-    padding: 2rem 1.5rem 1.5rem;
   }
 `;
 
-const DashboardTitle = styled.h1`
-  margin: 0 0 0.375rem;
-  color: ${({ theme }) => theme.colors.neutral800};
-  font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: clamp(32px, 3.2vw, 48px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1;
-`;
-
-const DashboardContent = styled.div`
+const Greeting = styled.div`
   display: grid;
-  gap: 1.25rem;
-  padding: 0 3rem 3rem;
-
-  @media (max-width: 48rem) { padding: 0 1.5rem 2rem; }
+  gap: 8px;
 `;
 
-const SupportingText = styled(Typography)`
-  font-size: 14px !important;
-  line-height: 20px !important;
+const GreetingTitle = styled.h1`
+  margin: 0;
+  color: #2f303a;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 29px;
 `;
 
-const PrimaryLink = styled(Link)`
+const GreetingText = styled.p`
+  margin: 0;
+  color: #6d675f;
+  font-size: 16px;
+  line-height: 24px;
+`;
+
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  @media (max-width: 32rem) {
+    width: 100%;
+    justify-content: space-between;
+  }
+`;
+
+const LanguageLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  color: #1a1917;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  letter-spacing: 0.28px;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const ProfileLink = styled(Link)`
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 55px;
+  padding: 7px;
+  border: 1px solid #ece8e1;
+  border-radius: 12px;
+  color: #1a1917;
+  background: #fff;
+  text-decoration: none;
+`;
+
+const Avatar = styled.span`
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  border-radius: 10px;
+  color: #fff;
+  background: #7d6645;
+  font-size: 14px;
+  font-weight: 700;
+`;
+
+const ProfileCopy = styled.span`
+  display: grid;
+  min-width: 112px;
+
+  strong {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+  small {
+    color: #6d675f;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  @media (max-width: 32rem) {
+    display: none;
+  }
+`;
+
+const Chevron = styled.span`
+  width: 8px;
+  height: 8px;
+  margin: 0 6px 4px 2px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+`;
+
+const Content = styled.div`
+  box-sizing: border-box;
+  display: grid;
+  gap: 32px;
+  max-width: 1229px;
+  margin: 0 auto;
+  padding: 32px;
+
+  @media (max-width: 44rem) {
+    padding: 20px;
+  }
+`;
+
+const Toolbar = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+
+  @media (max-width: 36rem) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SearchBox = styled.label`
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 50px;
+  padding: 8px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fff;
+
+  svg {
+    width: 24px;
+    height: 24px;
+    color: #7d6645;
+  }
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: #1a1917;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+
+  &::placeholder {
+    color: #8f887e;
+    opacity: 1;
+  }
+`;
+
+const PrimaryAction = styled(Link)`
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
-  min-height: 2.75rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid ${({ theme }) => theme.colors.primary600};
-  border-radius: 0.1875rem;
-  color: ${({ theme }) => theme.colors.buttonNeutral0};
-  background: ${({ theme }) => theme.colors.primary600};
-  font-size: 14px;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid #7d6645;
+  border-radius: 10px;
+  color: #fff;
+  background: #7d6645;
+  font-size: 16px;
   font-weight: 600;
+  line-height: 24px;
   text-decoration: none;
-  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+  transition: background-color 160ms ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary700};
-    background: ${({ theme }) => theme.colors.primary700};
-    transform: translateY(-0.0625rem);
+    background: #5f4d35;
+  }
+  svg {
+    width: 24px;
+    height: 24px;
   }
 `;
 
-const MetricsGrid = styled.section`
+const MetricsGrid = styled.section<{ $compact?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(
+    ${({ $compact }) => ($compact ? 5 : 4)},
+    minmax(0, 1fr)
+  );
+  gap: 18px;
 
-  @media (max-width: 68rem) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  @media (max-width: 36rem) { grid-template-columns: 1fr; }
+  @media (max-width: 70rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (max-width: 36rem) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-const MetricLink = styled(Link)`
+const MetricCard = styled(Link)`
+  box-sizing: border-box;
   display: grid;
-  gap: 0.75rem;
-  min-height: 7.25rem;
-  padding: 1.125rem;
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: 0.3125rem;
-  color: ${({ theme }) => theme.colors.neutral800};
-  background: ${({ theme }) => theme.colors.neutral0};
+  gap: 12px;
+  min-height: 108px;
+  padding: 24px;
+  border: 1px solid #ece8e1;
+  border-radius: 10px;
+  color: #1a1917;
+  background: #fff;
   text-decoration: none;
-  transition: border-color 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.colors.primary500};
-    transform: translateY(-0.125rem);
+    border-color: #b49667;
+    transform: translateY(-2px);
   }
 `;
 
-const MetricValue = styled.span`
-  align-self: end;
-  font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: clamp(32px, 3vw, 42px);
-  font-weight: 600;
-  line-height: 0.9;
-`;
-
-const SectionHeading = styled.div`
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.5rem;
-`;
-
-const ContentStatsGrid = styled.section`
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: 0.3125rem;
-  background: ${({ theme }) => theme.colors.neutral0};
-
-  @media (max-width: 72rem) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  @media (max-width: 42rem) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-`;
-
-const ContentStatLink = styled(Link)`
-  display: grid;
-  gap: 0.4rem;
-  min-height: 5.75rem;
-  padding: 1rem;
-  border-right: 1px solid ${({ theme }) => theme.colors.neutral200};
-  color: ${({ theme }) => theme.colors.neutral800};
-  text-decoration: none;
-
-  &:last-child { border-right: 0; }
-  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
-
-  @media (max-width: 72rem) {
-    &:nth-child(3n) { border-right: 0; }
-    &:nth-child(-n + 3) { border-bottom: 1px solid ${({ theme }) => theme.colors.neutral200}; }
-  }
-
-  @media (max-width: 42rem) {
-    border-bottom: 1px solid ${({ theme }) => theme.colors.neutral200};
-    &:nth-child(3n) { border-right: 1px solid ${({ theme }) => theme.colors.neutral200}; }
-    &:nth-child(2n) { border-right: 0; }
-    &:nth-last-child(-n + 2) { border-bottom: 0; }
-  }
-`;
-
-const ContentStatValue = styled.span`
-  font-family: 'Priscila Cormorant', Georgia, serif;
-  font-size: 32px;
-  font-weight: 600;
-  line-height: 1;
-`;
-
-const WorkGrid = styled.section`
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 0.7fr);
-  gap: 1.25rem;
-
-  @media (max-width: 62rem) { grid-template-columns: 1fr; }
-`;
-
-const Panel = styled.section`
-  overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: 0.3125rem;
-  background: ${({ theme }) => theme.colors.neutral0};
-`;
-
-const PanelHeader = styled.header`
+const MetricTop = styled.span`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  min-height: 3.75rem;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral200};
+  gap: 8px;
+  color: #6d675f;
+  font-size: 16px;
+  line-height: 24px;
+`;
+
+const MetricArrow = styled.span`
+  color: #b49667;
+  font-size: 24px;
+  line-height: 1;
+`;
+
+const MetricValue = styled.strong`
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+`;
+
+const Section = styled.section`
+  display: grid;
+  gap: 24px;
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+`;
+
+const SectionTitle = styled.h2`
+  margin: 0;
+  color: #2f303a;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19px;
 `;
 
 const QuietLink = styled(Link)`
-  color: ${({ theme }) => theme.colors.primary600};
-  font-size: 14px;
+  color: #7d6645;
+  font-size: 16px;
   font-weight: 600;
-  text-decoration: none;
-  &:hover { text-decoration: underline; }
+  line-height: 19px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 `;
 
-const AttentionLink = styled(Link)`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.875rem;
-  padding: 1.125rem 1.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
-  color: ${({ theme }) => theme.colors.neutral800};
-  text-decoration: none;
-
-  &:last-child { border-bottom: 0; }
-  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
+const Table = styled.div`
+  overflow: hidden;
+  border: 1px solid #ece8e1;
+  border-radius: 10px;
+  background: #fff;
 `;
 
-const AttentionIcon = styled.span`
+const TableRow = styled(Link)<{ $header?: boolean }>`
   display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  color: ${({ theme }) => theme.colors.primary700};
-  background: ${({ theme }) => theme.colors.primary100};
-`;
-
-const ActionList = styled.div`
-  display: grid;
-  gap: 0.5rem;
-  padding: 0.75rem;
-`;
-
-const QualityItem = styled(Link)`
-  display: flex;
+  grid-template-columns:
+    minmax(12rem, 1.1fr) minmax(13rem, 1fr) minmax(8rem, 0.95fr)
+    minmax(8rem, 0.7fr);
+  min-height: 56px;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
-  color: ${({ theme }) => theme.colors.neutral800};
-  font-size: 14px;
-  line-height: 20px;
+  border-bottom: 1px solid #ece8e1;
+  color: ${({ $header }) => ($header ? '#1a1917' : '#6d675f')};
+  background: #fff;
+  font-size: 16px;
+  font-weight: ${({ $header }) => ($header ? 600 : 400)};
   text-decoration: none;
 
-  &:last-child { border-bottom: 0; }
-  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
-`;
+  &:last-child {
+    border-bottom: 0;
+  }
+  &:not([data-header='true']):hover {
+    background: rgba(125, 102, 69, 0.04);
+  }
+  > span {
+    padding: 15px;
+  }
 
-const QualityCount = styled.span`
-  flex: 0 0 auto;
-  min-width: 2.25rem;
-  color: ${({ theme }) => theme.colors.primary700};
-  font-size: 14px;
-  font-weight: 700;
-  text-align: right;
-`;
-
-const OrderList = styled.div`
-  display: grid;
-`;
-
-const OrderRow = styled(Link)`
-  display: grid;
-  grid-template-columns: minmax(7rem, 0.7fr) minmax(9rem, 1.2fr) minmax(7rem, 0.7fr) minmax(7rem, 0.7fr);
-  gap: 1rem;
-  align-items: center;
-  padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
-  color: ${({ theme }) => theme.colors.neutral800};
-  font-size: 14px;
-  text-decoration: none;
-
-  &:last-child { border-bottom: 0; }
-  &:hover { background: ${({ theme }) => theme.colors.primary100}; }
-
-  @media (max-width: 46rem) {
+  @media (max-width: 48rem) {
     grid-template-columns: 1fr auto;
-    & > :nth-child(2) { grid-column: 1; }
-    & > :nth-child(3) { grid-column: 2; grid-row: 1; }
-    & > :nth-child(4) { grid-column: 2; grid-row: 2; }
+    > span:nth-child(2) {
+      grid-column: 1;
+    }
+    > span:nth-child(3) {
+      display: none;
+    }
+    > span:nth-child(4) {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
   }
 `;
 
-const StatusLabel = styled.span`
-  justify-self: start;
-  padding: 0.3rem 0.5rem;
-  border-radius: 999px;
-  color: ${({ theme }) => theme.colors.primary700};
-  background: ${({ theme }) => theme.colors.primary100};
-  font-size: 14px;
-  font-weight: 600;
+const EmptyRow = styled.div`
+  padding: 28px 15px;
+  color: #6d675f;
+  font-size: 16px;
 `;
 
-const actionStyles = `
+const dashboardStatusColors: Record<
+  string,
+  { background: string; border: string; color: string }
+> = {
+  pending: { background: '#fff7e6', border: '#f0c36a', color: '#75530b' },
+  confirmed: { background: '#eef6ff', border: '#93c5fd', color: '#1e4f86' },
+  paid: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
+  processing: { background: '#f7f2e9', border: '#d6c19a', color: '#6b522d' },
+  shipped: { background: '#f1f0ff', border: '#b9b4f6', color: '#47408f' },
+  delivered: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
+  cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
+  paymentfailed: {
+    background: '#fff1f2',
+    border: '#fda4af',
+    color: '#9f1239',
+  },
+  refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+};
+
+const Status = styled.span<{ $status: string }>`
+  justify-self: start;
+  padding: 5px 14px !important;
+  border: 1px solid
+    ${({ $status }) =>
+      (dashboardStatusColors[$status] ?? dashboardStatusColors.cancelled)
+        .border};
+  border-radius: 999px;
+  color: ${({ $status }) =>
+    (dashboardStatusColors[$status] ?? dashboardStatusColors.cancelled).color};
+  background: ${({ $status }) =>
+    (dashboardStatusColors[$status] ?? dashboardStatusColors.cancelled)
+      .background};
+  font-size: 14px;
+  line-height: 17px;
+`;
+
+const TwoColumns = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+
+  @media (max-width: 52rem) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const List = styled.div`
+  overflow: hidden;
+  border: 1px solid #ece8e1;
+  border-radius: 10px;
+  background: #fff;
+`;
+
+const listItemStyles = `
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  min-height: 3.25rem;
-  padding: 0.75rem 0.875rem;
-  border-radius: 0.1875rem;
+  gap: 16px;
+  min-height: 56px;
+  padding: 11px 15px;
+  border-bottom: 1px solid #ece8e1;
+  color: #1a1917;
+  font-size: 16px;
+  line-height: 24px;
   text-decoration: none;
-  transition: border-color 160ms ease, color 160ms ease;
+
+  &:last-child { border-bottom: 0; }
+  &:hover { background: rgba(125, 102, 69, 0.04); }
 `;
 
-const ActionLink = styled(Link)`
-  ${actionStyles}
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  color: ${({ theme }) => theme.colors.neutral800};
-  font-size: 14px;
-  &:hover { border-color: ${({ theme }) => theme.colors.primary500}; color: ${({ theme }) => theme.colors.primary700}; }
+const ListLink = styled(Link)`
+  ${listItemStyles}
 `;
 
-const ExternalActionLink = styled.a`
-  ${actionStyles}
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  color: ${({ theme }) => theme.colors.neutral800};
-  font-size: 14px;
-  &:hover { border-color: ${({ theme }) => theme.colors.primary500}; color: ${({ theme }) => theme.colors.primary700}; }
+const ExternalListLink = styled.a`
+  ${listItemStyles}
+`;
+
+const ListValue = styled.span`
+  color: #6d675f;
+`;
+
+const ListArrow = styled.span`
+  color: #b49667;
+  font-size: 28px;
+  line-height: 1;
 `;
 
 async function countFor(
@@ -358,10 +572,51 @@ async function countFor(
     const response = await get<CollectionResponse>(contentLink(uid), {
       params: { page: 1, pageSize: 1, ...filters },
     });
-    return response.data.pagination?.total ?? response.data.results?.length ?? 0;
+    return (
+      response.data.pagination?.total ?? response.data.results?.length ?? 0
+    );
   } catch {
     return null;
   }
+}
+
+async function entriesFor(
+  get: ReturnType<typeof useFetchClient>['get'],
+  uid: string,
+  params: Record<string, string> = {},
+): Promise<Array<Record<string, unknown>> | null> {
+  try {
+    const first = await get<CollectionResponse>(contentLink(uid), {
+      params: { page: 1, pageSize: 100, ...params },
+    });
+    const entries = [...(first.data.results ?? [])];
+    const total = first.data.pagination?.total ?? entries.length;
+    for (let page = 2; entries.length < total; page += 1) {
+      const response = await get<CollectionResponse>(contentLink(uid), {
+        params: { page, pageSize: 100, ...params },
+      });
+      const next = response.data.results ?? [];
+      if (!next.length) break;
+      entries.push(...next);
+    }
+    return entries;
+  } catch {
+    return null;
+  }
+}
+
+async function countDraftProducts(
+  get: ReturnType<typeof useFetchClient>['get'],
+): Promise<number | null> {
+  const entries = await entriesFor(get, 'api::product.product', {
+    locale: 'pt',
+  });
+  if (!entries) return null;
+  return entries.filter((entry) => {
+    const status =
+      typeof entry.status === 'string' ? entry.status.toLowerCase() : '';
+    return status === 'draft' || (!status && entry.publishedAt === null);
+  }).length;
 }
 
 function formatMetric(value: number | null): string {
@@ -371,22 +626,31 @@ function formatMetric(value: number | null): string {
 async function translationGap(
   get: ReturnType<typeof useFetchClient>['get'],
   uid: string,
-): Promise<number | null> {
+) {
   const [portuguese, french] = await Promise.all([
-    countFor(get, uid, { locale: 'pt' }),
-    countFor(get, uid, { locale: 'fr' }),
+    entriesFor(get, uid, { locale: 'pt' }),
+    entriesFor(get, uid, { locale: 'fr' }),
   ]);
   if (portuguese === null || french === null) return null;
-  return Math.max(0, portuguese - french);
+  const frenchDocuments = new Set(
+    french.map((entry) => String(entry.documentId ?? '')).filter(Boolean),
+  );
+  return portuguese.filter((entry) => {
+    const documentId = String(entry.documentId ?? '');
+    return documentId && !frenchDocuments.has(documentId);
+  }).length;
 }
 
 async function fetchRecentOrders(
   get: ReturnType<typeof useFetchClient>['get'],
 ): Promise<OrderEntry[]> {
   try {
-    const response = await get<OrdersResponse>(contentLink('api::order.order'), {
-      params: { page: 1, pageSize: 5, sort: 'placedAt:DESC' },
-    });
+    const response = await get<OrdersResponse>(
+      contentLink('api::order.order'),
+      {
+        params: { page: 1, pageSize: 5, sort: 'placedAt:DESC' },
+      },
+    );
     return response.data.results ?? [];
   } catch {
     return [];
@@ -394,6 +658,8 @@ async function fetchRecentOrders(
 }
 
 const orderStatus: Record<string, string> = {
+  published: 'Registada',
+  draft: 'Rascunho',
   pending: 'Pendente',
   confirmed: 'Confirmada',
   paid: 'Paga',
@@ -405,6 +671,32 @@ const orderStatus: Record<string, string> = {
   refunded: 'Reembolsada',
 };
 
+function getOrderBusinessStatus(order: OrderEntry) {
+  if (order.orderStatus) {
+    const status = order.orderStatus.toLowerCase();
+    if (status === 'paid' || status === 'paymentfailed') return 'confirmed';
+    if (status === 'refunded') return 'cancelled';
+    return status;
+  }
+  let timeline = order.timeline;
+  if (typeof timeline === 'string') {
+    try {
+      timeline = JSON.parse(timeline);
+    } catch {
+      timeline = [];
+    }
+  }
+  if (Array.isArray(timeline)) {
+    const latest = [...timeline]
+      .reverse()
+      .find((item) => item && typeof item === 'object' && 'status' in item);
+    if (latest && typeof latest === 'object' && 'status' in latest) {
+      return String(latest.status).toLowerCase();
+    }
+  }
+  return '';
+}
+
 function formatMoney(value?: number | string, currency = 'AOA'): string {
   const numericValue = Number(value ?? 0);
   return new Intl.NumberFormat('pt-AO', {
@@ -414,54 +706,55 @@ function formatMoney(value?: number | string, currency = 'AOA'): string {
   }).format(Number.isFinite(numericValue) ? numericValue : 0);
 }
 
+function initials(firstname?: string, lastname?: string) {
+  return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase() || 'PS';
+}
+
 export default function StoreDashboardPage() {
   const { get } = useFetchClient();
+  const { locale } = useIntl();
   const user = useAuth('StoreDashboardPage', (state) => state.user);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [recentOrders, setRecentOrders] = useState<OrderEntry[]>([]);
 
   useEffect(() => {
+    document.body.classList.add('priscila-dashboard-open');
+    return () => document.body.classList.remove('priscila-dashboard-open');
+  }, []);
+
+  useEffect(() => {
     let active = true;
     void Promise.all([
       countFor(get, 'api::product.product'),
-      countFor(get, 'api::order.order', { 'filters[status][$eq]': 'pending' }),
-      countFor(get, 'api::review.review', { 'filters[moderationStatus][$eq]': 'pending' }),
-      countFor(get, 'api::product.product', { 'filters[commerce][availability][$eq]': 'out-of-stock' }),
+      countFor(get, 'api::order.order', {
+        'filters[orderStatus][$eq]': 'pending',
+      }),
+      countFor(get, 'api::review.review', {
+        'filters[moderationStatus][$eq]': 'pending',
+      }),
+      countFor(get, 'api::product.product', {
+        'filters[commerce][availability][$eq]': 'out-of-stock',
+      }),
       countFor(get, 'api::kit.kit'),
       countFor(get, 'api::collection.collection'),
       countFor(get, 'api::ingredient.ingredient'),
-      countFor(get, 'api::category.category'),
       countFor(get, 'api::customer.customer'),
       countFor(get, 'api::hero-slide.hero-slide'),
-      countFor(get, 'api::product.product', { status: 'draft' }),
-      countFor(get, 'api::product.product', { 'filters[ingredients][$null]': 'true' }),
-      countFor(get, 'api::product.product', { 'filters[usageSteps][$null]': 'true' }),
+      countDraftProducts(get),
+      countFor(get, 'api::product.product', {
+        'filters[ingredients][$null]': 'true',
+      }),
+      countFor(get, 'api::product.product', {
+        'filters[usageSteps][$null]': 'true',
+      }),
       Promise.all([
         translationGap(get, 'api::product.product'),
         translationGap(get, 'api::kit.kit'),
         translationGap(get, 'api::collection.collection'),
       ]),
       fetchRecentOrders(get),
-    ]).then(([
-      products,
-      orders,
-      pendingReviews,
-      unavailableProducts,
-      kits,
-      collections,
-      ingredients,
-      categories,
-      customers,
-      banners,
-      draftProducts,
-      productsWithoutIngredients,
-      productsWithoutUsage,
-      translationGaps,
-      ordersList,
-    ]) => {
-      if (!active) return;
-      const knownGaps = translationGaps.filter((value): value is number => value !== null);
-      setMetrics({
+    ]).then(
+      ([
         products,
         orders,
         pendingReviews,
@@ -469,22 +762,53 @@ export default function StoreDashboardPage() {
         kits,
         collections,
         ingredients,
-        categories,
         customers,
         banners,
         draftProducts,
         productsWithoutIngredients,
         productsWithoutUsage,
-        pendingTranslations: knownGaps.length === translationGaps.length
-          ? knownGaps.reduce((total, value) => total + value, 0)
-          : null,
-      });
-      setRecentOrders(ordersList);
-    });
-    return () => { active = false; };
+        translationGaps,
+        ordersList,
+      ]) => {
+        if (!active) return;
+        const knownGaps = translationGaps.filter(
+          (value): value is number => value !== null,
+        );
+        setMetrics({
+          products,
+          orders,
+          pendingReviews,
+          unavailableProducts,
+          kits,
+          collections,
+          ingredients,
+          customers,
+          banners,
+          draftProducts,
+          productsWithoutIngredients,
+          productsWithoutUsage,
+          pendingTranslations:
+            knownGaps.length === translationGaps.length
+              ? knownGaps.reduce((total, value) => total + value, 0)
+              : null,
+        });
+        setRecentOrders(ordersList);
+      },
+    );
+    return () => {
+      active = false;
+    };
   }, [get]);
 
-  const firstName = user?.firstname?.trim() || user?.username?.trim() || 'equipa';
+  const firstName =
+    user?.firstname?.trim() || user?.username?.trim() || 'equipa';
+  const isFrench = locale.toLowerCase().startsWith('fr');
+  const t = (text: string) => (isFrench ? (frenchCopy[text] ?? text) : text);
+  const fullName =
+    [user?.firstname, user?.lastname].filter(Boolean).join(' ') ||
+    user?.username ||
+    'Utilizador';
+  const roleName = user?.roles?.[0]?.name || 'Admin';
   const data = metrics ?? {
     products: null,
     orders: null,
@@ -493,7 +817,6 @@ export default function StoreDashboardPage() {
     kits: null,
     collections: null,
     ingredients: null,
-    categories: null,
     customers: null,
     banners: null,
     draftProducts: null,
@@ -501,109 +824,237 @@ export default function StoreDashboardPage() {
     productsWithoutUsage: null,
     pendingTranslations: null,
   };
-  const attentionItems = [
-    { icon: ShoppingCart, title: `${formatMetric(data.orders)} encomendas aguardam confirmação`, detail: 'Confirme os produtos e avance a preparação da entrega.', href: `${contentLink('api::order.order')}?filters%5Bstatus%5D%5B%24eq%5D=pending` },
-    { icon: Star, title: `${formatMetric(data.pendingReviews)} avaliações aguardam aprovação`, detail: 'Leia e escolha quais avaliações podem aparecer no site.', href: `${contentLink('api::review.review')}?filters%5BmoderationStatus%5D%5B%24eq%5D=pending` },
-    { icon: WarningCircle, title: `${formatMetric(data.unavailableProducts)} produtos estão indisponíveis`, detail: 'Atualize a disponibilidade quando esses produtos voltarem ao stock.', href: contentLink('api::product.product') },
-  ];
+
+  const primaryMetrics = useMemo(
+    () =>
+      [
+        [t('Produtos no catálogo'), data.products, productListLink],
+        [t('Novas encomendas'), data.orders, storeListLink('orders')],
+        [
+          t('Avaliações pendentes'),
+          data.pendingReviews,
+          storeListLink('reviews'),
+        ],
+        [
+          t('Produtos indisponíveis'),
+          data.unavailableProducts,
+          productListLink,
+        ],
+      ] as const,
+    [data, isFrench],
+  );
+
+  const contentMetrics = useMemo(
+    () =>
+      [
+        [t('Kits'), data.kits, storeListLink('kits')],
+        [t('Coleções'), data.collections, storeListLink('collections')],
+        [t('Ingredientes'), data.ingredients, storeListLink('ingredients')],
+        [t('Clientes'), data.customers, storeListLink('customers')],
+        [t('Banners'), data.banners, storeListLink('banners')],
+      ] as const,
+    [data, isFrench],
+  );
 
   return (
-    <DashboardMain labelledBy="store-dashboard-title">
-      <DashboardHeader>
-        <Box>
-          <DashboardTitle id="store-dashboard-title">Bom dia, {firstName}</DashboardTitle>
-          <Typography textColor="neutral600">Aqui está o que precisa da sua atenção hoje.</Typography>
-        </Box>
-        <PrimaryLink to={`${contentLink('api::product.product')}/create`}><Plus aria-hidden /> Novo produto</PrimaryLink>
-      </DashboardHeader>
+    <Shell labelledBy="store-dashboard-title">
+      <StoreLayout>
+        <StoreSidebar activeHref="/" />
+        <StorePage>
+          <Header>
+            <Greeting>
+              <GreetingTitle id="store-dashboard-title">
+                {isFrench ? `Bonjour, ${firstName}` : `Bom dia, ${firstName}`}
+              </GreetingTitle>
+              <GreetingText>
+                {t('Aqui está o que precisa da sua atenção hoje.')}
+              </GreetingText>
+            </Greeting>
+            <HeaderActions>
+              <LanguageLink to="/store/profile" aria-label={t('Alterar idioma e moeda')}>
+                <span>{isFrench ? 'FR / €' : 'PT / €'}</span>
+                <img src={iconPath('language')} alt="" aria-hidden />
+              </LanguageLink>
+              <ProfileLink to="/store/profile">
+                <Avatar>{initials(user?.firstname, user?.lastname)}</Avatar>
+                <ProfileCopy>
+                  <strong>{fullName}</strong>
+                  <small>{roleName}</small>
+                </ProfileCopy>
+                <Chevron aria-hidden />
+              </ProfileLink>
+            </HeaderActions>
+          </Header>
 
-      <DashboardContent>
-        <MetricsGrid aria-label="Resumo da loja">
-          <MetricLink to={contentLink('api::product.product')}><SupportingText textColor="neutral600">Produtos no catálogo</SupportingText><MetricValue>{formatMetric(data.products)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::order.order')}><SupportingText textColor="neutral600">Novas encomendas</SupportingText><MetricValue>{formatMetric(data.orders)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::review.review')}><SupportingText textColor="neutral600">Avaliações pendentes</SupportingText><MetricValue>{formatMetric(data.pendingReviews)}</MetricValue></MetricLink>
-          <MetricLink to={contentLink('api::product.product')}><SupportingText textColor="neutral600">Produtos indisponíveis</SupportingText><MetricValue>{formatMetric(data.unavailableProducts)}</MetricValue></MetricLink>
-        </MetricsGrid>
+          <Content>
+            <Toolbar>
+              <SearchBox>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  />
+                  <path
+                    d="m16.5 16.5 4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <SearchInput
+                  type="search"
+                  placeholder={t('Pesquisar')}
+                  aria-label={t('Pesquisar no painel')}
+                />
+              </SearchBox>
+              <PrimaryAction to={productCreateLink}>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path
+                    d="M12 5v14M5 12h14"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                {t('Novo produto')}
+              </PrimaryAction>
+            </Toolbar>
 
-        <SectionHeading>
-          <Box>
-            <Typography tag="h2" fontWeight="semiBold">Conteúdos cadastrados</Typography>
-            <SupportingText tag="p" textColor="neutral600">Resumo do conteúdo disponível para montar a loja.</SupportingText>
-          </Box>
-        </SectionHeading>
-        <ContentStatsGrid aria-label="Conteúdos cadastrados">
-          <ContentStatLink to={contentLink('api::kit.kit')}><SupportingText textColor="neutral600">Kits</SupportingText><ContentStatValue>{formatMetric(data.kits)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::collection.collection')}><SupportingText textColor="neutral600">Coleções</SupportingText><ContentStatValue>{formatMetric(data.collections)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::ingredient.ingredient')}><SupportingText textColor="neutral600">Ingredientes</SupportingText><ContentStatValue>{formatMetric(data.ingredients)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::category.category')}><SupportingText textColor="neutral600">Categorias</SupportingText><ContentStatValue>{formatMetric(data.categories)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::customer.customer')}><SupportingText textColor="neutral600">Clientes</SupportingText><ContentStatValue>{formatMetric(data.customers)}</ContentStatValue></ContentStatLink>
-          <ContentStatLink to={contentLink('api::hero-slide.hero-slide')}><SupportingText textColor="neutral600">Banners</SupportingText><ContentStatValue>{formatMetric(data.banners)}</ContentStatValue></ContentStatLink>
-        </ContentStatsGrid>
+            <MetricsGrid aria-label={t('Resumo da loja')}>
+              {primaryMetrics.map(([label, value, href]) => (
+                <MetricCard key={label} to={href}>
+                  <MetricTop>
+                    <span>{label}</span>
+                    <MetricArrow aria-hidden>↗</MetricArrow>
+                  </MetricTop>
+                  <MetricValue>{formatMetric(value)}</MetricValue>
+                </MetricCard>
+              ))}
+            </MetricsGrid>
 
-        <WorkGrid>
-          <Panel>
-            <PanelHeader><Typography tag="h2" fontWeight="semiBold">Precisa da sua atenção</Typography><QuietLink to={contentLink('api::order.order')}>Ver encomendas</QuietLink></PanelHeader>
-            {attentionItems.map((item) => {
-              const Icon = item.icon;
-              return <AttentionLink key={item.title} to={item.href}><AttentionIcon><Icon aria-hidden /></AttentionIcon><Box><Typography tag="p" fontWeight="semiBold">{item.title}</Typography><SupportingText tag="p" textColor="neutral600">{item.detail}</SupportingText></Box></AttentionLink>;
-            })}
-          </Panel>
+            <Section>
+              <SectionHeader>
+                <SectionTitle>{t('Conteúdos cadastrados')}</SectionTitle>
+              </SectionHeader>
+              <MetricsGrid $compact aria-label={t('Conteúdos cadastrados')}>
+                {contentMetrics.map(([label, value, href]) => (
+                  <MetricCard key={label} to={href}>
+                    <MetricTop>
+                      <span>{label}</span>
+                      <MetricArrow aria-hidden>↗</MetricArrow>
+                    </MetricTop>
+                    <MetricValue>{formatMetric(value)}</MetricValue>
+                  </MetricCard>
+                ))}
+              </MetricsGrid>
+            </Section>
 
-          <Panel>
-            <PanelHeader><Typography tag="h2" fontWeight="semiBold">Ações rápidas</Typography></PanelHeader>
-            <ActionList>
-              <ActionLink to={`${contentLink('api::product.product')}/create`}><span>Adicionar produto</span><ArrowRight aria-hidden /></ActionLink>
-              <ActionLink to="/content-manager/single-types/api::home-page.home-page"><span>Atualizar página inicial</span><ArrowRight aria-hidden /></ActionLink>
-              <ActionLink to={contentLink('api::order.order')}><span>Gerir encomendas</span><ArrowRight aria-hidden /></ActionLink>
-              <ExternalActionLink href={storefrontUrl} target="_blank" rel="noreferrer"><span>Ver o site</span><ExternalLink aria-hidden /></ExternalActionLink>
-            </ActionList>
-          </Panel>
-        </WorkGrid>
+            <Section>
+              <SectionHeader>
+                <SectionTitle>{t('Encomendas recentes')}</SectionTitle>
+                <QuietLink to={storeListLink('orders')}>
+                  {t('Ver todas')}
+                </QuietLink>
+              </SectionHeader>
+              <Table>
+                <TableRow as="div" to="" $header data-header="true">
+                  <span>ID</span>
+                  <span>{t('Clientes')}</span>
+                  <span>{t('Preço')}</span>
+                  <span>{t('Estado')}</span>
+                </TableRow>
+                {recentOrders.length ? (
+                  recentOrders.map((order) => {
+                    const identifier = order.documentId ?? order.id;
+                    const businessStatus = getOrderBusinessStatus(order);
+                    return (
+                      <TableRow
+                        key={String(identifier ?? order.number)}
+                        to={`/store/orders/${identifier}`}
+                      >
+                        <span>{order.number || t('Sem número')}</span>
+                        <span>
+                          {order.customerName || t('Cliente não identificado')}
+                        </span>
+                        <span>{formatMoney(order.total, order.currency)}</span>
+                        <Status $status={businessStatus}>
+                          {t(orderStatus[businessStatus] ?? 'Sem estado')}
+                        </Status>
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  <EmptyRow>
+                    {t('Ainda não existem encomendas para apresentar.')}
+                  </EmptyRow>
+                )}
+              </Table>
+            </Section>
 
-        <WorkGrid>
-          <Panel>
-            <PanelHeader>
-              <Box>
-                <Typography tag="h2" fontWeight="semiBold">Encomendas recentes</Typography>
-                <SupportingText tag="p" textColor="neutral600">As cinco encomendas mais recentes da loja.</SupportingText>
-              </Box>
-              <QuietLink to={contentLink('api::order.order')}>Ver todas</QuietLink>
-            </PanelHeader>
-            <OrderList>
-              {recentOrders.length ? recentOrders.map((order) => {
-                const identifier = order.documentId ?? order.id;
-                return (
-                  <OrderRow key={String(identifier ?? order.number)} to={`${contentLink('api::order.order')}/${identifier}`}>
-                    <Typography fontWeight="semiBold">{order.number || 'Sem número'}</Typography>
-                    <SupportingText textColor="neutral600">{order.customerName || 'Cliente não identificado'}</SupportingText>
-                    <StatusLabel>{orderStatus[order.status ?? ''] ?? order.status ?? 'Sem estado'}</StatusLabel>
-                    <Typography fontWeight="semiBold">{formatMoney(order.total, order.currency)}</Typography>
-                  </OrderRow>
-                );
-              }) : (
-                <Box padding={5}><Typography textColor="neutral600">Ainda não existem encomendas para apresentar.</Typography></Box>
-              )}
-            </OrderList>
-          </Panel>
-
-          <Panel>
-            <PanelHeader>
-              <Box>
-                <Typography tag="h2" fontWeight="semiBold">Qualidade do catálogo</Typography>
-                <SupportingText tag="p" textColor="neutral600">Conteúdos que podem precisar de revisão.</SupportingText>
-              </Box>
-            </PanelHeader>
-            <QualityItem to={contentLink('api::product.product')}><span>Produtos em rascunho</span><QualityCount>{formatMetric(data.draftProducts)}</QualityCount></QualityItem>
-            <QualityItem to={contentLink('api::product.product')}><span>Sem ingredientes associados</span><QualityCount>{formatMetric(data.productsWithoutIngredients)}</QualityCount></QualityItem>
-            <QualityItem to={contentLink('api::product.product')}><span>Sem instruções de utilização</span><QualityCount>{formatMetric(data.productsWithoutUsage)}</QualityCount></QualityItem>
-            <QualityItem to={contentLink('api::product.product')}><span>Traduções em francês pendentes</span><QualityCount>{formatMetric(data.pendingTranslations)}</QualityCount></QualityItem>
-          </Panel>
-        </WorkGrid>
-
-        <Panel>
-          <PanelHeader><Flex gap={3} alignItems="center"><CheckCircle aria-hidden /><Box><Typography tag="h2" fontWeight="semiBold">Antes de publicar</Typography><SupportingText tag="p" textColor="neutral600">Confirme as traduções, use imagens otimizadas e reveja o conteúdo no site.</SupportingText></Box></Flex></PanelHeader>
-        </Panel>
-      </DashboardContent>
-    </DashboardMain>
+            <TwoColumns>
+              <Section>
+                <SectionHeader>
+                  <SectionTitle>{t('Qualidade do catálogo')}</SectionTitle>
+                </SectionHeader>
+                <List>
+                  <ListLink to={productListLink}>
+                    <span>{t('Produtos em rascunho')}</span>
+                    <ListValue>{formatMetric(data.draftProducts)}</ListValue>
+                  </ListLink>
+                  <ListLink to={productListLink}>
+                    <span>{t('Sem ingredientes associados')}</span>
+                    <ListValue>
+                      {formatMetric(data.productsWithoutIngredients)}
+                    </ListValue>
+                  </ListLink>
+                  <ListLink to={productListLink}>
+                    <span>{t('Sem instruções de utilização')}</span>
+                    <ListValue>
+                      {formatMetric(data.productsWithoutUsage)}
+                    </ListValue>
+                  </ListLink>
+                  <ListLink to={productListLink}>
+                    <span>{t('Traduções em francês pendentes')}</span>
+                    <ListValue>
+                      {formatMetric(data.pendingTranslations)}
+                    </ListValue>
+                  </ListLink>
+                </List>
+              </Section>
+              <Section>
+                <SectionHeader>
+                  <SectionTitle>{t('Ações rápidas')}</SectionTitle>
+                </SectionHeader>
+                <List>
+                  <ListLink to={productCreateLink}>
+                    <span>{t('Adicionar produto')}</span>
+                    <ListArrow aria-hidden>→</ListArrow>
+                  </ListLink>
+                  <ListLink to="/store/home-page">
+                    <span>{t('Atualizar página inicial')}</span>
+                    <ListArrow aria-hidden>→</ListArrow>
+                  </ListLink>
+                  <ListLink to={storeListLink('orders')}>
+                    <span>{t('Gerir encomendas')}</span>
+                    <ListArrow aria-hidden>→</ListArrow>
+                  </ListLink>
+                  <ExternalListLink
+                    href={storefrontUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span>{t('Ver o site')}</span>
+                    <ListArrow aria-hidden>◎</ListArrow>
+                  </ExternalListLink>
+                </List>
+              </Section>
+            </TwoColumns>
+          </Content>
+        </StorePage>
+      </StoreLayout>
+    </Shell>
   );
 }

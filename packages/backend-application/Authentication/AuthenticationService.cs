@@ -1,7 +1,10 @@
+using System.Text.Json;
 using PriscilaSkincare.Application.Abstractions;
+using PriscilaSkincare.Application.Integration;
 using PriscilaSkincare.Domain.Authentication;
 using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
+using PriscilaSkincare.Domain.Integration;
 
 namespace PriscilaSkincare.Application.Authentication;
 
@@ -13,7 +16,9 @@ public sealed class AuthenticationService(
     IClock clock,
     IOtpCodeGenerator otpCodeGenerator,
     ISecretHasher secretHasher,
-    IOtpSender otpSender,
+    IOtpCodeProtector otpCodeProtector,
+    IIntegrationOutbox integrationOutbox,
+    IIntegrationInbox integrationInbox,
     ITokenService tokenService,
     ICustomerProjection customerProjection,
     AuthenticationOptions options)
@@ -37,41 +42,48 @@ public sealed class AuthenticationService(
             }
         }
 
+        var pending = await otpChallenges.FindLatestPendingAsync(email, cancellationToken);
+        if (pending is not null && pending.ExpiresAt > now)
+            return new OtpRequestResult(pending.ExpiresAt, 0);
+        pending?.MarkDeliveryFailed();
+
         var code = otpCodeGenerator.Generate();
         var lifetime = TimeSpan.FromMinutes(options.OtpLifetimeMinutes);
         var challenge = OtpChallenge.Create(email, secretHasher.Hash(code), now, lifetime);
 
         otpChallenges.Add(challenge);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-        try
-        {
-            await otpSender.SendAsync(
-                new OtpEmail(email, code, NormalizeLocale(command.Locale), options.OtpLifetimeMinutes),
-                cancellationToken);
-        }
-        catch (OperationCanceledException)
-        {
-            challenge.MarkDeliveryFailed();
-            await unitOfWork.SaveChangesAsync(CancellationToken.None);
-            if (cancellationToken.IsCancellationRequested) throw;
-
-            throw new AuthenticationException(
-                "otp_delivery_timeout",
-                "O envio do código demorou mais do que o esperado. Tente novamente.");
-        }
-        catch (Exception)
-        {
-            challenge.MarkDeliveryFailed();
-            await unitOfWork.SaveChangesAsync(CancellationToken.None);
-            throw new AuthenticationException(
-                "otp_delivery_failed",
-                "Não foi possível enviar o código agora. Tente novamente.");
-        }
-
-        challenge.MarkSent(clock.UtcNow);
+        var notification = new OtpNotificationRequestedEvent(
+            $"otp:{challenge.Id:N}", challenge.Id, email.Value, otpCodeProtector.Protect(code),
+            NormalizeLocale(command.Locale), options.OtpLifetimeMinutes);
+        integrationOutbox.Add(IntegrationOutboxMessage.Create(
+            challenge.Id, "notification.otp.requested.v1", "notifications",
+            JsonSerializer.Serialize(notification), now));
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new OtpRequestResult(challenge.ExpiresAt, options.ResendCooldownSeconds);
+        return new OtpRequestResult(challenge.ExpiresAt, 0);
+    }
+
+    public async Task ApplyOtpDeliveryResultAsync(Guid eventId, OtpDeliveryResultEvent result,
+        CancellationToken cancellationToken = default)
+    {
+        if (await integrationInbox.ContainsAsync(eventId, cancellationToken)) return;
+        var challenge = await otpChallenges.FindByIdAsync(result.ChallengeId, cancellationToken)
+            ?? throw new AuthenticationException("otp_not_found", "A solicitação do código não foi encontrada.");
+        var status = result.Status.Trim().ToLowerInvariant();
+        if (challenge.DeliveryStatus == OtpDeliveryStatus.Pending)
+        {
+            if (status == "sent")
+                challenge.MarkSent(result.SentAt ?? clock.UtcNow,
+                    TimeSpan.FromMinutes(options.OtpLifetimeMinutes));
+            else if (status == "failed")
+                challenge.MarkDeliveryFailed();
+            else
+                throw new AuthenticationException("otp_delivery_status_invalid",
+                    "O resultado do envio do código é inválido.");
+        }
+        integrationInbox.Add(IntegrationInboxMessage.Receive(eventId,
+            "notification.otp.delivery-result.v1", clock.UtcNow));
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<AuthenticationResult> VerifyOtpAsync(

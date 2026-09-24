@@ -20,6 +20,7 @@ export class CartFacade {
 
   readonly items = signal<CartItem[]>(this.readLocal());
   readonly bundles = signal<Array<{ apiId?:string; id:string; type:'kit'|'collection'; name:string; image:string; productCount:number; quantity:number; prices:{AOA:number;EUR:number} }>>(this.readBundles());
+  readonly syncedCart = signal<ApiCart | null>(null);
   readonly loading = signal(false);
   readonly errorCode = signal<string | null>(null);
   readonly totalUnits = computed(() => this.items().reduce((total, item) => total + item.quantity, 0) + this.bundles().reduce((total,item)=>total+item.quantity,0));
@@ -98,7 +99,7 @@ export class CartFacade {
   }
   increment(productId: string, sizeId: string): void { this.changeQuantity(productId, sizeId, 1); }
   decrement(productId: string, sizeId: string): void { this.changeQuantity(productId, sizeId, -1); }
-  async clear(): Promise<void> { this.items.set([]); this.bundles.set([]); if (this.session.hasUsableAccessToken()) await firstValueFrom(this.http.delete(`${this.config.baseUrl}/cart`)); }
+  async clear(): Promise<void> { this.items.set([]); this.bundles.set([]); this.syncedCart.set(null); if (this.session.hasUsableAccessToken()) await firstValueFrom(this.http.delete(`${this.config.baseUrl}/cart`)); }
 
   private changeQuantity(productId: string, sizeId: string, difference: number): void {
     const current = this.items().find(item => item.productId === productId && item.sizeId === sizeId);
@@ -117,6 +118,7 @@ export class CartFacade {
   }
   private markUnsynchronized(): void { this.synchronized = false; this.synchronizedToken = null; }
   private applyApi(cart: ApiCart): void {
+    this.syncedCart.set(cart);
     const bySku = new Map(this.products.products().map(product => [product.sku, product]));
     const products=cart.items.filter(item=>(item.itemType??'product')==='product');
     this.items.set(products.map(item => {

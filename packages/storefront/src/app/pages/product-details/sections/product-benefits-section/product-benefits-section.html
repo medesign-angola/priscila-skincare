@@ -3,9 +3,9 @@
   <h2 id="benefits-title">{{ 'PRODUCT_DETAILS.BENEFITS' | translate }}</h2>
   <img class="benefits__main" [src]="benefits.mainImage" alt="" width="900" height="900" loading="lazy" />
   <div class="benefits__content">
-    @for (section of benefits.sections; track section.title; let first = $first) {
+    @for (section of benefits.sections; track section.title) {
     <article><h3>{{ section.title }}</h3><p>{{ section.description }}</p>
-      @if (first && section.images?.length) { <div class="benefits__gallery">@for (image of section.images; track image) { <img [src]="image" alt="" loading="lazy" /> }</div> }
+      @if (section.images?.length) { <div class="benefits__gallery">@for (image of section.images; track image) { <img [src]="image" alt="" loading="lazy" /> }</div> }
     </article>
     }
   </div>

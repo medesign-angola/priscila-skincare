@@ -1,4 +1,5 @@
 import { errors } from '@strapi/utils';
+import { applyAutomaticSeo } from '../../../../seo-automation';
 
 const { ValidationError } = errors;
 
@@ -32,10 +33,26 @@ function validateProduct(data: Record<string, unknown>): void {
 }
 
 export default {
-  beforeCreate(event: { params: { data: Record<string, unknown> } }) {
+  async beforeCreate(event: { params: { data: Record<string, unknown> } }) {
     validateProduct(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::product.product',
+      titlePaths: ['name'],
+      descriptionPaths: ['description', 'additionalDescription'],
+      imagePaths: ['thumbnailImage', 'featuredImage', 'images.0'],
+      populate: ['thumbnailImage', 'featuredImage', 'images'],
+    });
   },
-  beforeUpdate(event: { params: { data: Record<string, unknown> } }) {
+  async beforeUpdate(event: {
+    params: { data: Record<string, unknown>; where?: Record<string, unknown> };
+  }) {
     validateProduct(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::product.product',
+      titlePaths: ['name'],
+      descriptionPaths: ['description', 'additionalDescription'],
+      imagePaths: ['thumbnailImage', 'featuredImage', 'images.0'],
+      populate: ['thumbnailImage', 'featuredImage', 'images'],
+    });
   },
 };

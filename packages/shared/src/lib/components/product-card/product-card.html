@@ -37,6 +37,7 @@
     </span>
     }
 
+    @if (showCommerce()) {
     <button
       type="button"
       class="product-card__add"
@@ -54,17 +55,21 @@
         <span>{{ product().priceLabel }}</span>
       </span>
     </button>
+    }
   </div>
 
   <div class="product-card__content">
+    @if (showCategory()) {
     <p class="product-card__category">
       {{ product().categoryLabel || ('FEATURED_PRODUCTS.CATEGORY' | translate)
       }}
     </p>
+    }
     <button type="button" class="product-card__name" (click)="selectProduct()">
       {{ product().name }}
     </button>
     <p class="product-card__description">{{ product().description }}</p>
+    @if (showRating()) {
     <p
       class="product-card__rating"
       [attr.aria-label]="
@@ -86,5 +91,6 @@
         {{ product().rating | number: '1.1-1' }} ({{ product().totalReviews }})
       </span>
     </p>
+    }
   </div>
 </article>

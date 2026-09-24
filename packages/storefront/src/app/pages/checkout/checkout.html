@@ -1,17 +1,65 @@
 <main class="checkout-page">
-  <a routerLink="/produtos" class="checkout-back">← {{ 'CHECKOUT.CONTINUE_SHOPPING' | translate }}</a>
-  <header><span>{{ 'CHECKOUT.LABEL' | translate }}</span><h1>{{ 'CHECKOUT.TITLE' | translate }}</h1></header>
+  <a routerLink="/produtos" class="checkout-back">
+    <span aria-hidden>←</span>
+    {{ 'CHECKOUT.CONTINUE_SHOPPING' | translate }}
+  </a>
+
+  <header class="checkout-header">
+    <span>{{ 'CHECKOUT.LABEL' | translate }}</span>
+    <h1>{{ 'CHECKOUT.TITLE' | translate }}</h1>
+  </header>
+
   <div class="checkout-layout">
-    <section>
+    <section class="checkout-addresses">
       <h2>{{ 'CHECKOUT.ADDRESS' | translate }}</h2>
-      @if(addresses().length){<div class="address-list">@for(address of addresses();track address.id){<button type="button" [class.selected]="selectedAddressId()===address.id" (click)="select(address.id)"><strong>{{address.label}}</strong><span>{{address.recipient}}</span><span>{{address.street}}, {{address.city}}</span><span>{{address.phone}}</span></button>}</div>}
-      @else {<p>{{ 'CHECKOUT.NO_ADDRESS' | translate }}</p><a routerLink="/conta/perfil">{{ 'CHECKOUT.ADD_ADDRESS' | translate }} →</a>}
+      @if (addresses().length) {
+        <div class="address-list">
+          @for (address of addresses(); track address.id) {
+            <button type="button" [class.selected]="selectedAddressId() === address.id" (click)="select(address.id)">
+              <strong>{{ address.label }}</strong>
+              <span>{{ address.recipient }}</span>
+              <span>{{ address.street }}, {{ address.city }}</span>
+              <span>{{ address.phone }}</span>
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="address-empty">
+          <p>{{ 'CHECKOUT.NO_ADDRESS' | translate }}</p>
+          <a routerLink="/conta/perfil">
+            {{ 'CHECKOUT.ADD_ADDRESS' | translate }}
+            <span aria-hidden>→</span>
+          </a>
+        </div>
+      }
     </section>
-    <aside>
+
+    <aside class="checkout-summary">
       <h2>{{ 'CHECKOUT.SUMMARY' | translate }}</h2>
-      @if(preview();as data){<ul>@for(item of data.items;track item.productSku){<li><div><strong>{{item.productName}}</strong><span>{{item.variant}} · {{item.quantity}}x</span></div><strong>{{price(item.total)}}</strong></li>}</ul><dl><div><dt>{{'ACCOUNT.DETAILS.SUBTOTAL'|translate}}</dt><dd>{{price(data.subtotal)}}</dd></div><div><dt>{{'ACCOUNT.DETAILS.SHIPPING'|translate}}</dt><dd>{{data.shipping===0?('ACCOUNT.DETAILS.FREE'|translate):price(data.shipping)}}</dd></div><div class="total"><dt>{{'ACCOUNT.ORDERS.TOTAL'|translate}}</dt><dd>{{price(data.total)}}</dd></div></dl>}
-      @if(errorCode()){<p class="error">{{ errorMessageKey() | translate }}</p>}
-      <button type="button" [disabled]="loading()||!preview()" (click)="confirm()">{{(loading()?'CHECKOUT.PROCESSING':'CHECKOUT.CONFIRM')|translate}} <span>→</span></button>
+      @if (summary(); as data) {
+        <ul>
+          @for (item of data.items; track $index) {
+            <li>
+              @if (item.imageUrl) { <img [src]="item.imageUrl" [alt]="item.name" /> }
+              <div><strong>{{ item.name }}</strong><span>{{ item.variant || '—' }} · {{ item.quantity }}x</span></div>
+              <strong>{{ price(item.total) }}</strong>
+            </li>
+          }
+        </ul>
+        <dl>
+          <div><dt>{{ 'ACCOUNT.DETAILS.SUBTOTAL' | translate }}</dt><dd>{{ price(data.subtotal) }}</dd></div>
+          @if (data.complete && data.shipping !== null && data.total !== null) {
+            <div><dt>{{ 'ACCOUNT.DETAILS.SHIPPING' | translate }}</dt><dd>{{ data.shipping === 0 ? ('ACCOUNT.DETAILS.FREE' | translate) : price(data.shipping) }}</dd></div>
+            <div class="total"><dt>{{ 'ACCOUNT.ORDERS.TOTAL' | translate }}</dt><dd>{{ price(data.total) }}</dd></div>
+          }
+        </dl>
+        @if (!data.complete) { <p class="summary-hint">{{ 'CHECKOUT.ADDRESS_TOTAL_HINT' | translate }}</p> }
+      }
+      @if (errorCode()) { <p class="error">{{ errorMessageKey() | translate }}</p> }
+      <button type="button" [disabled]="loading() || !preview()" (click)="confirm()">
+        {{ (loading() ? 'CHECKOUT.PROCESSING' : 'CHECKOUT.CONFIRM') | translate }}
+        <span aria-hidden>→</span>
+      </button>
     </aside>
   </div>
 </main>

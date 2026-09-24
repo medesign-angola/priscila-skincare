@@ -20,6 +20,7 @@ export interface ProductTranslation {
   name: string;
   description: string;
   additionalDescription?: string;
+  editorialEnabled?: boolean;
   editorial?: {
     headline: string;
     description: string;
@@ -29,6 +30,7 @@ export interface ProductTranslation {
     headline: string;
     description: string;
   };
+  galleryEditorialEnabled?: boolean;
   highlights: string[];
   benefits: {
     mainImage: string;

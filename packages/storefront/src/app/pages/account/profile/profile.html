@@ -44,8 +44,14 @@
 </section>
 
 @if (modalOpen()) {
-  <div class="address-modal-backdrop" (click)="closeAddressModal()">
-    <section class="address-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'address-modal-title'" (click)="$event.stopPropagation()">
+  <div class="address-modal-backdrop" data-lenis-prevent>
+    <button
+      class="address-modal-dismiss"
+      type="button"
+      (click)="closeAddressModal()"
+      [attr.aria-label]="'ACCOUNT.PROFILE.ADDRESS.CLOSE' | translate"
+    ></button>
+    <section class="address-modal" data-lenis-prevent role="dialog" aria-modal="true" [attr.aria-labelledby]="'address-modal-title'">
       <header>
         <h2 id="address-modal-title">{{ (editingAddress() ? 'ACCOUNT.PROFILE.ADDRESS.EDIT_TITLE' : 'ACCOUNT.PROFILE.ADDRESS.ADD_TITLE') | translate }}</h2>
         <button type="button" (click)="closeAddressModal()" [attr.aria-label]="'ACCOUNT.PROFILE.ADDRESS.CLOSE' | translate">×</button>

@@ -154,6 +154,32 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.ToTable("customers", (string)null);
                 });
 
+            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationInboxMessage", b =>
+                {
+                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
+                    b.Property<DateTimeOffset>("ProcessedAt").HasColumnType("datetime").HasColumnName("processed_at");
+                    b.Property<string>("Type").IsRequired().HasMaxLength(100).HasColumnType("varchar(100)").HasColumnName("type");
+                    b.HasKey("Id");
+                    b.ToTable("integration_inbox", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationOutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
+                    b.Property<int>("Attempts").HasColumnType("int").HasColumnName("attempts");
+                    b.Property<DateTimeOffset>("CreatedAt").HasColumnType("datetime").HasColumnName("created_at");
+                    b.Property<string>("Destination").IsRequired().HasMaxLength(40).HasColumnType("varchar(40)").HasColumnName("destination");
+                    b.Property<string>("LastError").HasMaxLength(1000).HasColumnType("varchar(1000)").HasColumnName("last_error");
+                    b.Property<DateTimeOffset>("NextAttemptAt").HasColumnType("datetime").HasColumnName("next_attempt_at");
+                    b.Property<string>("Payload").IsRequired().HasColumnType("longtext").HasColumnName("payload");
+                    b.Property<DateTimeOffset?>("PublishedAt").HasColumnType("datetime").HasColumnName("published_at");
+                    b.Property<string>("Status").IsRequired().HasMaxLength(20).HasColumnType("varchar(20)").HasColumnName("status");
+                    b.Property<string>("Type").IsRequired().HasMaxLength(100).HasColumnType("varchar(100)").HasColumnName("type");
+                    b.HasKey("Id");
+                    b.HasIndex("Status", "NextAttemptAt");
+                    b.ToTable("integration_outbox", (string)null);
+                });
+
             modelBuilder.Entity("PriscilaSkincare.Domain.Customers.CustomerAddress", b =>
                 {
                     b.Property<Guid>("Id")

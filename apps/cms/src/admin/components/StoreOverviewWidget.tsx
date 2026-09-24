@@ -72,11 +72,11 @@ export default function StoreOverviewWidget() {
     ]).then(([products, kits, collections, orders, reviews]) => {
       if (!active) return;
       setMetrics([
-        { label: 'Produtos', value: products, href: '/content-manager/collection-types/api::product.product' },
-        { label: 'Kits', value: kits, href: '/content-manager/collection-types/api::kit.kit' },
-        { label: 'Coleções', value: collections, href: '/content-manager/collection-types/api::collection.collection' },
-        { label: 'Encomendas', value: orders, href: '/content-manager/collection-types/api::order.order' },
-        { label: 'Avaliações pendentes', value: reviews, href: '/content-manager/collection-types/api::review.review?filters%5Bstatus%5D%5B%24eq%5D=pending' },
+        { label: 'Produtos', value: products, href: '/store/products' },
+        { label: 'Kits', value: kits, href: '/store/kits' },
+        { label: 'Coleções', value: collections, href: '/store/collections' },
+        { label: 'Encomendas', value: orders, href: '/store/orders' },
+        { label: 'Avaliações pendentes', value: reviews, href: '/store/reviews?filters%5Bstatus%5D%5B%24eq%5D=pending' },
       ]);
     });
     return () => { active = false; };

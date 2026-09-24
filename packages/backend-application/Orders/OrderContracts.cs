@@ -14,6 +14,8 @@ public sealed record CheckoutPreviewResult(Guid AddressId, string Currency, deci
     decimal Shipping, decimal Total, IReadOnlyList<CheckoutItemResult> Items);
 public sealed record CreateOrderCommand(Guid AddressId, string Currency, string Locale, string IdempotencyKey, string PaymentMethod = "simulated");
 public sealed record PaymentResult(string Provider, string Reference, string Status);
+public sealed record ManualPaymentRequest(Guid OrderId, decimal Amount, string Currency,
+    string IdempotencyKey, bool Approved, string Locale);
 public sealed record OrderAddressResult(string Recipient, string Phone, string Country, string Province,
     string City, string Neighborhood, string Street, string? HouseNumber, string? Apartment, string? PostalCode);
 public sealed record OrderTimelineResult(string Status, DateTimeOffset OccurredAt);

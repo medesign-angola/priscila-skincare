@@ -97,6 +97,7 @@ Nx Console is an editor extension that enriches your developer experience. It le
 - [Releasing Packages](https://nx.dev/docs/features/manage-releases)
 - [Nx Plugins](https://nx.dev/docs/concepts/nx-plugins)
 - [Nx Cloud](https://nx.dev/nx-cloud)
+- [Blog](https://nx.dev/blog)
 
 ## 💬 Community
 
@@ -106,4 +107,33 @@ Join the Nx community:
 - [X (Twitter)](https://twitter.com/nxdevtools)
 - [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [YouTube](https://www.youtube.com/@nxdevtools)
-- [Blog](https://nx.dev/blog)
+
+## Provisionamento de staging
+
+O ambiente de staging usa uma unica instancia MySQL com quatro bases logicas e
+utilizadores independentes:
+
+- `priscila_app`: API transacional;
+- `priscila_cms`: Strapi;
+- `priscila_payments`: servico de pagamentos;
+- `priscila_notifications`: servico de notificacoes.
+
+Na VPS, gere apenas as credenciais que ainda estiverem ausentes ou com valores
+de exemplo. Credenciais validas ja existentes sao preservadas:
+
+```sh
+sh ./deploy/generate-staging-credentials.sh
+```
+
+Preencha depois os dominios, a origem do Storefront e, quando aplicavel, os
+dados SMTP no `.env.staging`. Para provisionar as bases, aplicar as migrations
+e iniciar todos os containers sem apagar os volumes existentes:
+
+```sh
+sh ./deploy/provision-staging.sh
+```
+
+O script pode ser executado novamente com seguranca. A API aplica as migrations
+atraves do perfil `migration`; Payments e Notifications aplicam as suas
+migrations automaticamente ao iniciar. O Strapi administra exclusivamente o
+schema de `priscila_cms`.

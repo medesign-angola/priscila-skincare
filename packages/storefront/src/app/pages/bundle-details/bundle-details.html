@@ -29,7 +29,31 @@
   @if (sectionProduct(); as product) {
     <app-product-usage-section [product]="product" [language]="facade.currentLanguage()" />
     <div class="bundle-results"><app-product-results-section [product]="product" [language]="facade.currentLanguage()" /></div>
-    @if (relatedProducts().length) {<app-related-products-section [product]="product" [language]="facade.currentLanguage()" [candidates]="relatedProducts()" />}
+    @if (!recommendations().length && fallbackProductRecommendations().length) {
+      <app-related-products-section
+        [product]="product"
+        [language]="facade.currentLanguage()"
+        [candidates]="fallbackProductRecommendations()"
+        titleKey="BUNDLE_DETAILS.RECOMMENDATIONS"
+      />
+    }
+  }
+
+  @if (recommendations().length) {
+  <section class="bundle-recommendations" aria-labelledby="bundle-recommendations-title">
+    <h2 id="bundle-recommendations-title">{{ 'BUNDLE_DETAILS.RECOMMENDATIONS' | translate }}</h2>
+    <div class="bundle-recommendations__grid">
+      @for (recommendation of recommendations(); track recommendation.id) {
+      <org-product-card
+        variant="related"
+        [product]="recommendation"
+        [showCategory]="false"
+        [showCommerce]="false"
+        (productSelect)="openRecommendation($event)"
+      />
+      }
+    </div>
+  </section>
   }
 </main>
 } @else {

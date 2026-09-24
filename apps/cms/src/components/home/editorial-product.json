@@ -13,8 +13,7 @@
     "media": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.media-presentation",
-      "required": true
+      "component": "shared.media-presentation"
     }
   }
 }

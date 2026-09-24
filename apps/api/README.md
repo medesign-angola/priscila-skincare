@@ -15,10 +15,17 @@ O projeto `Domain` não referencia ASP.NET, EF Core, MySQL ou Strapi.
 
 ## Bases de dados
 
-Uma única instância MySQL hospeda duas bases independentes:
+Uma única instância MySQL pode hospedar quatro bases lógicas independentes,
+cada uma com o seu próprio utilizador e responsabilidade:
 
-- `priscila_cms`: administrada exclusivamente pelo Strapi.
-- `priscila_app`: administrada exclusivamente pelo Entity Framework Core.
+- `priscila_cms`: administrada exclusivamente pelo Strapi;
+- `priscila_app`: administrada exclusivamente pela API principal e EF Core;
+- `priscila_payments`: administrada pelo serviço autónomo de pagamentos;
+- `priscila_notifications`: administrada pelo serviço autónomo de notificações.
+
+Nenhum serviço consulta diretamente a base de outro serviço. A comunicação é
+feita por HTTP autenticado e as filas persistentes de inbox/outbox garantem
+repetição segura e idempotência.
 
 Criação local da base transacional:
 
@@ -72,21 +79,16 @@ Endpoints disponíveis:
 O refresh token é rotativo e fica num cookie `HttpOnly`; o Storefront nunca
 recebe esse segredo através de JavaScript.
 
-### Envio do OTP por Gmail
+### Envio do OTP
 
-Em desenvolvimento, o SMTP já está configurado para `smtp.gmail.com`, porta
-`587`, com STARTTLS. A palavra-passe de aplicação nunca deve entrar no Git.
-Guarde-a no cofre local do .NET usando os 16 caracteres sem os espaços exibidos
-pelo Google:
+A API não envia SMTP diretamente. Ela grava o desafio e o evento cifrado na sua
+outbox na mesma transação. O serviço `priscila-notifications-service` recebe o
+evento, envia o e-mail e devolve o resultado através da própria outbox. O
+intervalo de reenvio só começa após a confirmação efetiva do envio.
 
-```powershell
-dotnet user-secrets set "Email:Password" "<PALAVRA-PASSE-DE-APLICACAO>" --project apps/api/PriscilaSkincare.Api.csproj
-```
-
-O e-mail acompanha o idioma ativo do Storefront (`pt` ou `fr`), inclui versão
-HTML responsiva, alternativa em texto simples e a imagem da marca incorporada.
-Para voltar temporariamente ao OTP no terminal, defina
-`Email__DeliveryMode=Log`.
+As credenciais SMTP devem existir exclusivamente no serviço de notificações.
+API e serviço compartilham apenas `Notifications:InternalApiKey`, utilizada para
+autenticação interna e para proteger o código enquanto ele está persistido.
 
 O Storefront usa `http://localhost:5041/api/v1` por padrão. Em ambientes
 publicados, defina `window.__PRISCILA_SKINCARE_CONFIG__.apiUrl` antes da

@@ -211,7 +211,10 @@ export interface CmsProduct extends CmsEntity {
   benefits?: CmsBenefit[] | null;
   benefitsMainMedia?: CmsMediaPresentation | null;
   editorial?: CmsEditorialCopy | null;
+  editorialEnabled?: boolean | null;
+  editorialMedia?: CmsMediaPresentation | null;
   galleryEditorial?: CmsEditorialCopy | null;
+  galleryEditorialEnabled?: boolean | null;
   usageSteps?: CmsUsageStep[] | null;
   usageMedia?: CmsMediaPresentation | null;
   results?: CmsResults | null;
@@ -221,6 +224,7 @@ export interface CmsProduct extends CmsEntity {
 export interface CmsKitProductReference extends CmsEntity {
   name: string;
   slug: string;
+  editorialMedia?: CmsMediaPresentation | null;
 }
 
 export interface CmsBundleDetails {

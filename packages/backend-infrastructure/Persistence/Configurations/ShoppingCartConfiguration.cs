@@ -23,6 +23,11 @@ public sealed class ShoppingCartItemConfiguration : IEntityTypeConfiguration<Sho
     public void Configure(EntityTypeBuilder<ShoppingCartItem> builder)
     {
         builder.ToTable("shopping_cart_items"); builder.HasKey(x => x.Id);
+        // The domain assigns the identifier before the item is attached to a
+        // cart. Without this hint EF treats a newly discovered item with a
+        // non-empty Guid as an existing row and issues UPDATE instead of
+        // INSERT when the cart itself was loaded from the database.
+        builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.CartId).HasColumnName("cart_id");
         builder.Property(x => x.ItemType).HasColumnName("item_type").HasConversion<string>().HasMaxLength(20);
         builder.Property(x => x.Reference).HasConversion(x => x.Value, x => CommerceItemReference.Create(x)).HasColumnName("item_reference").HasMaxLength(100);

@@ -20,6 +20,14 @@ public sealed class Payment : AggregateRoot<Guid>
     public static Payment Create(Guid orderId, string provider, string reference, Money amount, DateTimeOffset now) =>
         new(Guid.NewGuid(), orderId, provider.Trim(), reference.Trim(), amount.Amount, amount.Currency, now);
     public void ChangeStatus(PaymentStatus status, DateTimeOffset now) { Status=status; UpdatedAt=now; }
+    public void Complete(string provider, string reference, PaymentStatus status, DateTimeOffset now)
+    {
+        if (Status != PaymentStatus.Pending) return;
+        Provider = provider.Trim();
+        Reference = reference.Trim();
+        Status = status;
+        UpdatedAt = now;
+    }
 }
 
 public enum StockMovementType { Debit, Credit }

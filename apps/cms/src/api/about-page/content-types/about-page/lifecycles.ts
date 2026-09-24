@@ -4,6 +4,7 @@ import {
   candidateReadiness,
   relationReferences,
 } from '../../../../home-readiness';
+import { applyAutomaticSeo } from '../../../../seo-automation';
 
 const { ValidationError } = errors;
 
@@ -13,10 +14,10 @@ type IngredientsPresentation = {
   ingredients?: unknown;
 };
 
-async function validateIngredients(data: Record<string, unknown>): Promise<void> {
-  const presentation = data.ingredients as
-    | IngredientsPresentation
-    | undefined;
+async function validateIngredients(
+  data: Record<string, unknown>,
+): Promise<void> {
+  const presentation = data.ingredients as IngredientsPresentation | undefined;
 
   for (const reference of relationReferences(presentation?.ingredients)) {
     const { entry, issues } = await candidateReadiness(
@@ -35,8 +36,32 @@ async function validateIngredients(data: Record<string, unknown>): Promise<void>
 export default {
   async beforeCreate(event: { params: { data: Record<string, unknown> } }) {
     await validateIngredients(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::about-page.about-page',
+      titlePaths: ['heroHeadline'],
+      descriptionPaths: [
+        'heroDescription',
+        'brand.footerDescription',
+        'founderBiography',
+      ],
+      imagePaths: ['heroMedia.desktopImage', 'heroMedia.mobileImage'],
+      populate: ['heroMedia', 'brand'],
+    });
   },
-  async beforeUpdate(event: { params: { data: Record<string, unknown> } }) {
+  async beforeUpdate(event: {
+    params: { data: Record<string, unknown>; where?: Record<string, unknown> };
+  }) {
     await validateIngredients(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::about-page.about-page',
+      titlePaths: ['heroHeadline'],
+      descriptionPaths: [
+        'heroDescription',
+        'brand.footerDescription',
+        'founderBiography',
+      ],
+      imagePaths: ['heroMedia.desktopImage', 'heroMedia.mobileImage'],
+      populate: ['heroMedia', 'brand'],
+    });
   },
 };

@@ -3,6 +3,7 @@ using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
 using PriscilaSkincare.Domain.Orders;
 using PriscilaSkincare.Domain.Reviews;
+using PriscilaSkincare.Domain.Integration;
 
 namespace PriscilaSkincare.Application.Abstractions;
 
@@ -26,6 +27,17 @@ public sealed record PaymentRequest(Guid OrderId, Money Amount, string Idempoten
 public sealed record PaymentDecision(string Provider, string Reference, bool Approved, string? FailureCode = null);
 public interface IPaymentGateway { Task<PaymentDecision> AuthorizeAsync(PaymentRequest request, CancellationToken cancellationToken = default); }
 
+public interface IIntegrationOutbox
+{
+    void Add(IntegrationOutboxMessage message);
+}
+
+public interface IIntegrationInbox
+{
+    Task<bool> ContainsAsync(Guid eventId, CancellationToken cancellationToken = default);
+    void Add(IntegrationInboxMessage message);
+}
+
 public interface IInventoryService
 {
     Task ValidateAsync(IReadOnlyList<InventoryRequest> items, CancellationToken cancellationToken = default);
@@ -46,7 +58,8 @@ public interface ICustomerProjection
 
 public interface IOrderProjection
 {
-    Task<string?> UpsertAsync(Order order, Customer customer, CancellationToken cancellationToken = default);
+    Task<string?> UpsertAsync(Order order, Customer customer, Payment? payment,
+        CancellationToken cancellationToken = default);
 }
 
 public interface IOtpSender
@@ -55,6 +68,11 @@ public interface IOtpSender
 }
 
 public sealed record OtpEmail(EmailAddress Recipient, string Code, string Locale, int LifetimeMinutes);
+
+public interface IOtpCodeProtector
+{
+    string Protect(string code);
+}
 
 public sealed record OrderConfirmationEmailItem(string Name, string? Variant, int Quantity,
     decimal UnitPrice, decimal Total);

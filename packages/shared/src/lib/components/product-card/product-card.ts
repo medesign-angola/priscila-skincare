@@ -40,6 +40,9 @@ export interface ProductCardData {
 export class ProductCard {
   readonly product = input.required<ProductCardData>();
   readonly variant = input<'default' | 'related'>('default');
+  readonly showCategory = input(true);
+  readonly showRating = input(true);
+  readonly showCommerce = input(true);
   readonly productSelect = output<string>();
   readonly addToCart = output<string>();
 

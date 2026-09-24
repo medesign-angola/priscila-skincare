@@ -132,10 +132,33 @@
       "repeatable": false,
       "component": "product.editorial-copy"
     },
+    "editorialEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "editorialMedia": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.media-presentation"
+    },
     "galleryEditorial": {
       "type": "component",
       "repeatable": false,
       "component": "product.editorial-copy"
+    },
+    "galleryEditorialEnabled": {
+      "type": "boolean",
+      "default": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "usageSteps": {
       "type": "component",

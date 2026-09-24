@@ -12,6 +12,7 @@ using PriscilaSkincare.Infrastructure.Commerce;
 using PriscilaSkincare.Infrastructure.Email;
 using PriscilaSkincare.Infrastructure.Persistence;
 using PriscilaSkincare.Infrastructure.Persistence.Repositories;
+using PriscilaSkincare.Infrastructure.Integration;
 
 namespace PriscilaSkincare.Infrastructure;
 
@@ -39,7 +40,10 @@ public static class DependencyInjection
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IStockMovementRepository, StockMovementRepository>();
         services.AddScoped<IOrderEmailOutbox, OrderEmailOutbox>();
-        services.AddScoped<IPaymentGateway, SimulatedPaymentGateway>();
+        services.AddScoped<IntegrationMessageStore>();
+        services.AddScoped<IIntegrationOutbox>(provider => provider.GetRequiredService<IntegrationMessageStore>());
+        services.AddScoped<IIntegrationInbox>(provider => provider.GetRequiredService<IntegrationMessageStore>());
+        AddPaymentIntegration(services, configuration);
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<CustomerAddressService>();
@@ -48,6 +52,7 @@ public static class DependencyInjection
         services.AddScoped<OrderService>();
         services.AddSingleton<IOtpCodeGenerator, OtpCodeGenerator>();
         AddEmailDelivery(services, configuration);
+        AddNotificationIntegration(services, configuration);
         AddStrapiIntegration(services, configuration);
 
         var authenticationOptions = new AuthenticationOptions
@@ -94,27 +99,6 @@ public static class DependencyInjection
 
         services.AddSingleton(options);
         services.AddHostedService<OrderEmailOutboxWorker>();
-
-        if (!string.Equals(options.DeliveryMode, "Smtp", StringComparison.OrdinalIgnoreCase))
-        {
-            services.AddSingleton<IOtpSender, DevelopmentOtpSender>();
-            services.AddSingleton<IOrderEmailSender, DevelopmentOrderEmailSender>();
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(options.Host) ||
-            string.IsNullOrWhiteSpace(options.Username) ||
-            string.IsNullOrWhiteSpace(options.Password) ||
-            string.IsNullOrWhiteSpace(options.FromEmail) ||
-            string.IsNullOrWhiteSpace(options.FromName))
-        {
-            throw new InvalidOperationException(
-                "A entrega SMTP está ativa, mas a configuração Email está incompleta. " +
-                "Guarde Email:Password nos User Secrets e confirme os restantes dados SMTP.");
-        }
-
-        services.AddSingleton<IOtpSender, SmtpOtpSender>();
-        services.AddSingleton<IOrderEmailSender, SmtpOrderEmailSender>();
     }
 
     private static void AddStrapiIntegration(IServiceCollection services, IConfiguration configuration)
@@ -140,6 +124,56 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/");
             client.Timeout = TimeSpan.FromSeconds(8);
         });
+    }
+
+    private static void AddNotificationIntegration(IServiceCollection services, IConfiguration configuration)
+    {
+        var section = configuration.GetSection(NotificationServiceOptions.SectionName);
+        var options = new NotificationServiceOptions
+        {
+            BaseUrl = section["BaseUrl"] ?? "http://localhost:5052",
+            InternalApiKey = section["InternalApiKey"] ?? string.Empty,
+            TimeoutSeconds = ReadPositiveInt(configuration, "Notifications:TimeoutSeconds", 15)
+        };
+        if (!Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var baseUri))
+            throw new InvalidOperationException("Notifications:BaseUrl deve ser um endereço absoluto.");
+        if (options.InternalApiKey.Length < 32)
+            throw new InvalidOperationException("Notifications:InternalApiKey deve ter pelo menos 32 caracteres.");
+        services.AddSingleton(options);
+        services.AddSingleton<IOtpCodeProtector, OtpCodeProtector>();
+        services.AddHttpClient("integration-notifications", client =>
+        {
+            client.BaseAddress = new Uri(baseUri.ToString().TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        });
+        services.AddHttpClient<IOrderEmailSender, RemoteOrderEmailSender>(client =>
+        {
+            client.BaseAddress = new Uri(baseUri.ToString().TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        });
+    }
+
+    private static void AddPaymentIntegration(IServiceCollection services, IConfiguration configuration)
+    {
+        var section = configuration.GetSection(PaymentServiceOptions.SectionName);
+        var options = new PaymentServiceOptions
+        {
+            BaseUrl = section["BaseUrl"] ?? "http://localhost:5053",
+            InternalApiKey = section["InternalApiKey"] ?? string.Empty,
+            TimeoutSeconds = ReadPositiveInt(configuration, "Payments:TimeoutSeconds", 15)
+        };
+        if (!Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var baseUri))
+            throw new InvalidOperationException("Payments:BaseUrl deve ser um endereço absoluto válido.");
+        if (options.InternalApiKey.Length < 32)
+            throw new InvalidOperationException("Payments:InternalApiKey deve ter pelo menos 32 caracteres.");
+
+        services.AddSingleton(options);
+        services.AddHttpClient("integration-payments", client =>
+        {
+            client.BaseAddress = new Uri(baseUri.ToString().TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        });
+        services.AddHostedService<IntegrationOutboxWorker>();
     }
 }
 
