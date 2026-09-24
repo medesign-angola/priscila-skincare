@@ -310,10 +310,19 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
   const { get } = useFetchClient();
   const { locale } = useIntl();
   const permissions = useAuth('StoreSidebar', (state) => state.permissions);
+  const user = useAuth('StoreSidebar.user', (state) => state.user);
   const isFrench = locale.toLowerCase().startsWith('fr');
+  const isSuperAdmin = Boolean(
+    user?.roles?.some(
+      (role) =>
+        role.code === 'strapi-super-admin' ||
+        role.name?.toLowerCase() === 'super admin',
+    ),
+  );
   const canAccess = (item: SidebarItem) =>
     (!item.developmentOnly || import.meta.env.DEV) &&
-    (!item.permissions?.length ||
+    (isSuperAdmin ||
+      !item.permissions?.length ||
       item.permissions.some((action) =>
         permissions.some((permission) => permission.action === action),
       ));
