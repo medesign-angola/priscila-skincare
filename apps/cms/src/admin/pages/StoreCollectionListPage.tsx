@@ -818,6 +818,7 @@ const PageMain = styled(Main)`
 const Content = styled.div`
   box-sizing: border-box;
   display: grid;
+  align-content: start;
   gap: 32px;
   max-width: 1229px;
   min-height: 100vh;
