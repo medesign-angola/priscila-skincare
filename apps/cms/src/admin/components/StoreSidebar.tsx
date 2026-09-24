@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { useFetchClient } from '@strapi/strapi/admin';
+import { useAuth, useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,7 +9,9 @@ type SidebarItem = {
   frenchLabel: string;
   href: string;
   icon: string;
-  section?: string;
+  section?: 'site' | 'admin';
+  permissions?: string[];
+  developmentOnly?: boolean;
 };
 
 export const contentLink = (uid: string) =>
@@ -106,6 +108,8 @@ const navigation: SidebarItem[] = [
     frenchLabel: 'Utilisateurs',
     href: storeListLink('users'),
     icon: 'users',
+    section: 'admin',
+    permissions: ['admin::users.read'],
   },
   {
     label: 'Configurações do site',
@@ -127,6 +131,43 @@ const navigation: SidebarItem[] = [
     href: aboutPageLink,
     icon: 'about',
     section: 'site',
+  },
+  {
+    label: 'Funções e permissões',
+    frenchLabel: 'Rôles et autorisations',
+    href: '/settings/roles',
+    icon: 'settings',
+    section: 'admin',
+    permissions: ['admin::roles.read'],
+  },
+  {
+    label: 'Tokens de API',
+    frenchLabel: "Jetons d'API",
+    href: '/settings/api-tokens?sort=name:ASC',
+    icon: 'settings',
+    section: 'admin',
+    permissions: ['admin::api-tokens.access', 'admin::api-tokens.read'],
+  },
+  {
+    label: 'Webhooks',
+    frenchLabel: 'Webhooks',
+    href: '/settings/webhooks',
+    icon: 'settings',
+    section: 'admin',
+    permissions: [
+      'admin::webhooks.read',
+      'admin::webhooks.update',
+      'admin::webhooks.create',
+    ],
+  },
+  {
+    label: 'Estrutura técnica',
+    frenchLabel: 'Structure technique',
+    href: '/plugins/content-type-builder',
+    icon: 'settings',
+    section: 'admin',
+    permissions: ['plugin::content-type-builder.read'],
+    developmentOnly: true,
   },
 ];
 
@@ -191,6 +232,15 @@ const Navigation = styled.nav`
   & + & {
     margin-top: 45px;
   }
+`;
+
+const NavigationTitle = styled.p`
+  margin: 35px 16px 4px;
+  color: #777168;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 `;
 
 const NavigationLink = styled(Link)<{ $active?: boolean }>`
@@ -259,9 +309,30 @@ async function pendingCount(
 export function StoreSidebar({ activeHref }: { activeHref: string }) {
   const { get } = useFetchClient();
   const { locale } = useIntl();
+  const permissions = useAuth('StoreSidebar', (state) => state.permissions);
+  const user = useAuth('StoreSidebar.user', (state) => state.user);
   const isFrench = locale.toLowerCase().startsWith('fr');
-  const mainNavigation = navigation.filter((item) => item.section !== 'site');
+  const isSuperAdmin = Boolean(
+    user?.roles?.some(
+      (role) =>
+        role.code === 'strapi-super-admin' ||
+        role.name?.toLowerCase() === 'super admin',
+    ),
+  );
+  const canAccess = (item: SidebarItem) =>
+    (!item.developmentOnly || import.meta.env.DEV) &&
+    (isSuperAdmin ||
+      !item.permissions?.length ||
+      item.permissions.some((action) =>
+        permissions.some((permission) => permission.action === action),
+      ));
+  const mainNavigation = navigation.filter(
+    (item) => !item.section && canAccess(item),
+  );
   const siteNavigation = navigation.filter((item) => item.section === 'site');
+  const adminNavigation = navigation.filter(
+    (item) => item.section === 'admin' && canAccess(item),
+  );
   const [pending, setPending] = useState<Record<string, number>>({});
 
   const loadPending = useCallback(async () => {
@@ -358,6 +429,11 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     items.map((item) => {
       const count = pending[item.icon] ?? 0;
       const label = isFrench ? item.frenchLabel : item.label;
+      const currentPath = activeHref.split('?')[0];
+      const itemPath = item.href.split('?')[0];
+      const isActive =
+        currentPath === itemPath ||
+        (itemPath !== '/' && currentPath.startsWith(`${itemPath}/`));
       const pendingLabel = isFrench
         ? `${count} élément${count === 1 ? '' : 's'} en attente`
         : `${count} ${count === 1 ? 'elemento pendente' : 'elementos pendentes'}`;
@@ -365,7 +441,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
         <NavigationLink
           key={item.label}
           to={item.href}
-          $active={item.href === activeHref}
+          $active={isActive}
           aria-label={count > 0 ? `${label}: ${pendingLabel}` : label}
         >
           <NavigationIcon src={iconPath(item.icon)} alt="" aria-hidden />
@@ -384,9 +460,18 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
       <SidebarLogo src={iconPath('logo')} alt="Priscila Skincare" />
       <Navigation aria-label="Navegação da loja">
         {renderItems(mainNavigation)}
-      </Navigation>
-      <Navigation aria-label="Páginas do site">
+        <NavigationTitle>
+          {isFrench ? 'Contenu du site' : 'Conteúdo do site'}
+        </NavigationTitle>
         {renderItems(siteNavigation)}
+        {adminNavigation.length > 0 && (
+          <>
+            <NavigationTitle>
+              {isFrench ? 'Administration' : 'Administração'}
+            </NavigationTitle>
+            {renderItems(adminNavigation)}
+          </>
+        )}
       </Navigation>
     </Sidebar>
   );

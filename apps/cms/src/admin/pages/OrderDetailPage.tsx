@@ -60,6 +60,10 @@ const paymentStates: Record<string, { pt: string; fr: string }> = {
   rejected: { pt: 'Pagamento não aprovado', fr: 'Paiement refusé' },
   cancelled: { pt: 'Pagamento cancelado', fr: 'Paiement annulé' },
   refunded: { pt: 'Pagamento reembolsado', fr: 'Paiement remboursé' },
+  restricted: {
+    pt: 'Sem permissão para consultar',
+    fr: 'Autorisation de consultation requise',
+  },
 };
 const nextState: Record<string, string> = {
   pending: 'confirmed',
@@ -203,6 +207,7 @@ const statusColors: Record<
   rejected: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
   cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
   refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+  restricted: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
 };
 const StatusGroup = styled.div`
   display: flex;
@@ -503,6 +508,9 @@ export default function OrderDetailPage() {
   const { get, put } = useFetchClient();
   const { locale } = useIntl();
   const user = useAuth('OrderDetailPage', (state) => state.user);
+  const permissions = useAuth('OrderDetailPage.permissions', (state) =>
+    state.permissions,
+  );
   const language = locale.toLowerCase().startsWith('fr') ? 'fr' : 'pt';
   const listLink = storeListLink('orders');
   const [order, setOrder] = useState<Order | null>(null);
@@ -534,9 +542,10 @@ export default function OrderDetailPage() {
   }, [documentId]);
   const status = order ? statusOf(order) : 'pending';
   const legacyOrderStatus = String(order?.orderStatus ?? '').toLowerCase();
-  const storedPaymentStatus = String(
-    order?.paymentStatus ?? 'pending',
-  ).toLowerCase();
+  const storedPaymentStatus =
+    typeof order?.paymentStatus === 'string'
+      ? order.paymentStatus.toLowerCase()
+      : 'restricted';
   const paymentStatus =
     storedPaymentStatus === 'pending' && legacyOrderStatus === 'paid'
       ? 'approved'
@@ -546,6 +555,26 @@ export default function OrderDetailPage() {
         : storedPaymentStatus === 'pending' && legacyOrderStatus === 'refunded'
           ? 'refunded'
           : storedPaymentStatus;
+  const isSuperAdmin = Boolean(
+    user?.roles?.some(
+      (role) =>
+        role.code === 'strapi-super-admin' ||
+        role.name?.toLowerCase() === 'super admin',
+    ),
+  );
+  const orderUpdatePermission = permissions.find(
+    (permission) =>
+      permission.action === 'plugin::content-manager.explorer.update' &&
+      permission.subject === 'api::order.order',
+  );
+  const canUpdateField = (field: string) => {
+    if (isSuperAdmin) return true;
+    if (!orderUpdatePermission) return false;
+    const fields = orderUpdatePermission.properties?.fields;
+    return !Array.isArray(fields) || fields.includes(field);
+  };
+  const canUpdatePaymentStatus = canUpdateField('paymentStatus');
+  const canUpdateOrderStatus = canUpdateField('orderStatus');
   const next =
     status === 'confirmed'
       ? paymentStatus === 'approved'
@@ -806,7 +835,17 @@ export default function OrderDetailPage() {
                         <p>Registe o resultado do pagamento desta encomenda.</p>
                       </CardHeader>
                       <PaymentActions>
-                        {paymentStatus === 'pending' ? (
+                        {paymentStatus === 'restricted' ? (
+                          <p>
+                            A sua função não tem permissão para consultar o
+                            estado do pagamento desta encomenda.
+                          </p>
+                        ) : !canUpdatePaymentStatus ? (
+                          <p>
+                            Pode consultar o pagamento, mas a sua função não
+                            tem permissão para alterar este estado.
+                          </p>
+                        ) : paymentStatus === 'pending' ? (
                           <>
                             <p>
                               Confirme apenas depois de validar o recebimento do
@@ -874,7 +913,7 @@ export default function OrderDetailPage() {
                         ))}
                       </Flow>
                       <Advance>
-                        {next ? (
+                        {next && canUpdateOrderStatus ? (
                           <>
                             <p>
                               {language === 'fr'
@@ -898,10 +937,14 @@ export default function OrderDetailPage() {
                           </>
                         ) : (
                           <p>
-                            {status === 'confirmed' &&
-                            paymentStatus !== 'approved'
-                              ? 'A preparação ficará disponível quando o pagamento for aprovado.'
-                              : 'Esta encomenda chegou a um estado final e não possui uma próxima etapa automática.'}
+                            {!canUpdateOrderStatus
+                              ? 'A sua função não tem permissão para avançar o estado da encomenda.'
+                              : paymentStatus === 'restricted'
+                                ? 'A sua função não tem permissão para consultar o estado do pagamento.'
+                                : status === 'confirmed' &&
+                                    paymentStatus !== 'approved'
+                                  ? 'A preparação ficará disponível quando o pagamento for aprovado.'
+                                  : 'Esta encomenda chegou a um estado final e não possui uma próxima etapa automática.'}
                           </p>
                         )}
                       </Advance>
