@@ -4,6 +4,7 @@ import { useAuth, useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import {
   contentLink,
   iconPath,
@@ -191,62 +192,6 @@ const LanguageLink = styled(Link)`
     width: 24px;
     height: 24px;
   }
-`;
-
-const ProfileLink = styled(Link)`
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 55px;
-  padding: 7px;
-  border: 1px solid #ece8e1;
-  border-radius: 12px;
-  color: #1a1917;
-  background: #fff;
-  text-decoration: none;
-`;
-
-const Avatar = styled.span`
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  place-items: center;
-  border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
-  font-size: 14px;
-  font-weight: 700;
-`;
-
-const ProfileCopy = styled.span`
-  display: grid;
-  min-width: 112px;
-
-  strong {
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-  }
-  small {
-    color: #6d675f;
-    font-size: 12px;
-    line-height: 18px;
-  }
-
-  @media (max-width: 32rem) {
-    display: none;
-  }
-`;
-
-const Chevron = styled.span`
-  width: 8px;
-  height: 8px;
-  margin: 0 6px 4px 2px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(45deg);
 `;
 
 const Content = styled.div`
@@ -706,10 +651,6 @@ function formatMoney(value?: number | string, currency = 'AOA'): string {
   }).format(Number.isFinite(numericValue) ? numericValue : 0);
 }
 
-function initials(firstname?: string, lastname?: string) {
-  return `${firstname?.[0] ?? ''}${lastname?.[0] ?? ''}`.toUpperCase() || 'PS';
-}
-
 export default function StoreDashboardPage() {
   const { get } = useFetchClient();
   const { locale } = useIntl();
@@ -799,11 +740,6 @@ export default function StoreDashboardPage() {
     user?.firstname?.trim() || user?.username?.trim() || 'equipa';
   const isFrench = locale.toLowerCase().startsWith('fr');
   const t = (text: string) => (isFrench ? (frenchCopy[text] ?? text) : text);
-  const fullName =
-    [user?.firstname, user?.lastname].filter(Boolean).join(' ') ||
-    user?.username ||
-    'Utilizador';
-  const roleName = user?.roles?.[0]?.name || 'Admin';
   const data = metrics ?? {
     products: null,
     orders: null,
@@ -870,14 +806,7 @@ export default function StoreDashboardPage() {
                 <span>{isFrench ? 'FR / €' : 'PT / €'}</span>
                 <img src={iconPath('language')} alt="" aria-hidden />
               </LanguageLink>
-              <ProfileLink to="/store/profile">
-                <Avatar>{initials(user?.firstname, user?.lastname)}</Avatar>
-                <ProfileCopy>
-                  <strong>{fullName}</strong>
-                  <small>{roleName}</small>
-                </ProfileCopy>
-                <Chevron aria-hidden />
-              </ProfileLink>
+              <AdminProfileMenu />
             </HeaderActions>
           </Header>
 

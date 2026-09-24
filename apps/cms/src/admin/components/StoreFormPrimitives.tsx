@@ -1,8 +1,8 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 import { Main } from '@strapi/design-system';
-import { useAuth } from '@strapi/strapi/admin';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { AdminProfileMenu } from './AdminProfileMenu';
 import {
   iconPath,
   StoreLayout,
@@ -63,47 +63,6 @@ const Locale = styled.span`
   img {
     width: 22px;
     height: 22px;
-  }
-`;
-
-const Profile = styled(Link)`
-  display: flex;
-  min-height: 54px;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 12px;
-  border: 1px solid #ece8e1;
-  border-radius: 12px;
-  color: #252421;
-  background: #fff;
-  text-decoration: none;
-`;
-
-const Avatar = styled.span`
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  place-items: center;
-  border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
-  font-size: 13px;
-  font-weight: 750;
-`;
-
-const ProfileText = styled.span`
-  display: grid;
-  min-width: 116px;
-
-  strong {
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  small {
-    color: #777168;
-    font-size: 12px;
   }
 `;
 
@@ -373,9 +332,6 @@ export const SummaryList = styled.dl`
   }
 `;
 
-const initials = (first?: string, last?: string) =>
-  `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || 'PS';
-
 export function StoreFormPage({
   activeHref,
   backTo,
@@ -390,12 +346,6 @@ export function StoreFormPage({
   language: 'pt' | 'fr';
   labelledBy: string;
 }>) {
-  const user = useAuth('StoreFormPage', (state) => state.user);
-  const name =
-    [user?.firstname, user?.lastname].filter(Boolean).join(' ') ||
-    user?.username ||
-    'Utilizador';
-
   return (
     <FormShell labelledBy={labelledBy}>
       <StoreLayout>
@@ -408,14 +358,7 @@ export function StoreFormPage({
                 <span>{language === 'fr' ? 'FR / €' : 'PT / KZ'}</span>
                 <img src={iconPath('language')} alt="" aria-hidden />
               </Locale>
-              <Profile to="/store/profile">
-                <Avatar>{initials(user?.firstname, user?.lastname)}</Avatar>
-                <ProfileText>
-                  <strong>{name}</strong>
-                  <small>{user?.roles?.[0]?.name || 'Admin'}</small>
-                </ProfileText>
-                <span aria-hidden>⌄</span>
-              </Profile>
+              <AdminProfileMenu />
             </TopActions>
           </Topbar>
           {children as ReactNode}

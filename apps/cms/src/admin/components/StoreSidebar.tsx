@@ -320,7 +320,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
       const target = event.target as Node | null;
       document
         .querySelectorAll<HTMLDetailsElement>(
-          'details[data-store-select][open], details[data-row-action-menu][open]',
+          'details[data-store-select][open], details[data-row-action-menu][open], details[data-profile-menu][open]',
         )
         .forEach((details) => {
           if (!target || !details.contains(target)) details.open = false;
@@ -330,7 +330,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
       if (event.key !== 'Escape') return;
       document
         .querySelectorAll<HTMLDetailsElement>(
-          'details[data-store-select][open], details[data-row-action-menu][open]',
+          'details[data-store-select][open], details[data-row-action-menu][open], details[data-profile-menu][open]',
         )
         .forEach((details) => (details.open = false));
     };

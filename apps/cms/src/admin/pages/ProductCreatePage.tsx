@@ -17,6 +17,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import {
   contentLink,
   iconPath,
@@ -2728,14 +2729,7 @@ export default function ProductCreatePage() {
                 <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
                 <img src={iconPath('language')} alt="" aria-hidden />
               </Language>
-              <Profile to="/store/profile">
-                <Avatar>{initials(user?.firstname, user?.lastname)}</Avatar>
-                <ProfileText>
-                  <strong>{fullName}</strong>
-                  <small>{role}</small>
-                </ProfileText>
-                <span aria-hidden>⌄</span>
-              </Profile>
+              <AdminProfileMenu />
             </TopActions>
           </Topbar>
           <Workspace>
