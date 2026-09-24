@@ -68,7 +68,7 @@ type PageConfig = {
   canDelete?: boolean;
 };
 
-const asset = (name: string) => `/admin/admin/products/${name}.svg`;
+const asset = (name: string) => `/priscila-admin/products/${name}.svg`;
 const text = (entry: Entry, field: string) => {
   const value = entry[field];
   return typeof value === 'string' || typeof value === 'number'
@@ -665,7 +665,7 @@ const configs: Record<string, PageConfig> = {
       pt: 'Nenhum usuário encontrado',
       fr: 'Aucun utilisateur trouvé',
     },
-    emptyIcon: '/admin/admin/users/empty.svg',
+    emptyIcon: '/priscila-admin/users/empty.svg',
     defaultSort: 'firstname',
     filterField: 'isActive',
     filterOptions: [

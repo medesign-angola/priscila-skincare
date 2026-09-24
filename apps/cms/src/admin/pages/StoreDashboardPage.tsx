@@ -718,11 +718,6 @@ export default function StoreDashboardPage() {
   const [recentOrders, setRecentOrders] = useState<OrderEntry[]>([]);
 
   useEffect(() => {
-    document.body.classList.add('priscila-dashboard-open');
-    return () => document.body.classList.remove('priscila-dashboard-open');
-  }, []);
-
-  useEffect(() => {
     let active = true;
     void Promise.all([
       countFor(get, 'api::product.product'),

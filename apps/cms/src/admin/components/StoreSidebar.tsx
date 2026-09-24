@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
@@ -22,7 +22,11 @@ export const storeListLink = (resource: string) => `/store/${resource}`;
 export const siteSettingsLink = '/store/site-settings';
 export const homePageLink = '/store/home-page';
 export const aboutPageLink = '/store/about-page';
-export const iconPath = (name: string) => `/admin/admin/dashboard/${name}.svg`;
+export const iconPath = (name: string) =>
+  `/priscila-admin/dashboard/${name}.svg`;
+
+let mountedStoreLayouts = 0;
+let pendingBodyCleanup: number | undefined;
 
 const navigation: SidebarItem[] = [
   {
@@ -126,10 +130,12 @@ const navigation: SidebarItem[] = [
   },
 ];
 
-export const StoreLayout = styled.div`
+export const StoreLayout = styled.div.attrs({
+  'data-priscila-store-layout': '',
+})`
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 5;
   display: grid;
   grid-template-columns: 275px minmax(0, 1fr);
   width: 100%;
@@ -278,9 +284,22 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     }));
   }, [get]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    mountedStoreLayouts += 1;
+    if (pendingBodyCleanup !== undefined) {
+      window.cancelAnimationFrame(pendingBodyCleanup);
+      pendingBodyCleanup = undefined;
+    }
     document.body.classList.add('priscila-dashboard-open');
-    return () => document.body.classList.remove('priscila-dashboard-open');
+    return () => {
+      mountedStoreLayouts = Math.max(0, mountedStoreLayouts - 1);
+      pendingBodyCleanup = window.requestAnimationFrame(() => {
+        if (mountedStoreLayouts === 0) {
+          document.body.classList.remove('priscila-dashboard-open');
+        }
+        pendingBodyCleanup = undefined;
+      });
+    };
   }, []);
 
   useEffect(() => {
