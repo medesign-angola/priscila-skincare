@@ -1,7 +1,19 @@
 import type { StrapiApp } from '@strapi/strapi/admin';
 import { Layout, Star, Store } from '@strapi/icons';
 import { priscilaDarkTheme, priscilaLightTheme } from './admin-theme';
-import './styles/admin.css';
+import adminStyles from './styles/admin.css?inline';
+
+const installAdminStyles = () => {
+  if (typeof document === 'undefined') return;
+  const styleId = 'priscila-admin-styles';
+  let style = document.getElementById(styleId) as HTMLStyleElement | null;
+  if (!style) {
+    style = document.createElement('style');
+    style.id = styleId;
+    document.head.append(style);
+  }
+  if (style.textContent !== adminStyles) style.textContent = adminStyles;
+};
 
 const redirectRegistrationToLogin = () => {
   if (typeof window === 'undefined') return;
@@ -35,6 +47,7 @@ const syncAuthenticationMarker = () => {
 };
 
 redirectRegistrationToLogin();
+installAdminStyles();
 syncAuthenticationMarker();
 
 export default {
