@@ -18,7 +18,7 @@ redirectRegistrationToLogin();
 
 export default {
   config: {
-    auth: { logo: '/admin/admin/login/logo.svg' },
+    auth: { logo: '/priscila-admin/login/logo.svg' },
     menu: { logo: '/priscila-logo.svg' },
     locales: ['pt', 'fr'],
     notifications: { releases: false },

@@ -38,7 +38,8 @@ interface ProductResponse {
   };
 }
 
-const productAsset = (name: string) => `/admin/admin/products/${name}.svg`;
+const productAsset = (name: string) =>
+  `/priscila-admin/products/${name}.svg`;
 
 const copy = {
   pt: {

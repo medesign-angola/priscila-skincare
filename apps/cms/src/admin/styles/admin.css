@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'Priscila Cormorant';
-  src: url('/admin/admin/fonts/cormorant-garamond.ttf') format('truetype');
+  src: url('/../priscila-admin/fonts/cormorant-garamond.ttf') format('truetype');
   font-display: swap;
 }
 
 @font-face {
   font-family: 'Priscila Inter';
-  src: url('/admin/admin/fonts/inter.ttf') format('truetype');
+  src: url('/../priscila-admin/fonts/inter.ttf') format('truetype');
   font-display: swap;
   font-style: normal;
   font-weight: 100 900;
@@ -53,37 +53,49 @@ nav[aria-label] a[aria-current='page'] {
  * O menu nativo é ocultado apenas nessa rota; ao abrir um formulário, o
  * Content Manager volta a mostrar a navegação contextual do próprio Strapi.
  */
-body.priscila-dashboard-open {
+body.priscila-dashboard-open,
+body:has([data-priscila-store-layout]) {
   height: 100dvh;
   overflow: hidden;
   background: #f7f5f2;
 }
 
 html:has(body.priscila-dashboard-open),
+html:has([data-priscila-store-layout]),
 body.priscila-dashboard-open #strapi,
 body.priscila-dashboard-open #strapi > div,
-body.priscila-dashboard-open #strapi > div > div {
+body.priscila-dashboard-open #strapi > div > div,
+body:has([data-priscila-store-layout]) #strapi,
+body:has([data-priscila-store-layout]) #strapi > div,
+body:has([data-priscila-store-layout]) #strapi > div > div {
   height: 100%;
   min-height: 0;
   overflow: hidden;
 }
 
 body.priscila-dashboard-open #strapi > div > div > nav,
-body.priscila-dashboard-open #strapi > div > div > aside {
+body.priscila-dashboard-open #strapi > div > div > aside,
+body:has([data-priscila-store-layout]) #strapi > div > div > nav,
+body:has([data-priscila-store-layout]) #strapi > div > div > aside {
   display: none !important;
 }
 
 body.priscila-dashboard-open
   #strapi
+  nav:not([aria-label='Navegação da loja']):not([aria-label='Páginas do site']),
+body:has([data-priscila-store-layout])
+  #strapi
   nav:not([aria-label='Navegação da loja']):not([aria-label='Páginas do site']) {
   display: none !important;
 }
 
-body.priscila-dashboard-open #strapi > div > div {
+body.priscila-dashboard-open #strapi > div > div,
+body:has([data-priscila-store-layout]) #strapi > div > div {
   grid-template-columns: minmax(0, 1fr) !important;
 }
 
-body.priscila-dashboard-open main#main-content {
+body.priscila-dashboard-open main#main-content,
+body:has([data-priscila-store-layout]) main#main-content {
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -137,7 +149,7 @@ html:has(input[name='rememberMe']) body::before {
 }
 
 html:has(input[name='rememberMe']) body::after {
-    background: url('/admin/admin/login/hero.webp') center / cover no-repeat;
+    background: url('/../priscila-admin/login/hero.webp') center / cover no-repeat;
   mix-blend-mode: hard-light;
 }
 
@@ -175,7 +187,7 @@ html:has(input[name='rememberMe']) header::before {
   left: 7.78vw;
   width: 74px;
   height: 56px;
-  background: url('/admin/admin/login/logo.svg') center / contain no-repeat;
+  background: url('/../priscila-admin/login/logo.svg') center / contain no-repeat;
   content: '';
 }
 
@@ -237,7 +249,7 @@ html:has(input[name='rememberMe']) header [role='combobox']::after {
   right: 12px;
   width: 24px;
   height: 24px;
-  background: url('/admin/admin/login/language.svg') center / 24px 24px no-repeat;
+  background: url('/../priscila-admin/login/language.svg') center / 24px 24px no-repeat;
 }
 
 html:has(input[name='rememberMe']) main {
@@ -385,7 +397,7 @@ html:has(input[name='rememberMe']) form button[type='submit']::after {
   right: 20px;
   width: 24px;
   height: 24px;
-  background: url('/admin/admin/login/arrow-right.svg') center / 24px 24px no-repeat;
+  background: url('/../priscila-admin/login/arrow-right.svg') center / 24px 24px no-repeat;
   content: '';
   transform: translateY(-50%);
 }
