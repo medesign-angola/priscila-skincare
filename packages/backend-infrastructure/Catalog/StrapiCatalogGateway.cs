@@ -5,7 +5,7 @@ using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Infrastructure.Catalog;
 
-internal sealed class StrapiCatalogGateway(HttpClient httpClient, StrapiOptions options) : ICatalogGateway
+internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGateway
 {
     public async Task<CatalogItem?> FindAsync(CommerceItemType type, CommerceItemReference reference, string locale, CancellationToken token = default)
     {
@@ -81,10 +81,10 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient, StrapiOptions 
         if (Uri.TryCreate(url, UriKind.Absolute, out var absoluteUrl))
         {
             return IsInternalHost(absoluteUrl.Host)
-                ? new Uri(new Uri(options.PublicBaseUrl.TrimEnd('/') + "/"), absoluteUrl.PathAndQuery.TrimStart('/')).ToString()
+                ? absoluteUrl.PathAndQuery
                 : absoluteUrl.ToString();
         }
-        return new Uri(new Uri(options.PublicBaseUrl.TrimEnd('/') + "/"), url.TrimStart('/')).ToString();
+        return "/" + url.TrimStart('/');
     }
 
     private static bool IsInternalHost(string host) =>
