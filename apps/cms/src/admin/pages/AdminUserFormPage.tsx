@@ -36,53 +36,6 @@ type AdminUser = {
 };
 type Mode = 'create' | 'edit' | 'profile';
 
-const RoleList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-
-  @media (max-width: 44rem) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const RoleOption = styled.label<{ $selected?: boolean }>`
-  display: flex;
-  min-height: 74px;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 15px 16px;
-  border: 1px solid ${({ $selected }) => ($selected ? '#a98b62' : '#e4ddd3')};
-  border-radius: 11px;
-  background: ${({ $selected }) => ($selected ? '#fbf6ee' : '#fbfaf8')};
-  cursor: pointer;
-
-  input {
-    width: 18px;
-    height: 18px;
-    margin-top: 2px;
-    accent-color: #8f7048;
-  }
-
-  strong,
-  small {
-    display: block;
-  }
-
-  strong {
-    color: #292824;
-    font-size: 14px;
-  }
-
-  small {
-    margin-top: 4px;
-    color: #777168;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.4;
-  }
-`;
-
 const PasswordHint = styled.div`
   padding: 15px 17px;
   border-left: 3px solid #a8895f;
@@ -175,7 +128,7 @@ function AdminUserForm({ mode }: { mode: Mode }) {
           email: String(user.email ?? ''),
           isActive: user.isActive !== false,
           preferedLanguage: String(user.preferedLanguage ?? 'pt'),
-          roles: (user.roles ?? []).map((role) => String(role.id)),
+          roles: user.roles?.[0] ? [String(user.roles[0].id)] : [],
         });
       })
       .catch(() =>
@@ -198,23 +151,10 @@ function AdminUserForm({ mode }: { mode: Mode }) {
     value: (typeof initial)[K],
   ) => setForm((current) => ({ ...current, [key]: value }));
 
-  const selectedRoleNames = useMemo(
-    () =>
-      roles
-        .filter((role) => form.roles.includes(String(role.id)))
-        .map((role) => role.name)
-        .filter(Boolean)
-        .join(', '),
+  const selectedRole = useMemo(
+    () => roles.find((role) => form.roles[0] === String(role.id)),
     [form.roles, roles],
   );
-
-  const toggleRole = (id: string) =>
-    setField(
-      'roles',
-      form.roles.includes(id)
-        ? form.roles.filter((current) => current !== id)
-        : [...form.roles, id],
-    );
 
   const save = async () => {
     if (!form.firstname.trim() || !form.email.trim()) {
@@ -226,7 +166,7 @@ function AdminUserForm({ mode }: { mode: Mode }) {
     }
     if (!profile && form.roles.length === 0) {
       setMessage({
-        text: 'Selecione pelo menos uma função para este usuário.',
+        text: 'Selecione uma função para este usuário.',
         error: true,
       });
       return;
@@ -429,28 +369,31 @@ function AdminUserForm({ mode }: { mode: Mode }) {
                       alterar no painel.
                     </p>
                   </SectionHeading>
-                  <RoleList>
-                    {roles.map((role) => {
-                      const id = String(role.id);
-                      const selected = form.roles.includes(id);
-                      return (
-                        <RoleOption key={id} $selected={selected}>
-                          <input
-                            type="checkbox"
-                            checked={selected}
-                            onChange={() => toggleRole(id)}
-                          />
-                          <span>
-                            <strong>{role.name || 'Função sem nome'}</strong>
-                            <small>
-                              {role.description ||
-                                'As permissões desta função são definidas nas configurações.'}
-                            </small>
-                          </span>
-                        </RoleOption>
-                      );
-                    })}
-                  </RoleList>
+                  <Field>
+                    <span>
+                      Função <Required>*</Required>
+                    </span>
+                    <Select
+                      value={form.roles[0] ?? ''}
+                      onChange={(event) =>
+                        setField(
+                          'roles',
+                          event.target.value ? [event.target.value] : [],
+                        )
+                      }
+                    >
+                      <option value="">Selecione uma função</option>
+                      {roles.map((role) => (
+                        <option key={role.id} value={String(role.id)}>
+                          {role.name || 'Função sem nome'}
+                        </option>
+                      ))}
+                    </Select>
+                    <small>
+                      {selectedRole?.description ||
+                        'Cada usuário pode ter apenas uma função administrativa.'}
+                    </small>
+                  </Field>
                   {editing && (
                     <CheckRow>
                       <input
@@ -548,7 +491,7 @@ function AdminUserForm({ mode }: { mode: Mode }) {
                     </div>
                     <div>
                       <dt>Função</dt>
-                      <dd>{selectedRoleNames || 'Não selecionada'}</dd>
+                      <dd>{selectedRole?.name || 'Não selecionada'}</dd>
                     </div>
                     <div>
                       <dt>Acesso</dt>
