@@ -8,7 +8,8 @@ namespace PriscilaSkincare.Infrastructure.Catalog;
 
 internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions options) : IOrderProjection
 {
-    public async Task<string?> UpsertAsync(Order order, Customer customer, CancellationToken token = default)
+    public async Task<string?> UpsertAsync(Order order, Customer customer, Payment? payment,
+        CancellationToken token = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "api/internal/orders/sync");
         request.Headers.Add("x-integration-secret", options.IntegrationSecret);
@@ -19,7 +20,8 @@ internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions optio
             externalCustomerId = customer.Id,
             customerName = customer.Name ?? customer.Email.Value,
             customerEmail = customer.Email.Value,
-            status = order.Status.ToString().ToLowerInvariant(),
+            orderStatus = OperationalStatus(order.Status),
+            paymentStatus = payment?.Status.ToString().ToLowerInvariant() ?? "pending",
             currency = order.Currency,
             subtotal = order.SubtotalAmount,
             shipping = order.ShippingAmount,
@@ -34,4 +36,12 @@ internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions optio
         using var document = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(token), cancellationToken: token);
         return document.RootElement.TryGetProperty("documentId", out var id) ? id.GetString() : null;
     }
+
+    private static string OperationalStatus(OrderStatus status) => status switch
+    {
+        OrderStatus.Paid => "confirmed",
+        OrderStatus.PaymentFailed => "confirmed",
+        OrderStatus.Refunded => "cancelled",
+        _ => status.ToString().ToLowerInvariant()
+    };
 }

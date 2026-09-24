@@ -90,11 +90,26 @@ public sealed class Order : AggregateRoot<Guid>
             OrderStatus.Shipped => status is OrderStatus.Delivered,
             _ => false,
         };
-        if (!valid) throw new InvalidOperationException($"A transição de {Status} para {status} não é permitida.");
+        if (!valid) throw new InvalidOperationException(
+            $"Não é possível mudar o estado de «{StatusLabel(Status)}» para «{StatusLabel(status)}».");
         Status = status;
         UpdatedAt = now;
         _timeline.Add(OrderStatusEntry.Create(Id, status, now));
     }
+
+    private static string StatusLabel(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending => "Pendente",
+        OrderStatus.Confirmed => "Confirmada",
+        OrderStatus.Paid => "Paga",
+        OrderStatus.PaymentFailed => "Pagamento não aprovado",
+        OrderStatus.Processing => "Em preparação",
+        OrderStatus.Shipped => "Enviada",
+        OrderStatus.Delivered => "Entregue",
+        OrderStatus.Cancelled => "Cancelada",
+        OrderStatus.Refunded => "Reembolsada",
+        _ => status.ToString(),
+    };
 
     public void MarkProjected(string documentId) => StrapiDocumentId = documentId.Trim();
 

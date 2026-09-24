@@ -38,13 +38,14 @@ public sealed class OtpChallenge : AggregateRoot<Guid>
 
     public void RegisterFailedAttempt() => FailedAttempts++;
 
-    public void MarkSent(DateTimeOffset now)
+    public void MarkSent(DateTimeOffset now, TimeSpan lifetime)
     {
         if (DeliveryStatus != OtpDeliveryStatus.Pending)
             throw new InvalidOperationException("O envio do código já foi finalizado.");
 
         DeliveryStatus = OtpDeliveryStatus.Sent;
         SentAt = now;
+        ExpiresAt = now.Add(lifetime);
     }
 
     public void MarkDeliveryFailed()

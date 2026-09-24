@@ -105,7 +105,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Staging
       ConnectionStrings__PaymentsDatabase: Server=mysql;Port=3306;Database=${PAYMENTS_DB_NAME:-priscila_payments};User=${PAYMENTS_DB_USER:-priscila_payments};Password=${PAYMENTS_DB_PASSWORD};SslMode=Disabled;
       Payments__InternalApiKey: ${PAYMENTS_INTERNAL_API_KEY:?Defina PAYMENTS_INTERNAL_API_KEY}
-      Payments__Provider: ${PAYMENTS_PROVIDER:-Simulated}
+      Payments__Provider: ${PAYMENTS_PROVIDER:-Manual}
       Payments__CallbackBaseUrl: http://api:8080
       Payments__CallbackInternalApiKey: ${PAYMENTS_INTERNAL_API_KEY:?Defina PAYMENTS_INTERNAL_API_KEY}
     depends_on:
@@ -135,6 +135,8 @@ services:
       Notifications__FromName: ${SMTP_FROM_NAME:-Priscila Skincare}
       Notifications__StorefrontUrl: ${STOREFRONT_ORIGIN:?Defina STOREFRONT_ORIGIN}
       Notifications__SupportEmail: ${EMAIL_SUPPORT_ADDRESS:-}
+      Notifications__ApplicationApiUrl: http://api:8080
+      Notifications__CallbackTimeoutSeconds: ${NOTIFICATIONS_TIMEOUT_SECONDS:-15}
     depends_on:
       mysql:
         condition: service_healthy

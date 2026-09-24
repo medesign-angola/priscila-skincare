@@ -62,6 +62,11 @@ public sealed class OrderStatusEntryConfiguration : IEntityTypeConfiguration<Ord
     public void Configure(EntityTypeBuilder<OrderStatusEntry> builder)
     {
         builder.ToTable("order_status_history"); builder.HasKey(x => x.Id);
+        // Status entries are created by the domain with their final Guid. When
+        // they are appended to an order loaded from the database, EF must treat
+        // them as new rows instead of trying to update a row that does not yet
+        // exist.
+        builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.OrderId).HasColumnName("order_id");
         builder.Property(x => x.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(24);
         builder.Property(x => x.OccurredAt).HasColumnName("occurred_at");

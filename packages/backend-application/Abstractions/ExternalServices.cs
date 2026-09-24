@@ -58,7 +58,8 @@ public interface ICustomerProjection
 
 public interface IOrderProjection
 {
-    Task<string?> UpsertAsync(Order order, Customer customer, CancellationToken cancellationToken = default);
+    Task<string?> UpsertAsync(Order order, Customer customer, Payment? payment,
+        CancellationToken cancellationToken = default);
 }
 
 public interface IOtpSender
@@ -67,6 +68,11 @@ public interface IOtpSender
 }
 
 public sealed record OtpEmail(EmailAddress Recipient, string Code, string Locale, int LifetimeMinutes);
+
+public interface IOtpCodeProtector
+{
+    string Protect(string code);
+}
 
 public sealed record OrderConfirmationEmailItem(string Name, string? Variant, int Quantity,
     decimal UnitPrice, decimal Total);

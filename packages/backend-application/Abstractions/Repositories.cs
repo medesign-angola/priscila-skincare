@@ -23,7 +23,9 @@ public interface ICustomerAddressRepository
 
 public interface IOtpChallengeRepository
 {
+    Task<OtpChallenge?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<OtpChallenge?> FindLatestSentAsync(EmailAddress email, CancellationToken cancellationToken = default);
+    Task<OtpChallenge?> FindLatestPendingAsync(EmailAddress email, CancellationToken cancellationToken = default);
     void Add(OtpChallenge challenge);
 }
 

@@ -99,27 +99,6 @@ public static class DependencyInjection
 
         services.AddSingleton(options);
         services.AddHostedService<OrderEmailOutboxWorker>();
-
-        if (!string.Equals(options.DeliveryMode, "Smtp", StringComparison.OrdinalIgnoreCase))
-        {
-            services.AddSingleton<IOtpSender, DevelopmentOtpSender>();
-            services.AddSingleton<IOrderEmailSender, DevelopmentOrderEmailSender>();
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(options.Host) ||
-            string.IsNullOrWhiteSpace(options.Username) ||
-            string.IsNullOrWhiteSpace(options.Password) ||
-            string.IsNullOrWhiteSpace(options.FromEmail) ||
-            string.IsNullOrWhiteSpace(options.FromName))
-        {
-            throw new InvalidOperationException(
-                "A entrega SMTP está ativa, mas a configuração Email está incompleta. " +
-                "Guarde Email:Password nos User Secrets e confirme os restantes dados SMTP.");
-        }
-
-        services.AddSingleton<IOtpSender, SmtpOtpSender>();
-        services.AddSingleton<IOrderEmailSender, SmtpOrderEmailSender>();
     }
 
     private static void AddStrapiIntegration(IServiceCollection services, IConfiguration configuration)
@@ -161,6 +140,12 @@ public static class DependencyInjection
         if (options.InternalApiKey.Length < 32)
             throw new InvalidOperationException("Notifications:InternalApiKey deve ter pelo menos 32 caracteres.");
         services.AddSingleton(options);
+        services.AddSingleton<IOtpCodeProtector, OtpCodeProtector>();
+        services.AddHttpClient("integration-notifications", client =>
+        {
+            client.BaseAddress = new Uri(baseUri.ToString().TrimEnd('/') + "/");
+            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        });
         services.AddHttpClient<IOrderEmailSender, RemoteOrderEmailSender>(client =>
         {
             client.BaseAddress = new Uri(baseUri.ToString().TrimEnd('/') + "/");

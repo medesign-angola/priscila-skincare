@@ -32,6 +32,8 @@ public sealed class ApiExceptionHandler(
                 (StatusCodes.Status404NotFound, commerceException.Message, commerceException.Code),
             CommerceException commerceException =>
                 (StatusCodes.Status400BadRequest, commerceException.Message, commerceException.Code),
+            InvalidOperationException invalidOperationException =>
+                (StatusCodes.Status400BadRequest, invalidOperationException.Message, "invalid_operation"),
             ArgumentException argumentException =>
                 (StatusCodes.Status400BadRequest, argumentException.Message, "validation_error"),
             _ =>
