@@ -5,7 +5,7 @@ using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Infrastructure.Catalog;
 
-internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGateway
+internal sealed class StrapiCatalogGateway(HttpClient httpClient, StrapiOptions options) : ICatalogGateway
 {
     public async Task<CatalogItem?> FindAsync(CommerceItemType type, CommerceItemReference reference, string locale, CancellationToken token = default)
     {
@@ -77,9 +77,21 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGate
         if (!source.TryGetProperty(property, out var node) || node.ValueKind == JsonValueKind.Null) return null;
         var media = Unwrap(node);
         var url = Text(media, "url");
-        return string.IsNullOrWhiteSpace(url) ? null : url.StartsWith("http", StringComparison.OrdinalIgnoreCase)
-            ? url : new Uri(httpClient.BaseAddress!, url.TrimStart('/')).ToString();
+        if (string.IsNullOrWhiteSpace(url)) return null;
+        if (Uri.TryCreate(url, UriKind.Absolute, out var absoluteUrl))
+        {
+            return IsInternalHost(absoluteUrl.Host)
+                ? new Uri(new Uri(options.PublicBaseUrl.TrimEnd('/') + "/"), absoluteUrl.PathAndQuery.TrimStart('/')).ToString()
+                : absoluteUrl.ToString();
+        }
+        return new Uri(new Uri(options.PublicBaseUrl.TrimEnd('/') + "/"), url.TrimStart('/')).ToString();
     }
+
+    private static bool IsInternalHost(string host) =>
+        host.Equals("cms", StringComparison.OrdinalIgnoreCase) ||
+        host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+        host.Equals("127.0.0.1", StringComparison.OrdinalIgnoreCase) ||
+        host.Equals("host.docker.internal", StringComparison.OrdinalIgnoreCase);
     private static JsonElement Unwrap(JsonElement node) => node.ValueKind == JsonValueKind.Object && node.TryGetProperty("attributes", out var attributes) ? attributes : node;
     private static string? Text(JsonElement node, string name) => node.ValueKind == JsonValueKind.Object && node.TryGetProperty(name, out var value) && value.ValueKind != JsonValueKind.Null ? value.ToString() : null;
     private static decimal Decimal(JsonElement node, string name) => decimal.TryParse(Text(node, name), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var value) ? value : 0;

@@ -4,6 +4,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { API_CONFIG } from '../config/api.config';
+import { CMS_CONFIG } from '../config/cms.config';
+import { absoluteCmsUrl } from '../mappers/cms.mapper';
 import { CheckoutPreview, Customer, CustomerAddress, Order, SaveCustomerAddress } from '../models/account.interface';
 import { AuthenticationResponse, AuthSessionStore, SessionRefreshService } from '../services/auth-session.service';
 
@@ -24,6 +26,7 @@ interface ApiCustomer {
 export class AuthFacade {
   private readonly http = inject(HttpClient);
   private readonly config = inject(API_CONFIG);
+  private readonly cmsConfig = inject(CMS_CONFIG);
   private readonly session = inject(AuthSessionStore);
   private readonly refresher = inject(SessionRefreshService);
   private readonly translate = inject(TranslateService);
@@ -148,23 +151,30 @@ export class AuthFacade {
 
   async loadOrders(): Promise<void> {
     const orders = await firstValueFrom(this.http.get<ApiOrder[]>(`${this.config.baseUrl}/orders`));
-    this.orders.set(orders.map(mapOrder));
+    this.orders.set(orders.map((order) => this.mapOrder(order)));
   }
 
   async loadOrder(id: string): Promise<Order | undefined> {
     try {
-      const order = mapOrder(await firstValueFrom(this.http.get<ApiOrder>(`${this.config.baseUrl}/orders/${id}`)));
+      const order = this.mapOrder(await firstValueFrom(this.http.get<ApiOrder>(`${this.config.baseUrl}/orders/${id}`)));
       this.orders.update(items => [order, ...items.filter(item => item.id !== order.id)]);
       return order;
     } catch { return undefined; }
   }
 
   async checkoutPreview(addressId: string, currency: 'AOA'|'EUR', locale: string): Promise<CheckoutPreview> {
-    return firstValueFrom(this.http.post<CheckoutPreview>(`${this.config.baseUrl}/orders/preview`, { addressId, currency, locale }));
+    const preview = await firstValueFrom(this.http.post<CheckoutPreview>(`${this.config.baseUrl}/orders/preview`, { addressId, currency, locale }));
+    return {
+      ...preview,
+      items: preview.items.map((item) => ({
+        ...item,
+        imageUrl: absoluteCmsUrl(this.cmsConfig.baseUrl, item.imageUrl),
+      })),
+    };
   }
 
   async createOrder(addressId: string, currency: 'AOA'|'EUR', locale: string, idempotencyKey: string): Promise<Order> {
-    const order = mapOrder(await firstValueFrom(this.http.post<ApiOrder>(`${this.config.baseUrl}/orders`, { addressId, currency, locale, idempotencyKey })));
+    const order = this.mapOrder(await firstValueFrom(this.http.post<ApiOrder>(`${this.config.baseUrl}/orders`, { addressId, currency, locale, idempotencyKey })));
     this.orders.update(items => [order, ...items]);
     return order;
   }
@@ -228,6 +238,31 @@ export class AuthFacade {
     };
   }
 
+  private mapOrder(order: ApiOrder): Order {
+    return {
+      id: order.id,
+      number: order.number,
+      placedAt: order.placedAt,
+      status: order.status,
+      currency: order.currency,
+      subtotal: order.subtotal,
+      shippingPrice: order.shipping,
+      total: order.total,
+      items: order.items.map((item) => ({
+        itemType: item.itemType,
+        reference: item.reference,
+        productSku: item.reference ?? item.productSku ?? '',
+        productName: item.productName,
+        imageUrl: absoluteCmsUrl(this.cmsConfig.baseUrl, item.imageUrl),
+        sizeLabel: item.variant ?? '',
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+      })),
+      deliveryAddress: order.deliveryAddress,
+      timeline: order.timeline,
+    };
+  }
+
   private readPendingEmail(): string {
     return this.isBrowser ? sessionStorage.getItem('psc_pending_email') ?? '' : '';
   }
@@ -247,8 +282,3 @@ interface ApiOrder {
   items: { itemType?:'product'|'kit'|'collection'; reference?:string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
   deliveryAddress: CustomerAddress; timeline: { status: Order['status']; occurredAt: string }[];
 }
-const mapOrder = (order: ApiOrder): Order => ({ id: order.id, number: order.number, placedAt: order.placedAt, status: order.status,
-  currency: order.currency, subtotal: order.subtotal, shippingPrice: order.shipping, total: order.total,
-  items: order.items.map(item => ({ itemType:item.itemType,reference:item.reference,productSku:item.reference??item.productSku??'', productName: item.productName, imageUrl: item.imageUrl,
-    sizeLabel: item.variant ?? '', quantity: item.quantity, unitPrice: item.unitPrice })),
-  deliveryAddress: order.deliveryAddress, timeline: order.timeline });
