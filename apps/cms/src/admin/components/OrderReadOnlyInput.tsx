@@ -2,6 +2,7 @@ import { forwardRef, type ReactNode } from 'react';
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { Box, Field, Flex, Typography } from '@strapi/design-system';
+import { resolveAdminMediaUrl } from '../utils/media-url';
 
 interface OrderFieldProps {
   error?: MessageDescriptor | string;
@@ -94,19 +95,6 @@ function formatAmount(value?: number): string {
   }).format(value);
 }
 
-function resolveImageUrl(value?: string): string | undefined {
-  if (!value || typeof window === 'undefined') return value;
-  try {
-    const url = new URL(value, window.location.origin);
-    if (['localhost', '127.0.0.1', 'cms'].includes(url.hostname)) {
-      return `${window.location.origin}${url.pathname}${url.search}${url.hash}`;
-    }
-    return url.toString();
-  } catch {
-    return value;
-  }
-}
-
 const cardStyle = {
   border: '1px solid #dcdce4',
   borderRadius: '4px',
@@ -192,7 +180,7 @@ export const OrderItemsInput = forwardRef<HTMLDivElement, OrderFieldProps>(
                 <Flex gap={4} alignItems="center">
                   {item.imageUrl ? (
                     <img
-                      src={resolveImageUrl(item.imageUrl)}
+                      src={resolveAdminMediaUrl(item.imageUrl)}
                       alt={
                         item.productName
                           ? `Imagem de ${item.productName}`

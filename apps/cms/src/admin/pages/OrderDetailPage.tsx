@@ -13,6 +13,7 @@ import {
   StoreSidebar,
   storeListLink,
 } from '../components/StoreSidebar';
+import { resolveAdminMediaUrl } from '../utils/media-url';
 
 type OrderItem = {
   productName?: string;
@@ -730,7 +731,7 @@ export default function OrderDetailPage() {
                           >
                             {item.imageUrl ? (
                               <img
-                                src={item.imageUrl}
+                                src={resolveAdminMediaUrl(item.imageUrl)}
                                 alt={item.productName || 'Produto'}
                               />
                             ) : (
