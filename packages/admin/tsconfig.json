@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
+    "declaration": false,
+    "declarationMap": false,
     "emitDeclarationOnly": false,
     "noPropertyAccessFromIndexSignature": true,
     "experimentalDecorators": true,

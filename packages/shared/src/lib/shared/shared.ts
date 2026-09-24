@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'lib-shared',
+  selector: 'org-shared',
   imports: [],
   templateUrl: './shared.html',
   styleUrl: './shared.css',
