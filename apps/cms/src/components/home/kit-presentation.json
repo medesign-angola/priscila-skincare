@@ -13,16 +13,19 @@
       "min": 1
     },
     "editorialTitle": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "editorialDescription": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "editorialFootnote": {
       "type": "text"
     },
     "finderDescription": {
-      "type": "string"
+      "type": "string",
+      "required": true
     }
   }
 }

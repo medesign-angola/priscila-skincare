@@ -61,7 +61,19 @@ const contentTypes: Record<string, ModelPresentation> = {
     benefits: field('Benefícios detalhados', 'Crie os blocos que explicam os benefícios do produto.'),
     benefitsMainMedia: field('Imagem ou vídeo principal dos benefícios', 'Conteúdo visual de destaque da seção de benefícios.'),
     editorial: field('Conteúdo editorial', 'Título, descrição e nota da apresentação editorial.'),
+    editorialEnabled: field(
+      'Apresentação editorial disponível',
+      'Quando ativada, esta apresentação pode ser escolhida para ações de marketing no site.',
+    ),
+    editorialMedia: field(
+      'Imagem ou vídeo editorial',
+      'Conteúdo visual utilizado para pré-visualizar e apresentar este produto em ações de marketing.',
+    ),
     galleryEditorial: field('Galeria editorial', 'Imagens adicionais usadas na apresentação editorial do produto.'),
+    galleryEditorialEnabled: field(
+      'Galeria editorial disponível',
+      'Quando ativada, esta galeria pode ser escolhida para ações de marketing no site.',
+    ),
     usageSteps: field('Como utilizar o produto', 'Adicione os passos na ordem em que devem ser realizados.'),
     usageMedia: field('Imagem ou vídeo do modo de utilização', 'Conteúdo visual apresentado junto às instruções de uso.'),
     results: field('Resultados do produto', 'Dados percentuais e comparação visual de antes e depois.'),
@@ -214,7 +226,7 @@ const contentTypes: Record<string, ModelPresentation> = {
     customer: field('Cliente'),
     customerName: field('Nome do cliente'),
     customerEmail: field('E-mail do cliente'),
-    status: field(
+    orderStatus: field(
       'Estado da encomenda',
       'Atualize este campo à medida que a encomenda for preparada, enviada e entregue.',
     ),
@@ -369,7 +381,7 @@ const components: Record<string, ModelPresentation> = {
   },
   'home.editorial-product': {
     product: field('Produto', 'Apenas produtos com Conteúdo editorial preenchido ficam disponíveis.'),
-    media: field('Imagem ou vídeo de apresentação'),
+    media: field('Imagem ou vídeo alternativo', 'Opcional. Se ficar vazio, será utilizada a imagem configurada no recurso editorial do produto.'),
   },
   'home.editorial-gallery-product': {
     product: field('Produto', 'Apenas produtos com Galeria editorial preenchida ficam disponíveis. As imagens serão obtidas da galeria principal do produto.'),

@@ -121,12 +121,18 @@ function productIssues(
   }
 
   if (context === 'editorial-cover') {
+    if (entry.editorialEnabled === false) {
+      issues.push('ativar a apresentação editorial nos Recursos de marketing');
+    }
     const editorial = record(entry.editorial);
     if (!isFilled(editorial?.headline)) issues.push('título editorial');
     if (!isFilled(editorial?.description)) issues.push('descrição editorial');
   }
 
   if (context === 'editorial-gallery') {
+    if (entry.galleryEditorialEnabled === false) {
+      issues.push('ativar a galeria editorial nos Recursos de marketing');
+    }
     const editorial = record(entry.galleryEditorial);
     if (!isFilled(editorial?.headline)) {
       issues.push('título da galeria editorial');
@@ -143,6 +149,7 @@ function kitIssues(entry: ContentRecord): string[] {
   const issues: string[] = [];
   const prices = pricesOf(entry);
   const media = record(entry.media);
+  const homePresentation = record(entry.homePresentation);
   const products = Array.isArray(entry.products) ? entry.products : [];
 
   if (!isFilled(entry.name)) issues.push('nome do kit');
@@ -153,8 +160,24 @@ function kitIssues(entry: ContentRecord): string[] {
   if (!hasRelation(media?.desktopImage) && !hasRelation(media?.video)) {
     issues.push('imagem ou vídeo para destaque na página inicial');
   }
-  if (!entry.homePresentation) {
+  if (!homePresentation) {
     issues.push('bloco Apresentação na página inicial');
+  } else {
+    if (!isFilled(homePresentation.editorialTitle)) {
+      issues.push('título da apresentação editorial');
+    }
+    if (!isFilled(homePresentation.editorialDescription)) {
+      issues.push('descrição da apresentação editorial');
+    }
+    if (!isFilled(homePresentation.finderDescription)) {
+      issues.push('texto da área Encontrar');
+    }
+    if (
+      !isFilled(homePresentation.order) ||
+      Number(homePresentation.order) < 1
+    ) {
+      issues.push('posição da apresentação');
+    }
   }
   if (products.length === 0) issues.push('pelo menos um produto incluído');
   return issues;
@@ -163,6 +186,7 @@ function kitIssues(entry: ContentRecord): string[] {
 function collectionIssues(entry: ContentRecord): string[] {
   const issues: string[] = [];
   const media = record(entry.media);
+  const homePresentation = record(entry.homePresentation);
   const products = Array.isArray(entry.products) ? entry.products : [];
 
   if (!isFilled(entry.name)) issues.push('nome da coleção');
@@ -171,8 +195,21 @@ function collectionIssues(entry: ContentRecord): string[] {
   if (!hasRelation(media?.desktopImage) && !hasRelation(media?.video)) {
     issues.push('imagem ou vídeo para destaque na página inicial');
   }
-  if (!entry.homePresentation) {
+  if (!homePresentation) {
     issues.push('bloco Apresentação na página inicial');
+  } else {
+    if (!isFilled(homePresentation.title)) {
+      issues.push('título da apresentação editorial');
+    }
+    if (!isFilled(homePresentation.description)) {
+      issues.push('descrição da apresentação editorial');
+    }
+    if (
+      !isFilled(homePresentation.order) ||
+      Number(homePresentation.order) < 1
+    ) {
+      issues.push('posição da apresentação');
+    }
   }
   if (products.length === 0) issues.push('pelo menos um produto relacionado');
   return issues;
@@ -246,6 +283,9 @@ function populateForContext(context: HomeReadinessContext) {
     thumbnailImage: true,
     images: true,
     editorial: true,
+    editorialMedia: {
+      populate: { desktopImage: true, mobileImage: true, video: true },
+    },
     galleryEditorial: true,
   };
 }

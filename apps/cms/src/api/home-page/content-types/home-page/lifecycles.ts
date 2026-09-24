@@ -9,6 +9,7 @@ import {
   type HomeReadinessContext,
   type RelationReference,
 } from '../../../../home-readiness';
+import { applyAutomaticSeo } from '../../../../seo-automation';
 
 const { ValidationError } = errors;
 
@@ -27,11 +28,9 @@ type IngredientsPresentation = {
   ingredients?: unknown;
 };
 
-const MAX_FEATURED_PRODUCTS = 4;
+const MAX_FEATURED_PRODUCTS = 3;
 
-function validateUniqueProductPlacements(
-  data: Record<string, unknown>,
-): void {
+function validateUniqueProductPlacements(data: Record<string, unknown>): void {
   const featuredProducts = Array.isArray(data.featuredProducts)
     ? (data.featuredProducts as ProductSlot[])
         .map((slot) => referenceKey(firstRelationReference(slot.product)))
@@ -79,21 +78,31 @@ async function validateCandidate(
   );
 }
 
-function validateEditorialConfiguration(
+async function validateEditorialConfiguration(
   editorial: EditorialProduct | undefined,
   sectionLabel: string,
-): void {
-  if (!editorial || !firstRelationReference(editorial.product)) return;
+): Promise<void> {
+  const reference = firstRelationReference(editorial?.product);
+  if (!editorial || !reference) return;
   const media = editorial.media;
+  const { entry } = await candidateReadiness(
+    strapi,
+    'editorial-cover',
+    reference,
+  );
+  const productMedia = entry?.editorialMedia as
+    Record<string, unknown> | null | undefined;
   if (
-    !media ||
-    (!hasRelation(media.desktopImage) && !hasRelation(media.video))
+    (!media ||
+      (!hasRelation(media.desktopImage) && !hasRelation(media.video))) &&
+    (!productMedia ||
+      (!hasRelation(productMedia.desktopImage) &&
+        !hasRelation(productMedia.video)))
   ) {
     throw new ValidationError(
-      `Adicione uma imagem para computador ou um vídeo em ${sectionLabel}.`,
+      `Adicione uma imagem ou um vídeo ao recurso editorial do produto, ou diretamente em ${sectionLabel}.`,
     );
   }
-
 }
 
 async function validateHomeReadiness(
@@ -118,8 +127,9 @@ async function validateHomeReadiness(
   }
 
   const editorialCover = data.editorialCover as EditorialProduct | undefined;
-  const editorialGallery = data.editorialGallery as EditorialProduct | undefined;
-  validateEditorialConfiguration(
+  const editorialGallery = data.editorialGallery as
+    EditorialProduct | undefined;
+  await validateEditorialConfiguration(
     editorialCover,
     'Produto editorial com vídeo ou imagem',
   );
@@ -146,8 +156,7 @@ async function validateHomeReadiness(
   );
 
   const ingredientsPresentation = data.ingredients as
-    | IngredientsPresentation
-    | undefined;
+    IngredientsPresentation | undefined;
   for (const ingredient of relationReferences(
     ingredientsPresentation?.ingredients,
   )) {
@@ -167,8 +176,48 @@ async function validate(data: Record<string, unknown>): Promise<void> {
 export default {
   async beforeCreate(event: { params: { data: Record<string, unknown> } }) {
     await validate(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::home-page.home-page',
+      fixedTitle: 'Priscila Skincare',
+      descriptionPaths: [
+        'ingredients.description',
+        'testimonials.description',
+        'brandPillars.title',
+      ],
+      imagePaths: [
+        'editorialCover.media.desktopImage',
+        'editorialCover.media.mobileImage',
+      ],
+      populate: [
+        'editorialCover',
+        'ingredients',
+        'testimonials',
+        'brandPillars',
+      ],
+    });
   },
-  async beforeUpdate(event: { params: { data: Record<string, unknown> } }) {
+  async beforeUpdate(event: {
+    params: { data: Record<string, unknown>; where?: Record<string, unknown> };
+  }) {
     await validate(event.params.data);
+    await applyAutomaticSeo(event, {
+      uid: 'api::home-page.home-page',
+      fixedTitle: 'Priscila Skincare',
+      descriptionPaths: [
+        'ingredients.description',
+        'testimonials.description',
+        'brandPillars.title',
+      ],
+      imagePaths: [
+        'editorialCover.media.desktopImage',
+        'editorialCover.media.mobileImage',
+      ],
+      populate: [
+        'editorialCover',
+        'ingredients',
+        'testimonials',
+        'brandPillars',
+      ],
+    });
   },
 };
