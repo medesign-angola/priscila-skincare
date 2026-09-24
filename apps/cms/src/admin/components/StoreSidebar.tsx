@@ -329,6 +329,8 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
   const mainNavigation = navigation.filter(
     (item) => !item.section && canAccess(item),
   );
+  const dashboardNavigation = mainNavigation.slice(0, 1);
+  const commerceNavigation = mainNavigation.slice(1);
   const siteNavigation = navigation.filter((item) => item.section === 'site');
   const adminNavigation = navigation.filter(
     (item) => item.section === 'admin' && canAccess(item),
@@ -454,13 +456,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     <Sidebar>
       <SidebarLogo src={iconPath('logo')} alt="Priscila Skincare" />
       <Navigation aria-label="Navegação da loja">
-        {renderItems(mainNavigation)}
-      </Navigation>
-      <Navigation aria-label="Páginas do site">
-        <NavigationTitle>
-          {isFrench ? 'Contenu du site' : 'Conteúdo do site'}
-        </NavigationTitle>
-        {renderItems(siteNavigation)}
+        {renderItems(dashboardNavigation)}
       </Navigation>
       {adminNavigation.length > 0 && (
         <Navigation aria-label="Administração">
@@ -470,6 +466,15 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
           {renderItems(adminNavigation)}
         </Navigation>
       )}
+      <Navigation aria-label="Gestão da loja">
+        {renderItems(commerceNavigation)}
+      </Navigation>
+      <Navigation aria-label="Páginas do site">
+        <NavigationTitle>
+          {isFrench ? 'Contenu du site' : 'Conteúdo do site'}
+        </NavigationTitle>
+        {renderItems(siteNavigation)}
+      </Navigation>
     </Sidebar>
   );
 }
