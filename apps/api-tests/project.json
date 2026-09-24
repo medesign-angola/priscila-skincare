@@ -12,7 +12,9 @@
       "cache": true,
       "dependsOn": ["api:build"],
       "outputs": ["{projectRoot}/TestResults"],
-      "options": { "command": "dotnet test apps/api-tests/PriscilaSkincare.Api.Tests.csproj --configuration Release --no-restore" }
+      "options": {
+        "command": "dotnet test apps/api-tests/PriscilaSkincare.Api.Tests.csproj --configuration Release"
+      }
     }
   }
 }

@@ -42,7 +42,8 @@
     "typescript-eslint": "^8.40.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/cms"
   ],
   "dependencies": {
     "@angular-devkit/build-angular": "~21.2.0",

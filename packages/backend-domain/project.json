@@ -10,7 +10,9 @@
       "executor": "nx:run-commands",
       "cache": true,
       "outputs": ["{projectRoot}/bin"],
-      "options": { "command": "dotnet build packages/backend-domain/PriscilaSkincare.Domain.csproj --configuration Release --no-restore" }
+      "options": {
+        "command": "dotnet build packages/backend-domain/PriscilaSkincare.Domain.csproj --configuration Release"
+      }
     }
   }
 }

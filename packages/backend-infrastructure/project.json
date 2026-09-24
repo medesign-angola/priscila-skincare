@@ -12,7 +12,9 @@
       "cache": true,
       "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/bin"],
-      "options": { "command": "dotnet build packages/backend-infrastructure/PriscilaSkincare.Infrastructure.csproj --configuration Release --no-restore" }
+      "options": {
+        "command": "dotnet build packages/backend-infrastructure/PriscilaSkincare.Infrastructure.csproj --configuration Release"
+      }
     }
   }
 }

@@ -2,18 +2,18 @@ import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { appConfig } from './app.config';
 import { serverRoutes } from './app.routes.server';
-import { TranslateLoader } from '@ngx-translate/core';
+import { TranslateLoader, type TranslationObject } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import * as fs from 'fs';
 import * as path from 'path';
 
 export class TranslateServerLoader implements TranslateLoader {
   constructor(
-    private prefix: string = 'public/assets/i18n/',
-    private suffix: string = '.json',
+    private prefix = 'public/assets/i18n/',
+    private suffix = '.json',
   ) {}
 
-  public getTranslation(lang: string): Observable<any> {
+  public getTranslation(lang: string): Observable<TranslationObject> {
     try {
       // Tenta caminhos diferentes para desenvolvimento (prerender) e produção
       let filePath = path.join(
@@ -38,7 +38,7 @@ export class TranslateServerLoader implements TranslateLoader {
       }
 
       const fileData = fs.readFileSync(filePath, 'utf8');
-      return of(JSON.parse(fileData));
+      return of(JSON.parse(fileData) as TranslationObject);
     } catch (e) {
       console.error('Erro ao carregar arquivos de tradução no servidor:', e);
       return of({});
