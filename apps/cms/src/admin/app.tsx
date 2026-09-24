@@ -123,16 +123,37 @@ export default {
   },
   register(app: StrapiApp) {
     app.router.addRoute((routes) => [
-      ...routes.map((route) =>
-        route.index
-          ? {
-              ...route,
-              lazy: async () => ({
-                Component: (await import('./pages/StoreDashboardPage')).default,
-              }),
-            }
-          : route,
-      ),
+      ...routes.map((route) => {
+        if (route.index) {
+          return {
+            ...route,
+            lazy: async () => ({
+              Component: (await import('./pages/StoreDashboardPage')).default,
+            }),
+          };
+        }
+
+        if (route.path === 'settings/*' && route.lazy) {
+          const loadNativeSettings = route.lazy;
+          return {
+            ...route,
+            lazy: async () => {
+              const [nativeRoute, shell] = await Promise.all([
+                loadNativeSettings(),
+                import('./components/AdministrativeSettingsShell'),
+              ]);
+              return {
+                ...nativeRoute,
+                Component: shell.withAdministrativeSettingsShell(
+                  nativeRoute.Component,
+                ),
+              };
+            },
+          };
+        }
+
+        return route;
+      }),
       {
         path: 'store/products',
         lazy: async () => ({

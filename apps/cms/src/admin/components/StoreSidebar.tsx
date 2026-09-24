@@ -429,6 +429,11 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     items.map((item) => {
       const count = pending[item.icon] ?? 0;
       const label = isFrench ? item.frenchLabel : item.label;
+      const currentPath = activeHref.split('?')[0];
+      const itemPath = item.href.split('?')[0];
+      const isActive =
+        currentPath === itemPath ||
+        (itemPath !== '/' && currentPath.startsWith(`${itemPath}/`));
       const pendingLabel = isFrench
         ? `${count} élément${count === 1 ? '' : 's'} en attente`
         : `${count} ${count === 1 ? 'elemento pendente' : 'elementos pendentes'}`;
@@ -436,7 +441,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
         <NavigationLink
           key={item.label}
           to={item.href}
-          $active={item.href === activeHref}
+          $active={isActive}
           aria-label={count > 0 ? `${label}: ${pendingLabel}` : label}
         >
           <NavigationIcon src={iconPath(item.icon)} alt="" aria-hidden />
