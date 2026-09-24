@@ -4,6 +4,7 @@ import { useAuth, useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import {
   contentLink,
   iconPath,
@@ -552,14 +553,7 @@ export default function StoreEntityDetailPage({ kind }: { kind: Kind }) {
                   ? 'Clientes'
                   : 'Usuários'}
             </Back>
-            <Profile to="/store/profile">
-              <Avatar>{initials(user?.firstname, user?.lastname)}</Avatar>
-              <span>
-                <strong>{fullName}</strong>
-                <small>{user?.roles?.[0]?.name || 'Admin'}</small>
-              </span>
-              <img src={iconPath('language')} alt="" width="20" height="20" />
-            </Profile>
+            <AdminProfileMenu />
           </Topbar>
           <Workspace>
             {message && <Notice $error={message.error}>{message.text}</Notice>}
