@@ -32,11 +32,22 @@ function normalizeHttpUrl(name, value) {
   return value.replace(/\/+$/, '');
 }
 
+function normalizeApiUrl(value) {
+  if (value.startsWith('/')) {
+    const normalized = `/${value.replace(/^\/+|\/+$/g, '')}`;
+    if (normalized !== '/api/v1') {
+      throw new Error(
+        'STOREFRONT_API_URL relativa deve ser exatamente /api/v1.',
+      );
+    }
+    return normalized;
+  }
+
+  return normalizeHttpUrl('STOREFRONT_API_URL', value);
+}
+
 const config = {
-  apiUrl: normalizeHttpUrl(
-    'STOREFRONT_API_URL',
-    configuredApiUrl || defaults.apiUrl,
-  ),
+  apiUrl: normalizeApiUrl(configuredApiUrl || defaults.apiUrl),
   cmsUrl: normalizeHttpUrl(
     'STOREFRONT_CMS_URL',
     configuredCmsUrl || defaults.cmsUrl,
