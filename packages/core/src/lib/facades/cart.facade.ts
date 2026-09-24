@@ -5,13 +5,16 @@ import { firstValueFrom } from 'rxjs';
 import { ProductFacade } from './product.facade';
 import { ApiCart, CartItem } from '../models/cart.interface';
 import { API_CONFIG } from '../config/api.config';
+import { CMS_CONFIG } from '../config/cms.config';
 import { AuthSessionStore } from '../services/auth-session.service';
+import { absoluteCmsUrl } from '../mappers/cms.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class CartFacade {
   private readonly products = inject(ProductFacade);
   private readonly http = inject(HttpClient);
   private readonly config = inject(API_CONFIG);
+  private readonly cmsConfig = inject(CMS_CONFIG);
   private readonly session = inject(AuthSessionStore);
   private readonly browser = isPlatformBrowser(inject(PLATFORM_ID));
   private synchronized = false;
@@ -118,9 +121,16 @@ export class CartFacade {
   }
   private markUnsynchronized(): void { this.synchronized = false; this.synchronizedToken = null; }
   private applyApi(cart: ApiCart): void {
-    this.syncedCart.set(cart);
+    const normalizedCart: ApiCart = {
+      ...cart,
+      items: cart.items.map((item) => ({
+        ...item,
+        imageUrl: absoluteCmsUrl(this.cmsConfig.baseUrl, item.imageUrl),
+      })),
+    };
+    this.syncedCart.set(normalizedCart);
     const bySku = new Map(this.products.products().map(product => [product.sku, product]));
-    const products=cart.items.filter(item=>(item.itemType??'product')==='product');
+    const products=normalizedCart.items.filter(item=>(item.itemType??'product')==='product');
     this.items.set(products.map(item => {
       const sku = item.reference ?? item.productSku;
       return {
@@ -134,7 +144,7 @@ export class CartFacade {
         stock: item.stock,
       };
     }));
-    this.bundles.set(cart.items.filter(item=>item.itemType==='kit'||item.itemType==='collection').map(item=>({apiId:item.id,id:item.reference,type:item.itemType as 'kit'|'collection',name:item.productName,image:item.imageUrl??'',productCount:0,quantity:item.quantity,prices:{AOA:item.aoaPrice,EUR:item.eurPrice}})));
+    this.bundles.set(normalizedCart.items.filter(item=>item.itemType==='kit'||item.itemType==='collection').map(item=>({apiId:item.id,id:item.reference,type:item.itemType as 'kit'|'collection',name:item.productName,image:item.imageUrl??'',productCount:0,quantity:item.quantity,prices:{AOA:item.aoaPrice,EUR:item.eurPrice}})));
   }
   private readLocal(): CartItem[] {
     if (!this.browser) return [];

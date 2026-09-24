@@ -86,7 +86,22 @@ function asNumber(value: number | string | null | undefined): number {
 
 export function absoluteCmsUrl(baseUrl: string, url?: string | null): string {
   if (!url) return EMPTY_MEDIA;
-  if (/^https?:\/\//i.test(url) || url.startsWith('data:')) return url;
+  if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const parsed = new URL(url);
+      const internalHosts = new Set([
+        'cms',
+        'localhost',
+        '127.0.0.1',
+        'host.docker.internal',
+      ]);
+      if (!internalHosts.has(parsed.hostname.toLowerCase())) return url;
+      return new URL(`${parsed.pathname}${parsed.search}${parsed.hash}`, `${baseUrl}/`).toString();
+    } catch {
+      return url;
+    }
+  }
   return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
