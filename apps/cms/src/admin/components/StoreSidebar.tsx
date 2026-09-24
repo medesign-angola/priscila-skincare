@@ -133,8 +133,8 @@ const navigation: SidebarItem[] = [
     section: 'site',
   },
   {
-    label: 'Funções e permissões',
-    frenchLabel: 'Rôles et autorisations',
+    label: 'Administração',
+    frenchLabel: 'Administration',
     href: '/settings/roles',
     icon: 'settings',
     section: 'admin',
@@ -335,6 +335,11 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
   const adminNavigation = navigation.filter(
     (item) => item.section === 'admin' && canAccess(item),
   );
+  const primaryNavigation = [
+    ...dashboardNavigation,
+    ...adminNavigation,
+    ...commerceNavigation,
+  ];
   const [pending, setPending] = useState<Record<string, number>>({});
 
   const loadPending = useCallback(async () => {
@@ -456,18 +461,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     <Sidebar>
       <SidebarLogo src={iconPath('logo')} alt="Priscila Skincare" />
       <Navigation aria-label="Navegação da loja">
-        {renderItems(dashboardNavigation)}
-      </Navigation>
-      {adminNavigation.length > 0 && (
-        <Navigation aria-label="Administração">
-          <NavigationTitle>
-            {isFrench ? 'Administration' : 'Administração'}
-          </NavigationTitle>
-          {renderItems(adminNavigation)}
-        </Navigation>
-      )}
-      <Navigation aria-label="Gestão da loja">
-        {renderItems(commerceNavigation)}
+        {renderItems(primaryNavigation)}
       </Navigation>
       <Navigation aria-label="Páginas do site">
         <NavigationTitle>
