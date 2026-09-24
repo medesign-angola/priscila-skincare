@@ -80,7 +80,7 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGate
         if (string.IsNullOrWhiteSpace(url)) return null;
         if (Uri.TryCreate(url, UriKind.Absolute, out var absoluteUrl))
         {
-            return IsInternalHost(absoluteUrl.Host)
+            return absoluteUrl.IsFile || IsInternalHost(absoluteUrl.Host)
                 ? absoluteUrl.PathAndQuery
                 : absoluteUrl.ToString();
         }

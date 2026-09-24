@@ -86,23 +86,35 @@ function asNumber(value: number | string | null | undefined): number {
 
 export function absoluteCmsUrl(baseUrl: string, url?: string | null): string {
   if (!url) return EMPTY_MEDIA;
-  if (url.startsWith('data:') || url.startsWith('blob:')) return url;
-  if (/^https?:\/\//i.test(url)) {
+  const value = url.trim();
+  if (value.startsWith('data:') || value.startsWith('blob:')) return value;
+
+  // Some URL serializers turn Strapi's relative media path into a file URI.
+  // It is not a client-accessible address; preserve only the /uploads path.
+  const fileUriIndex = value.toLowerCase().indexOf('file:///');
+  if (fileUriIndex >= 0) {
+    const filePath = value.slice(fileUriIndex + 'file://'.length);
+    const uploadsIndex = filePath.toLowerCase().indexOf('/uploads/');
+    const publicPath = uploadsIndex >= 0 ? filePath.slice(uploadsIndex) : filePath;
+    return `${baseUrl}/${publicPath.replace(/^\/+/, '')}`;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
     try {
-      const parsed = new URL(url);
+      const parsed = new URL(value);
       const internalHosts = new Set([
         'cms',
         'localhost',
         '127.0.0.1',
         'host.docker.internal',
       ]);
-      if (!internalHosts.has(parsed.hostname.toLowerCase())) return url;
+      if (!internalHosts.has(parsed.hostname.toLowerCase())) return value;
       return new URL(`${parsed.pathname}${parsed.search}${parsed.hash}`, `${baseUrl}/`).toString();
     } catch {
-      return url;
+      return value;
     }
   }
-  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  return `${baseUrl}${value.startsWith('/') ? '' : '/'}${value}`;
 }
 
 function mediaUrl(baseUrl: string, media?: CmsMedia | null): string {
