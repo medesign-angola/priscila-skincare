@@ -4,6 +4,7 @@ import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { StorePageHeader } from '../components/StorePageHeader';
 import {
   contentLink,
   StoreLayout,
@@ -826,19 +827,6 @@ const Content = styled.div`
     padding: 24px 20px;
   }
 `;
-const PageHeader = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-`;
-const Title = styled.h1`
-  margin: 0;
-  color: #2f303a;
-  font-size: 32px;
-  font-weight: 600;
-  line-height: normal;
-`;
 const PrimaryAction = styled(Link)`
   box-sizing: border-box;
   display: inline-flex;
@@ -1492,18 +1480,18 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
       <StoreLayout>
         <StoreSidebar activeHref={storeListLink(config.resource)} />
         <StorePage>
+          <StorePageHeader
+            id={`${config.resource}-page-title`}
+            title={config.title[language]}
+            language={language}
+            primaryAction={config.canCreate !== false ? (
+              <PrimaryAction to={createLink}>
+                <img src={asset('add')} alt="" aria-hidden />
+                {config.createLabel[language]}
+              </PrimaryAction>
+            ) : undefined}
+          />
           <Content>
-            <PageHeader>
-              <Title id={`${config.resource}-page-title`}>
-                {config.title[language]}
-              </Title>
-              {config.canCreate !== false && (
-                <PrimaryAction to={createLink}>
-                  <img src={asset('add')} alt="" aria-hidden />
-                  {config.createLabel[language]}
-                </PrimaryAction>
-              )}
-            </PageHeader>
             <Tools>
               <SearchForm onSubmit={submitSearch}>
                 <img src={asset('search')} alt="" aria-hidden />
