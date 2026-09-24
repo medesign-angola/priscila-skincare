@@ -21,6 +21,7 @@ export class RelatedProductsSection {
   readonly product = input.required<Product>();
   readonly language = input.required<'pt' | 'fr'>();
   readonly candidates = input<readonly Product[] | null>(null);
+  readonly titleKey = input('PRODUCT_DETAILS.RELATED_PRODUCTS');
   private readonly facade = inject(ProductFacade);
   private readonly header = inject(HeaderService);
   private readonly router = inject(Router);

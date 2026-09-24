@@ -38,7 +38,7 @@ export class ProductEditorialGallerySection {
     const translation = entry?.product.translations[language];
     const editorial = translation?.galleryEditorial;
 
-    if (!entry || !translation || !editorial) return null;
+    if (!entry || !translation || !editorial || translation.galleryEditorialEnabled === false) return null;
 
     const images = entry.placement.imageIndexes.flatMap((imageIndex, index) => {
       const url = entry.product.images[imageIndex];

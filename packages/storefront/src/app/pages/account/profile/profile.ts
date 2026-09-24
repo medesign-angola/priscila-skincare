@@ -1,6 +1,18 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, effect, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthFacade, CustomerAddress, SaveCustomerAddress } from '@org/core';
@@ -24,14 +36,38 @@ export class Profile {
   readonly addressError = signal(false);
 
   readonly addressForm = new FormGroup({
-    label: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(60)] }),
-    recipient: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(160)] }),
-    phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(32)] }),
-    country: new FormControl('Angola', { nonNullable: true, validators: [Validators.required] }),
-    province: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    city: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    neighborhood: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    street: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    label: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(60)],
+    }),
+    recipient: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(160)],
+    }),
+    phone: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(32)],
+    }),
+    country: new FormControl('Angola', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    province: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    city: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    neighborhood: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    street: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     houseNumber: new FormControl('', { nonNullable: true }),
     apartment: new FormControl('', { nonNullable: true }),
     postalCode: new FormControl('', { nonNullable: true }),
@@ -44,8 +80,35 @@ export class Profile {
       this.name.setValue(customer?.name ?? '', { emitEvent: false });
       this.phone.setValue(customer?.phone ?? '', { emitEvent: false });
     });
-    effect(() => {
-      this.document.body.style.overflow = this.modalOpen() ? 'hidden' : '';
+    effect((onCleanup) => {
+      if (!this.modalOpen()) return;
+      const body = this.document.body;
+      const root = this.document.documentElement;
+      const view = this.document.defaultView;
+      const scrollY = view?.scrollY ?? 0;
+      const previous = {
+        bodyOverflow: body.style.overflow,
+        bodyPosition: body.style.position,
+        bodyTop: body.style.top,
+        bodyWidth: body.style.width,
+        rootOverflow: root.style.overflow,
+        rootOverscroll: root.style.overscrollBehavior,
+      };
+      root.style.overflow = 'hidden';
+      root.style.overscrollBehavior = 'none';
+      body.style.overflow = 'hidden';
+      body.style.position = 'fixed';
+      body.style.top = `-${scrollY}px`;
+      body.style.width = '100%';
+      onCleanup(() => {
+        body.style.overflow = previous.bodyOverflow;
+        body.style.position = previous.bodyPosition;
+        body.style.top = previous.bodyTop;
+        body.style.width = previous.bodyWidth;
+        root.style.overflow = previous.rootOverflow;
+        root.style.overscrollBehavior = previous.rootOverscroll;
+        view?.scrollTo(0, scrollY);
+      });
     });
   }
 
@@ -58,9 +121,17 @@ export class Profile {
     this.editingAddress.set(null);
     this.addressError.set(false);
     this.addressForm.reset({
-      label: '', recipient: this.auth.customer()?.name ?? '', phone: this.auth.customer()?.phone ?? '',
-      country: 'Angola', province: '', city: '', neighborhood: '', street: '',
-      houseNumber: '', apartment: '', postalCode: '',
+      label: '',
+      recipient: this.auth.customer()?.name ?? '',
+      phone: this.auth.customer()?.phone ?? '',
+      country: 'Angola',
+      province: '',
+      city: '',
+      neighborhood: '',
+      street: '',
+      houseNumber: '',
+      apartment: '',
+      postalCode: '',
       isDefault: (this.auth.customer()?.addresses.length ?? 0) === 0,
     });
     this.modalOpen.set(true);

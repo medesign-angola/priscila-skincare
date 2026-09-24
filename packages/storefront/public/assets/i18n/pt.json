@@ -62,7 +62,7 @@
     "HOW_TO_USE": "Como usar", "RELATED_PRODUCTS": "Produtos semelhantes",
     "PURCHASE": {
       "PRODUCT_IMAGES": "Imagens do produto", "VIEW_IMAGE": "Ver imagem {{current}} de {{total}}",
-      "MORE_DETAILS": "Mais detalhes sobre o produto", "HIGHLIGHTS": "Destaques", "SIZE": "Tamanho",
+      "MORE_DETAILS": "Mais detalhes sobre o produto", "HIGHLIGHTS": "Principais características", "SIZE": "Tamanho",
       "SELECT": "Selecionar", "ADD_TO_CART": "Ad. ao carrinho"
     },
     "INGREDIENTS": { "TITLE": "Ingredientes", "VIEW_ALL": "Ver listagem completa", "SHOW_LESS": "Ver menos", "COMPLEMENTARY_ACTIVES": "Ativos complementares" },
@@ -102,7 +102,7 @@
     "ERRORS": { "REQUEST_FAILED": "Não foi possível enviar o código. Tente novamente.", "INTERNAL_ERROR": "Não foi possível concluir o pedido agora. Tente novamente.", "OTP_DELIVERY_FAILED": "Não foi possível enviar o código agora. Tente novamente.", "OTP_DELIVERY_TIMEOUT": "O envio demorou mais do que o esperado. Pode tentar novamente.", "OTP_RESEND_TOO_SOON": "Aguarde antes de pedir outro código.", "RATE_LIMIT_EXCEEDED": "Foram feitos demasiados pedidos. Aguarde alguns minutos." },
     "OTP": { "TITLE": "Digite o código", "SENT_TO": "Enviado para {{email}}", "DELIVERY_HINT": "Não recebeu? Verifique também a pasta de spam ou lixo eletrónico.", "DIGIT": "Dígito {{number}} do código", "INVALID": "Insira o código completo de seis dígitos.", "RESEND": "Reenviar código", "RESEND_IN": "Reenviar em {{seconds}}s", "SENDING": "A enviar novo código...", "VERIFYING": "A verificar código...", "ERRORS": { "OTP_INVALID": "O código informado é inválido.", "OTP_EXPIRED": "O código expirou. Solicite um novo.", "RATE_LIMIT_EXCEEDED": "Foram feitas demasiadas tentativas. Aguarde alguns minutos.", "REQUEST_FAILED": "Não foi possível validar o código." } }
   },
-  "CHECKOUT": { "LABEL": "Finalizar compra", "TITLE": "Confirme a sua encomenda", "ADDRESS": "Morada de entrega", "NO_ADDRESS": "Adicione uma morada antes de continuar.", "ADD_ADDRESS": "Adicionar morada", "SUMMARY": "Resumo", "CONFIRM": "Confirmar encomenda", "PROCESSING": "A processar...", "CONTINUE_SHOPPING": "Continuar a comprar", "ERROR": "Não foi possível concluir. Verifique os produtos e tente novamente.", "CART_SYNC_ERROR": "Não foi possível sincronizar o seu carrinho. Tente novamente.", "PREVIEW_ERROR": "Não foi possível calcular o resumo da encomenda. Verifique os produtos e a morada.", "CREATE_ERROR": "Não foi possível confirmar a encomenda. Nenhuma compra foi registada." },
+  "CHECKOUT": { "LABEL": "Finalizar compra", "TITLE": "Confirme a sua encomenda", "ADDRESS": "Morada de entrega", "NO_ADDRESS": "Adicione uma morada antes de continuar.", "ADD_ADDRESS": "Adicionar morada", "ADDRESS_TOTAL_HINT": "Adicione uma morada para calcular a entrega e o total final.", "SUMMARY": "Resumo", "CONFIRM": "Confirmar encomenda", "PROCESSING": "A processar...", "CONTINUE_SHOPPING": "Continuar a comprar", "ERROR": "Não foi possível concluir. Verifique os produtos e tente novamente.", "CART_SYNC_ERROR": "Não foi possível sincronizar o seu carrinho. Tente novamente.", "PREVIEW_ERROR": "Não foi possível calcular o resumo da encomenda. Verifique os produtos e a morada.", "CREATE_ERROR": "Não foi possível confirmar a encomenda. Nenhuma compra foi registada." },
   "ACCOUNT": {
     "NAV": { "ORDERS": "Encomendas", "PROFILE": "Perfil" },
     "STATUS": { "PENDING": "Pendente", "CONFIRMED": "Confirmada", "PAID": "Paga", "PROCESSING": "Em processamento", "SHIPPED": "Expedida", "DELIVERED": "Entregue", "CANCELLED": "Cancelada" },
@@ -115,7 +115,7 @@
     "ORDERS": { "TITLE": "Encomendas", "EMPTY_TITLE": "Nenhuma encomenda ainda", "EMPTY_DESCRIPTION": "Visite a loja para fazer a sua primeira encomenda.", "SHOP": "Ir à loja", "VIEW_DETAILS": "Ver detalhes", "SIZE": "Tamanho", "QUANTITY_SHORT": "Qtd", "TOTAL": "Total" },
     "DETAILS": { "STATUS": "Estado da encomenda", "PRODUCTS": "Produtos", "DELIVERY_ADDRESS": "Morada de entrega", "PAYMENT_METHOD": "Método de pagamento", "ENTITY": "Entidade", "REFERENCE": "Referência", "AMOUNT": "Montante", "SUMMARY": "Resumo", "SUBTOTAL": "Subtotal", "SHIPPING": "Envio", "FREE": "Grátis", "REORDER": "Voltar a encomendar", "NOT_FOUND": "Encomenda não encontrada" }
   },
-  "BUNDLE_DETAILS": { "KIT": "Kit", "COLLECTION": "Coleção", "INCLUDES": "Produtos incluídos", "RECEIVE": "O que você vai receber" },
+  "BUNDLE_DETAILS": { "KIT": "Kit", "COLLECTION": "Coleção", "INCLUDES": "Produtos incluídos", "RECEIVE": "O que você vai receber", "RECOMMENDATIONS": "Outras Recomendações", "RELATED_KITS": "Outros kits", "RELATED_COLLECTIONS": "Outras coleções", "VIEW": "Ver detalhes" },
   "ABOUT": {
     "HERO": {
       "LABEL": "Sobre nós", "TITLE": "A ciência por trás do brilho que a sua pele merece hoje",

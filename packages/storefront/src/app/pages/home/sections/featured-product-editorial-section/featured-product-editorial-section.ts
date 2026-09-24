@@ -43,10 +43,11 @@ export class FeaturedProductEditorialSection {
     const language = this.facade.currentLanguage();
     const currency = this.headerService.currency();
     const editorial = product?.translations[language].editorial;
+    const editorialEnabled = product?.translations[language].editorialEnabled;
     const presentation = entry?.placement;
     const commerce = product?.commerce;
 
-    if (!product || !editorial || !presentation || !commerce) return null;
+    if (!product || !editorial || editorialEnabled === false || !presentation || !commerce) return null;
 
     return {
       id: product.id,

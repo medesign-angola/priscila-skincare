@@ -81,7 +81,18 @@ export class CmsService {
               'populate[featuredProducts][populate][product]',
               'true',
             )
-            .set('populate[editorialCover][populate][product]', 'true')
+            .set(
+              'populate[editorialCover][populate][product][populate][editorialMedia][populate][desktopImage]',
+              'true',
+            )
+            .set(
+              'populate[editorialCover][populate][product][populate][editorialMedia][populate][video]',
+              'true',
+            )
+            .set(
+              'populate[editorialCover][populate][product][populate][editorialMedia][populate][placeholder]',
+              'true',
+            )
             .set(
               'populate[editorialCover][populate][media][populate][desktopImage]',
               'true',
@@ -296,6 +307,7 @@ export class CmsService {
       'sizes',
       'highlights',
       'editorial',
+      'editorialMedia',
       'galleryEditorial',
       'usageSteps',
       'reviews',

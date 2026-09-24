@@ -250,6 +250,7 @@ function mapProductTranslation(
     name: product.name,
     description: product.description,
     additionalDescription: product.additionalDescription ?? undefined,
+    editorialEnabled: product.editorialEnabled ?? undefined,
     editorial: product.editorial
       ? {
           headline: product.editorial.headline,
@@ -263,6 +264,7 @@ function mapProductTranslation(
           description: product.galleryEditorial.description,
         }
       : undefined,
+    galleryEditorialEnabled: product.galleryEditorialEnabled ?? undefined,
     highlights: [...(product.highlights ?? [])]
       .sort((first, second) => first.order - second.order)
       .map((highlight) => highlight.title),
@@ -682,7 +684,7 @@ export function mapCmsEditorialCover(
 ) {
   const editorial = homePage?.editorialCover;
   const product = editorial?.product;
-  const media = editorial?.media;
+  const media = editorial?.media ?? product?.editorialMedia;
   const productId =
     product?.documentId || (product?.id ? String(product.id) : '');
   const videoUrl = mediaUrl(baseUrl, media?.video);
