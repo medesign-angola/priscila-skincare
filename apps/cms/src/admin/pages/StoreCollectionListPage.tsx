@@ -156,7 +156,10 @@ const orderState = (entry: Entry, language: Language) => {
 
 const getPaymentStatus = (entry: Entry) => {
   const legacyOrderStatus = String(entry.orderStatus ?? '').toLowerCase();
-  const storedStatus = String(entry.paymentStatus ?? 'pending').toLowerCase();
+  const storedStatus =
+    typeof entry.paymentStatus === 'string'
+      ? entry.paymentStatus.toLowerCase()
+      : 'restricted';
   return storedStatus === 'pending' && legacyOrderStatus === 'paid'
     ? 'approved'
     : storedStatus === 'pending' && legacyOrderStatus === 'paymentfailed'
@@ -173,9 +176,16 @@ const paymentState = (entry: Entry, language: Language) => {
     rejected: { pt: 'Não aprovado', fr: 'Refusé' },
     cancelled: { pt: 'Cancelado', fr: 'Annulé' },
     refunded: { pt: 'Reembolsado', fr: 'Remboursé' },
+    restricted: {
+      pt: 'Sem permissão para consultar',
+      fr: 'Autorisation de consultation requise',
+    },
   };
   const status = getPaymentStatus(entry);
-  return states[status]?.[language] ?? states.pending[language];
+  return (
+    states[status]?.[language] ??
+    (language === 'fr' ? 'Statut non disponible' : 'Estado não disponível')
+  );
 };
 
 const isPendingWorkflowEntry = (resource: string, entry: Entry) => {
@@ -1113,6 +1123,7 @@ const orderBadgeColors: Record<
   cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
   paymentfailed: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
   refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+  restricted: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
 };
 const OrderStatusBadge = styled.span<{ $status: string }>`
   justify-self: start;
