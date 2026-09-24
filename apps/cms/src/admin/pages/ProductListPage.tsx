@@ -4,6 +4,7 @@ import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { StorePageHeader } from '../components/StorePageHeader';
 import {
   contentLink,
   productCreateLink,
@@ -165,21 +166,6 @@ const Content = styled.div`
   padding: 32px;
 
   @media (max-width: 48rem) { padding: 24px 20px; }
-`;
-
-const PageHeader = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  color: #2f303a;
-  font-size: 32px;
-  font-weight: 600;
-  line-height: normal;
 `;
 
 const PrimaryAction = styled(Link)`
@@ -664,15 +650,18 @@ export default function ProductListPage() {
       <StoreLayout>
         <StoreSidebar activeHref={productListLink} />
         <StorePage>
-          <Content>
-            <PageHeader>
-              <Title id="products-page-title">{labels.title}</Title>
+          <StorePageHeader
+            id="products-page-title"
+            title={labels.title}
+            language={interfaceLocale.toLowerCase().startsWith('fr') ? 'fr' : 'pt'}
+            primaryAction={(
               <PrimaryAction to={productCreateLink}>
                 <img src={productAsset('add')} alt="" aria-hidden />
                 {labels.newProduct}
               </PrimaryAction>
-            </PageHeader>
-
+            )}
+          />
+          <Content>
             <Tools>
               <SearchForm onSubmit={submitSearch}>
                 <img src={productAsset('search')} alt="" aria-hidden />
