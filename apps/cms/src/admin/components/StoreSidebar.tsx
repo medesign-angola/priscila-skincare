@@ -133,8 +133,8 @@ const navigation: SidebarItem[] = [
     section: 'site',
   },
   {
-    label: 'Administração',
-    frenchLabel: 'Administration',
+    label: 'Funções e permissões',
+    frenchLabel: 'Rôles et autorisations',
     href: '/settings/roles',
     icon: 'settings',
     section: 'admin',
@@ -235,7 +235,7 @@ const Navigation = styled.nav`
 `;
 
 const NavigationTitle = styled.p`
-  margin: 0 16px 4px;
+  margin: 35px 16px 4px;
   color: #777168;
   font-size: 12px;
   font-weight: 700;
@@ -329,17 +329,10 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
   const mainNavigation = navigation.filter(
     (item) => !item.section && canAccess(item),
   );
-  const dashboardNavigation = mainNavigation.slice(0, 1);
-  const commerceNavigation = mainNavigation.slice(1);
   const siteNavigation = navigation.filter((item) => item.section === 'site');
   const adminNavigation = navigation.filter(
     (item) => item.section === 'admin' && canAccess(item),
   );
-  const primaryNavigation = [
-    ...dashboardNavigation,
-    ...adminNavigation,
-    ...commerceNavigation,
-  ];
   const [pending, setPending] = useState<Record<string, number>>({});
 
   const loadPending = useCallback(async () => {
@@ -461,13 +454,19 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
     <Sidebar>
       <SidebarLogo src={iconPath('logo')} alt="Priscila Skincare" />
       <Navigation aria-label="Navegação da loja">
-        {renderItems(primaryNavigation)}
-      </Navigation>
-      <Navigation aria-label="Páginas do site">
+        {renderItems(mainNavigation)}
         <NavigationTitle>
           {isFrench ? 'Contenu du site' : 'Conteúdo do site'}
         </NavigationTitle>
         {renderItems(siteNavigation)}
+        {adminNavigation.length > 0 && (
+          <>
+            <NavigationTitle>
+              {isFrench ? 'Administration' : 'Administração'}
+            </NavigationTitle>
+            {renderItems(adminNavigation)}
+          </>
+        )}
       </Navigation>
     </Sidebar>
   );
