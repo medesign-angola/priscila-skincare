@@ -32,6 +32,7 @@ export class AuthFacade {
   private readonly translate = inject(TranslateService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private restoration?: Promise<boolean>;
+  private customerHydration?: Promise<void>;
 
   readonly pendingEmail = signal(this.readPendingEmail());
   readonly pendingMarketing = signal(this.readPendingMarketing());
@@ -80,11 +81,11 @@ export class AuthFacade {
         { withCredentials: true },
       ));
       this.session.save(response);
-      await this.loadCustomer();
       if (this.isBrowser) {
         sessionStorage.removeItem('psc_pending_email');
         sessionStorage.removeItem('psc_pending_marketing');
       }
+      void this.hydrateCustomer();
       return true;
     } catch (error) {
       this.errorCode.set(this.problemCode(error));
@@ -97,12 +98,15 @@ export class AuthFacade {
   ensureSession(): Promise<boolean> {
     if (!this.isBrowser) return Promise.resolve(false);
     if (this.session.hasUsableAccessToken()) {
-      return this.customer() ? Promise.resolve(true) : this.loadCustomer().then(() => true).catch(() => false);
+      void this.hydrateCustomer();
+      return Promise.resolve(true);
     }
     if (!this.restoration) {
       this.restoration = firstValueFrom(this.refresher.refresh())
-        .then(() => this.loadCustomer())
-        .then(() => true)
+        .then(() => {
+          void this.hydrateCustomer();
+          return true;
+        })
         .catch(() => false)
         .finally(() => { this.restoration = undefined; });
     }
@@ -214,6 +218,16 @@ export class AuthFacade {
       // encomendas está temporariamente indisponível.
       this.orders.set([]);
     }
+  }
+
+  private hydrateCustomer(): Promise<void> {
+    if (this.customer()) return Promise.resolve();
+    if (!this.customerHydration) {
+      this.customerHydration = this.loadCustomer()
+        .catch(() => undefined)
+        .finally(() => { this.customerHydration = undefined; });
+    }
+    return this.customerHydration;
   }
 
   private async loadAddresses(): Promise<void> {
