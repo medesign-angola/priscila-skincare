@@ -68,12 +68,14 @@
     "media": {
       "type": "component",
       "component": "shared.media-presentation",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "homePresentation": {
       "type": "component",
       "component": "home.kit-presentation",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "products": {
       "type": "relation",
@@ -95,7 +97,8 @@
     "seo": {
       "type": "component",
       "component": "shared.seo",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

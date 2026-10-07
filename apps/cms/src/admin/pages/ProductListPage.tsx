@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Main } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { StorePageHeader } from '../components/StorePageHeader';
 import {
@@ -60,6 +60,7 @@ const copy = {
     published: 'Publicado',
     draft: 'Rascunho',
     edit: 'Editar produto',
+    translate: 'Traduzir para francês',
     publish: 'Publicar no site',
     publishing: 'A publicar…',
     publishSuccess: 'Produto publicado no site.',
@@ -112,6 +113,7 @@ const copy = {
     published: 'Publié',
     draft: 'Brouillon',
     edit: 'Modifier le produit',
+    translate: 'Traduire en français',
     publish: 'Publier sur le site',
     publishing: 'Publication…',
     publishSuccess: 'Produit publié sur le site.',
@@ -514,14 +516,21 @@ function isDraftEntry(entry: ProductEntry) {
 export default function ProductListPage() {
   const { get, post, del } = useFetchClient();
   const { locale: interfaceLocale } = useIntl();
-  const labels = interfaceLocale.toLowerCase().startsWith('fr') ? copy.fr : copy.pt;
+  const interfaceLanguage = interfaceLocale.toLowerCase().startsWith('fr') ? 'fr' : 'pt';
+  const labels = interfaceLanguage === 'fr' ? copy.fr : copy.pt;
+  const [searchParams] = useSearchParams();
+  const requestedLocale = searchParams.get('locale');
   const [products, setProducts] = useState<ProductEntry[]>([]);
   const [pagination, setPagination] = useState({ page: 1, pageCount: 1, total: 0 });
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const [publicationState, setPublicationState] = useState<'all' | 'published' | 'draft'>('all');
-  const [contentLocale, setContentLocale] = useState<'pt' | 'fr'>('pt');
+  const [contentLocale, setContentLocale] = useState<'pt' | 'fr'>(
+    requestedLocale === 'fr' || requestedLocale === 'pt'
+      ? requestedLocale
+      : interfaceLanguage,
+  );
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -654,7 +663,7 @@ export default function ProductListPage() {
           <StorePageHeader
             id="products-page-title"
             title={labels.title}
-            language={interfaceLocale.toLowerCase().startsWith('fr') ? 'fr' : 'pt'}
+            language={interfaceLanguage}
             primaryAction={(
               <PrimaryAction to={productCreateLink}>
                 <img src={productAsset('add')} alt="" aria-hidden />
@@ -769,6 +778,13 @@ export default function ProductListPage() {
                           </summary>
                           <RowMenuPanel>
                             <Link to={editLink}>{labels.edit}</Link>
+                            {contentLocale === 'pt' && (
+                              <Link
+                                to={`/store/products/${identifier}/edit?locale=fr`}
+                              >
+                                {labels.translate}
+                              </Link>
+                            )}
                             {isDraft && (
                               <button
                                 type="button"

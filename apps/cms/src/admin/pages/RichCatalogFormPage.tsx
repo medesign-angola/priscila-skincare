@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
   iconPath,
@@ -21,6 +22,10 @@ import {
 import { StoreSelect, StoreSelectShell } from '../components/StoreSelect';
 import { MediaFocalPointPicker } from '../components/MediaFocalPointPicker';
 import { OptionalRelationField } from '../components/OptionalRelationField';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 
 type Kind = 'kit' | 'collection' | 'ingredient';
 type Asset = {
@@ -121,6 +126,29 @@ const initialForm: FormValues = {
   beforeLabel: 'Antes',
   afterLabel: 'Depois',
 };
+
+function applyCatalogTranslations(
+  current: FormValues,
+  fields: TranslationField[],
+): FormValues {
+  const next: FormValues = {
+    ...current,
+    usageSteps: current.usageSteps.map((item) => ({ ...item })),
+    statistics: current.statistics.map((item) => ({ ...item })),
+  };
+  for (const field of fields) {
+    if (field.path in next && typeof next[field.path as keyof FormValues] === 'string')
+      (next as Record<string, unknown>)[field.path] = field.value;
+    const match = field.path.match(/^(usageSteps|statistics)\.(\d+)\.(name|description)$/);
+    if (!match) continue;
+    const index = Number(match[2]);
+    if (match[1] === 'usageSteps' && next.usageSteps[index])
+      next.usageSteps[index] = { ...next.usageSteps[index], [match[3]]: field.value };
+    if (match[1] === 'statistics' && match[3] === 'description' && next.statistics[index])
+      next.statistics[index] = { ...next.statistics[index], description: field.value };
+  }
+  return next;
+}
 
 const kindConfig = {
   kit: {
@@ -1015,7 +1043,7 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
   const contentLocale =
     searchParams.get('locale') ||
     searchParams.get('plugins[i18n][locale]') ||
-    'pt';
+    language;
   const editing = Boolean(documentId);
   const listLink = storeListLink(config.resource);
   const [step, setStep] = useState(1);
@@ -1049,6 +1077,9 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
     text: string;
     error: boolean;
   } | null>(null);
+  const translationSourceRef = useRef<
+    Pick<FormValues, 'usageSteps' | 'statistics'> | null
+  >(null);
 
   const setters = useMemo(
     () => ({
@@ -1080,6 +1111,79 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
     }));
   const pendingFor = (scope: string) =>
     pending.filter((item) => item.scope === scope);
+
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    if (!documentId)
+      throw new Error(`Guarde primeiro o ${config.singular} em português.`);
+    const response = await get<EntryResponse>(`${contentLink(config.uid)}/${documentId}`, {
+      params: { locale: 'pt', status: 'draft' },
+    });
+    const record = response.data.data;
+    if (!record) throw new Error('Não foi encontrada a versão em português.');
+    const home = record.homePresentation ?? {};
+    const media = kind === 'ingredient' ? record.editorialMedia : record.media;
+    const details = record.details ?? {};
+    const results = details.results ?? {};
+    const comparison = results.comparison ?? {};
+    translationSourceRef.current = {
+      usageSteps: (Array.isArray(details.usageSteps) ? details.usageSteps : []).map(
+        (item: Record<string, unknown>) => ({
+          name: String(item.name ?? ''),
+          description: String(item.description ?? ''),
+        }),
+      ),
+      statistics: (Array.isArray(results.statistics) ? results.statistics : []).map(
+        (item: Record<string, unknown>) => ({
+          percentage: String(item.percentage ?? ''),
+          description: String(item.description ?? ''),
+        }),
+      ),
+    };
+    setHeroDesktop(mediaAssets(media, 'desktopImage'));
+    setHeroMobile(mediaAssets(media, 'mobileImage'));
+    setHeroVideo(mediaAssets(media, 'video'));
+    setHeroPlaceholder(mediaAssets(media, 'placeholder'));
+    setGallery(asAssets(details.images));
+    setUsageDesktop(mediaAssets(details.usageMedia, 'desktopImage'));
+    setUsageMobile(mediaAssets(details.usageMedia, 'mobileImage'));
+    setUsageVideo(mediaAssets(details.usageMedia, 'video'));
+    setUsagePlaceholder(mediaAssets(details.usageMedia, 'placeholder'));
+    setBefore(firstAsset(comparison.before));
+    setAfter(firstAsset(comparison.after));
+    const fields: TranslationField[] = [
+      { path: 'name', value: String(record.name ?? '') },
+      { path: 'description', value: String(record.description ?? '') },
+      { path: 'homeTitle', value: String(home.editorialTitle ?? home.title ?? '') },
+      {
+        path: 'homeDescription',
+        value: String(home.editorialDescription ?? home.description ?? ''),
+      },
+      { path: 'homeFootnote', value: String(home.editorialFootnote ?? home.footnote ?? '') },
+      { path: 'finderDescription', value: String(home.finderDescription ?? '') },
+      { path: 'heroAlt', value: String(media?.alt ?? '') },
+      { path: 'usageAlt', value: String(details.usageMedia?.alt ?? '') },
+      { path: 'resultsDescription', value: String(results.description ?? '') },
+      { path: 'beforeLabel', value: String(comparison.beforeLabel ?? '') },
+      { path: 'afterLabel', value: String(comparison.afterLabel ?? '') },
+    ];
+    (Array.isArray(details.usageSteps) ? details.usageSteps : []).forEach(
+      (item: Record<string, unknown>, index: number) => {
+        fields.push({ path: `usageSteps.${index}.name`, value: String(item.name ?? '') });
+        fields.push({
+          path: `usageSteps.${index}.description`,
+          value: String(item.description ?? ''),
+        });
+      },
+    );
+    (Array.isArray(results.statistics) ? results.statistics : []).forEach(
+      (item: Record<string, unknown>, index: number) =>
+        fields.push({
+          path: `statistics.${index}.description`,
+          value: String(item.description ?? ''),
+        }),
+    );
+    return fields.filter((field) => field.value.trim());
+  };
 
   useEffect(() => {
     let active = true;
@@ -1116,8 +1220,22 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
       params: { locale: contentLocale, status: 'draft' },
     })
       .then(async (response) => {
-        const record = response.data.data;
-        if (!record) throw new Error('Não foi possível carregar este registo.');
+        let record = response.data.data;
+        let sourceLocale = contentLocale;
+        if (
+          contentLocale.toLowerCase().startsWith('fr') &&
+          (!record || !Object.keys(record).length)
+        ) {
+          const source = await get<EntryResponse>(
+            `${contentLink(config.uid)}/${documentId}`,
+            { params: { locale: 'pt', status: 'draft' } },
+          );
+          record = source.data.data;
+          sourceLocale = 'pt';
+        }
+        if (!record || !Object.keys(record).length)
+          throw new Error('Não foi possível carregar este registo.');
+        const creatingTranslation = sourceLocale !== contentLocale;
         const relationFields = bundle
           ? (['products', 'relatedProducts'] as const)
           : (['products'] as const);
@@ -1129,7 +1247,7 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
                   `/content-manager/relations/${config.uid}/${documentId}/${field}`,
                   {
                     params: {
-                      locale: contentLocale,
+                      locale: sourceLocale,
                       status: 'draft',
                       page: 1,
                       pageSize: 200,
@@ -1156,10 +1274,14 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
             loadedRelations.relatedProducts ?? [],
           ),
         );
-        setOriginalRelations({
-          products: productValues,
-          relatedProducts: relatedValues,
-        });
+        setOriginalRelations(
+          creatingTranslation
+            ? { products: [], relatedProducts: [] }
+            : {
+                products: productValues,
+                relatedProducts: relatedValues,
+              },
+        );
         const home = record.homePresentation ?? {};
         const media =
           kind === 'ingredient' ? record.editorialMedia : record.media;
@@ -1171,10 +1293,14 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
           name: String(record.name ?? ''),
           slug: String(record.slug ?? ''),
           description: String(record.description ?? ''),
-          products: productValues,
-          relatedProducts: relatedValues,
-          linkProducts: productValues.length > 0,
-          linkRelatedProducts: relatedValues.length > 0,
+          // A primeira versão francesa não deve tentar ligar produtos que
+          // ainda só existem em português. As relações podem ser restabelecidas
+          // pelo produto traduzido ou ativadas manualmente depois.
+          products: creatingTranslation ? [] : productValues,
+          relatedProducts: creatingTranslation ? [] : relatedValues,
+          linkProducts: !creatingTranslation && productValues.length > 0,
+          linkRelatedProducts:
+            !creatingTranslation && relatedValues.length > 0,
           includePrices: kind === 'kit' || Boolean(record.prices),
           priceAoa: String(record.prices?.aoa ?? ''),
           priceEur: String(record.prices?.eur ?? ''),
@@ -2356,10 +2482,7 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
               {config.back}
             </BackLink>
             <TopActions>
-              <Language to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Language>
+              <ContentLocaleSwitcher fallbackLocale={contentLocale === 'fr' ? 'fr' : 'pt'} />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>
@@ -2367,6 +2490,22 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
             <Title id="rich-catalog-form-title">
               {editing ? config.editTitle : config.title}
             </Title>
+            <AutomaticTranslationAction
+              contentLocale={contentLocale}
+              contentType={config.uid}
+              disabled={!editing || loading}
+              loadPortugueseFields={loadPortugueseTranslationFields}
+              onApply={(fields) =>
+                setForm((current) =>
+                  applyCatalogTranslations(
+                    translationSourceRef.current
+                      ? { ...current, ...translationSourceRef.current }
+                      : current,
+                    fields,
+                  ),
+                )
+              }
+            />
             <Stepper aria-label="Etapas do formulário">
               {steps.map((label, index) => {
                 const number = index + 1;

@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
   iconPath,
@@ -172,25 +173,6 @@ const HeaderActions = styled.div`
   @media (max-width: 32rem) {
     width: 100%;
     justify-content: space-between;
-  }
-`;
-
-const LanguageLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  color: #1a1917;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
-  letter-spacing: 0.28px;
-  text-decoration: none;
-  text-transform: uppercase;
-
-  img {
-    width: 24px;
-    height: 24px;
   }
 `;
 
@@ -552,9 +534,10 @@ async function entriesFor(
 
 async function countDraftProducts(
   get: ReturnType<typeof useFetchClient>['get'],
+  locale: 'pt' | 'fr',
 ): Promise<number | null> {
   const entries = await entriesFor(get, 'api::product.product', {
-    locale: 'pt',
+    locale,
   });
   if (!entries) return null;
   return entries.filter((entry) => {
@@ -657,11 +640,13 @@ export default function StoreDashboardPage() {
   const user = useAuth('StoreDashboardPage', (state) => state.user);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [recentOrders, setRecentOrders] = useState<OrderEntry[]>([]);
+  const isFrench = locale.toLowerCase().startsWith('fr');
+  const contentLocale: 'pt' | 'fr' = isFrench ? 'fr' : 'pt';
 
   useEffect(() => {
     let active = true;
     void Promise.all([
-      countFor(get, 'api::product.product'),
+      countFor(get, 'api::product.product', { locale: contentLocale }),
       countFor(get, 'api::order.order', {
         'filters[orderStatus][$eq]': 'pending',
       }),
@@ -669,18 +654,21 @@ export default function StoreDashboardPage() {
         'filters[moderationStatus][$eq]': 'pending',
       }),
       countFor(get, 'api::product.product', {
+        locale: contentLocale,
         'filters[commerce][availability][$eq]': 'out-of-stock',
       }),
-      countFor(get, 'api::kit.kit'),
-      countFor(get, 'api::collection.collection'),
-      countFor(get, 'api::ingredient.ingredient'),
+      countFor(get, 'api::kit.kit', { locale: contentLocale }),
+      countFor(get, 'api::collection.collection', { locale: contentLocale }),
+      countFor(get, 'api::ingredient.ingredient', { locale: contentLocale }),
       countFor(get, 'api::customer.customer'),
-      countFor(get, 'api::hero-slide.hero-slide'),
-      countDraftProducts(get),
+      countFor(get, 'api::hero-slide.hero-slide', { locale: contentLocale }),
+      countDraftProducts(get, contentLocale),
       countFor(get, 'api::product.product', {
+        locale: contentLocale,
         'filters[ingredients][$null]': 'true',
       }),
       countFor(get, 'api::product.product', {
+        locale: contentLocale,
         'filters[usageSteps][$null]': 'true',
       }),
       Promise.all([
@@ -734,11 +722,10 @@ export default function StoreDashboardPage() {
     return () => {
       active = false;
     };
-  }, [get]);
+  }, [contentLocale, get]);
 
   const firstName =
     user?.firstname?.trim() || user?.username?.trim() || 'equipa';
-  const isFrench = locale.toLowerCase().startsWith('fr');
   const t = (text: string) => (isFrench ? (frenchCopy[text] ?? text) : text);
   const data = metrics ?? {
     products: null,
@@ -802,10 +789,7 @@ export default function StoreDashboardPage() {
               </GreetingText>
             </Greeting>
             <HeaderActions>
-              <LanguageLink to="/store/profile" aria-label={t('Alterar idioma e moeda')}>
-                <span>{isFrench ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </LanguageLink>
+              <ContentLocaleSwitcher fallbackLocale={isFrench ? 'fr' : 'pt'} />
               <AdminProfileMenu />
             </HeaderActions>
           </Header>

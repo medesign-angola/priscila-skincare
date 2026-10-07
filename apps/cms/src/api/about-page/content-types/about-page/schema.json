@@ -36,22 +36,26 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.media-presentation",
-      "required": true
+      "required": true,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "brandTimeline": {
       "type": "component",
       "repeatable": true,
-      "component": "shared.text-item"
+      "component": "shared.text-item",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "brand": {
       "type": "component",
       "repeatable": false,
-      "component": "about.brand-section"
+      "component": "about.brand-section",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "pillars": {
       "type": "component",
       "repeatable": false,
-      "component": "about.pillars-section"
+      "component": "about.pillars-section",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "founderName": {
       "type": "string"
@@ -70,22 +74,26 @@
     "founder": {
       "type": "component",
       "repeatable": false,
-      "component": "about.founder-section"
+      "component": "about.founder-section",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "locations": {
       "type": "component",
       "repeatable": false,
-      "component": "about.locations-section"
+      "component": "about.locations-section",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "ingredients": {
       "type": "component",
       "repeatable": false,
-      "component": "home.ingredients-presentation"
+      "component": "home.ingredients-presentation",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "seo": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.seo"
+      "component": "shared.seo",
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

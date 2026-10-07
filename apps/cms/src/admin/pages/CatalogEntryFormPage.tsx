@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
   iconPath,
@@ -20,6 +21,10 @@ import {
 } from '../components/StoreSidebar';
 import { StoreSelectShell } from '../components/StoreSelect';
 import { OptionalRelationField } from '../components/OptionalRelationField';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 
 type Language = 'pt' | 'fr';
 type FormKind = 'category' | 'size';
@@ -584,7 +589,7 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
   const contentLocale =
     searchParams.get('locale') ||
     searchParams.get('plugins[i18n][locale]') ||
-    'pt';
+    language;
   const resource = kind === 'category' ? 'categories' : 'sizes';
   const uid = kind === 'category' ? 'api::category.category' : 'api::size.size';
   const listLink = storeListLink(resource);
@@ -645,8 +650,23 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
     void get<EntryResponse>(`${contentLink(uid)}/${documentId}`, { params })
       .then(async (response) => {
         if (!active) return;
-        const record = response.data.data;
-        if (!record) throw new Error(labels.loadError);
+        let record = response.data.data;
+        let sourceLocale = contentLocale;
+        if (
+          localized &&
+          contentLocale.toLowerCase().startsWith('fr') &&
+          (!record || !Object.keys(record).length)
+        ) {
+          const source = await get<EntryResponse>(
+            `${contentLink(uid)}/${documentId}`,
+            { params: { locale: 'pt', status: 'draft' } },
+          );
+          record = source.data.data;
+          sourceLocale = 'pt';
+        }
+        if (!record || !Object.keys(record).length)
+          throw new Error(labels.loadError);
+        const creatingTranslation = sourceLocale !== contentLocale;
         let currentProducts = relationEntries(record.products);
         try {
           const relationParams: Record<string, string | number> = {
@@ -654,7 +674,7 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
             pageSize: 200,
           };
           if (localized) {
-            relationParams.locale = contentLocale;
+            relationParams.locale = sourceLocale;
             relationParams.status = 'draft';
           }
           const relationResponse = await get<RelationResponse>(
@@ -666,9 +686,10 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
           /* A resposta principal continua a ser uma alternativa válida. */
         }
         if (!active) return;
-        const productValues = currentProducts
+        const sourceProductValues = currentProducts
           .map(relationValue)
           .filter(Boolean);
+        const productValues = creatingTranslation ? [] : sourceProductValues;
         setProducts((current) => mergeEntries(current, currentProducts));
         setOriginalProducts(productValues);
         setForm({
@@ -708,6 +729,19 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
           ? current.slug
           : slugify(value),
     }));
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    if (!documentId)
+      throw new Error('Guarde primeiro a categoria em português.');
+    const response = await get<EntryResponse>(`${contentLink(uid)}/${documentId}`, {
+      params: { locale: 'pt', status: 'draft' },
+    });
+    const record = response.data.data;
+    if (!record) throw new Error('Não foi encontrada a versão em português.');
+    return [
+      { path: 'name', value: String(record.name ?? '') },
+      { path: 'description', value: String(record.description ?? '') },
+    ].filter((field) => field.value.trim());
+  };
   const valid =
     kind === 'category'
       ? Boolean(form.name.trim() && form.slug.trim() && form.description.trim())
@@ -956,10 +990,7 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
               {entityCopy.back}
             </BackLink>
             <TopActions>
-              <LanguageLink to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </LanguageLink>
+              <ContentLocaleSwitcher fallbackLocale={contentLocale === 'fr' ? 'fr' : 'pt'} />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>
@@ -967,6 +998,24 @@ export default function CatalogEntryFormPage({ kind }: { kind: FormKind }) {
             <Title id="catalog-entry-form-title">
               {editing ? entityCopy.editTitle : entityCopy.createTitle}
             </Title>
+            {kind === 'category' && (
+              <AutomaticTranslationAction
+                contentLocale={contentLocale}
+                contentType={uid}
+                disabled={!editing || loading}
+                loadPortugueseFields={loadPortugueseTranslationFields}
+                onApply={(fields) =>
+                  setForm((current) => ({
+                    ...current,
+                    ...Object.fromEntries(
+                      fields
+                        .filter((field) => field.path === 'name' || field.path === 'description')
+                        .map((field) => [field.path, field.value]),
+                    ),
+                  }))
+                }
+              />
+            )}
             <Stepper aria-label="Etapas do formulário">
               <StepItem>
                 <StepButton

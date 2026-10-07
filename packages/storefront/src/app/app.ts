@@ -39,6 +39,7 @@ export class App {
   private readonly translateService = inject(TranslateService);
   private readonly documentTitle = inject(Title);
   private readonly router = inject(Router);
+  private readonly currentUrl = signal(this.router.url);
   readonly shellMode = signal<'storefront' | 'auth' | 'account'>('storefront');
   readonly showFooter = computed(() => this.shellMode() === 'storefront');
   readonly accountRoute = computed(() =>
@@ -129,15 +130,28 @@ export class App {
 
   constructor() {
     this.updateShellMode(this.router.url);
-    this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe((event) => this.updateShellMode(event.urlAfterRedirects));
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd,
+        ),
+      )
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+        this.updateShellMode(event.urlAfterRedirects);
+      });
     effect(() => {
       const language = this.facade.currentLanguage();
-      const siteName = this.facade.siteSetting()?.siteName;
-      this.translateService.use(language).subscribe(() => {
-        this.documentTitle.setTitle(
-          siteName || this.translateService.instant('GLOBAL.TITLE'),
-        );
-      });
+      this.translateService.use(language).subscribe();
+    });
+    effect(() => {
+      const language = this.facade.currentLanguage();
+      const siteName =
+        this.facade.siteSetting()?.siteName || 'Priscila Skincare';
+      const pageTitle = this.resolvePageTitle(this.currentUrl(), language);
+      this.documentTitle.setTitle(
+        pageTitle ? `${pageTitle} | ${siteName}` : siteName,
+      );
     });
 
     afterNextRender(async () => {
@@ -199,6 +213,127 @@ export class App {
       return;
     }
     this.cart[action](item.productId, item.sizeId);
+  }
+
+  private resolvePageTitle(url: string, language: 'pt' | 'fr'): string | null {
+    const path = decodeURIComponent(url.split(/[?#]/, 1)[0]).replace(/\/+$/, '');
+    const labels =
+      language === 'fr'
+        ? {
+            about: 'À propos',
+            account: 'Mon compte',
+            checkout: 'Finaliser la commande',
+            collection: 'Collection',
+            kit: 'Coffret',
+            login: 'Connexion',
+            order: 'Détails de la commande',
+            orders: 'Mes commandes',
+            otp: 'Vérifier le code',
+            product: 'Produit',
+            products: 'Produits',
+            profile: 'Mon profil',
+            review: 'Donner mon avis',
+            reviewSent: 'Avis envoyé',
+          }
+        : {
+            about: 'Sobre',
+            account: 'Minha conta',
+            checkout: 'Finalizar compra',
+            collection: 'Coleção',
+            kit: 'Kit',
+            login: 'Entrar',
+            order: 'Detalhes da encomenda',
+            orders: 'Minhas encomendas',
+            otp: 'Verificar código',
+            product: 'Produto',
+            products: 'Produtos',
+            profile: 'Meu perfil',
+            review: 'Avaliar produto',
+            reviewSent: 'Avaliação enviada',
+          };
+
+    if (!path) return null;
+    if (path === '/sobre') return labels.about;
+    if (path === '/entrar') return labels.login;
+    if (path === '/verificar-codigo') return labels.otp;
+    if (path === '/checkout') return labels.checkout;
+    if (path === '/avaliar') return labels.review;
+    if (path === '/avaliacao-enviada') return labels.reviewSent;
+    if (path === '/conta') return labels.account;
+    if (path === '/conta/perfil') return labels.profile;
+    if (path === '/conta/encomendas') return labels.orders;
+    if (/^\/conta\/encomendas\/[^/]+$/.test(path)) return labels.order;
+
+    const segments = path.split('/').filter(Boolean);
+    const resourceId = segments.at(-1) ?? '';
+
+    if (segments[0] === 'kits' && segments.length === 2) {
+      return (
+        this.facade
+          .localizedKitsWithProducts()
+          .find((kit) => kit.id === resourceId || kit.slug === resourceId)
+          ?.name ?? labels.kit
+      );
+    }
+
+    if (segments[0] === 'colecoes' && segments.length === 2) {
+      return (
+        this.facade
+          .localizedCollectionsWithProducts()
+          .find(
+            (collection) =>
+              collection.id === resourceId || collection.slug === resourceId,
+          )?.name ?? labels.collection
+      );
+    }
+
+    if (segments[0] !== 'produtos') return null;
+    if (segments.length === 1) return labels.products;
+    if (segments.at(-1) === 'avaliar') return labels.review;
+    if (segments.at(-1) === 'avaliacao-enviada') return labels.reviewSent;
+
+    if (segments.length === 3) {
+      const context = segments[1];
+      if (context === 'colecao') {
+        return (
+          this.facade
+            .localizedCollectionsWithProducts()
+            .find(
+              (collection) =>
+                collection.id === resourceId || collection.slug === resourceId,
+            )?.name ?? labels.collection
+        );
+      }
+      if (context === 'kit') {
+        return (
+          this.facade
+            .localizedKitsWithProducts()
+            .find((kit) => kit.id === resourceId || kit.slug === resourceId)
+            ?.name ?? labels.kit
+        );
+      }
+      if (context === 'categoria') {
+        const category = this.facade
+          .categories()
+          .find(
+            (candidate) =>
+              candidate.id === resourceId || candidate.slug === resourceId,
+          );
+        return (
+          category?.translations?.[language] ??
+          category?.name ??
+          labels.products
+        );
+      }
+    }
+
+    const product = this.facade
+      .products()
+      .find(
+        (candidate) =>
+          candidate.id === resourceId || candidate.slug === resourceId,
+      );
+    return product?.translations[language].name ?? labels.product;
   }
 
   handleCheckout(): void {
