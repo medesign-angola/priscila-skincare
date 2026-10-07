@@ -1,7 +1,8 @@
 # Deploy de staging com Docker e Nginx
 
-Esta composição executa a API .NET, o Strapi e uma instância MySQL com duas
-bases lógicas: `priscila_app` para a aplicação e `priscila_cms` para o CMS.
+Esta composição executa a API .NET, o Strapi, os serviços de pagamentos,
+notificações e traduções, além de uma instância MySQL com bases lógicas isoladas
+para cada aplicação.
 O Nginx instalado na VPS é responsável pelo acesso público e pelo HTTPS.
 
 A API e o CMS são publicados apenas em `127.0.0.1`, portanto não ficam
@@ -18,6 +19,20 @@ diretamente expostos à internet:
 4. Clone o repositório e copie `.env.staging.example` para `.env.staging`.
 5. Substitua todos os valores `change-me` por segredos fortes. O ficheiro real
    `.env.staging` nunca deve ser enviado ao Git.
+6. Preencha `DEEPL_API_KEY` com uma chave DeepL API Free e use o mesmo valor
+   aleatório em `TRANSLATIONS_INTERNAL_API_KEY` para o CMS e o serviço.
+
+Se o volume MySQL já existia antes da introdução do serviço de traduções, o
+script de inicialização não volta a executar automaticamente. Crie a base e o
+utilizador uma única vez com os valores reais de `.env.staging`:
+
+```sql
+CREATE DATABASE IF NOT EXISTS priscila_translations CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'priscila_translations'@'%' IDENTIFIED BY 'SUBSTITUA_A_PASSWORD';
+ALTER USER 'priscila_translations'@'%' IDENTIFIED BY 'SUBSTITUA_A_PASSWORD';
+GRANT ALL PRIVILEGES ON priscila_translations.* TO 'priscila_translations'@'%';
+FLUSH PRIVILEGES;
+```
 
 ## Primeira publicação
 
@@ -104,6 +119,7 @@ criado por uma versão anterior da composição.
 docker compose --env-file .env.staging -f docker-compose.staging.yml ps
 docker compose --env-file .env.staging -f docker-compose.staging.yml logs --tail 200 api
 docker compose --env-file .env.staging -f docker-compose.staging.yml logs --tail 200 cms
+docker compose --env-file .env.staging -f docker-compose.staging.yml logs --tail 200 translations
 curl http://127.0.0.1:8098/health
 curl http://127.0.0.1:8099/_health
 ```

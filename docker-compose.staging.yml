@@ -18,6 +18,9 @@ services:
       NOTIFICATIONS_DB_NAME: ${NOTIFICATIONS_DB_NAME:-priscila_notifications}
       NOTIFICATIONS_DB_USER: ${NOTIFICATIONS_DB_USER:-priscila_notifications}
       NOTIFICATIONS_DB_PASSWORD: ${NOTIFICATIONS_DB_PASSWORD:?Defina NOTIFICATIONS_DB_PASSWORD}
+      TRANSLATIONS_DB_NAME: ${TRANSLATIONS_DB_NAME:-priscila_translations}
+      TRANSLATIONS_DB_USER: ${TRANSLATIONS_DB_USER:-priscila_translations}
+      TRANSLATIONS_DB_PASSWORD: ${TRANSLATIONS_DB_PASSWORD:?Defina TRANSLATIONS_DB_PASSWORD}
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     volumes:
       - mysql_data:/var/lib/mysql
@@ -148,6 +151,30 @@ services:
       start_period: 30s
     networks: [private]
 
+  translations:
+    image: ${TRANSLATIONS_IMAGE:-ghcr.io/medesign-angola/priscila-translations-service:latest}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Staging
+      ConnectionStrings__TranslationsDatabase: Server=mysql;Port=3306;Database=${TRANSLATIONS_DB_NAME:-priscila_translations};User=${TRANSLATIONS_DB_USER:-priscila_translations};Password=${TRANSLATIONS_DB_PASSWORD};SslMode=Disabled;AllowPublicKeyRetrieval=True;
+      Translations__InternalApiKey: ${TRANSLATIONS_INTERNAL_API_KEY:?Defina TRANSLATIONS_INTERNAL_API_KEY}
+      Translations__Provider: DeepL
+      DeepL__ApiKey: ${DEEPL_API_KEY:?Defina DEEPL_API_KEY}
+      DeepL__BaseUrl: ${DEEPL_API_BASE_URL:-https://api-free.deepl.com}
+      TranslationPolicy__MonthlyCharacterLimit: ${TRANSLATIONS_MONTHLY_CHARACTER_LIMIT:-1000000}
+      TranslationPolicy__MaximumCharactersPerRequest: ${TRANSLATIONS_MAXIMUM_CHARACTERS_PER_REQUEST:-30000}
+      TranslationPolicy__AllowedLocalePairs__0: pt:fr
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+    networks: [private]
+
   cms:
     build:
       context: ./apps/cms
@@ -181,10 +208,14 @@ services:
       CMS_BOOTSTRAP_LOCALES: "true"
       CMS_BOOTSTRAP_PUBLIC_READ: "true"
       CMS_SEED_BASE_DATA: "false"
+      TRANSLATIONS_SERVICE_URL: http://translations:8080
+      TRANSLATIONS_INTERNAL_API_KEY: ${TRANSLATIONS_INTERNAL_API_KEY:?Defina TRANSLATIONS_INTERNAL_API_KEY}
     volumes:
       - strapi_uploads:/opt/app/public/uploads
     depends_on:
       mysql:
+        condition: service_healthy
+      translations:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:1337/_health"]

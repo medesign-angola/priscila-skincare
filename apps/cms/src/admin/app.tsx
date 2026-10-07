@@ -15,6 +15,113 @@ const installAdminStyles = () => {
   if (style.textContent !== adminStyles) style.textContent = adminStyles;
 };
 
+const resolveAdminPageTitle = (pathname: string) => {
+  const path = pathname.replace(/^\/admin\/?/, '').replace(/\/+$/, '');
+  if (!path) return 'Dashboard';
+  if (/^auth\/(?:login|register(?:-admin)?)$/.test(path)) return 'Entrar';
+  if (path === 'auth/forgot-password') return 'Recuperar palavra-passe';
+  if (path === 'auth/reset-password') return 'Redefinir palavra-passe';
+  if (path === 'store/profile' || path === 'settings/profile') {
+    return 'Meu perfil';
+  }
+  if (path.startsWith('settings')) return 'Administração';
+
+  const resources: Record<string, string> = {
+    products: 'Produtos',
+    orders: 'Encomendas',
+    reviews: 'Avaliações',
+    customers: 'Clientes',
+    kits: 'Kits de produtos',
+    categories: 'Categorias',
+    collections: 'Coleções',
+    ingredients: 'Ingredientes',
+    sizes: 'Tamanhos',
+    banners: 'Banners',
+    users: 'Usuários',
+    testimonials: 'Testemunhos em vídeo',
+    'site-settings': 'Configuração do site',
+    'home-page': 'Página inicial',
+    'about-page': 'Página sobre',
+  };
+  const singularResources: Record<string, string> = {
+    products: 'produto',
+    orders: 'encomenda',
+    reviews: 'avaliação',
+    customers: 'cliente',
+    kits: 'kit de produtos',
+    categories: 'categoria',
+    collections: 'coleção',
+    ingredients: 'ingrediente',
+    sizes: 'tamanho',
+    banners: 'banner',
+    users: 'usuário',
+    testimonials: 'testemunho em vídeo',
+  };
+  const detailTitles: Record<string, string> = {
+    orders: 'Detalhes da encomenda',
+    reviews: 'Detalhes da avaliação',
+    customers: 'Detalhes do cliente',
+    users: 'Detalhes do usuário',
+  };
+  const match = path.match(/^store\/([^/]+)(?:\/([^/]+))?/);
+  if (match) {
+    const resourceTitle = resources[match[1]] ?? 'Conteúdos';
+    const singularTitle = singularResources[match[1]] ?? resourceTitle.toLowerCase();
+    if (path.endsWith('/new')) return `Criar ${singularTitle}`;
+    if (path.endsWith('/edit')) return `Editar ${singularTitle}`;
+    if (match[2]) return detailTitles[match[1]] ?? `Detalhes de ${singularTitle}`;
+    return resourceTitle;
+  }
+  if (path.startsWith('content-manager')) return 'Conteúdos do site';
+  return 'Painel administrativo';
+};
+
+const installAdminBranding = () => {
+  if (typeof window === 'undefined') return;
+
+  const syncHead = () => {
+    let icon = document.querySelector<HTMLLinkElement>('link[rel~="icon"]');
+    if (!icon) {
+      icon = document.createElement('link');
+      icon.rel = 'icon';
+      document.head.append(icon);
+    }
+    icon.type = 'image/svg+xml';
+    icon.href = '/priscila-logo.svg';
+
+    const title = `${resolveAdminPageTitle(window.location.pathname)} | Priscila Skincare`;
+    if (document.title !== title) document.title = title;
+  };
+
+  const state = window as typeof window & {
+    __priscilaAdminBrandingInstalled?: boolean;
+  };
+  if (state.__priscilaAdminBrandingInstalled) {
+    syncHead();
+    return;
+  }
+  state.__priscilaAdminBrandingInstalled = true;
+
+  const wrapHistoryMethod = (method: 'pushState' | 'replaceState') => {
+    const original = window.history[method].bind(window.history);
+    window.history[method] = ((...args: Parameters<History['pushState']>) => {
+      const result = original(...args);
+      window.queueMicrotask(syncHead);
+      return result;
+    }) as History[typeof method];
+  };
+
+  wrapHistoryMethod('pushState');
+  wrapHistoryMethod('replaceState');
+  window.addEventListener('popstate', syncHead);
+  new MutationObserver(syncHead).observe(document.head, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+  syncHead();
+};
+
 const redirectRegistrationToLogin = () => {
   if (typeof window === 'undefined') return;
   const registrationRoute = /\/auth\/register(?:-admin)?\/?$/;
@@ -48,6 +155,7 @@ const syncAuthenticationMarker = () => {
 
 redirectRegistrationToLogin();
 installAdminStyles();
+installAdminBranding();
 syncAuthenticationMarker();
 
 export default {

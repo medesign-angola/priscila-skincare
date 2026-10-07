@@ -7,6 +7,10 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 import { contentLink, storeListLink } from '../components/StoreSidebar';
 import {
   Field,
@@ -203,7 +207,10 @@ export default function TestimonialFormPage() {
   const { documentId } = useParams<{ documentId: string }>();
   const [searchParams] = useSearchParams();
   const language = locale.toLowerCase().startsWith('fr') ? 'fr' : 'pt';
-  const contentLocale = searchParams.get('locale') || 'pt';
+  const contentLocale =
+    searchParams.get('locale') ||
+    searchParams.get('plugins[i18n][locale]') ||
+    language;
   const editing = Boolean(documentId);
   const listLink = storeListLink('testimonials');
   const [form, setForm] = useState({
@@ -235,9 +242,19 @@ export default function TestimonialFormPage() {
       `${contentLink('api::testimonial.testimonial')}/${documentId}`,
       { params: { locale: contentLocale, status: 'draft' } },
     )
-      .then((response) => {
-        if (!active || !response.data.data) return;
-        const entry = response.data.data;
+      .then(async (response) => {
+        let entry = response.data.data;
+        if (
+          (!entry || !Object.keys(entry).length) &&
+          contentLocale.toLowerCase().startsWith('fr')
+        ) {
+          const source = await get<EntryResponse>(
+            `${contentLink('api::testimonial.testimonial')}/${documentId}`,
+            { params: { locale: 'pt', status: 'draft' } },
+          );
+          entry = source.data.data;
+        }
+        if (!active || !entry || !Object.keys(entry).length) return;
         setForm({
           name: String(entry.name ?? ''),
           message: String(entry.message ?? ''),
@@ -264,6 +281,31 @@ export default function TestimonialFormPage() {
 
   const setField = (key: keyof typeof form, value: string) =>
     setForm((current) => ({ ...current, [key]: value }));
+
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    if (!documentId)
+      throw new Error('Guarde primeiro o testemunho em português.');
+    const response = await get<EntryResponse>(
+      `${contentLink('api::testimonial.testimonial')}/${documentId}`,
+      { params: { locale: 'pt', status: 'draft' } },
+    );
+    const entry = response.data.data;
+    if (!entry || !Object.keys(entry).length)
+      throw new Error('Não foi encontrada a versão em português deste testemunho.');
+    setForm((current) => ({
+      ...current,
+      name: String(entry.name ?? current.name),
+      rating: String(entry.rating ?? current.rating),
+      order: String(entry.order ?? current.order),
+    }));
+    setMedia({
+      video: firstAsset(entry.video),
+      poster: firstAsset(entry.poster),
+    });
+    return [{ path: 'message', value: String(entry.message ?? '') }].filter(
+      (field) => field.value.trim(),
+    );
+  };
 
   const upload = async (key: MediaKey, files: FileList | null) => {
     const file = files?.[0];
@@ -427,7 +469,7 @@ export default function TestimonialFormPage() {
       activeHref={listLink}
       backTo={listLink}
       backLabel="Testemunhos em vídeo"
-      language={language}
+      language={contentLocale.toLowerCase().startsWith('fr') ? 'fr' : language}
       labelledBy="testimonial-form-title"
     >
       <FormWorkspace>
@@ -440,6 +482,22 @@ export default function TestimonialFormPage() {
             secção de testemunhos do site.
           </p>
         </FormHeading>
+        <AutomaticTranslationAction
+          contentLocale={contentLocale}
+          contentType="api::testimonial.testimonial"
+          disabled={!editing || loading}
+          loadPortugueseFields={loadPortugueseTranslationFields}
+          onApply={(fields) => {
+            const translatedMessage = fields.find(
+              (field) => field.path === 'message',
+            )?.value;
+            if (translatedMessage)
+              setForm((current) => ({
+                ...current,
+                message: translatedMessage,
+              }));
+          }}
+        />
         {message && (
           <FormNotice $error={message.error} role={message.error ? 'alert' : 'status'}>
             {message.text}

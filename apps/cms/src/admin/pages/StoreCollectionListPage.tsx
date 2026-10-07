@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Main } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { StorePageHeader } from '../components/StorePageHeader';
 import {
@@ -740,6 +740,7 @@ const ui = {
     loadError: 'Não foi possível carregar os dados. Tente novamente.',
     empty: 'Nenhuma entrada corresponde à pesquisa ou aos filtros.',
     edit: 'Abrir detalhes',
+    translate: 'Traduzir para francês',
     select: 'Selecionar item',
     deselect: 'Remover da seleção',
     clearSelection: 'Limpar seleção',
@@ -786,6 +787,7 @@ const ui = {
     loadError: 'Impossible de charger les données. Veuillez réessayer.',
     empty: 'Aucune entrée ne correspond à la recherche ou aux filtres.',
     edit: 'Ouvrir les détails',
+    translate: 'Traduire en français',
     select: "Sélectionner l'élément",
     deselect: 'Retirer de la sélection',
     clearSelection: 'Effacer la sélection',
@@ -1293,6 +1295,8 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
     ? 'fr'
     : 'pt';
   const labels = ui[language];
+  const [searchParams] = useSearchParams();
+  const requestedLocale = searchParams.get('locale');
   const [entries, setEntries] = useState<Entry[]>([]);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -1302,7 +1306,11 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
-  const [contentLocale, setContentLocale] = useState<Language>('pt');
+  const [contentLocale, setContentLocale] = useState<Language>(
+    requestedLocale === 'fr' || requestedLocale === 'pt'
+      ? requestedLocale
+      : language,
+  );
   const [filterValue, setFilterValue] = useState('all');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -1680,6 +1688,9 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
                       const editLink =
                         config.editLink?.(entry) ??
                         `${contentLink(config.uid)}/${identifier}${suffix}`;
+                      const translateLink =
+                        config.editLink?.({ ...entry, locale: 'fr' }) ??
+                        `${contentLink(config.uid)}/${identifier}?plugins[i18n][locale]=fr`;
                       const isDraft = config.localized && isDraftEntry(entry);
                       const isPending = isPendingWorkflowEntry(
                         config.resource,
@@ -1747,6 +1758,9 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
                             </summary>
                             <RowMenuPanel>
                               <Link to={editLink}>{labels.edit}</Link>
+                              {config.localized && contentLocale === 'pt' && (
+                                <Link to={translateLink}>{labels.translate}</Link>
+                              )}
                               {config.localized && isDraft && (
                                 <button
                                   type="button"

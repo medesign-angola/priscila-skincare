@@ -16,4 +16,12 @@
   <Folder Name="/packages/backend-infrastructure/">
     <Project Path="packages/backend-infrastructure/PriscilaSkincare.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/standalone-services/" />
+  <Folder Name="/standalone-services/priscila-payments-service/" />
+  <Folder Name="/standalone-services/priscila-payments-service/src/">
+    <Project Path="standalone-services/priscila-payments-service/src/PriscilaPayments.Api/PriscilaPayments.Api.csproj" />
+    <Project Path="standalone-services/priscila-payments-service/src/PriscilaPayments.Application/PriscilaPayments.Application.csproj" />
+    <Project Path="standalone-services/priscila-payments-service/src/PriscilaPayments.Domain/PriscilaPayments.Domain.csproj" />
+    <Project Path="standalone-services/priscila-payments-service/src/PriscilaPayments.Infrastructure/PriscilaPayments.Infrastructure.csproj" />
+  </Folder>
 </Solution>

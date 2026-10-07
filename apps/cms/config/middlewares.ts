@@ -59,7 +59,12 @@ const config = ({
     },
   },
   'strapi::session',
-  'strapi::favicon',
+  {
+    name: 'strapi::favicon',
+    config: {
+      path: 'public/priscila-logo.svg',
+    },
+  },
   'strapi::public',
 ];
 

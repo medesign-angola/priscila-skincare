@@ -5,9 +5,9 @@ import { useIntl } from 'react-intl';
 import { Link, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
-  iconPath,
   StoreLayout,
   StorePage,
   StoreSidebar,
@@ -687,10 +687,7 @@ export default function OrderDetailPage() {
               <span aria-hidden>←</span>Encomendas
             </Back>
             <Actions>
-              <Language to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Language>
+              <ContentLocaleSwitcher fallbackLocale={language} />
               <AdminProfileMenu />
             </Actions>
           </Topbar>

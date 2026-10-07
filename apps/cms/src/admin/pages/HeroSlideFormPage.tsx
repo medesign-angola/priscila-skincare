@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { Main } from '@strapi/design-system';
 import { useAuth, useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
   iconPath,
@@ -20,6 +21,10 @@ import {
 } from '../components/StoreSidebar';
 import { StoreSelect } from '../components/StoreSelect';
 import { MediaFocalPointPicker } from '../components/MediaFocalPointPicker';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 
 type Asset = {
   id: number;
@@ -538,7 +543,7 @@ export default function HeroSlideFormPage() {
   const contentLocale =
     searchParams.get('locale') ||
     searchParams.get('plugins[i18n][locale]') ||
-    'pt';
+    language;
   const editing = Boolean(documentId);
   const listLink = storeListLink('banners');
   const [step, setStep] = useState(1);
@@ -568,8 +573,60 @@ export default function HeroSlideFormPage() {
     text: string;
     error: boolean;
   } | null>(null);
+  const translationSourceRef = useRef<Partial<typeof initial> | null>(null);
   const setField = (key: keyof typeof initial, value: any) =>
     setForm((current) => ({ ...current, [key]: value }));
+
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    if (!documentId) throw new Error('Guarde primeiro o banner em português.');
+    const response = await get<EntryResponse>(
+      `${contentLink('api::hero-slide.hero-slide')}/${documentId}`,
+      { params: { locale: 'pt', status: 'draft' } },
+    );
+    const data = response.data.data;
+    if (!data) throw new Error('Não foi encontrada a versão em português deste banner.');
+    const action = Array.isArray(data.cta) ? data.cta[0] : undefined;
+    const component = String(action?.__component ?? '');
+    let actionType: ActionType = 'none';
+    let actionTarget = '';
+    if (component.startsWith('action.')) {
+      const suffix = component.slice(7);
+      actionType = (suffix === 'internal-page' ? 'page' :
+        suffix === 'external-link' ? 'external' : suffix) as ActionType;
+      const field = actionType === 'page' ? 'page' :
+        actionType === 'external' ? 'url' : actionType;
+      const target = action?.[field];
+      actionTarget = actionType === 'page' || actionType === 'external'
+        ? String(target ?? '') : relationValue(relation(target) ?? {});
+    }
+    translationSourceRef.current = {
+      name: String(data.name ?? ''),
+      presentation: String(data.presentation ?? 'split-right'),
+      order: String(data.order ?? 0),
+      mediaMode: data.media?.video ? 'video' : 'image',
+      focalX: String(data.media?.focalPointX ?? 50),
+      focalY: String(data.media?.focalPointY ?? 50),
+      objectFit: String(data.media?.objectFit ?? 'cover'),
+      noise: Boolean(data.media?.hasNoise),
+      actionType,
+      actionTarget: actionType === 'external' ? '' : actionTarget,
+      externalUrl: actionType === 'external' ? actionTarget : '',
+      openInNewTab: Boolean(action?.openInNewTab ?? true),
+    };
+    setMedia({
+      desktop: assets(data.media?.desktopImage),
+      mobile: assets(data.media?.mobileImage),
+      video: assets(data.media?.video),
+      placeholder: assets(data.media?.placeholder),
+    });
+    return [
+      { path: 'label', value: String(data.label ?? '') },
+      { path: 'headline', value: String(data.headline ?? '') },
+      { path: 'description', value: String(data.description ?? '') },
+      { path: 'alt', value: String(data.media?.alt ?? '') },
+      { path: 'actionLabel', value: String(action?.label ?? '') },
+    ].filter((field) => field.value.trim());
+  };
 
   useEffect(() => {
     let active = true;
@@ -610,9 +667,19 @@ export default function HeroSlideFormPage() {
       `${contentLink('api::hero-slide.hero-slide')}/${documentId}`,
       { params: { locale: contentLocale, status: 'draft' } },
     )
-      .then((response) => {
-        const data = response.data.data;
-        if (!data || !active) return;
+      .then(async (response) => {
+        let data = response.data.data;
+        if (
+          contentLocale.toLowerCase().startsWith('fr') &&
+          (!data || !Object.keys(data).length)
+        ) {
+          const source = await get<EntryResponse>(
+            `${contentLink('api::hero-slide.hero-slide')}/${documentId}`,
+            { params: { locale: 'pt', status: 'draft' } },
+          );
+          data = source.data.data;
+        }
+        if (!data || !Object.keys(data).length || !active) return;
         const action = Array.isArray(data.cta) ? data.cta[0] : undefined;
         const component = String(action?.__component ?? '');
         let actionType: ActionType = 'none';
@@ -1261,10 +1328,7 @@ export default function HeroSlideFormPage() {
               <span aria-hidden>←</span>Banners
             </Back>
             <TopActions>
-              <Language to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Language>
+              <ContentLocaleSwitcher fallbackLocale={contentLocale === 'fr' ? 'fr' : 'pt'} />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>
@@ -1272,6 +1336,19 @@ export default function HeroSlideFormPage() {
             <Title id="banner-title">
               {editing ? 'Editar banner' : 'Novo banner'}
             </Title>
+            <AutomaticTranslationAction
+              contentLocale={contentLocale}
+              contentType="api::hero-slide.hero-slide"
+              disabled={!editing || loading}
+              loadPortugueseFields={loadPortugueseTranslationFields}
+              onApply={(fields) =>
+                setForm((current) => ({
+                  ...current,
+                  ...(translationSourceRef.current ?? {}),
+                  ...Object.fromEntries(fields.map((field) => [field.path, field.value])),
+                }))
+              }
+            />
             <Stepper>
               {steps.map((label, index) => {
                 const number = index + 1;

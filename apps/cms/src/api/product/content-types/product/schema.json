@@ -115,12 +115,14 @@
     "highlights": {
       "type": "component",
       "repeatable": true,
-      "component": "shared.text-item"
+      "component": "shared.text-item",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "benefits": {
       "type": "component",
       "repeatable": true,
-      "component": "product.benefit"
+      "component": "product.benefit",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "benefitsMainMedia": {
       "type": "component",
@@ -130,16 +132,12 @@
     "editorial": {
       "type": "component",
       "repeatable": false,
-      "component": "product.editorial-copy"
+      "component": "product.editorial-copy",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "editorialEnabled": {
       "type": "boolean",
-      "default": true,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "default": true
     },
     "editorialMedia": {
       "type": "component",
@@ -149,21 +147,18 @@
     "galleryEditorial": {
       "type": "component",
       "repeatable": false,
-      "component": "product.editorial-copy"
+      "component": "product.editorial-copy",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "galleryEditorialEnabled": {
       "type": "boolean",
-      "default": true,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "default": true
     },
     "usageSteps": {
       "type": "component",
       "repeatable": true,
-      "component": "product.usage-step"
+      "component": "product.usage-step",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "usageMedia": {
       "type": "component",
@@ -173,7 +168,8 @@
     "results": {
       "type": "component",
       "repeatable": false,
-      "component": "product.results"
+      "component": "product.results",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "reviews": {
       "type": "relation",
@@ -184,7 +180,8 @@
     "seo": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.seo"
+      "component": "shared.seo",
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

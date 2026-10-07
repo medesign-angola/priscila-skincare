@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
   iconPath,
@@ -15,6 +16,10 @@ import {
 } from '../components/StoreSidebar';
 import { StoreSelect, StoreSelectShell } from '../components/StoreSelect';
 import { MediaFocalPointPicker } from '../components/MediaFocalPointPicker';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 
 type Kind = 'site' | 'home' | 'about';
 type Asset = {
@@ -137,6 +142,26 @@ const initialForm: Record<string, any> = {
   locationsDescription: '',
   locationsItems: [{ title: '', description: '' }] as Location[],
 };
+
+function applySingleTypeTranslations(
+  current: Record<string, any>,
+  sourceStructure: Record<string, any> | null,
+  fields: TranslationField[],
+) {
+  const next = structuredClone({ ...current, ...(sourceStructure ?? {}) });
+  for (const field of fields) {
+    const segments = field.path.split('.');
+    let target: any = next;
+    for (let index = 0; index < segments.length - 1; index += 1) {
+      const segment = /^\d+$/.test(segments[index]) ? Number(segments[index]) : segments[index];
+      if (target?.[segment] == null) break;
+      target = target[segment];
+    }
+    const last = segments.at(-1);
+    if (target && last && last in target) target[last] = field.value;
+  }
+  return next;
+}
 
 const Shell = styled(Main)`
   height: 100%;
@@ -752,7 +777,7 @@ export default function SingleTypeEditorPage({ kind }: { kind: Kind }) {
   const { locale } = useIntl();
   const user = useAuth('SingleTypeEditorPage', (state) => state.user);
   const language = locale.toLowerCase().startsWith('fr') ? 'fr' : 'pt';
-  const contentLocale = searchParams.get('locale') || 'pt';
+  const contentLocale = searchParams.get('locale') || language;
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<Record<string, any>>(initialForm);
   const [options, setOptions] = useState<Record<string, RelationEntry[]>>({
@@ -786,6 +811,7 @@ export default function SingleTypeEditorPage({ kind }: { kind: Kind }) {
     text: string;
     error: boolean;
   } | null>(null);
+  const translationSourceRef = useRef<Record<string, any> | null>(null);
   const sources = useMemo(
     () =>
       kind === 'home'
@@ -804,6 +830,109 @@ export default function SingleTypeEditorPage({ kind }: { kind: Kind }) {
     setForm((current) => ({ ...current, [key]: value }));
   const setMediaValue = (key: string, value: MediaValue) =>
     setMedia((current) => ({ ...current, [key]: value }));
+
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    const response = await get<EntryResponse>(singleTypeLink(config.uid), {
+      params: { locale: 'pt', status: 'draft' },
+    });
+    const data = response.data.data;
+    if (!data || !Object.keys(data).length)
+      throw new Error('Não foi encontrada a versão em português desta página.');
+    const fields: TranslationField[] = [];
+    const push = (path: string, value: unknown) =>
+      fields.push({ path, value: String(value ?? '') });
+    translationSourceRef.current = null;
+
+    if (kind === 'site') {
+      push('newsletterHeadline', data.newsletterHeadline);
+    }
+
+    if (kind === 'home') {
+      push('ingredientsHeadline', data.ingredients?.headline);
+      push('ingredientsDescription', data.ingredients?.description);
+      push('ingredientsFootnote', data.ingredients?.footnote);
+      push('testimonialsTitle', data.testimonials?.title);
+      push('testimonialsDescription', data.testimonials?.description);
+      push('pillarsTitle', data.brandPillars?.title);
+      const pillarItems = Array.isArray(data.brandPillars?.items)
+        ? data.brandPillars.items.map((item: Record<string, unknown>) => ({
+            title: String(item.title ?? ''),
+            description: String(item.description ?? ''),
+          }))
+        : [];
+      translationSourceRef.current = { pillarItems };
+      pillarItems.forEach((item: Item, index: number) => {
+        push(`pillarItems.${index}.title`, item.title);
+        push(`pillarItems.${index}.description`, item.description);
+      });
+    }
+
+    if (kind === 'about') {
+      push('heroLabel', data.heroLabel);
+      push('heroHeadline', data.heroHeadline);
+      push('heroDescription', data.heroDescription);
+      push('brandLabel', data.brand?.label);
+      push('brandFooterTitle', data.brand?.footerTitle);
+      push('brandFooterDescription', data.brand?.footerDescription);
+      push('pillarsTitle', data.pillars?.title);
+      push('founderLabel', data.founder?.label);
+      push('founderCta', data.founder?.ctaLabel);
+      push('locationsLabel', data.locations?.label);
+      push('locationsHeadline', data.locations?.headline);
+      push('locationsDescription', data.locations?.description);
+      push('ingredientsHeadline', data.ingredients?.headline);
+      push('ingredientsDescription', data.ingredients?.description);
+      push('ingredientsFootnote', data.ingredients?.footnote);
+
+      const brandMetrics = Array.isArray(data.brand?.metrics)
+        ? data.brand.metrics.map((item: Record<string, unknown>) => ({
+            value: String(item.value ?? ''), suffix: String(item.suffix ?? ''),
+            label: String(item.label ?? ''), description: String(item.description ?? ''),
+          }))
+        : [];
+      const pillarItems = Array.isArray(data.pillars?.items)
+        ? data.pillars.items.map((item: Record<string, unknown>) => ({
+            title: String(item.title ?? ''), description: String(item.description ?? ''),
+          }))
+        : [];
+      const founderParagraphs = Array.isArray(data.founder?.paragraphs)
+        ? data.founder.paragraphs.map((item: Record<string, unknown>) => ({
+            text: String(item.text ?? ''),
+          }))
+        : [];
+      const locationsItems = Array.isArray(data.locations?.items)
+        ? data.locations.items.map((item: Record<string, unknown>) => ({
+            title: String(item.title ?? ''), description: String(item.description ?? ''),
+          }))
+        : [];
+      translationSourceRef.current = {
+        brandMetrics, pillarItems, founderParagraphs, locationsItems,
+      };
+      brandMetrics.forEach((item: Metric, index: number) => {
+        push(`brandMetrics.${index}.label`, item.label);
+        push(`brandMetrics.${index}.description`, item.description);
+      });
+      pillarItems.forEach((item: Item, index: number) => {
+        push(`pillarItems.${index}.title`, item.title);
+        push(`pillarItems.${index}.description`, item.description);
+      });
+      founderParagraphs.forEach((item: Paragraph, index: number) =>
+        push(`founderParagraphs.${index}.text`, item.text),
+      );
+      locationsItems.forEach((item: Location, index: number) => {
+        push(`locationsItems.${index}.title`, item.title);
+        push(`locationsItems.${index}.description`, item.description);
+      });
+      setMedia((current) => ({
+        ...current,
+        aboutHero: mediaFrom(data.heroMedia),
+        aboutBrand: mediaFrom(data.brand?.media),
+        aboutFounder: mediaFrom(data.founder?.media),
+        aboutLocations: mediaFrom(data.locations?.media),
+      }));
+    }
+    return fields.filter((field) => field.value.trim());
+  };
 
   useEffect(() => {
     let active = true;
@@ -2606,15 +2735,27 @@ export default function SingleTypeEditorPage({ kind }: { kind: Kind }) {
               <span aria-hidden>←</span>Dashboard
             </BackLink>
             <TopActions>
-              <Language to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Language>
+              <ContentLocaleSwitcher fallbackLocale={contentLocale === 'fr' ? 'fr' : 'pt'} />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>
           <Workspace>
             <Title id="single-type-title">{config.title}</Title>
+            <AutomaticTranslationAction
+              contentLocale={contentLocale}
+              contentType={config.uid}
+              disabled={loading}
+              loadPortugueseFields={loadPortugueseTranslationFields}
+              onApply={(fields) =>
+                setForm((current) =>
+                  applySingleTypeTranslations(
+                    current,
+                    translationSourceRef.current,
+                    fields,
+                  ),
+                )
+              }
+            />
             <Stepper>
               {config.steps.map((label, index) => {
                 const number = index + 1;

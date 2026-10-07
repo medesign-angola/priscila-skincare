@@ -18,9 +18,9 @@ import {
 } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
+import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
   contentLink,
-  iconPath,
   productListLink,
   StoreLayout,
   StorePage,
@@ -33,6 +33,10 @@ import {
   type MarketingAsset,
   type MarketingResourceValues,
 } from '../components/ProductMarketingResources';
+import {
+  AutomaticTranslationAction,
+  type TranslationField,
+} from '../components/AutomaticTranslationAction';
 
 type Step = 1 | 2 | 3 | 4 | 5;
 type UploadKind =
@@ -109,6 +113,12 @@ type ProductRecord = Record<string, any> & {
 
 type ProductResponse = {
   data?: ProductRecord;
+};
+
+type TranslationDependency = {
+  key: string;
+  label: string;
+  href: string;
 };
 
 type RelationResponse = {
@@ -192,6 +202,46 @@ const initialForm: ProductForm = {
   beforeLabel: 'Antes',
   afterLabel: 'Depois',
 };
+
+function applyProductTranslations(
+  current: ProductForm,
+  fields: TranslationField[],
+): ProductForm {
+  const next: ProductForm = {
+    ...current,
+    highlights: [...current.highlights],
+    benefits: current.benefits.map((item) => ({ ...item })),
+    usageSteps: current.usageSteps.map((item) => ({ ...item })),
+    resultStatistics: current.resultStatistics.map((item) => ({ ...item })),
+  };
+  for (const field of fields) {
+    if (field.path === 'name') next.name = field.value;
+    else if (field.path === 'description') next.description = field.value;
+    else if (field.path === 'additionalDescription') next.additionalDescription = field.value;
+    else if (field.path === 'editorialHeadline') next.editorialHeadline = field.value;
+    else if (field.path === 'editorialDescription') next.editorialDescription = field.value;
+    else if (field.path === 'editorialFootnote') next.editorialFootnote = field.value;
+    else if (field.path === 'galleryHeadline') next.galleryHeadline = field.value;
+    else if (field.path === 'galleryDescription') next.galleryDescription = field.value;
+    else if (field.path === 'resultsDescription') next.resultsDescription = field.value;
+    else if (field.path === 'beforeLabel') next.beforeLabel = field.value;
+    else if (field.path === 'afterLabel') next.afterLabel = field.value;
+    else {
+      const match = field.path.match(/^(highlights|benefits|usageSteps|resultStatistics)\.(\d+)\.(title|name|description)$/);
+      if (!match) continue;
+      const index = Number(match[2]);
+      if (match[1] === 'highlights' && match[3] === 'title' && next.highlights[index] !== undefined)
+        next.highlights[index] = field.value;
+      if (match[1] === 'benefits' && next.benefits[index])
+        next.benefits[index] = { ...next.benefits[index], [match[3]]: field.value };
+      if (match[1] === 'usageSteps' && next.usageSteps[index])
+        next.usageSteps[index] = { ...next.usageSteps[index], [match[3]]: field.value };
+      if (match[1] === 'resultStatistics' && match[3] === 'description' && next.resultStatistics[index])
+        next.resultStatistics[index] = { ...next.resultStatistics[index], description: field.value };
+    }
+  }
+  return next;
+}
 
 const labels = {
   pt: {
@@ -290,20 +340,6 @@ const TopActions = styled.div`
   display: flex;
   align-items: center;
   gap: 22px;
-`;
-const Language = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1a1917;
-  font-size: 14px;
-  font-weight: 700;
-  text-decoration: none;
-  text-transform: uppercase;
-  img {
-    width: 24px;
-    height: 24px;
-  }
 `;
 const Profile = styled(Link)`
   display: flex;
@@ -561,6 +597,17 @@ const Notice = styled.div<{ $error?: boolean }>`
   color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
   background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
   font-size: 14px;
+`;
+const DependencyList = styled.ul`
+  display: grid;
+  gap: 7px;
+  margin: 10px 0 0;
+  padding-left: 20px;
+  a {
+    color: inherit;
+    font-weight: 700;
+    text-underline-offset: 3px;
+  }
 `;
 const DropZone = styled(ImagePicker)`
   button {
@@ -1202,7 +1249,7 @@ export default function ProductCreatePage() {
   const contentLocale =
     searchParams.get('locale') ||
     searchParams.get('plugins[i18n][locale]') ||
-    'pt';
+    language;
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<ProductForm>(initialForm);
   const [relations, setRelations] = useState<Record<string, RelationEntry[]>>({
@@ -1235,7 +1282,13 @@ export default function ProductCreatePage() {
     text: string;
     error: boolean;
   } | null>(null);
+  const [missingTranslations, setMissingTranslations] = useState<
+    TranslationDependency[]
+  >([]);
   const cardRef = useRef<HTMLElement | null>(null);
+  const translationSourceRef = useRef<
+    Pick<ProductForm, 'highlights' | 'benefits' | 'usageSteps' | 'resultStatistics'> | null
+  >(null);
 
   const setField = <K extends keyof ProductForm>(
     key: K,
@@ -1300,9 +1353,26 @@ export default function ProductCreatePage() {
     )
       .then(async (response) => {
         if (!active) return;
-        const record = response.data.data;
+        let record = response.data.data;
+        let sourceLocale = contentLocale;
+        const requestedTranslation =
+          contentLocale.toLowerCase().startsWith('fr');
+
+        // Strapi returns an empty object when the document exists but the
+        // requested locale has not been created yet. In that case, seed the
+        // translation form with the Portuguese version; the first PUT creates
+        // the French locale under the same documentId.
+        if ((!record || !Object.keys(record).length) && requestedTranslation) {
+          const sourceResponse = await get<ProductResponse>(
+            `${contentLink('api::product.product')}/${documentId}`,
+            { params: { locale: 'pt', status: 'draft' } },
+          );
+          record = sourceResponse.data.data;
+          sourceLocale = 'pt';
+        }
         if (!record || !Object.keys(record).length)
           throw new Error(copy.loadError);
+        const creatingTranslation = sourceLocale !== contentLocale;
         const relationFields = [
           'category',
           'sizes',
@@ -1318,7 +1388,7 @@ export default function ProductCreatePage() {
                   `/content-manager/relations/api::product.product/${documentId}/${field}`,
                   {
                     params: {
-                      locale: contentLocale,
+                      locale: sourceLocale,
                       status: 'draft',
                       page: 1,
                       pageSize: 100,
@@ -1351,7 +1421,17 @@ export default function ProductCreatePage() {
           kits: relationValues(existingRelationEntries.kits),
         };
         setOriginalProduct(record);
-        setOriginalRelations(relationSnapshot);
+        setOriginalRelations(
+          creatingTranslation
+            ? {
+                category: [],
+                sizes: [],
+                ingredients: [],
+                collections: [],
+                kits: [],
+              }
+            : relationSnapshot,
+        );
         setRelations((current) => ({
           ...current,
           categories: mergeRelationEntries(
@@ -1479,6 +1559,84 @@ export default function ProductCreatePage() {
           ? current.slug
           : slugify(value),
     }));
+  const loadPortugueseTranslationFields = async (): Promise<TranslationField[]> => {
+    if (!documentId)
+      throw new Error('Guarde primeiro o produto em português antes de criar a tradução.');
+    const response = await get<ProductResponse>(
+      `${contentLink('api::product.product')}/${documentId}`,
+      { params: { locale: 'pt', status: 'draft' } },
+    );
+    const record = response.data.data;
+    if (!record || !Object.keys(record).length)
+      throw new Error('Não foi encontrada a versão em português deste produto.');
+    const editorial = record.editorial ?? {};
+    const galleryEditorial = record.galleryEditorial ?? {};
+    const results = record.results ?? {};
+    const comparison = results.comparison ?? {};
+    translationSourceRef.current = {
+      highlights: (Array.isArray(record.highlights) ? record.highlights : []).map(
+        (item: Record<string, unknown>) => asText(item.title),
+      ),
+      benefits: (Array.isArray(record.benefits) ? record.benefits : []).map(
+        (item: Record<string, unknown>) => ({
+          title: asText(item.title),
+          description: asText(item.description),
+          images: asAssets(item.images).slice(0, 3),
+        }),
+      ),
+      usageSteps: (Array.isArray(record.usageSteps) ? record.usageSteps : []).map(
+        (item: Record<string, unknown>) => ({
+          name: asText(item.name),
+          description: asText(item.description),
+        }),
+      ),
+      resultStatistics: (Array.isArray(results.statistics) ? results.statistics : []).map(
+        (item: Record<string, unknown>) => ({
+          percentage: asText(item.percentage),
+          description: asText(item.description),
+        }),
+      ),
+    };
+    setResultBefore(firstAsset(comparison.before));
+    setResultAfter(firstAsset(comparison.after));
+    const fields: TranslationField[] = [
+      { path: 'name', value: asText(record.name) },
+      { path: 'description', value: asText(record.description) },
+      { path: 'additionalDescription', value: asText(record.additionalDescription) },
+      { path: 'editorialHeadline', value: asText(editorial.headline) },
+      { path: 'editorialDescription', value: asText(editorial.description) },
+      { path: 'editorialFootnote', value: asText(editorial.footnote) },
+      { path: 'galleryHeadline', value: asText(galleryEditorial.headline) },
+      { path: 'galleryDescription', value: asText(galleryEditorial.description) },
+      { path: 'resultsDescription', value: asText(results.description) },
+      { path: 'beforeLabel', value: asText(comparison.beforeLabel) },
+      { path: 'afterLabel', value: asText(comparison.afterLabel) },
+    ];
+    (Array.isArray(record.highlights) ? record.highlights : []).forEach(
+      (item: Record<string, unknown>, index: number) =>
+        fields.push({ path: `highlights.${index}.title`, value: asText(item.title) }),
+    );
+    (Array.isArray(record.benefits) ? record.benefits : []).forEach(
+      (item: Record<string, unknown>, index: number) => {
+        fields.push({ path: `benefits.${index}.title`, value: asText(item.title) });
+        fields.push({ path: `benefits.${index}.description`, value: asText(item.description) });
+      },
+    );
+    (Array.isArray(record.usageSteps) ? record.usageSteps : []).forEach(
+      (item: Record<string, unknown>, index: number) => {
+        fields.push({ path: `usageSteps.${index}.name`, value: asText(item.name) });
+        fields.push({ path: `usageSteps.${index}.description`, value: asText(item.description) });
+      },
+    );
+    (Array.isArray(results.statistics) ? results.statistics : []).forEach(
+      (item: Record<string, unknown>, index: number) =>
+        fields.push({
+          path: `resultStatistics.${index}.description`,
+          value: asText(item.description),
+        }),
+    );
+    return fields.filter((field) => field.value.trim());
+  };
   const pendingFor = (scope: string) =>
     pendingUploads.filter((item) => item.scope === scope);
   const upload = async (files: FileList | File[] | null, scope: string) => {
@@ -1839,7 +1997,93 @@ export default function ProductCreatePage() {
     if (!validateStep(1) || !validateStep(2) || !validateStep(4)) return;
     setSaving(true);
     setMessage(null);
+    setMissingTranslations([]);
     try {
+      if (contentLocale.toLowerCase().startsWith('fr')) {
+        const dependencies = [
+          form.category
+            ? {
+                key: 'category',
+                value: form.category,
+                uid: 'api::category.category',
+                resource: 'categories',
+                entries: relations.categories,
+              }
+            : null,
+          ...(form.linkIngredients
+            ? form.ingredients.map((value) => ({
+                key: `ingredient-${value}`,
+                value,
+                uid: 'api::ingredient.ingredient',
+                resource: 'ingredients',
+                entries: relations.ingredients,
+              }))
+            : []),
+          ...(form.linkCollections
+            ? form.collections.map((value) => ({
+                key: `collection-${value}`,
+                value,
+                uid: 'api::collection.collection',
+                resource: 'collections',
+                entries: relations.collections,
+              }))
+            : []),
+          ...(form.linkKits
+            ? form.kits.map((value) => ({
+                key: `kit-${value}`,
+                value,
+                uid: 'api::kit.kit',
+                resource: 'kits',
+                entries: relations.kits,
+              }))
+            : []),
+        ].filter(Boolean) as Array<{
+          key: string;
+          value: string;
+          uid: string;
+          resource: string;
+          entries: RelationEntry[];
+        }>;
+
+        const checks = await Promise.all(
+          dependencies.map(async (dependency) => {
+            try {
+              const response = await get<ProductResponse>(
+                `${contentLink(dependency.uid)}/${dependency.value}`,
+                { params: { locale: 'fr', status: 'draft' } },
+              );
+              if (
+                response.data.data &&
+                Object.keys(response.data.data).length > 0
+              )
+                return null;
+            } catch {
+              // A dependência ausente será apresentada abaixo com uma ação.
+            }
+            const entry = dependency.entries.find(
+              (item) => relationValue(item) === dependency.value,
+            );
+            return {
+              key: dependency.key,
+              label: entry ? displayName(entry) : dependency.value,
+              href: `/admin/store/${dependency.resource}/${dependency.value}/edit?locale=fr`,
+            };
+          }),
+        );
+        const missing = checks.filter(
+          (item): item is TranslationDependency => Boolean(item),
+        );
+        if (missing.length) {
+          setMissingTranslations(missing);
+          setMessage({
+            text:
+              'Antes de guardar este produto em francês, traduza os conteúdos relacionados abaixo. Abra cada um numa nova aba e depois volte para guardar o produto.',
+            error: true,
+          });
+          return;
+        }
+      }
+
       const base = contentLink('api::product.product');
       const payload = { ...buildPayload(), status };
       const response =
@@ -2725,10 +2969,7 @@ export default function ProductCreatePage() {
               {copy.back}
             </BackLink>
             <TopActions>
-              <Language to="/store/profile">
-                <span>{language === 'fr' ? 'FR / €' : 'PT / €'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Language>
+              <ContentLocaleSwitcher />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>
@@ -2736,6 +2977,22 @@ export default function ProductCreatePage() {
             <Title id="product-form-title">
               {editing ? copy.editTitle : copy.title}
             </Title>
+            <AutomaticTranslationAction
+              contentLocale={contentLocale}
+              contentType="api::product.product"
+              disabled={!editing || loadingProduct}
+              loadPortugueseFields={loadPortugueseTranslationFields}
+              onApply={(fields) =>
+                setForm((current) =>
+                  applyProductTranslations(
+                    translationSourceRef.current
+                      ? { ...current, ...translationSourceRef.current }
+                      : current,
+                    fields,
+                  ),
+                )
+              }
+            />
             <Stepper aria-label="Etapas do formulário">
               {steps.map((label, index) => {
                 const number = (index + 1) as Step;
@@ -2761,6 +3018,21 @@ export default function ProductCreatePage() {
                 role={message.error ? 'alert' : 'status'}
               >
                 {message.text}
+                {missingTranslations.length > 0 && (
+                  <DependencyList>
+                    {missingTranslations.map((dependency) => (
+                      <li key={dependency.key}>
+                        <a
+                          href={dependency.href}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Traduzir {dependency.label}
+                        </a>
+                      </li>
+                    ))}
+                  </DependencyList>
+                )}
               </Notice>
             )}
             <Card ref={cardRef}>

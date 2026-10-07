@@ -41,7 +41,8 @@
     "editorialMedia": {
       "type": "component",
       "repeatable": false,
-      "component": "shared.media-presentation"
+      "component": "shared.media-presentation",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "products": {
       "type": "relation",

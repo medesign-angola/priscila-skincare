@@ -3,8 +3,8 @@ import { Main } from '@strapi/design-system';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from './AdminProfileMenu';
+import { ContentLocaleSwitcher } from './ContentLocaleSwitcher';
 import {
-  iconPath,
   StoreLayout,
   StorePage,
   StoreSidebar,
@@ -50,20 +50,6 @@ const TopActions = styled.div`
   display: flex;
   align-items: center;
   gap: 18px;
-`;
-
-const Locale = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #252421;
-  font-size: 14px;
-  font-weight: 700;
-
-  img {
-    width: 22px;
-    height: 22px;
-  }
 `;
 
 export const FormWorkspace = styled.div`
@@ -354,10 +340,7 @@ export function StoreFormPage({
           <Topbar>
             <Back to={backTo}>← {backLabel}</Back>
             <TopActions>
-              <Locale>
-                <span>{language === 'fr' ? 'FR / €' : 'PT / KZ'}</span>
-                <img src={iconPath('language')} alt="" aria-hidden />
-              </Locale>
+              <ContentLocaleSwitcher fallbackLocale={language} />
               <AdminProfileMenu />
             </TopActions>
           </Topbar>

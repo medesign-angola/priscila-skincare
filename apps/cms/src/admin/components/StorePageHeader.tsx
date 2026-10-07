@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from './AdminProfileMenu';
-import { iconPath } from './StoreSidebar';
+import { ContentLocaleSwitcher } from './ContentLocaleSwitcher';
 
 const Header = styled.header`
   box-sizing: border-box;
@@ -42,25 +41,6 @@ const Actions = styled.div`
   }
 `;
 
-const LanguageLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  color: #1a1917;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
-  letter-spacing: 0.28px;
-  text-decoration: none;
-  text-transform: uppercase;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
 export function StorePageHeader({
   id,
   title,
@@ -77,13 +57,7 @@ export function StorePageHeader({
       <Title id={id}>{title}</Title>
       <Actions>
         {primaryAction}
-        <LanguageLink
-          to="/store/profile"
-          aria-label={language === 'fr' ? 'Modifier la langue et la devise' : 'Alterar idioma e moeda'}
-        >
-          <span>{language === 'fr' ? 'FR / €' : 'PT / KZ'}</span>
-          <img src={iconPath('language')} alt="" aria-hidden />
-        </LanguageLink>
+        <ContentLocaleSwitcher fallbackLocale={language} />
         <AdminProfileMenu />
       </Actions>
     </Header>

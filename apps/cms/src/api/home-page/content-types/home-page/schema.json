@@ -49,22 +49,26 @@
     "ingredients": {
       "type": "component",
       "component": "home.ingredients-presentation",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "testimonials": {
       "type": "component",
       "component": "home.testimonials-presentation",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "brandPillars": {
       "type": "component",
       "component": "about.pillars-section",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "seo": {
       "type": "component",
       "component": "shared.seo",
-      "repeatable": false
+      "repeatable": false,
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

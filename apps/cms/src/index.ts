@@ -1,6 +1,7 @@
 import type { Core } from '@strapi/strapi';
 import { applyPortugueseContentManager } from './admin/content-manager-portuguese';
 import { registerHomeReadinessRelationFilter } from './home-readiness';
+import { registerTranslationProxy } from './translation-proxy';
 
 const PUBLIC_READ_CONTENT_TYPES = [
   'api::category.category',
@@ -111,6 +112,7 @@ export default {
       });
     }
     registerHomeReadinessRelationFilter(strapi);
+    registerTranslationProxy(strapi);
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
