@@ -1942,7 +1942,10 @@ export default function RichCatalogFormPage({ kind }: { kind: Kind }) {
         <>
           <Section>
             <SectionTitle>
-              <h2>Preço apresentado para o {config.singular}</h2>
+              <h2>
+                Preço apresentado para {kind === 'collection' ? 'a' : 'o'}{' '}
+                {config.singular}
+              </h2>
               {kind === 'collection' && (
                 <p>Decida se esta coleção terá um preço próprio.</p>
               )}
