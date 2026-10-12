@@ -8,7 +8,7 @@ namespace PriscilaSkincare.Infrastructure.Catalog;
 
 internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions options) : IOrderProjection
 {
-    public async Task<string?> UpsertAsync(Order order, Customer customer, Payment? payment,
+    public async Task<string?> UpsertAsync(Order order, Customer? customer, Payment? payment,
         CancellationToken token = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "api/internal/orders/sync");
@@ -17,9 +17,12 @@ internal sealed class StrapiOrderProjection(HttpClient http, StrapiOptions optio
         {
             externalOrderId = order.Id,
             number = order.Number,
-            externalCustomerId = customer.Id,
-            customerName = customer.Name ?? customer.Email.Value,
-            customerEmail = customer.Email.Value,
+            externalCustomerId = customer?.Id,
+            customerName = string.IsNullOrWhiteSpace(order.CustomerNameSnapshot)
+                ? order.Recipient
+                : order.CustomerNameSnapshot,
+            customerEmail = order.CustomerEmailSnapshot ?? customer?.Email.Value,
+            customerAccountDeletedAt = order.CustomerAccountDeletedAt,
             orderStatus = OperationalStatus(order.Status),
             paymentStatus = payment?.Status.ToString().ToLowerInvariant() ?? "pending",
             currency = order.Currency,

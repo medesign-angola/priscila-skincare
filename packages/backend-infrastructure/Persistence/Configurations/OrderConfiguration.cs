@@ -26,6 +26,9 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.HouseNumber).HasColumnName("house_number").HasMaxLength(40);
         builder.Property(x => x.Apartment).HasColumnName("apartment").HasMaxLength(120);
         builder.Property(x => x.PostalCode).HasColumnName("postal_code").HasMaxLength(24);
+        builder.Property(x => x.CustomerNameSnapshot).HasColumnName("customer_name_snapshot").HasMaxLength(160);
+        builder.Property(x => x.CustomerEmailSnapshot).HasColumnName("customer_email_snapshot").HasMaxLength(320);
+        builder.Property(x => x.CustomerAccountDeletedAt).HasColumnName("customer_account_deleted_at");
         builder.Property(x => x.IdempotencyKey).HasColumnName("idempotency_key").HasMaxLength(80);
         builder.Property(x => x.StrapiDocumentId).HasColumnName("strapi_document_id").HasMaxLength(64);
         builder.Property(x => x.CreatedAt).HasColumnName("created_at");

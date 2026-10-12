@@ -7,6 +7,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import { invalidateAdminRequestCache } from '../utils/adminRequestCache';
 import {
   AutomaticTranslationAction,
   type TranslationField,
@@ -68,16 +69,16 @@ const UploadBox = styled.label`
   min-height: 190px;
   place-items: center;
   padding: 24px;
-  border: 1px dashed #bca98f;
+  border: 1px dashed var(--ps-border-strong);
   border-radius: 12px;
   text-align: center;
-  background: #fbfaf8;
+  background: var(--ps-surface-raised);
   cursor: pointer;
   transition: border-color 160ms ease, background-color 160ms ease;
 
   &:hover {
-    border-color: #8f7048;
-    background: #f8f3ec;
+    border-color: var(--ps-accent-alt);
+    background: var(--ps-accent-soft);
   }
 
   input {
@@ -93,13 +94,13 @@ const UploadBox = styled.label`
   }
 
   strong {
-    color: #755a36;
+    color: var(--ps-accent);
     font-size: 15px;
   }
 
   small {
     margin-top: 7px;
-    color: #817a70;
+    color: var(--ps-text-subtle);
     font-size: 13px;
     line-height: 1.45;
   }
@@ -112,9 +113,9 @@ const MediaCard = styled.article`
   align-items: center;
   min-height: 120px;
   padding: 14px;
-  border: 1px solid #e4ddd3;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fbfaf8;
+  background: var(--ps-surface-raised);
 
   img,
   video,
@@ -123,13 +124,13 @@ const MediaCard = styled.article`
     height: 90px;
     border-radius: 9px;
     object-fit: cover;
-    background: #e9e4dd;
+    background: var(--ps-border);
   }
 
   .file {
     display: grid;
     place-items: center;
-    color: #755a36;
+    color: var(--ps-accent);
     font-size: 13px;
     font-weight: 750;
   }
@@ -141,13 +142,13 @@ const MediaCard = styled.article`
 
   strong {
     overflow-wrap: anywhere;
-    color: #292824;
+    color: var(--ps-heading);
     font-size: 14px;
   }
 
   small {
     margin-top: 5px;
-    color: #817a70;
+    color: var(--ps-text-subtle);
     font-size: 13px;
   }
 
@@ -156,10 +157,10 @@ const MediaCard = styled.article`
     width: 36px;
     height: 36px;
     place-items: center;
-    border: 1px solid #decfc0;
+    border: 1px solid var(--ps-border-strong);
     border-radius: 8px;
-    color: #8b3340;
-    background: #fff;
+    color: var(--ps-danger-text);
+    background: var(--ps-surface);
     font-size: 21px;
     cursor: pointer;
   }
@@ -176,18 +177,18 @@ const Progress = styled.div`
     height: 7px;
     overflow: hidden;
     border-radius: 99px;
-    background: #ebe7e1;
+    background: var(--ps-border);
   }
 
   i {
     display: block;
     height: 100%;
     border-radius: inherit;
-    background: #92754d;
+    background: var(--ps-accent-alt);
   }
 
   span {
-    color: #625c54;
+    color: var(--ps-text-muted);
     font-size: 12px;
     font-weight: 650;
   }
@@ -451,6 +452,7 @@ export default function TestimonialFormPage() {
           status: 'published',
         },
       );
+      invalidateAdminRequestCache(base);
       navigate(listLink, { replace: true });
     } catch (error: any) {
       setMessage({

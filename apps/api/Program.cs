@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -43,6 +44,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = jwtOptions.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
             ClockSkew = TimeSpan.FromSeconds(30)
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var value = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier)
+                    ?? context.Principal?.FindFirstValue("sub");
+                if (!Guid.TryParse(value, out var customerId))
+                {
+                    context.Fail("Identidade inválida.");
+                    return;
+                }
+                var repository = context.HttpContext.RequestServices.GetRequiredService<ICustomerRepository>();
+                var customer = await repository.FindByIdAsync(customerId, context.HttpContext.RequestAborted);
+                if (customer is null || !customer.IsActive) context.Fail("A conta já não está disponível.");
+            }
         };
     });
 builder.Services.AddAuthorization();

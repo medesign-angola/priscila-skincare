@@ -13,15 +13,15 @@ const Shell = styled.div`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #292824;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 
 const NativeSettings = styled.section`
   min-height: calc(100dvh - 93px);
   padding: 0 0 48px;
-  background: #f7f5f2;
+  background: var(--ps-canvas);
 
   /* The native settings layout reserves a second sidebar. The Priscila
      navigation already provides that context, so keep only its content. */
@@ -44,7 +44,7 @@ const NativeSettings = styled.section`
     min-width: 0;
     padding-bottom: 0 !important;
     overflow: visible;
-    background: #f7f5f2;
+    background: var(--ps-canvas);
   }
 
   [data-strapi-main-content] > header,
@@ -54,9 +54,9 @@ const NativeSettings = styled.section`
 
   table {
     overflow: hidden;
-    border: 1px solid #e8e2d9;
+    border: 1px solid var(--ps-border-strong);
     border-radius: 12px;
-    background: #fff;
+    background: var(--ps-surface);
   }
 
   button,

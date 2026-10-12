@@ -32,12 +32,22 @@ public sealed class Customer : AggregateRoot<Guid>
         }
 
         Name = name.Trim();
-        Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+        Phone = PhoneNumber.NormalizeOptional(phone);
         UpdatedAt = now;
     }
 
     public void Deactivate(DateTimeOffset now)
     {
+        IsActive = false;
+        UpdatedAt = now;
+    }
+
+    public void Anonymize(DateTimeOffset now)
+    {
+        Email = EmailAddress.Create($"deleted+{Id:N}@anonymized.invalid");
+        Name = "Cliente anónimo";
+        Phone = null;
+        AcceptsMarketing = false;
         IsActive = false;
         UpdatedAt = now;
     }

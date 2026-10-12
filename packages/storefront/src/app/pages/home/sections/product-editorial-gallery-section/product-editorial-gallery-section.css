@@ -69,6 +69,12 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+.editorial-gallery h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+.editorial-gallery h2 a:hover,
+.editorial-gallery h2 a:focus-visible { text-decoration: underline; text-underline-offset: 0.25em; }
 
 .editorial-gallery p {
   font-size: clamp(0.8125rem, 0.972vw, 1rem);
@@ -82,6 +88,7 @@
   overflow: clip;
   border-radius: 0.125rem;
   background: #f1f1ef;
+  cursor: pointer;
 }
 
 .editorial-gallery img {
@@ -169,6 +176,7 @@
     height: 19.125rem;
     overflow: hidden;
     scroll-snap-align: start;
+    cursor: pointer;
   }
 
   .editorial-gallery__mobile-strip img {

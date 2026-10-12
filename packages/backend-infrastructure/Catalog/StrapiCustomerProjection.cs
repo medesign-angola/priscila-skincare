@@ -26,4 +26,13 @@ internal sealed class StrapiCustomerProjection(HttpClient httpClient, StrapiOpti
         using var response = await httpClient.SendAsync(request, cancellationToken);
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task DeleteAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Delete,
+            $"api/internal/customers/{Uri.EscapeDataString(customerId.ToString())}");
+        request.Headers.Add("X-Integration-Secret", options.IntegrationSecret);
+        using var response = await httpClient.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+    }
 }

@@ -28,7 +28,8 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         var now = clock.UtcNow;
         var order = Order.Create(customerId, $"PSC-{now:yyyyMMdd}-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}",
             preview.Currency, new(address.Recipient, address.Phone, address.Country, address.Province, address.City,
-                address.Neighborhood, address.Street, address.HouseNumber, address.Apartment, address.PostalCode), now, command.IdempotencyKey);
+                address.Neighborhood, address.Street, address.HouseNumber, address.Apartment, address.PostalCode),
+            customer.Name, customer.Email.Value, now, command.IdempotencyKey);
         foreach (var item in preview.Items)
             order.AddItem(CartService.ParseType(item.ItemType), CommerceItemReference.Create(item.Reference), item.ProductName, item.Variant,
                 Money.Create(item.UnitPrice, preview.Currency), item.Quantity, item.ImageUrl);
@@ -89,11 +90,9 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         integrationInbox.Add(IntegrationInboxMessage.Receive(eventId, "payment.result.v1", now));
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        var owner = synchronizeProjection
-            ? await customers.FindByIdAsync(order.CustomerId, cancellationToken)
-            : null;
-        if (owner is not null)
+        if (synchronizeProjection)
         {
+            var owner = await customers.FindByIdAsync(order.CustomerId, cancellationToken);
             try { await projection.UpsertAsync(order, owner, payment, cancellationToken); }
             catch { /* a confirmação do pagamento permanece local e será reconciliada */ }
         }
@@ -150,11 +149,8 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
         if (synchronizeProjection)
         {
             var customer = await customers.FindByIdAsync(order.CustomerId, cancellationToken);
-            if (customer is not null)
-            {
-                try { await projection.UpsertAsync(order, customer, payment, cancellationToken); }
-                catch { /* o estado já foi persistido e será reconciliado com o CMS */ }
-            }
+            try { await projection.UpsertAsync(order, customer, payment, cancellationToken); }
+            catch { /* o estado já foi persistido e será reconciliado com o CMS */ }
         }
     }
 

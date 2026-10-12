@@ -11,8 +11,8 @@ const Header = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 32px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 
   @media (max-width: 48rem) {
     min-height: auto;
@@ -24,7 +24,7 @@ const Header = styled.header`
 
 const Title = styled.h1`
   margin: 0;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 24px;
   font-weight: 600;
   line-height: 29px;

@@ -1,5 +1,28 @@
 :host {
+  --profile-accent: #7d6645;
+  --profile-text: #1a1917;
+  --profile-muted: #6d675f;
+  --profile-border: #ded8cf;
+  --profile-danger: #8f332c;
+  --profile-danger-dark: #74261f;
+  --profile-danger-border: #ddc4be;
+  --profile-danger-surface: #fbf7f4;
   display: block;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--profile-accent);
+  outline-offset: 3px;
+}
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+button:disabled {
+  cursor: not-allowed;
 }
 .account-page {
   width: min(100%, 53.75rem);
@@ -36,6 +59,30 @@ h1 {
   flex-direction: column;
   gap: 1.5rem;
 }
+.profile-sync-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #b9d9c0;
+  border-radius: 0.25rem;
+  color: #285b36;
+  background: #f3faf4;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.profile-sync-notice span {
+  display: grid;
+  width: 1.15rem;
+  height: 1.15rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #4c8b5d;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
 .contact > div {
   display: flex;
   flex-direction: column;
@@ -55,6 +102,7 @@ h1 {
   letter-spacing: 0.02em;
   color: #7d6645;
 }
+.phone-field{display:grid;grid-template-columns:4.5rem minmax(0,1fr)}.phone-field select{border:0;border-right:1px solid #ddd7ce;border-radius:2px 0 0 2px;background:#f7f5f1;padding:.5rem;font:inherit;font-size:.75rem;font-weight:700}.phone-field input{border-radius:0 2px 2px 0}
 .addresses > header {
   display: flex;
   justify-content: space-between;
@@ -162,7 +210,7 @@ h1 {
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: default;
+  cursor: pointer;
 }
 .address-modal {
   position: relative;
@@ -215,7 +263,8 @@ h1 {
   font-weight: 700;
   text-transform: uppercase;
 }
-.address-fields input {
+.address-fields input,
+.address-fields select {
   width: 100%;
   height: 3rem;
   border: 1.5px solid #b8b0a5;
@@ -226,7 +275,8 @@ h1 {
   font: inherit;
   font-size: 0.75rem;
 }
-.address-fields input:focus {
+.address-fields input:focus,
+.address-fields select:focus {
   border-color: #88714f;
 }
 .address-fields__wide {
@@ -264,6 +314,10 @@ h1 {
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.address-modal__actions button:hover:not(:disabled) {
+  background: #f4f0e9;
 }
 .address-modal__actions .address-save {
   display: flex;
@@ -288,6 +342,228 @@ h1 {
 @keyframes address-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+.account-danger {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  margin-top: 3.5rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border: 1px solid var(--profile-danger-border);
+  background:
+    linear-gradient(90deg, rgb(143 51 44 / 0.04), transparent 42%),
+    var(--profile-danger-surface);
+  overflow: hidden;
+}
+.account-danger::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--profile-danger);
+  content: '';
+}
+.account-danger__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  min-width: 0;
+}
+.account-danger__mark,
+.account-delete-modal__notice > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--profile-danger-border);
+  color: var(--profile-danger);
+  font-family: 'cormorant', 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.account-danger__copy {
+  min-width: 0;
+}
+.account-danger__eyebrow,
+.account-delete-modal__header > div > span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--profile-danger);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.account-danger h2,
+.account-danger p { margin: 0; }
+.account-danger h2 {
+  color: var(--profile-text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.account-danger p {
+  max-width: 34rem;
+  margin-top: 0.5rem;
+  color: var(--profile-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.account-danger__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--profile-danger);
+  background: transparent;
+  color: var(--profile-danger);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 200ms ease, color 200ms ease, transform 200ms ease;
+}
+.account-danger__action > span:last-child {
+  font-size: 1.1rem;
+  font-weight: 400;
+  transition: transform 200ms ease;
+}
+.account-danger__action:hover {
+  background: var(--profile-danger);
+  color: #fff;
+}
+.account-danger__action:hover > span:last-child {
+  transform: translateX(3px);
+}
+.account-delete-backdrop {
+  background: rgb(26 25 23 / 0.58);
+  backdrop-filter: blur(3px);
+}
+.account-delete-modal {
+  width: min(100%, 36rem);
+  max-width: 36rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-top: 3px solid var(--profile-danger);
+  box-shadow: 0 1.75rem 5rem rgb(65 43 33 / 0.28);
+  animation: account-dialog-in 220ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+.account-delete-modal > .account-delete-modal__header {
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--profile-border);
+}
+.account-delete-modal__header h2 {
+  color: var(--profile-text);
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-transform: none;
+}
+.account-delete-modal__header > button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: -0.5rem -0.5rem 0 1rem;
+  color: var(--profile-text);
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+.account-delete-modal__header > button:hover {
+  background: #f4f0e9;
+  color: var(--profile-danger);
+}
+.account-delete-modal__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid var(--profile-danger-border);
+  background: var(--profile-danger-surface);
+}
+.account-delete-modal__notice > span {
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #fff;
+  font-size: 1.1rem;
+}
+.account-delete-modal__notice > p {
+  max-width: 31rem;
+  margin: 0;
+  color: var(--profile-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+.account-delete-modal__field {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.5rem;
+}
+.account-delete-modal__field > span {
+  color: var(--profile-text);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.account-delete-modal__field > input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3.25rem;
+  border: 1px solid #b8b0a5;
+  background: #fff;
+  padding: 0.8rem 0.9rem;
+  color: var(--profile-text);
+  font: inherit;
+  font-size: 0.875rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.account-delete-modal__field > input:focus {
+  border-color: var(--profile-accent);
+  box-shadow: 0 0 0 3px rgb(125 102 69 / 0.12);
+  outline: 0;
+}
+.account-delete-modal__actions {
+  align-items: stretch;
+  margin-top: 1.75rem;
+}
+.account-delete-modal__actions > button {
+  min-height: 3rem;
+}
+.account-delete-confirm {
+  border-color: var(--profile-danger) !important;
+  background: var(--profile-danger) !important;
+  color: #fff !important;
+  white-space: nowrap;
+}
+.account-delete-confirm:hover:not(:disabled) {
+  border-color: var(--profile-danger-dark) !important;
+  background: var(--profile-danger-dark) !important;
+}
+.account-delete-confirm:disabled {
+  border-color: #c9b7b2 !important;
+  background: #c9b7b2 !important;
+  color: #fff !important;
+  cursor: not-allowed;
+}
+@keyframes account-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 @media (max-width: 600px) {
@@ -315,5 +591,33 @@ h1 {
   }
   .address-modal__actions button {
     padding: 0.75rem 0.5rem;
+  }
+  .account-danger {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+  .account-danger__action {
+    width: 100%;
+  }
+  .account-delete-modal {
+    border-top-width: 3px;
+  }
+  .account-delete-modal__actions {
+    grid-template-columns: 1fr;
+  }
+  .account-delete-modal__actions .account-delete-confirm {
+    grid-row: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-delete-modal,
+  .account-danger__action,
+  .account-danger__action > span:last-child,
+  .address-modal__actions button {
+    animation: none;
+    transition: none;
   }
 }

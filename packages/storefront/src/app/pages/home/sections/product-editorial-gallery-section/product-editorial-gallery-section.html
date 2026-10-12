@@ -7,15 +7,13 @@
     <div class="editorial-gallery__column editorial-gallery__column--intro">
       <div class="editorial-gallery__intro-region">
         <div class="editorial-gallery__intro">
-          <h2 [id]="'editorial-gallery-title-' + gallery.id">
-            {{ gallery.headline }}
-          </h2>
+          <h2 [id]="'editorial-gallery-title-' + gallery.id"><a [routerLink]="['/produtos', gallery.slug]">{{ gallery.headline }}</a></h2>
           <p>{{ gallery.description }}</p>
         </div>
       </div>
 
       @for (image of gallery.images.slice(0, 2); track image.url) {
-      <figure class="editorial-gallery__tile">
+      <figure class="editorial-gallery__tile" [routerLink]="['/produtos', gallery.slug]">
         <img
           [src]="image.url"
           [alt]="image.alt"
@@ -29,7 +27,7 @@
       }
     </div>
 
-    <figure class="editorial-gallery__cover">
+    <figure class="editorial-gallery__cover" [routerLink]="['/produtos', gallery.slug]">
       <img
         [src]="gallery.coverImage"
         [alt]="gallery.coverAlt"
@@ -58,7 +56,7 @@
   </div>
 
   <div class="editorial-gallery__mobile-strip" [attr.aria-label]="'ACCESSIBILITY.GALLERY' | translate">
-    <figure>
+    <figure [routerLink]="['/produtos', gallery.slug]">
       <img
         [src]="gallery.coverImage"
         [alt]="gallery.coverAlt"
@@ -69,7 +67,7 @@
       />
     </figure>
     @for (image of gallery.images; track image.url) {
-    <figure>
+    <figure [routerLink]="['/produtos', gallery.slug]">
       <img
         [src]="image.url"
         [alt]="image.alt"

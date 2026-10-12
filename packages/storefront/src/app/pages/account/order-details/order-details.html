@@ -17,13 +17,13 @@
   <article class="timeline-card">
     <h2>{{ 'ACCOUNT.DETAILS.STATUS' | translate }}</h2>
     <div class="timeline">
-      @for (entry of current.timeline; track entry.status) {
-      <div class="timeline__step">
-        <span>✓</span>
+      @for (entry of timelineSteps(); track entry.status) {
+      <div class="timeline__step" [class.timeline__step--complete]="entry.state === 'complete'" [class.timeline__step--current]="entry.state === 'current'" [class.timeline__step--future]="entry.state === 'future'">
+        <span>{{ entry.state === 'complete' ? '✓' : entry.state === 'current' ? '•' : '' }}</span>
         <strong>
           {{ 'ACCOUNT.STATUS.' + entry.status.toUpperCase() | translate }}
         </strong>
-        <time>{{ entry.occurredAt | date: 'dd MMM y, HH:mm' }}</time>
+        @if (entry.occurredAt) { <time>{{ entry.occurredAt | date: 'dd MMM y, HH:mm' }}</time> }
       </div>
       }
     </div>

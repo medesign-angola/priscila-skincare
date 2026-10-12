@@ -3,6 +3,7 @@ import { useAuth, useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { cachedAdminGet } from '../utils/adminRequestCache';
 
 type SidebarItem = {
   label: string;
@@ -41,6 +42,12 @@ const navigation: SidebarItem[] = [
     label: 'Encomendas',
     frenchLabel: 'Commandes',
     href: storeListLink('orders'),
+    icon: 'orders',
+  },
+  {
+    label: 'Receitas',
+    frenchLabel: 'Recettes',
+    href: storeListLink('revenue'),
     icon: 'orders',
   },
   {
@@ -207,8 +214,8 @@ const Sidebar = styled.aside`
   height: 100dvh;
   padding: 30px 16px;
   overflow-y: auto;
-  border-right: 1px solid #ece8e1;
-  background: #fafafa;
+  border-right: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
   scrollbar-width: thin;
 
   @media (max-width: 56rem) {
@@ -236,7 +243,7 @@ const Navigation = styled.nav`
 
 const NavigationTitle = styled.p`
   margin: 35px 16px 4px;
-  color: #777168;
+  color: var(--ps-text-subtle);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -251,7 +258,7 @@ const NavigationLink = styled(Link)<{ $active?: boolean }>`
   min-height: 48px;
   padding: 12px 16px;
   border-radius: 10px;
-  color: ${({ $active }) => ($active ? '#7d6645' : '#8f887e')};
+  color: ${({ $active }) => ($active ? 'var(--ps-accent)' : 'var(--ps-text-subtle)')};
   background: ${({ $active }) => ($active ? 'rgba(125, 102, 69, 0.08)' : 'transparent')};
   font-size: 16px;
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
@@ -262,7 +269,7 @@ const NavigationLink = styled(Link)<{ $active?: boolean }>`
     background-color 160ms ease;
 
   &:hover {
-    color: #7d6645;
+    color: var(--ps-accent);
     background: rgba(125, 102, 69, 0.08);
   }
 `;
@@ -283,8 +290,8 @@ const NavigationBadge = styled.span`
   padding: 0 7px;
   place-items: center;
   border-radius: 999px;
-  color: #fff;
-  background: #8b7048;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent-alt);
   font-size: 12px;
   font-weight: 750;
   line-height: 1;
@@ -300,9 +307,9 @@ async function pendingCount(
   uid: string,
   filter: string,
 ) {
-  const response = await get<CountResponse>(contentLink(uid), {
+  const response = await cachedAdminGet<CountResponse>(get, contentLink(uid), {
     params: { page: 1, pageSize: 1, [filter]: 'pending' },
-  });
+  }, 15_000);
   return response.data.pagination?.total ?? response.data.results?.length ?? 0;
 }
 

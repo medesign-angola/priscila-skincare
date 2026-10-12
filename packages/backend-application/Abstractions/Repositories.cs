@@ -27,12 +27,14 @@ public interface IOtpChallengeRepository
     Task<OtpChallenge?> FindLatestSentAsync(EmailAddress email, CancellationToken cancellationToken = default);
     Task<OtpChallenge?> FindLatestPendingAsync(EmailAddress email, CancellationToken cancellationToken = default);
     void Add(OtpChallenge challenge);
+    Task RemoveAllAsync(EmailAddress email, CancellationToken cancellationToken = default);
 }
 
 public interface IRefreshTokenRepository
 {
     Task<RefreshToken?> FindByHashAsync(string tokenHash, CancellationToken cancellationToken = default);
     void Add(RefreshToken refreshToken);
+    Task RevokeAllAsync(Guid customerId, DateTimeOffset now, CancellationToken cancellationToken = default);
 }
 
 public interface IReviewRepository

@@ -15,11 +15,11 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::customer.customer",
-      "inversedBy": "orders",
-      "required": true
+      "inversedBy": "orders"
     },
     "customerName": { "type": "string", "required": true },
     "customerEmail": { "type": "email", "required": true },
+    "customerAccountDeletedAt": { "type": "datetime" },
     "orderStatus": {
       "type": "customField",
       "customField": "global::friendly-select",

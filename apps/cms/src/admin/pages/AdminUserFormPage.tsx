@@ -38,10 +38,10 @@ type Mode = 'create' | 'edit' | 'profile';
 
 const PasswordHint = styled.div`
   padding: 15px 17px;
-  border-left: 3px solid #a8895f;
+  border-left: 3px solid var(--ps-accent-alt);
   border-radius: 0 9px 9px 0;
-  color: #675b4c;
-  background: #faf6ef;
+  color: var(--ps-text-muted);
+  background: var(--ps-surface-raised);
   font-size: 13px;
   line-height: 1.55;
 `;

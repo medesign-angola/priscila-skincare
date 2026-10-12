@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { ProductFacade } from '@org/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 interface GalleryImageViewModel {
   index: string;
@@ -15,6 +16,7 @@ interface GalleryImageViewModel {
 
 interface EditorialGalleryViewModel {
   id: string;
+  slug: string;
   headline: string;
   description: string;
   coverImage: string;
@@ -24,7 +26,7 @@ interface EditorialGalleryViewModel {
 
 @Component({
   selector: 'app-product-editorial-gallery-section',
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, RouterLink],
   templateUrl: './product-editorial-gallery-section.html',
   styleUrl: './product-editorial-gallery-section.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +60,7 @@ export class ProductEditorialGallerySection {
 
     return {
       id: entry.product.id,
+      slug: entry.product.slug ?? entry.product.id,
       headline: editorial.headline,
       description: editorial.description,
       coverImage: entry.placement.coverImage,

@@ -19,7 +19,7 @@ const Switcher = styled.details.attrs({
     gap: 8px;
     padding: 4px 10px;
     border-radius: 8px;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.28px;
@@ -30,7 +30,7 @@ const Switcher = styled.details.attrs({
 
   summary::-webkit-details-marker { display: none; }
   summary:hover,
-  &[open] summary { background: #f0ece6; }
+  &[open] summary { background: var(--ps-border); }
   summary img { width: 24px; height: 24px; }
 `;
 
@@ -42,14 +42,14 @@ const Menu = styled.div`
   display: grid;
   width: 230px;
   padding: 8px;
-  border: 1px solid #e5ded4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 16px 38px rgba(47, 48, 58, 0.16);
+  background: var(--ps-surface);
+  box-shadow: 0 16px 38px var(--ps-shadow);
 
   strong {
     padding: 8px 10px 6px;
-    color: #716b63;
+    color: var(--ps-text-muted);
     font-size: 12px;
     font-weight: 600;
   }
@@ -62,7 +62,7 @@ const Menu = styled.div`
     padding: 9px 10px;
     border: 0;
     border-radius: 8px;
-    color: #312f2b;
+    color: var(--ps-heading);
     background: transparent;
     font: inherit;
     font-size: 14px;
@@ -71,13 +71,13 @@ const Menu = styled.div`
   }
 
   button:hover,
-  button[aria-current='true'] { background: #f4efe7; }
+  button[aria-current='true'] { background: var(--ps-accent-soft); }
   button:disabled { cursor: wait; opacity: 0.65; }
-  button span:last-child { color: #7d6645; font-weight: 700; }
+  button span:last-child { color: var(--ps-accent); font-weight: 700; }
 
   .locale-error {
     padding: 6px 10px;
-    color: #b42318;
+    color: var(--ps-danger-text);
     font-size: 12px;
     line-height: 1.35;
   }

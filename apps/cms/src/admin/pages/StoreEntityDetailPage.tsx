@@ -42,8 +42,8 @@ const Shell = styled(Main)`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #252421;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 const Topbar = styled.header`
@@ -54,11 +54,11 @@ const Topbar = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 28px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 `;
 const Back = styled(Link)`
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 650;
   text-decoration: none;
@@ -68,10 +68,10 @@ const Profile = styled(Link)`
   align-items: center;
   gap: 9px;
   padding: 7px 12px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  color: #252421;
-  background: #fff;
+  color: var(--ps-heading);
+  background: var(--ps-surface);
   text-decoration: none;
   strong,
   small {
@@ -81,7 +81,7 @@ const Profile = styled(Link)`
     font-size: 14px;
   }
   small {
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 12px;
   }
 `;
@@ -91,8 +91,8 @@ const Avatar = styled.span`
   height: 38px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 13px;
   font-weight: 700;
 `;
@@ -117,7 +117,7 @@ const Header = styled.header`
   }
   p {
     margin: 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 14px;
   }
 `;
@@ -131,27 +131,27 @@ const EditLink = styled(Link)`
   min-height: 40px;
   align-items: center;
   padding: 9px 15px;
-  border: 1px solid #92754d;
+  border: 1px solid var(--ps-accent-alt);
   border-radius: 9px;
-  color: #755a36;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
   transition: background-color 160ms ease;
 
   &:hover {
-    background: #f8f3ec;
+    background: var(--ps-accent-soft);
   }
 `;
 const Badge = styled.span<{ $tone?: string }>`
   display: inline-flex;
   padding: 7px 13px;
   border: 1px solid
-    ${({ $tone }) => ($tone === 'positive' ? '#86d9a4' : $tone === 'negative' ? '#f3a4ae' : '#dfc68d')};
+    ${({ $tone }) => ($tone === 'positive' ? 'var(--ps-success-border)' : $tone === 'negative' ? 'var(--ps-danger-border)' : 'var(--ps-warning-border)')};
   border-radius: 999px;
-  color: ${({ $tone }) => ($tone === 'positive' ? '#166534' : $tone === 'negative' ? '#9f1239' : '#75530b')};
-  background: ${({ $tone }) => ($tone === 'positive' ? '#ecfdf3' : $tone === 'negative' ? '#fff1f2' : '#fff8e7')};
+  color: ${({ $tone }) => ($tone === 'positive' ? 'var(--ps-success-text)' : $tone === 'negative' ? 'var(--ps-danger-text)' : 'var(--ps-warning-text)')};
+  background: ${({ $tone }) => ($tone === 'positive' ? 'var(--ps-success-bg)' : $tone === 'negative' ? 'var(--ps-danger-bg)' : 'var(--ps-warning-bg)')};
   font-size: 14px;
   font-weight: 700;
 `;
@@ -170,13 +170,13 @@ const Stack = styled.div`
 `;
 const Card = styled.section`
   overflow: hidden;
-  border: 1px solid #e8e2d9;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const CardHeader = styled.header`
   padding: 18px 20px;
-  border-bottom: 1px solid #ece8e1;
+  border-bottom: 1px solid var(--ps-border);
   h2 {
     margin: 0;
     font-size: 18px;
@@ -184,7 +184,7 @@ const CardHeader = styled.header`
   }
   p {
     margin: 5px 0 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 13px;
   }
 `;
@@ -195,7 +195,7 @@ const Fields = styled.dl`
   padding: 8px 20px 18px;
   div {
     padding: 13px 0;
-    border-bottom: 1px solid #f0ece6;
+    border-bottom: 1px solid var(--ps-border);
   }
   div:nth-child(odd) {
     padding-right: 16px;
@@ -205,7 +205,7 @@ const Fields = styled.dl`
   }
   dt {
     margin-bottom: 5px;
-    color: #857e75;
+    color: var(--ps-text-subtle);
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -231,7 +231,7 @@ const ReviewBody = styled.div`
   strong {
     display: block;
     margin-bottom: 12px;
-    color: #8b7048;
+    color: var(--ps-accent-alt);
     font-size: 20px;
     letter-spacing: 3px;
   }
@@ -242,17 +242,17 @@ const ReviewProduct = styled.section`
   gap: 16px;
   align-items: center;
   padding: 18px 20px;
-  border-top: 1px solid #ece8e1;
+  border-top: 1px solid var(--ps-border);
   img,
   .placeholder {
     display: grid;
     width: 88px;
     height: 88px;
     place-items: center;
-    border: 1px solid #ece8e1;
+    border: 1px solid var(--ps-border);
     border-radius: 10px;
-    color: #8b7048;
-    background: #f7f5f2;
+    color: var(--ps-accent-alt);
+    background: var(--ps-canvas);
     object-fit: cover;
     font-size: 24px;
   }
@@ -263,27 +263,27 @@ const ReviewProduct = styled.section`
   }
   small {
     margin-bottom: 5px;
-    color: #857e75;
+    color: var(--ps-text-subtle);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
   strong {
-    color: #252421;
+    color: var(--ps-heading);
     font-size: 16px;
     line-height: 1.35;
   }
   span {
     margin-top: 5px;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 13px;
   }
   a {
     padding: 10px 13px;
-    border: 1px solid #8b7048;
+    border: 1px solid var(--ps-accent-alt);
     border-radius: 8px;
-    color: #7d6645;
+    color: var(--ps-accent);
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
@@ -309,19 +309,19 @@ const Buttons = styled.div`
   button {
     min-height: 48px;
     padding: 0 15px;
-    border: 1px solid #8b7048;
+    border: 1px solid var(--ps-accent-alt);
     border-radius: 9px;
-    color: #fff;
-    background: #8b7048;
+    color: var(--ps-on-accent);
+    background: var(--ps-accent-alt);
     font: inherit;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
   }
   button.secondary {
-    color: #7b4a4a;
-    border-color: #d9b5b5;
-    background: #fff;
+    color: var(--ps-danger-text);
+    border-color: var(--ps-danger-border);
+    background: var(--ps-surface);
   }
   button:disabled {
     cursor: not-allowed;
@@ -330,10 +330,10 @@ const Buttons = styled.div`
 `;
 const Notice = styled.div<{ $error?: boolean }>`
   padding: 14px 16px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
 `;
 
@@ -409,7 +409,7 @@ export default function StoreEntityDetailPage({ kind }: { kind: Kind }) {
         );
         product = firstEntry(relationResponse.data) ?? product;
       } catch {
-        // A referência SKU continua disponível caso a relação não possa ser expandida.
+        // A referência técnica continua disponível caso a relação não possa ser expandida.
       }
 
       if (product?.documentId) {
@@ -609,7 +609,7 @@ export default function StoreEntityDetailPage({ kind }: { kind: Kind }) {
                               <strong>
                                 {value(entity.product?.name, entity.productSku)}
                               </strong>
-                              <span>SKU: {value(entity.product?.sku, entity.productSku)}</span>
+                              <span>Referência: {value(entity.product?.sku, entity.productSku)}</span>
                             </div>
                             {entity.product?.documentId && (
                               <Link

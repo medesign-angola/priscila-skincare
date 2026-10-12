@@ -50,7 +50,7 @@ public sealed class CustomerAddress : Entity<Guid>
     {
         Label = Required(label, 60, "nome da morada");
         Recipient = Required(recipient, 160, "destinatário");
-        Phone = Required(phone, 32, "telefone");
+        Phone = PhoneNumber.Normalize(phone);
         Country = Required(country, 80, "país");
         Province = Required(province, 100, "província");
         City = Required(city, 100, "município ou cidade");

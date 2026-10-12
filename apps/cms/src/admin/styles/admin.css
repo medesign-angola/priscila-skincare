@@ -17,10 +17,92 @@
   --priscila-brown-dark: #5f4d35;
   --priscila-cream: #f7f3ed;
   --priscila-ink: #1a1917;
+  --ps-canvas: #f7f5f2;
+  --ps-canvas-alt: #f7f5f1;
+  --ps-surface: #ffffff;
+  --ps-surface-soft: #fafafa;
+  --ps-surface-muted: #f7f3ed;
+  --ps-surface-raised: #fbfaf8;
+  --ps-field: #f5f5f5;
+  --ps-text: #1a1917;
+  --ps-heading: #2f303a;
+  --ps-text-muted: #6d675f;
+  --ps-text-subtle: #8f887e;
+  --ps-border: #ece8e1;
+  --ps-border-strong: #e5ded4;
+  --ps-accent: #7d6645;
+  --ps-accent-alt: #8b7048;
+  --ps-accent-hover: #5f4d35;
+  --ps-accent-soft: rgba(125, 102, 69, 0.08);
+  --ps-on-accent: #ffffff;
+  --ps-shadow: rgba(47, 43, 39, 0.12);
+  --ps-success-bg: #f0fdf4;
+  --ps-success-border: #bbf7d0;
+  --ps-success-text: #166534;
+  --ps-danger-bg: #fef2f2;
+  --ps-danger-border: #fecaca;
+  --ps-danger-text: #991b1b;
+  --ps-warning-bg: #fff8eb;
+  --ps-warning-border: #ead2a8;
+  --ps-warning-text: #7d5a24;
+  --ps-info-bg: #eef6ff;
+  --ps-info-border: #93c5fd;
+  --ps-info-text: #1e4f86;
+  --ps-violet-bg: #f1f0ff;
+  --ps-violet-border: #b9b4f6;
+  --ps-violet-text: #47408f;
+  --ps-neutral-badge-bg: #f5f5f4;
+  --ps-neutral-badge-border: #d6d3d1;
+  --ps-neutral-badge-text: #57534e;
+}
+
+html[data-priscila-theme='dark'] {
+  color-scheme: dark;
+  --priscila-brown: #c6a778;
+  --priscila-brown-dark: #dcc49e;
+  --priscila-cream: #24201c;
+  --priscila-ink: #f8f4ed;
+  --ps-canvas: #171512;
+  --ps-canvas-alt: #1a1815;
+  --ps-surface: #1d1a17;
+  --ps-surface-soft: #211e1a;
+  --ps-surface-muted: #24201c;
+  --ps-surface-raised: #28231e;
+  --ps-field: #24201c;
+  --ps-text: #f8f4ed;
+  --ps-heading: #eee7dd;
+  --ps-text-muted: #b8aa99;
+  --ps-text-subtle: #9f9282;
+  --ps-border: #302a24;
+  --ps-border-strong: #443b32;
+  --ps-accent: #c6a778;
+  --ps-accent-alt: #b49667;
+  --ps-accent-hover: #dcc49e;
+  --ps-accent-soft: rgba(198, 167, 120, 0.12);
+  --ps-on-accent: #171512;
+  --ps-shadow: rgba(0, 0, 0, 0.34);
+  --ps-success-bg: #15271d;
+  --ps-success-border: #28543a;
+  --ps-success-text: #8de5aa;
+  --ps-danger-bg: #30191b;
+  --ps-danger-border: #663036;
+  --ps-danger-text: #ffabb3;
+  --ps-warning-bg: #2e2619;
+  --ps-warning-border: #5d4928;
+  --ps-warning-text: #e7c486;
+  --ps-info-bg: #172633;
+  --ps-info-border: #345c79;
+  --ps-info-text: #9dcced;
+  --ps-violet-bg: #211f35;
+  --ps-violet-border: #514b83;
+  --ps-violet-text: #c4bff4;
+  --ps-neutral-badge-bg: #282522;
+  --ps-neutral-badge-border: #4a443d;
+  --ps-neutral-badge-text: #c8beb2;
 }
 
 html {
-  scrollbar-color: #b49667 #f1ebe2;
+  scrollbar-color: var(--ps-accent-alt) var(--ps-surface-muted);
 }
 
 body {
@@ -28,12 +110,17 @@ body {
 }
 
 ::selection {
-  color: #fff;
-  background: var(--priscila-brown);
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
 }
 
 *:focus-visible {
   outline-color: var(--priscila-brown);
+}
+
+img[data-priscila-loader='true'] {
+  width: 56px;
+  height: 56px;
 }
 
 /* Mantém a navegação do Strapi discreta e coerente com a loja. */
@@ -57,7 +144,7 @@ body.priscila-dashboard-open,
 body:has([data-priscila-store-layout]) {
   height: 100dvh;
   overflow: hidden;
-  background: #f7f5f2;
+  background: var(--ps-canvas);
 }
 
 html:has(body.priscila-dashboard-open),
@@ -112,9 +199,8 @@ body:has([data-priscila-store-layout]) main#main-content {
  * continuam sendo os componentes nativos do CMS.
  */
 html:has(input[name='rememberMe']) {
-  color-scheme: light;
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
-  background: #ffffff;
+  background: var(--ps-surface);
 }
 
 html:has(input[name='rememberMe']),
@@ -123,7 +209,7 @@ html:has(input[name='rememberMe']) body > #strapi {
   min-width: 320px;
   min-height: 100%;
   margin: 0;
-  background: #ffffff;
+  background: var(--ps-surface);
 }
 
 html:has(input[name='rememberMe']) body {
@@ -149,7 +235,7 @@ html:has(input[name='rememberMe']) body::before {
 }
 
 html:has(input[name='rememberMe']) body::after {
-    background: url('/../priscila-admin/login/hero.webp') center / cover no-repeat;
+  background: url('/../priscila-admin/login/hero.webp') center / cover no-repeat;
   mix-blend-mode: hard-light;
 }
 
@@ -230,7 +316,7 @@ html:has(input[name='rememberMe']) header [role='combobox']::after {
 html:has(input[name='rememberMe']) header button::before,
 html:has(input[name='rememberMe']) header [role='combobox']::before {
   left: 12px;
-  color: #1a1917;
+  color: var(--ps-text);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
   font-size: 14px;
   font-weight: 700;
@@ -263,7 +349,7 @@ html:has(input[name='rememberMe']) main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #1a1917;
+  color: var(--ps-text);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 }
 
@@ -292,7 +378,7 @@ html:has(input[name='rememberMe']) main > div:first-child > div:first-child > im
 
 html:has(input[name='rememberMe']) main h1 {
   margin: 0;
-  color: #1a1917;
+  color: var(--ps-text);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
   font-size: 32px;
   font-weight: 700;
@@ -315,7 +401,7 @@ html:has(input[name='rememberMe']) main > div:first-child > div:first-child > di
 
 html:has(input[name='rememberMe']) main > div:first-child > div:first-child > div:nth-of-type(2) span,
 html:has(input[name='rememberMe']) main > div:first-child > div:first-child > div:nth-of-type(2) p {
-  color: #1a1917;
+  color: var(--ps-text);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
   font-size: 18px;
   font-weight: 400;
@@ -336,7 +422,7 @@ html:has(input[name='rememberMe']) form button {
 }
 
 html:has(input[name='rememberMe']) form label {
-  color: #1a1917;
+  color: var(--ps-text);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -346,9 +432,9 @@ html:has(input[name='rememberMe']) form div:has(> input[type='password']) {
   box-sizing: border-box;
   min-height: 48px;
   padding: 0 12px;
-  border: 1px solid rgb(0 0 0 / 10%);
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  background: #f5f5f5;
+  background: var(--ps-field);
   box-shadow: none;
 }
 
@@ -357,14 +443,14 @@ html:has(input[name='rememberMe']) form input[type='password'] {
   height: 46px;
   padding: 0;
   border: 0;
-  color: #1a1917;
+  color: var(--ps-text);
   background: transparent;
   box-shadow: none;
 }
 
 html:has(input[name='rememberMe']) form input[type='email']::placeholder,
 html:has(input[name='rememberMe']) form input[type='password']::placeholder {
-  color: rgb(0 0 0 / 60%);
+  color: var(--ps-text-subtle);
   opacity: 1;
 }
 
@@ -372,7 +458,7 @@ html:has(input[name='rememberMe']) form input[type='checkbox'] {
   width: 24px;
   height: 24px;
   min-width: 24px;
-  accent-color: #7d6645;
+  accent-color: var(--ps-accent);
 }
 
 html:has(input[name='rememberMe']) form button[type='submit'] {
@@ -380,10 +466,10 @@ html:has(input[name='rememberMe']) form button[type='submit'] {
   box-sizing: border-box;
   min-height: 48px;
   padding: 12px 56px 12px 24px;
-  border: 1px solid #7d6645;
+  border: 1px solid var(--ps-accent);
   border-radius: 10px;
-  color: #ffffff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   box-shadow: none;
   font-weight: 600;
   line-height: 1.5;
@@ -403,8 +489,8 @@ html:has(input[name='rememberMe']) form button[type='submit']::after {
 }
 
 html:has(input[name='rememberMe']) form button[type='submit']:hover:not(:disabled) {
-  border-color: #5f4d35;
-  background: #5f4d35;
+  border-color: var(--ps-accent-hover);
+  background: var(--ps-accent-hover);
 }
 
 html:has(input[name='rememberMe']) main > div:last-child {
@@ -416,7 +502,7 @@ html:has(input[name='rememberMe']) main > div:last-child > div {
 }
 
 html:has(input[name='rememberMe']) main > div:last-child a {
-  color: #1a1917;
+  color: var(--ps-text);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;

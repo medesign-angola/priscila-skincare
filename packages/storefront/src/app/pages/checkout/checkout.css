@@ -30,7 +30,8 @@
 }
 
 .checkout-back:focus-visible,
-.address-empty a:focus-visible,
+.address-empty button:focus-visible,
+.address-add:focus-visible,
 .address-list button:focus-visible,
 .checkout-summary > button:focus-visible {
   outline: 2px solid #7d6645;
@@ -142,7 +143,8 @@
   line-height: 1.55;
 }
 
-.address-empty a {
+.address-empty button,
+.address-add {
   display: inline-flex;
   min-height: 2.75rem;
   align-items: center;
@@ -158,10 +160,22 @@
   transition: color 180ms ease, background 180ms ease;
 }
 
-.address-empty a:hover {
+.address-empty button:hover,
+.address-add:hover {
   color: #fff;
   background: #7d6645;
 }
+
+.address-add {
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.address-modal-backdrop{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:1rem;background:rgb(26 25 23/.48);overflow:hidden;overscroll-behavior:none}
+.address-modal-dismiss{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:transparent}
+.address-modal{position:relative;z-index:1;box-sizing:border-box;width:min(100%,44rem);max-height:calc(100dvh - 2rem);padding:clamp(1.25rem,3vw,2rem);background:#fff;overflow:auto;overscroll-behavior:contain;box-shadow:0 1.5rem 5rem rgb(48 39 27/.2)}
+.address-modal>header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}.address-modal>header div{display:grid;gap:.35rem}.address-modal>header span{color:#7d6645;font-size:.6875rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}.address-modal>header h2{padding:0;border:0}.address-modal>header>button{border:0;background:none;font-size:1.75rem;line-height:1;cursor:pointer}
+.address-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}.address-fields label{display:grid;gap:.4rem}.address-fields label>span{color:#6d675f;font-size:.6875rem;font-weight:700;text-transform:uppercase}.address-fields input,.address-fields select{box-sizing:border-box;width:100%;height:3.25rem;padding:.75rem;border:1px solid #cfc7bc;border-radius:2px;background:#fff;color:#1a1917;font:inherit;font-size:.875rem;outline:0}.address-fields input:focus,.address-fields select:focus{border-color:#7d6645;box-shadow:0 0 0 2px #eee8df}.address-fields__wide{grid-column:1/-1}.address-default{display:flex;align-items:center;gap:.65rem;margin-top:1rem;font-size:.8125rem}.address-default input{width:1.125rem;height:1.125rem;accent-color:#7d6645}.address-modal__actions{display:flex;justify-content:flex-end;gap:.75rem;margin-top:1.5rem}.address-modal__actions button{min-height:2.75rem;padding:.75rem 1.25rem;border:1px solid #7d6645;background:#fff;color:#7d6645;font:inherit;font-size:.75rem;font-weight:700;text-transform:uppercase;cursor:pointer}.address-modal__actions .address-save{background:#7d6645;color:#fff}.address-modal__actions button:disabled{opacity:.6;cursor:wait}
 
 .checkout-summary {
   position: sticky;
@@ -328,4 +342,5 @@
   .checkout-summary {
     padding: 1.25rem;
   }
+  .address-modal-backdrop{place-items:end center;padding:0}.address-modal{width:100%;max-height:92svh;padding:1.25rem}.address-fields{grid-template-columns:1fr}.address-fields__wide{grid-column:auto}.address-modal__actions{display:grid;grid-template-columns:1fr 1fr}.address-modal__actions button{padding:.75rem .5rem}
 }

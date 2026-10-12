@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, shareReplay, throwError } from 'rxjs';
 import { CMS_CONFIG } from '../config/cms.config';
 import {
   CmsAboutPage,
@@ -24,12 +24,16 @@ import { mapCmsHeroSlide } from '../mappers/cms.mapper';
 export class CmsService {
   private readonly http = inject(HttpClient);
   private readonly config = inject(CMS_CONFIG);
+  private readonly responseCache = new Map<
+    string,
+    { expiresAt: number; request: Observable<unknown> }
+  >();
 
   readonly baseUrl = this.config.baseUrl;
   readonly useMockFallbacks = this.config.useMockFallbacks ?? false;
 
   getHeroSlides(locale: CmsLocale): Observable<HeroSlide[]> {
-    return this.http
+    return this.cached(`hero-slides:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsHeroSlide>>(
         `${this.baseUrl}/api/hero-slides`,
         { params: this.heroSlideParams(locale) },
@@ -41,37 +45,37 @@ export class CmsService {
             .filter((slide): slide is HeroSlide => slide !== null)
             .sort((first, second) => first.order - second.order),
         ),
-      );
+      ));
   }
 
   getProducts(locale: CmsLocale): Observable<CmsProduct[]> {
-    return this.http
+    return this.cached(`products:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsProduct>>(
         `${this.baseUrl}/api/products`,
         { params: this.productParams(locale) },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getKits(locale: CmsLocale): Observable<CmsKit[]> {
-    return this.http
+    return this.cached(`kits:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsKit>>(`${this.baseUrl}/api/kits`, {
         params: this.kitParams(locale),
       })
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getCollections(locale: CmsLocale): Observable<CmsProductCollection[]> {
-    return this.http
+    return this.cached(`collections:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsProductCollection>>(
         `${this.baseUrl}/api/collections`,
         { params: this.collectionParams(locale) },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getHomePage(locale: CmsLocale): Observable<CmsHomePage | null> {
-    return this.http
+    return this.cached(`home-page:${locale}`, () => this.http
       .get<CmsSingleResponse<CmsHomePage>>(
         `${this.baseUrl}/api/home-page`,
         {
@@ -131,11 +135,11 @@ export class CmsService {
             .set('populate[brandPillars][populate][items]', 'true'),
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getAboutPage(locale: CmsLocale): Observable<CmsAboutPage | null> {
-    return this.http
+    return this.cached(`about-page:${locale}`, () => this.http
       .get<CmsSingleResponse<CmsAboutPage>>(
         `${this.baseUrl}/api/about-page`,
         {
@@ -190,11 +194,11 @@ export class CmsService {
             ),
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getSiteSetting(locale: CmsLocale): Observable<CmsSiteSetting | null> {
-    return this.http
+    return this.cached(`site-setting:${locale}`, () => this.http
       .get<CmsSingleResponse<CmsSiteSetting>>(
         `${this.baseUrl}/api/site-setting`,
         {
@@ -205,11 +209,11 @@ export class CmsService {
             .set('populate[logo]', 'true'),
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getIngredients(locale: CmsLocale): Observable<CmsIngredient[]> {
-    return this.http
+    return this.cached(`ingredients:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsIngredient>>(
         `${this.baseUrl}/api/ingredients`,
         {
@@ -222,11 +226,11 @@ export class CmsService {
             .set('populate[editorialMedia][populate][mobileImage]', 'true'),
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getCategories(locale: CmsLocale): Observable<CmsCategory[]> {
-    return this.http
+    return this.cached(`categories:${locale}`, () => this.http
       .get<CmsCollectionResponse<CmsCategory>>(
         `${this.baseUrl}/api/categories`,
         {
@@ -236,17 +240,40 @@ export class CmsService {
             .set('pagination[pageSize]', '100'),
         },
       )
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
   }
 
   getSizes(): Observable<CmsSize[]> {
-    return this.http
+    return this.cached('sizes', () => this.http
       .get<CmsCollectionResponse<CmsSize>>(`${this.baseUrl}/api/sizes`, {
         params: new HttpParams()
           .set('sort[0]', 'order:asc')
           .set('pagination[pageSize]', '100'),
       })
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data)));
+  }
+
+  private cached<T>(
+    key: string,
+    loader: () => Observable<T>,
+    ttlMs = 5 * 60_000,
+  ): Observable<T> {
+    const now = Date.now();
+    const existing = this.responseCache.get(key);
+    if (existing && existing.expiresAt > now) {
+      return existing.request as Observable<T>;
+    }
+    if (existing) this.responseCache.delete(key);
+
+    const request = loader().pipe(
+      catchError((error) => {
+        this.responseCache.delete(key);
+        return throwError(() => error);
+      }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+    this.responseCache.set(key, { expiresAt: now + ttlMs, request });
+    return request;
   }
 
   private heroSlideParams(locale: CmsLocale): HttpParams {

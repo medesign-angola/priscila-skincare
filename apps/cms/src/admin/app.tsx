@@ -15,6 +15,59 @@ const installAdminStyles = () => {
   if (style.textContent !== adminStyles) style.textContent = adminStyles;
 };
 
+const installAdminThemeMarker = () => {
+  if (typeof window === 'undefined') return;
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+  const syncTheme = () => {
+    const preference = window.localStorage.getItem('STRAPI_THEME') ?? 'system';
+    const theme =
+      preference === 'system'
+        ? systemTheme.matches
+          ? 'dark'
+          : 'light'
+        : preference;
+    if (document.documentElement.dataset.priscilaTheme !== theme) {
+      document.documentElement.dataset.priscilaTheme = theme;
+    }
+  };
+  const scheduleSync = () => window.requestAnimationFrame(syncTheme);
+
+  systemTheme.addEventListener('change', syncTheme);
+  document.addEventListener('click', scheduleSync, true);
+  document.addEventListener('change', scheduleSync, true);
+  syncTheme();
+};
+
+const installAdminLoaderBranding = () => {
+  if (typeof document === 'undefined') return;
+
+  const loaderSource = `data:image/svg+xml,${encodeURIComponent(`
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="25" stroke="#eee7dd" stroke-width="5" />
+      <path d="M32 7a25 25 0 1 1-22.6 14.3" stroke="#9a794a" stroke-width="5" stroke-linecap="round" />
+    </svg>
+  `)}`;
+
+  const replaceLoaders = (root: ParentNode = document) => {
+    root.querySelectorAll<HTMLImageElement>('img').forEach((image) => {
+      const source = image.getAttribute('src') ?? '';
+      if (!source.toLowerCase().includes('%234945ff')) return;
+      image.src = loaderSource;
+      image.dataset.priscilaLoader = 'true';
+      image.alt = '';
+    });
+  };
+
+  replaceLoaders();
+  new MutationObserver((mutations) => {
+    mutations.forEach((mutation) =>
+      mutation.addedNodes.forEach((node) => {
+        if (node instanceof Element) replaceLoaders(node);
+      }),
+    );
+  }).observe(document.documentElement, { childList: true, subtree: true });
+};
+
 const resolveAdminPageTitle = (pathname: string) => {
   const path = pathname.replace(/^\/admin\/?/, '').replace(/\/+$/, '');
   if (!path) return 'Dashboard';
@@ -29,6 +82,7 @@ const resolveAdminPageTitle = (pathname: string) => {
   const resources: Record<string, string> = {
     products: 'Produtos',
     orders: 'Encomendas',
+    revenue: 'Receitas',
     reviews: 'Avaliações',
     customers: 'Clientes',
     kits: 'Kits de produtos',
@@ -154,7 +208,9 @@ const syncAuthenticationMarker = () => {
 };
 
 redirectRegistrationToLogin();
+installAdminThemeMarker();
 installAdminStyles();
+installAdminLoaderBranding();
 installAdminBranding();
 syncAuthenticationMarker();
 
@@ -317,6 +373,12 @@ export default {
         path: 'store/orders/:documentId',
         lazy: async () => ({
           Component: (await import('./pages/OrderDetailPage')).default,
+        }),
+      },
+      {
+        path: 'store/revenue',
+        lazy: async () => ({
+          Component: (await import('./pages/RevenuePage')).default,
         }),
       },
       {

@@ -9,6 +9,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import { invalidateAdminRequestCache } from '../utils/adminRequestCache';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
@@ -77,8 +78,8 @@ const Shell = styled(Main)`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #2f303a;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 const Topbar = styled.header`
@@ -89,14 +90,14 @@ const Topbar = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 28px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 `;
 const Back = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -114,7 +115,7 @@ const Language = styled(Link)`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1a1917;
+  color: var(--ps-text);
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
@@ -129,10 +130,10 @@ const Profile = styled(Link)`
   align-items: center;
   gap: 9px;
   padding: 6px 12px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  color: #1a1917;
-  background: #fff;
+  color: var(--ps-text);
+  background: var(--ps-surface);
   text-decoration: none;
 `;
 const Avatar = styled.span`
@@ -141,8 +142,8 @@ const Avatar = styled.span`
   height: 40px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 13px;
   font-weight: 700;
 `;
@@ -154,7 +155,7 @@ const ProfileText = styled.span`
     font-weight: 500;
   }
   small {
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 12px;
   }
 `;
@@ -166,7 +167,7 @@ const Workspace = styled.div`
 `;
 const Title = styled.h1`
   margin: 0 0 28px;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 32px;
   font-weight: 600;
   letter-spacing: -0.5px;
@@ -189,7 +190,7 @@ const Step = styled.li`
     min-width: 28px;
     flex: 1;
     margin: 0 8px;
-    background: #ddd5c9;
+    background: var(--ps-border-strong);
     content: '';
   }
 `;
@@ -200,10 +201,10 @@ const StepButton = styled.button<{ $active: boolean; $done: boolean }>`
   align-items: center;
   gap: 11px;
   padding: 11px 16px;
-  border: 1px solid ${({ $done }) => ($done ? '#7d6645' : 'transparent')};
+  border: 1px solid ${({ $done }) => ($done ? 'var(--ps-accent)' : 'transparent')};
   border-radius: 10px;
-  color: ${({ $active, $done }) => ($active ? '#fff' : $done ? '#7d6645' : '#806b4b')};
-  background: ${({ $active }) => ($active ? '#8b7048' : '#eeeae4')};
+  color: ${({ $active, $done }) => ($active ? 'var(--ps-on-accent)' : $done ? 'var(--ps-accent)' : 'var(--ps-accent)')};
+  background: ${({ $active }) => ($active ? 'var(--ps-accent-alt)' : 'var(--ps-border)')};
   font: inherit;
   font-size: 15px;
   font-weight: 700;
@@ -217,7 +218,7 @@ const Card = styled.section`
   min-height: 600px;
   padding: 64px 32px 72px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const Column = styled.div`
   display: grid;
@@ -240,14 +241,14 @@ const SectionTitle = styled.div`
   p {
     max-width: 65ch;
     margin: 0;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 14px;
     line-height: 1.55;
   }
 `;
 const Field = styled.label`
   display: block;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
@@ -260,16 +261,16 @@ const Field = styled.label`
   small {
     display: block;
     margin-top: 8px;
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 400;
   }
   .required {
     margin-left: 2px;
-    color: #e15454;
+    color: var(--ps-danger-text);
   }
 `;
-const inputCss = `box-sizing:border-box;width:100%;min-height:52px;padding:12px 14px;border:1px solid rgba(0,0,0,.12);border-radius:10px;color:#1a1917;background:#f7f7f7;font:inherit;font-size:14px;outline:0;&:focus{border-color:#8b7048;box-shadow:0 0 0 3px rgba(139,112,72,.12);}&::placeholder{color:#97928a;}`;
+const inputCss = `box-sizing:border-box;width:100%;min-height:52px;padding:12px 14px;border:1px solid var(--ps-border-strong);border-radius:10px;color:var(--ps-text);background:var(--ps-field);font:inherit;font-size:14px;outline:0;&:focus{border-color:var(--ps-accent-alt);box-shadow:0 0 0 3px rgba(139,112,72,.12);}&::placeholder{color:var(--ps-text-subtle);}`;
 const Input = styled.input`
   ${inputCss}
 `;
@@ -297,7 +298,7 @@ const Radio = styled.div`
     font-weight: 500;
   }
   input {
-    accent-color: #7d6645;
+    accent-color: var(--ps-accent);
   }
 `;
 const Upload = styled.label`
@@ -307,10 +308,10 @@ const Upload = styled.label`
   justify-items: center;
   gap: 10px;
   padding: 22px;
-  border: 1px dashed #b9aa95;
+  border: 1px dashed var(--ps-border-strong);
   border-radius: 12px;
-  color: #7d6645;
-  background: #faf9f7;
+  color: var(--ps-accent);
+  background: var(--ps-surface-raised);
   cursor: pointer;
   input {
     position: absolute;
@@ -322,7 +323,7 @@ const Upload = styled.label`
     font-size: 14px;
   }
   small {
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     font-weight: 400;
   }
 `;
@@ -332,9 +333,9 @@ const AssetCard = styled.div`
   align-items: center;
   gap: 16px;
   padding: 14px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  background: #fafafa;
+  background: var(--ps-surface-soft);
   img,
   video {
     width: 88px;
@@ -352,8 +353,8 @@ const AssetCard = styled.div`
     height: 34px;
     border: 0;
     border-radius: 8px;
-    color: #7d6645;
-    background: #eeeae4;
+    color: var(--ps-accent);
+    background: var(--ps-border);
     font-size: 20px;
     cursor: pointer;
   }
@@ -371,23 +372,23 @@ const Track = styled.span`
   height: 8px;
   overflow: hidden;
   border-radius: 8px;
-  background: #ece8e1;
+  background: var(--ps-border);
 `;
 const Fill = styled.span<{ $value: number }>`
   display: block;
   width: ${({ $value }) => $value}%;
   height: 100%;
   border-radius: inherit;
-  background: #8b7048;
+  background: var(--ps-accent-alt);
   transition: width 180ms ease;
 `;
 const Notice = styled.div<{ $error?: boolean }>`
   margin-bottom: 20px;
   padding: 13px 16px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
 `;
 const Footer = styled.footer`
@@ -396,7 +397,7 @@ const Footer = styled.footer`
   gap: 32px;
   margin-top: 30px;
   padding: 24px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const FooterSingle = styled(Footer)`
   grid-template-columns: minmax(0, 620px);
@@ -410,8 +411,8 @@ const Button = styled.button<{ $primary?: boolean }>`
   padding: 14px 22px;
   border: 0;
   border-radius: 10px;
-  color: ${({ $primary }) => ($primary ? '#fff' : '#7d6645')};
-  background: ${({ $primary }) => ($primary ? '#8b7048' : '#eeeae4')};
+  color: ${({ $primary }) => ($primary ? 'var(--ps-on-accent)' : 'var(--ps-accent)')};
+  background: ${({ $primary }) => ($primary ? 'var(--ps-accent-alt)' : 'var(--ps-border)')};
   font: inherit;
   font-size: 16px;
   font-weight: 700;
@@ -428,17 +429,17 @@ const Summary = styled.dl`
     grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.2fr);
     gap: 28px;
     padding: 17px 0;
-    border-bottom: 1px solid #ece8e1;
+    border-bottom: 1px solid var(--ps-border);
   }
   dt {
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
   }
   dd {
     margin: 0;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 14px;
     font-weight: 600;
     overflow-wrap: anywhere;
@@ -451,9 +452,9 @@ const BannerPreview = styled.div<{ $presentation: string; $image?: string }>`
     $presentation === 'cover' ? '1fr' : 'minmax(0, 1fr) minmax(220px, .9fr)'};
   min-height: 270px;
   overflow: hidden;
-  border: 1px solid #ded7cd;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #ede8e0;
+  background: var(--ps-border);
   &::after {
     display: ${({ $presentation }) =>
       $presentation === 'cover' ? 'block' : 'none'};
@@ -499,7 +500,7 @@ const BannerPreview = styled.div<{ $presentation: string; $image?: string }>`
       $presentation === 'cover' ? 'absolute' : 'relative'};
     inset: 0;
     min-height: 270px;
-    background: ${({ $image }) => ($image ? `url("${$image}")` : '#ded7cd')};
+    background: ${({ $image }) => ($image ? `url("${$image}")` : 'var(--ps-border-strong)')};
     background-position: var(--focal-x) var(--focal-y);
     background-size: var(--object-fit);
     background-repeat: no-repeat;
@@ -982,6 +983,7 @@ export default function HeroSlideFormPage() {
           : `${base}/actions/publish`,
         payload,
       );
+      invalidateAdminRequestCache(contentLink('api::hero-slide.hero-slide'));
       navigate(listLink, { replace: true });
     } catch (error: any) {
       setMessage({

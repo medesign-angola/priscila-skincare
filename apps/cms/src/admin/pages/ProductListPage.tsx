@@ -4,6 +4,7 @@ import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { cachedAdminGet, invalidateAdminRequestCache } from '../utils/adminRequestCache';
 import { StorePageHeader } from '../components/StorePageHeader';
 import {
   contentLink,
@@ -153,8 +154,8 @@ const copy = {
 
 const PageMain = styled(Main)`
   min-height: 100vh;
-  color: #1a1917;
-  background: #f7f5f2;
+  color: var(--ps-text);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 
@@ -178,16 +179,16 @@ const PrimaryAction = styled(Link)`
   gap: 8px;
   min-height: 48px;
   padding: 12px;
-  border: 1px solid #7d6645;
+  border: 1px solid var(--ps-accent);
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   text-decoration: none;
 
-  &:hover { background: #5f4d35; }
+  &:hover { background: var(--ps-accent-hover); }
   img { width: 24px; height: 24px; }
 `;
 
@@ -206,9 +207,9 @@ const SearchForm = styled.form`
   gap: 10px;
   padding: 8px 16px;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
 
   img { width: 24px; height: 24px; }
 `;
@@ -217,12 +218,12 @@ const SearchInput = styled.input`
   width: 100%;
   border: 0;
   outline: 0;
-  color: #1a1917;
+  color: var(--ps-text);
   background: transparent;
   font: inherit;
   font-size: 14px;
 
-  &::placeholder { color: #8f887e; opacity: 1; }
+  &::placeholder { color: var(--ps-text-subtle); opacity: 1; }
 `;
 
 const FilterButton = styled.button<{ $active?: boolean }>`
@@ -232,10 +233,10 @@ const FilterButton = styled.button<{ $active?: boolean }>`
   align-items: center;
   gap: 10px;
   padding: 8px 16px;
-  border: 1px solid ${({ $active }) => ($active ? '#b49667' : 'rgba(0, 0, 0, 0.1)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--ps-accent-alt)' : 'var(--ps-border-strong)')};
   border-radius: 12px;
-  color: #7d6645;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -253,10 +254,10 @@ const FilterPanel = styled.div`
   gap: 18px;
   width: 280px;
   padding: 20px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 14px 35px rgba(47, 48, 58, 0.12);
+  background: var(--ps-surface);
+  box-shadow: 0 14px 35px var(--ps-shadow);
 `;
 
 const FilterGroup = styled.fieldset`
@@ -268,7 +269,7 @@ const FilterGroup = styled.fieldset`
 
   legend {
     margin-bottom: 8px;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 14px;
     font-weight: 600;
   }
@@ -277,12 +278,12 @@ const FilterGroup = styled.fieldset`
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 14px;
     cursor: pointer;
   }
 
-  input { accent-color: #7d6645; }
+  input { accent-color: var(--ps-accent); }
 `;
 
 const Results = styled.section`
@@ -292,7 +293,7 @@ const Results = styled.section`
 
 const ResultSummary = styled.p`
   margin: 0;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   line-height: 24px;
 `;
@@ -303,10 +304,10 @@ const SelectionBar = styled.div`
   justify-content: space-between;
   gap: 18px;
   padding: 0 16px;
-  border: 1px solid #d7c9b4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  color: #5f4d35;
-  background: #f3eee6;
+  color: var(--ps-accent-hover);
+  background: var(--ps-accent-soft);
   font-size: 14px;
   font-weight: 600;
   div {
@@ -317,14 +318,14 @@ const SelectionBar = styled.div`
     padding: 8px 12px;
     border: 0;
     border-radius: 8px;
-    color: #6f593d;
-    background: #fff;
+    color: var(--ps-accent-hover);
+    background: var(--ps-surface);
     font: inherit;
     font-weight: 600;
     cursor: pointer;
   }
   button.danger {
-    color: #9f1239;
+    color: var(--ps-danger-text);
   }
   button:disabled {
     cursor: wait;
@@ -334,18 +335,18 @@ const SelectionBar = styled.div`
 const ActionNotice = styled.p<{ $error?: boolean }>`
   margin: 0;
   padding: 12px 14px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
 `;
 
 const TableScroll = styled.div`
   overflow-x: auto;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 
 const Table = styled.div`
@@ -357,9 +358,9 @@ const Row = styled.div<{ $selected?: boolean }>`
   grid-template-columns: 50px 70px minmax(170px, 1fr) minmax(190px, 1.1fr) minmax(160px, 0.95fr) 140px 58px;
   min-height: 56px;
   align-items: center;
-  border-bottom: 1px solid #ece8e1;
-  color: #6d675f;
-  background: ${({ $selected }) => ($selected ? '#f7f2ea' : '#fff')};
+  border-bottom: 1px solid var(--ps-border);
+  color: var(--ps-text-muted);
+  background: ${({ $selected }) => ($selected ? 'var(--ps-accent-soft)' : 'var(--ps-surface)')};
   font-size: 16px;
 
   &:last-child { border-bottom: 0; }
@@ -367,7 +368,7 @@ const Row = styled.div<{ $selected?: boolean }>`
 `;
 
 const HeaderRow = styled(Row)`
-  color: #1a1917;
+  color: var(--ps-text);
   font-weight: 600;
 `;
 
@@ -379,12 +380,12 @@ const CellText = styled.span`
 
 const ProductLink = styled(Link)`
   overflow: hidden;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   text-overflow: ellipsis;
   text-decoration: none;
   white-space: nowrap;
 
-  &:hover { color: #7d6645; text-decoration: underline; text-underline-offset: 3px; }
+  &:hover { color: var(--ps-accent); text-decoration: underline; text-underline-offset: 3px; }
 `;
 
 const CheckCell = styled.label`
@@ -394,7 +395,7 @@ const CheckCell = styled.label`
   input {
     width: 16px;
     height: 16px;
-    accent-color: #7d6645;
+    accent-color: var(--ps-accent);
     cursor: pointer;
   }
 `;
@@ -402,10 +403,10 @@ const CheckCell = styled.label`
 const Status = styled.span<{ $draft?: boolean }>`
   justify-self: start;
   padding: 4px 16px !important;
-  border: 1px solid ${({ $draft }) => ($draft ? '#d6d3d1' : '#7bf1a8')};
+  border: 1px solid ${({ $draft }) => ($draft ? 'var(--ps-neutral-badge-border)' : 'var(--ps-success-border)')};
   border-radius: 32px;
-  color: #1a1917;
-  background: ${({ $draft }) => ($draft ? '#f5f5f4' : '#dcfce7')};
+  color: var(--ps-text);
+  background: ${({ $draft }) => ($draft ? 'var(--ps-neutral-badge-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
   line-height: 20px;
   white-space: nowrap;
@@ -424,13 +425,13 @@ const RowMenu = styled.details.attrs({
     padding: 4px;
     place-items: center;
     border-radius: 5px;
-    background: #f7f5f1;
+    background: var(--ps-canvas-alt);
     cursor: pointer;
     list-style: none;
   }
   summary::-webkit-details-marker { display: none; }
   summary:hover,
-  &[open] summary { background: #ece8e1; }
+  &[open] summary { background: var(--ps-border); }
   img { width: 24px; height: 24px; }
 `;
 const RowMenuPanel = styled.div`
@@ -441,17 +442,17 @@ const RowMenuPanel = styled.div`
   display: grid;
   width: 190px;
   padding: 7px;
-  border: 1px solid #e5ded4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 14px 32px rgba(47, 48, 58, 0.14);
+  background: var(--ps-surface);
+  box-shadow: 0 14px 32px var(--ps-shadow);
   a,
   button {
     min-height: 40px;
     padding: 8px 11px;
     border: 0;
     border-radius: 7px;
-    color: #4f4a43;
+    color: var(--ps-text);
     background: transparent;
     font: inherit;
     font-size: 14px;
@@ -460,21 +461,21 @@ const RowMenuPanel = styled.div`
     text-decoration: none;
     cursor: pointer;
   }
-  button.danger { color: #9f1239; }
+  button.danger { color: var(--ps-danger-text); }
   a:hover,
-  button:hover { background: #f3eee6; }
+  button:hover { background: var(--ps-accent-soft); }
   button:disabled { cursor: wait; opacity: 0.55; }
 `;
 
 const EmptyState = styled.div`
   padding: 40px 24px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   text-align: center;
 `;
 
 const ErrorState = styled(EmptyState)`
-  color: #991b1b;
+  color: var(--ps-danger-text);
 `;
 
 const Pagination = styled.div`
@@ -482,17 +483,17 @@ const Pagination = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 14px;
 `;
 
 const PageButton = styled.button`
   min-height: 38px;
   padding: 8px 14px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 8px;
-  color: #7d6645;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -556,7 +557,7 @@ export default function ProductListPage() {
     if (submittedQuery) params._q = submittedQuery;
     if (publicationState !== 'all') params.status = publicationState;
 
-    void get<ProductResponse>(contentLink('api::product.product'), { params })
+    void cachedAdminGet<ProductResponse>(get, contentLink('api::product.product'), { params })
       .then((response) => {
         if (!active) return;
         const nextProducts = response.data.results ?? [];
@@ -609,6 +610,7 @@ export default function ProductListPage() {
           params: { locale: contentLocale },
         });
       }
+      invalidateAdminRequestCache(contentLink('api::product.product'));
       setSelected([]);
       setActionMessage({ text: labels.deleteSuccess(productIds.length), error: false });
       if (productIds.length >= products.length && page > 1)
@@ -629,6 +631,7 @@ export default function ProductListPage() {
         `${contentLink('api::product.product')}/${identifier}/actions/unpublish`,
         { locale: contentLocale, discardDraft: false },
       );
+      invalidateAdminRequestCache(contentLink('api::product.product'));
       setActionMessage({ text: labels.unpublishSuccess, error: false });
       setRefreshKey((current) => current + 1);
     } catch {
@@ -646,6 +649,7 @@ export default function ProductListPage() {
         `${contentLink('api::product.product')}/${identifier}/actions/publish`,
         { locale: contentLocale },
       );
+      invalidateAdminRequestCache(contentLink('api::product.product'));
       setActionMessage({ text: labels.publishSuccess, error: false });
       setRefreshKey((current) => current + 1);
     } catch {

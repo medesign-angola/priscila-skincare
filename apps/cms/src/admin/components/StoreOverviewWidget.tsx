@@ -3,6 +3,7 @@ import { Box, Flex, Typography } from '@strapi/design-system';
 import { Widget, useFetchClient } from '@strapi/strapi/admin';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { cachedAdminGet } from '../utils/adminRequestCache';
 
 interface CollectionResponse {
   pagination?: { total?: number };
@@ -47,7 +48,7 @@ async function totalFor(
   filters?: Record<string, string>,
 ): Promise<number | null> {
   try {
-    const response = await get<CollectionResponse>(
+    const response = await cachedAdminGet<CollectionResponse>(get,
       `/content-manager/collection-types/${uid}`,
       { params: { page: 1, pageSize: 1, ...filters } },
     );

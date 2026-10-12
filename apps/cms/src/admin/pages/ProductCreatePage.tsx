@@ -17,6 +17,7 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 import styled from 'styled-components';
+import { invalidateAdminRequestCache } from '../utils/adminRequestCache';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
 import {
@@ -308,8 +309,8 @@ const Shell = styled(Main)`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #2f303a;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 const Topbar = styled.header`
@@ -320,14 +321,14 @@ const Topbar = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 28px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 `;
 const BackLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -347,10 +348,10 @@ const Profile = styled(Link)`
   align-items: center;
   gap: 9px;
   padding: 6px 12px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  color: #1a1917;
-  background: #fff;
+  color: var(--ps-text);
+  background: var(--ps-surface);
   text-decoration: none;
 `;
 const Avatar = styled.span`
@@ -359,8 +360,8 @@ const Avatar = styled.span`
   height: 40px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 13px;
   font-weight: 700;
 `;
@@ -372,7 +373,7 @@ const ProfileText = styled.span`
     font-weight: 500;
   }
   small {
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 12px;
   }
 `;
@@ -387,7 +388,7 @@ const Workspace = styled.div`
 `;
 const Title = styled.h1`
   margin: 0 0 28px;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 32px;
   font-weight: 600;
   line-height: 1.2;
@@ -414,7 +415,7 @@ const StepItem = styled.li`
     min-width: 28px;
     flex: 1;
     margin: 0 8px;
-    background: #ddd5c9;
+    background: var(--ps-border-strong);
     content: '';
   }
 `;
@@ -425,10 +426,10 @@ const StepButton = styled.button<{ $active: boolean; $done: boolean }>`
   align-items: center;
   gap: 11px;
   padding: 11px 16px;
-  border: 1px solid ${({ $done }) => ($done ? '#7d6645' : 'transparent')};
+  border: 1px solid ${({ $done }) => ($done ? 'var(--ps-accent)' : 'transparent')};
   border-radius: 10px;
-  color: ${({ $active, $done }) => ($active ? '#fff' : $done ? '#7d6645' : '#806b4b')};
-  background: ${({ $active }) => ($active ? '#8b7048' : '#eeeae4')};
+  color: ${({ $active, $done }) => ($active ? 'var(--ps-on-accent)' : $done ? 'var(--ps-accent)' : 'var(--ps-accent)')};
+  background: ${({ $active }) => ($active ? 'var(--ps-accent-alt)' : 'var(--ps-border)')};
   font: inherit;
   font-size: 15px;
   font-weight: 700;
@@ -449,7 +450,7 @@ const Card = styled.section`
   min-height: 640px;
   padding: 64px 32px 72px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
   @media (max-width: 48rem) {
     padding: 36px 18px 48px;
   }
@@ -464,7 +465,7 @@ const Section = styled.section`
   display: grid;
   gap: 22px;
   padding-bottom: 28px;
-  border-bottom: 1px solid #ece8e1;
+  border-bottom: 1px solid var(--ps-border);
   &:last-child {
     padding-bottom: 0;
     border-bottom: 0;
@@ -475,21 +476,21 @@ const SectionTitle = styled.div`
   gap: 6px;
   h2 {
     margin: 0;
-    color: #2f303a;
+    color: var(--ps-heading);
     font-size: 20px;
     font-weight: 700;
     line-height: 1.35;
   }
   p {
     margin: 0;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 14px;
     line-height: 1.5;
   }
 `;
 const Field = styled.label`
   display: block;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
@@ -505,7 +506,7 @@ const Field = styled.label`
   small {
     display: block;
     margin-top: 8px;
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 400;
     line-height: 1.5;
@@ -513,10 +514,10 @@ const Field = styled.label`
   .required {
     display: inline;
     margin-left: 2px;
-    color: #e15454;
+    color: var(--ps-danger-text);
   }
 `;
-const inputCss = `box-sizing:border-box;width:100%;min-height:48px;padding:11px 12px;border:1px solid rgba(0,0,0,.12);border-radius:10px;color:#1a1917;background:#f7f7f7;font:inherit;font-size:14px;outline:0;transition:border-color 160ms ease,box-shadow 160ms ease;&:focus{border-color:#8b7048;box-shadow:0 0 0 3px rgba(139,112,72,.12);}&:disabled{cursor:not-allowed;color:#746f67;background:#ece9e4;}&::placeholder{color:#97928a;}`;
+const inputCss = `box-sizing:border-box;width:100%;min-height:48px;padding:11px 12px;border:1px solid var(--ps-border-strong);border-radius:10px;color:var(--ps-text);background:var(--ps-field);font:inherit;font-size:14px;outline:0;transition:border-color 160ms ease,box-shadow 160ms ease;&:focus{border-color:var(--ps-accent-alt);box-shadow:0 0 0 3px rgba(139,112,72,.12);}&:disabled{cursor:not-allowed;color:var(--ps-text-muted);background:var(--ps-surface-muted);}&::placeholder{color:var(--ps-text-subtle);}`;
 const Input = styled.input`
   ${inputCss}
 `;
@@ -537,16 +538,16 @@ const SmallButton = styled.button`
   justify-self: start;
   min-height: 38px;
   padding: 8px 14px;
-  border: 1px solid #8b7048;
+  border: 1px solid var(--ps-accent-alt);
   border-radius: 9px;
-  color: #7d6645;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   &:hover {
-    background: #f7f3ed;
+    background: var(--ps-surface-muted);
   }
 `;
 const Footer = styled.footer`
@@ -555,7 +556,7 @@ const Footer = styled.footer`
   gap: 32px;
   margin-top: 30px;
   padding: 24px;
-  background: #fff;
+  background: var(--ps-surface);
   @media (max-width: 38rem) {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -569,8 +570,8 @@ const NavButton = styled.button<{ $primary?: boolean }>`
   padding: 14px 22px;
   border: 0;
   border-radius: 10px;
-  color: ${({ $primary }) => ($primary ? '#fff' : '#7d6645')};
-  background: ${({ $primary }) => ($primary ? '#8b7048' : '#eeeae4')};
+  color: ${({ $primary }) => ($primary ? 'var(--ps-on-accent)' : 'var(--ps-accent)')};
+  background: ${({ $primary }) => ($primary ? 'var(--ps-accent-alt)' : 'var(--ps-border)')};
   font: inherit;
   font-size: 16px;
   font-weight: 700;
@@ -579,7 +580,7 @@ const NavButton = styled.button<{ $primary?: boolean }>`
     background-color 180ms ease,
     transform 180ms ease;
   &:hover {
-    background: ${({ $primary }) => ($primary ? '#6f593d' : '#e5ded4')};
+    background: ${({ $primary }) => ($primary ? 'var(--ps-accent-hover)' : 'var(--ps-border-strong)')};
   }
   &:active {
     transform: scale(0.99);
@@ -592,10 +593,10 @@ const NavButton = styled.button<{ $primary?: boolean }>`
 const Notice = styled.div<{ $error?: boolean }>`
   margin-bottom: 20px;
   padding: 13px 16px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
 `;
 const DependencyList = styled.ul`
@@ -616,10 +617,10 @@ const DropZone = styled(ImagePicker)`
     min-height: 260px;
     place-items: center;
     padding: 28px;
-    border: 2px dashed #e4ddd3;
+    border: 2px dashed var(--ps-border-strong);
     border-radius: 8px;
     color: inherit;
-    background: #fff;
+    background: var(--ps-surface);
     text-align: center;
     font: inherit;
     cursor: pointer;
@@ -628,8 +629,8 @@ const DropZone = styled(ImagePicker)`
     display: none;
   }
   button:hover {
-    border-color: #b49667;
-    background: #fffdf9;
+    border-color: var(--ps-accent-alt);
+    background: var(--ps-surface);
   }
   button:focus-visible {
     outline: 3px solid rgba(180, 150, 103, 0.3);
@@ -640,7 +641,7 @@ const EmptyUpload = styled.span`
   display: grid;
   gap: 18px;
   place-items: center;
-  color: #817b72;
+  color: var(--ps-text-subtle);
   font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
@@ -650,16 +651,16 @@ const EmptyUpload = styled.span`
     height: 64px;
     place-items: center;
     border-radius: 50%;
-    background: #f7f3ed;
-    color: #8b7048;
+    background: var(--ps-surface-muted);
+    color: var(--ps-accent-alt);
     font-size: 26px;
   }
   b {
     padding: 9px 16px;
-    border: 1px solid #8b7048;
+    border: 1px solid var(--ps-accent-alt);
     border-radius: 9px;
-    color: #7d6645;
-    background: #fff;
+    color: var(--ps-accent);
+    background: var(--ps-surface);
     font-size: 14px;
   }
 `;
@@ -674,7 +675,7 @@ const AssetRow = styled.div`
   align-items: center;
   padding: 14px 16px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
   img {
     width: 64px;
@@ -685,7 +686,7 @@ const AssetRow = styled.div`
   strong {
     display: block;
     overflow: hidden;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 15px;
     font-weight: 500;
     text-overflow: ellipsis;
@@ -694,7 +695,7 @@ const AssetRow = styled.div`
   small {
     display: block;
     margin-top: 5px;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 13px;
   }
 `;
@@ -704,10 +705,10 @@ const PendingAssetRow = styled.div`
   gap: 16px;
   align-items: center;
   padding: 14px 16px;
-  border: 1px solid #eee9e2;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 8px 24px rgba(47, 48, 58, 0.04);
+  background: var(--ps-surface);
+  box-shadow: 0 8px 24px var(--ps-shadow);
   img {
     width: 64px;
     height: 64px;
@@ -718,7 +719,7 @@ const PendingAssetRow = styled.div`
   strong {
     display: block;
     overflow: hidden;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 15px;
     font-weight: 500;
     text-overflow: ellipsis;
@@ -732,8 +733,8 @@ const PendingAssetPreview = styled.div`
   place-items: center;
   overflow: hidden;
   border-radius: 9px;
-  color: #8b7048;
-  background: #f3efe9;
+  color: var(--ps-accent-alt);
+  background: var(--ps-accent-soft);
   font-size: 22px;
   img {
     width: 100%;
@@ -753,7 +754,7 @@ const UploadProgressLine = styled.div`
   align-items: center;
   margin-top: 12px;
   span {
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 13px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -763,13 +764,13 @@ const UploadProgressTrack = styled.div`
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: #f1eee9;
+  background: var(--ps-surface-muted);
 `;
 const UploadProgressValue = styled.div<{ $progress: number }>`
   width: ${({ $progress }) => $progress}%;
   height: 100%;
   border-radius: inherit;
-  background: #8b7048;
+  background: var(--ps-accent-alt);
   transition: width 180ms ease;
 `;
 const UploadFallback = styled.div`
@@ -779,10 +780,10 @@ const UploadFallback = styled.div`
   justify-content: space-between;
   gap: 16px;
   padding: 14px 16px;
-  border: 1px solid #eee9e2;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  color: #1a1917;
-  background: #fff;
+  color: var(--ps-text);
+  background: var(--ps-surface);
   font-size: 14px;
   strong {
     overflow: hidden;
@@ -791,7 +792,7 @@ const UploadFallback = styled.div`
   }
   span {
     flex: 0 0 auto;
-    color: #7d6645;
+    color: var(--ps-accent);
     font-weight: 700;
   }
 `;
@@ -805,8 +806,8 @@ const AssetActions = styled.div`
     place-items: center;
     border: 0;
     border-radius: 7px;
-    color: #7d6645;
-    background: #f7f3ed;
+    color: var(--ps-accent);
+    background: var(--ps-surface-muted);
     font-size: 18px;
     cursor: pointer;
   }
@@ -819,8 +820,8 @@ const ReplaceAsset = styled(ImagePicker)`
     place-items: center;
     border: 0;
     border-radius: 7px;
-    color: #7d6645;
-    background: #f7f3ed;
+    color: var(--ps-accent);
+    background: var(--ps-surface-muted);
     font-size: 18px;
     cursor: pointer;
   }
@@ -835,10 +836,10 @@ const AddAsset = styled(ImagePicker)`
     min-height: 46px;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #b49667;
+    border: 1px dashed var(--ps-accent-alt);
     border-radius: 9px;
-    color: #7d6645;
-    background: #fff;
+    color: var(--ps-accent);
+    background: var(--ps-surface);
     font: inherit;
     font-size: 14px;
     font-weight: 700;
@@ -848,16 +849,16 @@ const AddAsset = styled(ImagePicker)`
     display: none;
   }
   button:hover {
-    background: #fffdf9;
+    background: var(--ps-surface);
   }
 `;
 const Repeatable = styled.div`
   display: grid;
   gap: 16px;
   padding: 20px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fcfbf9;
+  background: var(--ps-surface-soft);
 `;
 const RepeatHeader = styled.div`
   display: flex;
@@ -869,7 +870,7 @@ const RepeatHeader = styled.div`
   }
   button {
     border: 0;
-    color: #991b1b;
+    color: var(--ps-danger-text);
     background: transparent;
     font: inherit;
     font-size: 13px;
@@ -882,25 +883,25 @@ const SummaryGrid = styled.dl`
   gap: 1px;
   margin: 0;
   overflow: hidden;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #ece8e1;
+  background: var(--ps-border);
   @media (max-width: 42rem) {
     grid-template-columns: 1fr;
   }
   div {
     padding: 18px;
-    background: #fff;
+    background: var(--ps-surface);
   }
   dt {
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
   }
   dd {
     margin: 7px 0 0;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 15px;
     line-height: 1.45;
   }
@@ -2108,12 +2109,10 @@ export default function ProductCreatePage() {
         });
         if (response.data?.data) setOriginalProduct(response.data.data);
       }
+      invalidateAdminRequestCache(contentLink('api::product.product'));
       setMessage({ text: copy.saved, error: false });
       if (!editing && savedDocumentId)
-        navigate(
-          `/store/products/${savedDocumentId}/edit?locale=${contentLocale}`,
-          { replace: true },
-        );
+        navigate('/store/products', { replace: true });
     } catch (error: any) {
       const detail = error?.response?.data?.error?.message || copy.saveError;
       setMessage({ text: detail, error: true });
@@ -2197,7 +2196,7 @@ export default function ProductCreatePage() {
           <small>Resumo apresentado junto ao nome e ao preço.</small>
         </Field>
         <Field>
-          Código interno (SKU) <Required />
+          Referência do produto <Required />
           <Input
             value={form.sku}
             disabled={editing}
@@ -2885,7 +2884,7 @@ export default function ProductCreatePage() {
             <dd>{form.name || 'Não informado'}</dd>
           </div>
           <div>
-            <dt>SKU</dt>
+            <dt>Referência do produto</dt>
             <dd>{form.sku || 'Não informado'}</dd>
           </div>
           <div>

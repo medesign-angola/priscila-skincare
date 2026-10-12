@@ -4,6 +4,7 @@ import { useFetchClient } from '@strapi/strapi/admin';
 import { useIntl } from 'react-intl';
 import { Link, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { cachedAdminGet, invalidateAdminRequestCache } from '../utils/adminRequestCache';
 import { StorePageHeader } from '../components/StorePageHeader';
 import {
   contentLink,
@@ -823,8 +824,8 @@ const ui = {
 
 const PageMain = styled(Main)`
   min-height: 100vh;
-  color: #1a1917;
-  background: #f7f5f2;
+  color: var(--ps-text);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 const Content = styled.div`
@@ -847,16 +848,16 @@ const PrimaryAction = styled(Link)`
   gap: 8px;
   min-height: 48px;
   padding: 12px;
-  border: 1px solid #7d6645;
+  border: 1px solid var(--ps-accent);
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   text-decoration: none;
   &:hover {
-    background: #5f4d35;
+    background: var(--ps-accent-hover);
   }
   img {
     width: 24px;
@@ -877,9 +878,9 @@ const SearchForm = styled.form`
   gap: 10px;
   padding: 8px 16px;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
   img {
     width: 24px;
     height: 24px;
@@ -889,12 +890,12 @@ const SearchInput = styled.input`
   width: 100%;
   border: 0;
   outline: 0;
-  color: #1a1917;
+  color: var(--ps-text);
   background: transparent;
   font: inherit;
   font-size: 14px;
   &::placeholder {
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     opacity: 1;
   }
 `;
@@ -905,10 +906,10 @@ const FilterButton = styled.button<{ $active?: boolean }>`
   align-items: center;
   gap: 10px;
   padding: 8px 16px;
-  border: 1px solid ${({ $active }) => ($active ? '#b49667' : 'rgba(0,0,0,.1)')};
+  border: 1px solid ${({ $active }) => ($active ? 'var(--ps-accent-alt)' : 'var(--ps-border-strong)')};
   border-radius: 12px;
-  color: #7d6645;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -927,10 +928,10 @@ const FilterPanel = styled.div`
   gap: 18px;
   width: 280px;
   padding: 20px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 14px 35px rgba(47, 48, 58, 0.12);
+  background: var(--ps-surface);
+  box-shadow: 0 14px 35px var(--ps-shadow);
 `;
 const FilterGroup = styled.fieldset`
   display: grid;
@@ -940,7 +941,7 @@ const FilterGroup = styled.fieldset`
   border: 0;
   legend {
     margin-bottom: 8px;
-    color: #1a1917;
+    color: var(--ps-text);
     font-size: 14px;
     font-weight: 600;
   }
@@ -948,12 +949,12 @@ const FilterGroup = styled.fieldset`
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 14px;
     cursor: pointer;
   }
   input {
-    accent-color: #7d6645;
+    accent-color: var(--ps-accent);
   }
 `;
 const Results = styled.section`
@@ -962,7 +963,7 @@ const Results = styled.section`
 `;
 const ResultSummary = styled.p`
   margin: 0;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   line-height: 24px;
 `;
@@ -973,10 +974,10 @@ const SelectionBar = styled.div`
   justify-content: space-between;
   gap: 18px;
   padding: 0 16px;
-  border: 1px solid #d7c9b4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  color: #5f4d35;
-  background: #f3eee6;
+  color: var(--ps-accent-hover);
+  background: var(--ps-accent-soft);
   font-size: 14px;
   font-weight: 600;
   div {
@@ -989,8 +990,8 @@ const SelectionBar = styled.div`
     padding: 8px 12px;
     border: 0;
     border-radius: 8px;
-    color: #6f593d;
-    background: #fff;
+    color: var(--ps-accent-hover);
+    background: var(--ps-surface);
     font: inherit;
     font-size: 14px;
     font-weight: 600;
@@ -999,10 +1000,10 @@ const SelectionBar = styled.div`
   }
   a:hover,
   button:hover {
-    background: #e8dfd2;
+    background: var(--ps-border-strong);
   }
   button.danger {
-    color: #9f1239;
+    color: var(--ps-danger-text);
   }
   button:disabled {
     cursor: wait;
@@ -1012,17 +1013,17 @@ const SelectionBar = styled.div`
 const ActionNotice = styled.p<{ $error?: boolean }>`
   margin: 0;
   padding: 12px 14px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
 `;
 const TableScroll = styled.div`
   overflow-x: auto;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const Table = styled.div<{ $minWidth: number }>`
   min-width: ${({ $minWidth }) => $minWidth}px;
@@ -1031,11 +1032,11 @@ const Row = styled.div<{ $selected?: boolean; $pending?: boolean }>`
   display: grid;
   min-height: 56px;
   align-items: center;
-  border-bottom: 1px solid #ece8e1;
-  color: #6d675f;
+  border-bottom: 1px solid var(--ps-border);
+  color: var(--ps-text-muted);
   background: ${({ $selected, $pending }) =>
-    $selected ? '#f7f2ea' : $pending ? '#fffbf3' : '#fff'};
-  box-shadow: ${({ $pending }) => ($pending ? 'inset 3px 0 0 #b38d52' : 'none')};
+    $selected ? 'var(--ps-accent-soft)' : $pending ? 'var(--ps-warning-bg)' : 'var(--ps-surface)'};
+  box-shadow: ${({ $pending }) => ($pending ? 'inset 3px 0 0 var(--ps-accent-alt)' : 'none')};
   font-size: 16px;
   transition: background-color 160ms ease;
   &:last-child {
@@ -1047,7 +1048,7 @@ const Row = styled.div<{ $selected?: boolean; $pending?: boolean }>`
   }
 `;
 const HeaderRow = styled(Row)`
-  color: #1a1917;
+  color: var(--ps-text);
   font-weight: 600;
 `;
 const CellText = styled.span`
@@ -1057,12 +1058,12 @@ const CellText = styled.span`
 `;
 const EntryLink = styled(Link)`
   overflow: hidden;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   text-overflow: ellipsis;
   text-decoration: none;
   white-space: nowrap;
   &:hover {
-    color: #7d6645;
+    color: var(--ps-accent);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -1079,10 +1080,10 @@ const PrimaryCell = styled.div`
 const AttentionBadge = styled.span`
   flex: 0 0 auto;
   padding: 3px 9px;
-  border: 1px solid #dfbf88;
+  border: 1px solid var(--ps-warning-border);
   border-radius: 999px;
-  color: #75530b;
-  background: #fff4dc;
+  color: var(--ps-warning-text);
+  background: var(--ps-warning-bg);
   font-size: 12px;
   font-weight: 700;
   line-height: 18px;
@@ -1095,17 +1096,17 @@ const CheckCell = styled.label`
   input {
     width: 16px;
     height: 16px;
-    accent-color: #7d6645;
+    accent-color: var(--ps-accent);
     cursor: pointer;
   }
 `;
 const Status = styled.span<{ $draft?: boolean }>`
   justify-self: start;
   padding: 4px 16px !important;
-  border: 1px solid ${({ $draft }) => ($draft ? '#d6d3d1' : '#7bf1a8')};
+  border: 1px solid ${({ $draft }) => ($draft ? 'var(--ps-neutral-badge-border)' : 'var(--ps-success-border)')};
   border-radius: 32px;
-  color: #1a1917;
-  background: ${({ $draft }) => ($draft ? '#f5f5f4' : '#dcfce7')};
+  color: var(--ps-text);
+  background: ${({ $draft }) => ($draft ? 'var(--ps-neutral-badge-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
   line-height: 20px;
   white-space: nowrap;
@@ -1114,18 +1115,18 @@ const orderBadgeColors: Record<
   string,
   { background: string; border: string; color: string }
 > = {
-  pending: { background: '#fff7e6', border: '#f0c36a', color: '#75530b' },
-  approved: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  rejected: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
-  confirmed: { background: '#eef6ff', border: '#93c5fd', color: '#1e4f86' },
-  paid: { background: '#ecfdf3', border: '#86efac', color: '#166534' },
-  processing: { background: '#f7f2e9', border: '#d6c19a', color: '#6b522d' },
-  shipped: { background: '#f1f0ff', border: '#b9b4f6', color: '#47408f' },
-  delivered: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
-  paymentfailed: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
-  refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
-  restricted: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+  pending: { background: 'var(--ps-warning-bg)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  approved: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  rejected: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
+  confirmed: { background: 'var(--ps-info-bg)', border: 'var(--ps-info-border)', color: 'var(--ps-info-text)' },
+  paid: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  processing: { background: 'var(--ps-surface-muted)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  shipped: { background: 'var(--ps-violet-bg)', border: 'var(--ps-violet-border)', color: 'var(--ps-violet-text)' },
+  delivered: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  cancelled: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
+  paymentfailed: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
+  refunded: { background: 'var(--ps-neutral-badge-bg)', border: 'var(--ps-neutral-badge-border)', color: 'var(--ps-neutral-badge-text)' },
+  restricted: { background: 'var(--ps-neutral-badge-bg)', border: 'var(--ps-neutral-badge-border)', color: 'var(--ps-neutral-badge-text)' },
 };
 const OrderStatusBadge = styled.span<{ $status: string }>`
   justify-self: start;
@@ -1152,7 +1153,7 @@ const RowMenu = styled.details.attrs({
     padding: 4px;
     place-items: center;
     border-radius: 5px;
-    background: #f7f5f1;
+    background: var(--ps-canvas-alt);
     cursor: pointer;
     list-style: none;
   }
@@ -1160,14 +1161,14 @@ const RowMenu = styled.details.attrs({
     display: none;
   }
   summary:hover {
-    background: #ece8e1;
+    background: var(--ps-border);
   }
   summary img {
     width: 24px;
     height: 24px;
   }
   &[open] summary {
-    background: #ece8e1;
+    background: var(--ps-border);
   }
 `;
 const RowMenuPanel = styled.div`
@@ -1178,10 +1179,10 @@ const RowMenuPanel = styled.div`
   display: grid;
   width: 190px;
   padding: 7px;
-  border: 1px solid #e5ded4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 14px 32px rgba(47, 48, 58, 0.14);
+  background: var(--ps-surface);
+  box-shadow: 0 14px 32px var(--ps-shadow);
   a,
   button {
     display: flex;
@@ -1190,7 +1191,7 @@ const RowMenuPanel = styled.div`
     padding: 8px 11px;
     border: 0;
     border-radius: 7px;
-    color: #4f4a43;
+    color: var(--ps-text);
     background: transparent;
     font: inherit;
     font-size: 14px;
@@ -1201,11 +1202,11 @@ const RowMenuPanel = styled.div`
   }
   a:hover,
   button:hover {
-    color: #6f593d;
-    background: #f3eee6;
+    color: var(--ps-accent-hover);
+    background: var(--ps-accent-soft);
   }
   button.danger {
-    color: #9f1239;
+    color: var(--ps-danger-text);
   }
   button:disabled {
     cursor: wait;
@@ -1214,12 +1215,12 @@ const RowMenuPanel = styled.div`
 `;
 const EmptyState = styled.div`
   padding: 40px 24px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   text-align: center;
 `;
 const ErrorState = styled(EmptyState)`
-  color: #991b1b;
+  color: var(--ps-danger-text);
 `;
 const RichEmptyState = styled.div`
   display: grid;
@@ -1228,7 +1229,7 @@ const RichEmptyState = styled.div`
   justify-items: center;
   gap: 22px;
   padding: 32px;
-  color: #1a1917;
+  color: var(--ps-text);
   text-align: center;
   strong {
     font-size: 16px;
@@ -1241,7 +1242,7 @@ const EmptyIconCircle = styled.span`
   height: 64px;
   place-items: center;
   border-radius: 50%;
-  background: #f7f5f1;
+  background: var(--ps-canvas-alt);
   img {
     width: 24px;
     height: 24px;
@@ -1254,8 +1255,8 @@ const EmptyAction = styled(Link)`
   min-height: 44px;
   padding: 0 16px;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -1269,16 +1270,16 @@ const Pagination = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 14px;
 `;
 const PageButton = styled.button`
   min-height: 38px;
   padding: 8px 14px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 8px;
-  color: #7d6645;
-  background: #fff;
+  color: var(--ps-accent);
+  background: var(--ps-surface);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -1342,9 +1343,12 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
       params[`filters[${config.filterField}][$eq]`] = filterValue;
     }
 
-    void get<CollectionResponse | CollectionEnvelope>(
+    void cachedAdminGet<CollectionResponse | CollectionEnvelope>(get,
       config.endpoint ?? contentLink(config.uid),
       { params },
+      config.resource === 'orders' || config.resource === 'reviews'
+        ? 15_000
+        : 45_000,
     )
       .then((response) => {
         if (!active) return;
@@ -1426,6 +1430,7 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
           params: config.localized ? { locale: contentLocale } : undefined,
         });
       }
+      invalidateAdminRequestCache(config.endpoint ?? contentLink(config.uid));
       setSelected([]);
       setActionMessage({
         text: labels.deleteSuccess(entryIds.length),
@@ -1458,6 +1463,7 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
           discardDraft: false,
         },
       );
+      invalidateAdminRequestCache(config.endpoint ?? contentLink(config.uid));
       setActionMessage({ text: labels.unpublishSuccess, error: false });
       setRefreshKey((current) => current + 1);
     } catch {
@@ -1481,6 +1487,7 @@ function StoreCollectionListPage({ config }: { config: PageConfig }) {
         `${contentLink(config.uid)}/${identifier}/actions/publish`,
         { locale: entry.locale ?? contentLocale },
       );
+      invalidateAdminRequestCache(config.endpoint ?? contentLink(config.uid));
       setActionMessage({ text: labels.publishSuccess, error: false });
       setRefreshKey((current) => current + 1);
     } catch {

@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { AdminProfileMenu } from '../components/AdminProfileMenu';
 import { ContentLocaleSwitcher } from '../components/ContentLocaleSwitcher';
+import { StoreActionLink } from '../components/StoreActionButton';
+import { cachedAdminGet } from '../utils/adminRequestCache';
 import {
   contentLink,
   iconPath,
@@ -122,8 +124,8 @@ const frenchCopy: Record<string, string> = {
 
 const Shell = styled(Main)`
   min-height: 100vh;
-  color: #1a1917;
-  background: #f7f5f2;
+  color: var(--ps-text);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 
@@ -135,8 +137,8 @@ const Header = styled.header`
   gap: 24px;
   min-height: 93px;
   padding: 16px 24px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 
   @media (max-width: 44rem) {
     align-items: flex-start;
@@ -152,7 +154,7 @@ const Greeting = styled.div`
 
 const GreetingTitle = styled.h1`
   margin: 0;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 24px;
   font-weight: 600;
   line-height: 29px;
@@ -160,7 +162,7 @@ const GreetingTitle = styled.h1`
 
 const GreetingText = styled.p`
   margin: 0;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   line-height: 24px;
 `;
@@ -207,14 +209,14 @@ const SearchBox = styled.label`
   gap: 10px;
   height: 50px;
   padding: 8px 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
 
   svg {
     width: 24px;
     height: 24px;
-    color: #7d6645;
+    color: var(--ps-accent);
   }
 `;
 
@@ -223,41 +225,14 @@ const SearchInput = styled.input`
   padding: 0;
   border: 0;
   outline: 0;
-  color: #1a1917;
+  color: var(--ps-text);
   background: transparent;
   font: inherit;
   font-size: 14px;
 
   &::placeholder {
-    color: #8f887e;
+    color: var(--ps-text-subtle);
     opacity: 1;
-  }
-`;
-
-const PrimaryAction = styled(Link)`
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 48px;
-  padding: 12px;
-  border: 1px solid #7d6645;
-  border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-  text-decoration: none;
-  transition: background-color 160ms ease;
-
-  &:hover {
-    background: #5f4d35;
-  }
-  svg {
-    width: 24px;
-    height: 24px;
   }
 `;
 
@@ -283,17 +258,17 @@ const MetricCard = styled(Link)`
   gap: 12px;
   min-height: 108px;
   padding: 24px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  color: #1a1917;
-  background: #fff;
+  color: var(--ps-text);
+  background: var(--ps-surface);
   text-decoration: none;
   transition:
     border-color 160ms ease,
     transform 160ms ease;
 
   &:hover {
-    border-color: #b49667;
+    border-color: var(--ps-accent-alt);
     transform: translateY(-2px);
   }
 `;
@@ -303,13 +278,13 @@ const MetricTop = styled.span`
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
   line-height: 24px;
 `;
 
 const MetricArrow = styled.span`
-  color: #b49667;
+  color: var(--ps-accent-alt);
   font-size: 24px;
   line-height: 1;
 `;
@@ -334,14 +309,14 @@ const SectionHeader = styled.div`
 
 const SectionTitle = styled.h2`
   margin: 0;
-  color: #2f303a;
+  color: var(--ps-heading);
   font-size: 16px;
   font-weight: 600;
   line-height: 19px;
 `;
 
 const QuietLink = styled(Link)`
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   line-height: 19px;
@@ -351,9 +326,9 @@ const QuietLink = styled(Link)`
 
 const Table = styled.div`
   overflow: hidden;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 
 const TableRow = styled(Link)<{ $header?: boolean }>`
@@ -363,9 +338,9 @@ const TableRow = styled(Link)<{ $header?: boolean }>`
     minmax(8rem, 0.7fr);
   min-height: 56px;
   align-items: center;
-  border-bottom: 1px solid #ece8e1;
-  color: ${({ $header }) => ($header ? '#1a1917' : '#6d675f')};
-  background: #fff;
+  border-bottom: 1px solid var(--ps-border);
+  color: ${({ $header }) => ($header ? 'var(--ps-text)' : 'var(--ps-text-muted)')};
+  background: var(--ps-surface);
   font-size: 16px;
   font-weight: ${({ $header }) => ($header ? 600 : 400)};
   text-decoration: none;
@@ -397,7 +372,7 @@ const TableRow = styled(Link)<{ $header?: boolean }>`
 
 const EmptyRow = styled.div`
   padding: 28px 15px;
-  color: #6d675f;
+  color: var(--ps-text-muted);
   font-size: 16px;
 `;
 
@@ -405,19 +380,19 @@ const dashboardStatusColors: Record<
   string,
   { background: string; border: string; color: string }
 > = {
-  pending: { background: '#fff7e6', border: '#f0c36a', color: '#75530b' },
-  confirmed: { background: '#eef6ff', border: '#93c5fd', color: '#1e4f86' },
-  paid: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  processing: { background: '#f7f2e9', border: '#d6c19a', color: '#6b522d' },
-  shipped: { background: '#f1f0ff', border: '#b9b4f6', color: '#47408f' },
-  delivered: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
+  pending: { background: 'var(--ps-warning-bg)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  confirmed: { background: 'var(--ps-info-bg)', border: 'var(--ps-info-border)', color: 'var(--ps-info-text)' },
+  paid: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  processing: { background: 'var(--ps-surface-muted)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  shipped: { background: 'var(--ps-violet-bg)', border: 'var(--ps-violet-border)', color: 'var(--ps-violet-text)' },
+  delivered: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  cancelled: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
   paymentfailed: {
-    background: '#fff1f2',
-    border: '#fda4af',
-    color: '#9f1239',
+    background: 'var(--ps-danger-bg)',
+    border: 'var(--ps-danger-border)',
+    color: 'var(--ps-danger-text)',
   },
-  refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+  refunded: { background: 'var(--ps-neutral-badge-bg)', border: 'var(--ps-neutral-badge-border)', color: 'var(--ps-neutral-badge-text)' },
 };
 
 const Status = styled.span<{ $status: string }>`
@@ -449,9 +424,9 @@ const TwoColumns = styled.div`
 
 const List = styled.div`
   overflow: hidden;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 
 const listItemStyles = `
@@ -462,8 +437,8 @@ const listItemStyles = `
   gap: 16px;
   min-height: 56px;
   padding: 11px 15px;
-  border-bottom: 1px solid #ece8e1;
-  color: #1a1917;
+  border-bottom: 1px solid var(--ps-border);
+  color: var(--ps-text);
   font-size: 16px;
   line-height: 24px;
   text-decoration: none;
@@ -481,11 +456,11 @@ const ExternalListLink = styled.a`
 `;
 
 const ListValue = styled.span`
-  color: #6d675f;
+  color: var(--ps-text-muted);
 `;
 
 const ListArrow = styled.span`
-  color: #b49667;
+  color: var(--ps-accent-alt);
   font-size: 28px;
   line-height: 1;
 `;
@@ -496,7 +471,7 @@ async function countFor(
   filters?: Record<string, string>,
 ): Promise<number | null> {
   try {
-    const response = await get<CollectionResponse>(contentLink(uid), {
+    const response = await cachedAdminGet<CollectionResponse>(get, contentLink(uid), {
       params: { page: 1, pageSize: 1, ...filters },
     });
     return (
@@ -513,13 +488,13 @@ async function entriesFor(
   params: Record<string, string> = {},
 ): Promise<Array<Record<string, unknown>> | null> {
   try {
-    const first = await get<CollectionResponse>(contentLink(uid), {
+    const first = await cachedAdminGet<CollectionResponse>(get, contentLink(uid), {
       params: { page: 1, pageSize: 100, ...params },
     });
     const entries = [...(first.data.results ?? [])];
     const total = first.data.pagination?.total ?? entries.length;
     for (let page = 2; entries.length < total; page += 1) {
-      const response = await get<CollectionResponse>(contentLink(uid), {
+      const response = await cachedAdminGet<CollectionResponse>(get, contentLink(uid), {
         params: { page, pageSize: 100, ...params },
       });
       const next = response.data.results ?? [];
@@ -573,7 +548,7 @@ async function fetchRecentOrders(
   get: ReturnType<typeof useFetchClient>['get'],
 ): Promise<OrderEntry[]> {
   try {
-    const response = await get<OrdersResponse>(
+    const response = await cachedAdminGet<OrdersResponse>(get,
       contentLink('api::order.order'),
       {
         params: { page: 1, pageSize: 5, sort: 'placedAt:DESC' },
@@ -818,7 +793,7 @@ export default function StoreDashboardPage() {
                   aria-label={t('Pesquisar no painel')}
                 />
               </SearchBox>
-              <PrimaryAction to={productCreateLink}>
+              <StoreActionLink $primary to={productCreateLink}>
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden>
                   <path
                     d="M12 5v14M5 12h14"
@@ -828,7 +803,7 @@ export default function StoreDashboardPage() {
                   />
                 </svg>
                 {t('Novo produto')}
-              </PrimaryAction>
+              </StoreActionLink>
             </Toolbar>
 
             <MetricsGrid aria-label={t('Resumo da loja')}>

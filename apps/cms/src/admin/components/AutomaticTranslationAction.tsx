@@ -28,25 +28,25 @@ const Panel = styled.section`
   gap: 20px;
   margin: 0;
   padding: 18px 20px;
-  border: 1px solid #dfd7cc;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 14px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const Copy = styled.div`
   display: grid;
   gap: 4px;
-  color: #2f303a;
+  color: var(--ps-heading);
   strong { font-size: 15px; }
-  span { color: #746f68; font-size: 14px; line-height: 1.45; }
+  span { color: var(--ps-text-muted); font-size: 14px; line-height: 1.45; }
 `;
 const Button = styled.button`
   flex: 0 0 auto;
   min-height: 44px;
   padding: 0 18px;
-  border: 1px solid #907348;
+  border: 1px solid var(--ps-accent-alt);
   border-radius: 10px;
-  color: #fff;
-  background: #907348;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent-alt);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -55,7 +55,7 @@ const Button = styled.button`
 `;
 const Feedback = styled.p<{ $error?: boolean }>`
   margin: 8px 0 0;
-  color: ${({ $error }) => ($error ? '#b42318' : '#447456')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
   font-size: 14px;
 `;
 
