@@ -9,9 +9,9 @@ const Canvas = styled.div`
   position: relative;
   aspect-ratio: 16/9;
   overflow: hidden;
-  border: 1px solid #ded7cd;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #eeeae4;
+  background: var(--ps-border);
   cursor: crosshair;
   &:focus-visible {
     outline: 3px solid rgba(139, 112, 72, 0.24);
@@ -32,7 +32,7 @@ const Marker = styled.span<{ $x: number; $y: number }>`
   height: 24px;
   border: 2px solid #fff;
   border-radius: 50%;
-  background: #8b7048;
+  background: var(--ps-accent-alt);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -40,7 +40,7 @@ const Marker = styled.span<{ $x: number; $y: number }>`
   &::after {
     position: absolute;
     inset: 50% auto auto 50%;
-    background: #fff;
+    background: var(--ps-surface);
     content: '';
     transform: translate(-50%, -50%);
   }
@@ -58,7 +58,7 @@ const Caption = styled.div`
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  color: #7b756d;
+  color: var(--ps-text-subtle);
   font-size: 12px;
   font-weight: 400;
 `;
@@ -69,7 +69,7 @@ const Coordinates = styled.div`
   label {
     display: grid;
     gap: 4px;
-    color: #5f4d35;
+    color: var(--ps-accent-hover);
     font-size: 12px;
     font-weight: 600;
   }
@@ -82,10 +82,10 @@ const Coordinates = styled.div`
     width: 92px;
     height: 40px;
     padding: 0 28px 0 11px;
-    border: 1px solid #d7cec1;
+    border: 1px solid var(--ps-border-strong);
     border-radius: 8px;
-    color: #252421;
-    background: #fff;
+    color: var(--ps-heading);
+    background: var(--ps-surface);
     font: inherit;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
@@ -94,7 +94,7 @@ const Coordinates = styled.div`
     position: absolute;
     top: 50%;
     right: 11px;
-    color: #7b756d;
+    color: var(--ps-text-subtle);
     font-style: normal;
     transform: translateY(-50%);
     pointer-events: none;

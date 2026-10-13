@@ -96,9 +96,9 @@ function formatAmount(value?: number): string {
 }
 
 const cardStyle = {
-  border: '1px solid #dcdce4',
+  border: '1px solid var(--ps-border)',
   borderRadius: '4px',
-  background: '#f6f6f9',
+  background: 'var(--ps-field)',
 };
 
 function ReadOnlyField({

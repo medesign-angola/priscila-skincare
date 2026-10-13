@@ -11,7 +11,8 @@ public sealed class Order : AggregateRoot<Guid>
     private readonly List<OrderStatusEntry> _timeline = [];
     private Order() : base(Guid.Empty) { }
 
-    private Order(Guid id, Guid customerId, string number, string currency, OrderAddress address, DateTimeOffset now) : base(id)
+    private Order(Guid id, Guid customerId, string number, string currency, OrderAddress address,
+        string? customerNameSnapshot, string? customerEmailSnapshot, DateTimeOffset now) : base(id)
     {
         CustomerId = customerId;
         Number = number;
@@ -26,6 +27,8 @@ public sealed class Order : AggregateRoot<Guid>
         HouseNumber = address.HouseNumber?.Trim();
         Apartment = address.Apartment?.Trim();
         PostalCode = address.PostalCode?.Trim();
+        CustomerNameSnapshot = NormalizeSnapshot(customerNameSnapshot) ?? Recipient;
+        CustomerEmailSnapshot = NormalizeSnapshot(customerEmailSnapshot);
         CreatedAt = now;
         UpdatedAt = now;
         _timeline.Add(OrderStatusEntry.Create(Id, OrderStatus.Pending, now));
@@ -48,6 +51,11 @@ public sealed class Order : AggregateRoot<Guid>
     public string? HouseNumber { get; private set; }
     public string? Apartment { get; private set; }
     public string? PostalCode { get; private set; }
+    /// <summary>Dados do cliente no instante em que a encomenda foi criada.</summary>
+    public string? CustomerNameSnapshot { get; private set; }
+    public string? CustomerEmailSnapshot { get; private set; }
+    /// <summary>Indica que o perfil associado deixou de existir, sem apagar o histórico da encomenda.</summary>
+    public DateTimeOffset? CustomerAccountDeletedAt { get; private set; }
     public string? IdempotencyKey { get; private set; }
     public string? StrapiDocumentId { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
@@ -55,11 +63,18 @@ public sealed class Order : AggregateRoot<Guid>
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
     public IReadOnlyCollection<OrderStatusEntry> Timeline => _timeline.AsReadOnly();
 
-    public static Order Create(Guid customerId, string number, string currency, OrderAddress address, DateTimeOffset now, string? idempotencyKey = null) =>
-        new(Guid.NewGuid(), customerId, number, currency, address, now) { IdempotencyKey = idempotencyKey?.Trim() };
+    public static Order Create(Guid customerId, string number, string currency, OrderAddress address,
+        string? customerNameSnapshot, string? customerEmailSnapshot, DateTimeOffset now,
+        string? idempotencyKey = null) =>
+        new(Guid.NewGuid(), customerId, number, currency, address, customerNameSnapshot, customerEmailSnapshot, now)
+        { IdempotencyKey = idempotencyKey?.Trim() };
+
+    public static Order Create(Guid customerId, string number, string currency, OrderAddress address,
+        DateTimeOffset now, string? idempotencyKey = null) =>
+        Create(customerId, number, currency, address, address.Recipient, null, now, idempotencyKey);
 
     public static Order Create(Guid customerId, DateTimeOffset now) =>
-        Create(customerId, $"PSC-{now:yyyyMMddHHmmss}", "AOA", new OrderAddress("Cliente", "N/D", "Angola", "N/D", "N/D", "N/D", "N/D", null, null, null), now);
+        Create(customerId, $"PSC-{now:yyyyMMddHHmmss}", "AOA", new OrderAddress("Cliente", "N/D", "Angola", "N/D", "N/D", "N/D", "N/D", null, null, null), "Cliente", null, now);
 
     public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null)
     {
@@ -112,6 +127,17 @@ public sealed class Order : AggregateRoot<Guid>
     };
 
     public void MarkProjected(string documentId) => StrapiDocumentId = documentId.Trim();
+
+    public void PreserveCustomerHistory(string? customerName, string? customerEmail, DateTimeOffset now)
+    {
+        CustomerNameSnapshot ??= NormalizeSnapshot(customerName) ?? Recipient;
+        CustomerEmailSnapshot ??= NormalizeSnapshot(customerEmail);
+        CustomerAccountDeletedAt ??= now;
+        UpdatedAt = now;
+    }
+
+    private static string? NormalizeSnapshot(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private void Recalculate()
     {

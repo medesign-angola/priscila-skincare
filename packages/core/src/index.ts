@@ -33,3 +33,4 @@ export * from './lib/services/cms.service';
 export * from './lib/models/home-page.interface';
 export * from './lib/models/about-page.interface';
 export * from './lib/models/site-setting.interface';
+export * from './lib/utils/phone-country';

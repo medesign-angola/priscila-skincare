@@ -22,10 +22,10 @@ const StyledStoreSelectShell = styled.details.attrs({
     justify-content: space-between;
     gap: 16px;
     padding: 11px 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--ps-border-strong);
     border-radius: 10px;
-    color: #1a1917;
-    background: #f7f7f7;
+    color: var(--ps-text);
+    background: var(--ps-field);
     font: inherit;
     font-size: 14px;
     list-style: none;
@@ -41,7 +41,7 @@ const StyledStoreSelectShell = styled.details.attrs({
   }
   &[open] summary,
   summary:focus-visible {
-    border-color: #8b7048;
+    border-color: var(--ps-accent-alt);
     box-shadow: 0 0 0 3px rgba(139, 112, 72, 0.12);
   }
 
@@ -56,10 +56,10 @@ const StyledStoreSelectShell = styled.details.attrs({
     max-height: 240px;
     padding: 8px;
     overflow: auto;
-    border: 1px solid #ece8e1;
+    border: 1px solid var(--ps-border);
     border-radius: 10px;
-    background: #fff;
-    box-shadow: 0 16px 38px rgba(47, 48, 58, 0.13);
+    background: var(--ps-surface);
+    box-shadow: 0 16px 38px var(--ps-shadow);
   }
 
   label,
@@ -72,7 +72,7 @@ const StyledStoreSelectShell = styled.details.attrs({
     padding: 10px;
     border: 0;
     border-radius: 7px;
-    color: #514b44;
+    color: var(--ps-text);
     background: transparent;
     font: inherit;
     font-size: 14px;
@@ -83,20 +83,20 @@ const StyledStoreSelectShell = styled.details.attrs({
 
   label:hover,
   [role='option']:hover {
-    background: #f7f3ed;
+    background: var(--ps-surface-muted);
   }
   [role='option'][aria-selected='true'] {
-    color: #7d6645;
-    background: #f3ede4;
+    color: var(--ps-accent);
+    background: var(--ps-accent-soft);
     font-weight: 600;
   }
   [role='option'] .store-select-check {
     margin-left: auto;
-    color: #7d6645;
+    color: var(--ps-accent);
     font-weight: 700;
   }
   input {
-    accent-color: #7d6645;
+    accent-color: var(--ps-accent);
   }
 `;
 

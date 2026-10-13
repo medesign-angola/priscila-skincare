@@ -7,7 +7,7 @@ const Menu = styled.details`
   position: relative;
 
   &[open] > summary {
-    border-color: #cdbb9f;
+    border-color: var(--ps-border-strong);
     box-shadow: 0 8px 24px rgba(68, 53, 35, 0.08);
   }
 `;
@@ -20,10 +20,10 @@ const Trigger = styled.summary`
   align-items: center;
   gap: 9px;
   padding: 6px 12px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  color: #252421;
-  background: #fff;
+  color: var(--ps-heading);
+  background: var(--ps-surface);
   user-select: none;
 
   &::-webkit-details-marker {
@@ -31,7 +31,7 @@ const Trigger = styled.summary`
   }
 
   &:focus-visible {
-    outline: 2px solid #7d6645;
+    outline: 2px solid var(--ps-accent);
     outline-offset: 2px;
   }
 `;
@@ -43,8 +43,8 @@ const Avatar = styled.span`
   flex: 0 0 40px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 13px;
   font-weight: 750;
 `;
@@ -63,14 +63,14 @@ const Copy = styled.span`
   }
 
   small {
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 12px;
   }
 `;
 
 const Chevron = styled.span`
   margin-left: 4px;
-  color: #777168;
+  color: var(--ps-text-subtle);
   transition: transform 160ms ease;
 
   ${Menu}[open] & {
@@ -86,23 +86,23 @@ const Dropdown = styled.div`
   display: grid;
   width: 220px;
   padding: 8px;
-  border: 1px solid #e5dfd6;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
   box-shadow: 0 18px 42px rgba(68, 53, 35, 0.14);
 `;
 
 const MenuLink = styled(Link)`
   padding: 11px 12px;
   border-radius: 8px;
-  color: #292824;
+  color: var(--ps-heading);
   font-size: 14px;
   font-weight: 550;
   text-decoration: none;
 
   &:hover {
-    color: #6f5737;
-    background: #f7f3ed;
+    color: var(--ps-accent);
+    background: var(--ps-surface-muted);
   }
 `;
 
@@ -110,9 +110,9 @@ const LogoutButton = styled.button`
   padding: 11px 12px;
   cursor: pointer;
   border: 0;
-  border-top: 1px solid #eee8df;
+  border-top: 1px solid var(--ps-border);
   border-radius: 0 0 8px 8px;
-  color: #9b3434;
+  color: var(--ps-danger-text);
   background: transparent;
   font: inherit;
   font-size: 14px;
@@ -120,7 +120,7 @@ const LogoutButton = styled.button`
   text-align: left;
 
   &:hover {
-    background: #fff4f2;
+    background: var(--ps-danger-bg);
   }
 `;
 

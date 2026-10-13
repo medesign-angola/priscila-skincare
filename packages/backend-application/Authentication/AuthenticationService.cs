@@ -5,6 +5,7 @@ using PriscilaSkincare.Domain.Authentication;
 using PriscilaSkincare.Domain.Common;
 using PriscilaSkincare.Domain.Customers;
 using PriscilaSkincare.Domain.Integration;
+using PriscilaSkincare.Domain.Orders;
 
 namespace PriscilaSkincare.Application.Authentication;
 
@@ -21,6 +22,12 @@ public sealed class AuthenticationService(
     IIntegrationInbox integrationInbox,
     ITokenService tokenService,
     ICustomerProjection customerProjection,
+    ICustomerAddressRepository customerAddresses,
+    IOrderRepository orders,
+    IShoppingCartRepository carts,
+    IPaymentRepository payments,
+    IOrderProjection orderProjection,
+    IOrderEmailOutbox emailOutbox,
     AuthenticationOptions options)
 {
     public async Task<OtpRequestResult> RequestOtpAsync(
@@ -184,6 +191,63 @@ public sealed class AuthenticationService(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await SynchronizeCustomerAsync(customer, cancellationToken);
         return new AuthenticatedCustomer(customer.Id, customer.Email.Value, customer.Name, customer.Phone, customer.AcceptsMarketing);
+    }
+
+    public async Task AnonymizeCustomerAsync(Guid customerId, string confirmation, CancellationToken cancellationToken = default)
+    {
+        var customer = await customers.FindByIdAsync(customerId, cancellationToken)
+            ?? throw new AuthenticationException("customer_not_found", "Cliente não encontrado.");
+        if (!customer.IsActive) return;
+        if (!string.Equals(customer.Email.Value, confirmation?.Trim(), StringComparison.OrdinalIgnoreCase))
+            throw new AuthenticationException("account_deletion_confirmation_required",
+                "Digite o e-mail da conta para confirmar a eliminação.");
+
+        var customerOrders = await orders.ListAsync(customerId, cancellationToken);
+        var activeStatuses = new[]
+        {
+            OrderStatus.Pending, OrderStatus.Confirmed, OrderStatus.Paid,
+            OrderStatus.PaymentFailed, OrderStatus.Processing, OrderStatus.Shipped
+        };
+        if (customerOrders.Any(order => activeStatuses.Contains(order.Status)))
+            throw new AuthenticationException("active_orders_exist",
+                "A conta não pode ser eliminada enquanto existir uma encomenda ativa.");
+
+        var now = clock.UtcNow;
+        var originalEmail = customer.Email;
+        var addresses = await customerAddresses.ListAsync(customerId, cancellationToken);
+        foreach (var address in addresses) customerAddresses.Remove(address);
+
+        var cart = await carts.FindAsync(customerId, cancellationToken);
+        cart?.Clear(now);
+        foreach (var order in customerOrders)
+            order.PreserveCustomerHistory(customer.Name, originalEmail.Value, now);
+        await emailOutbox.RemovePersonalDataAsync(customerOrders.Select(order => order.Id).ToArray(), cancellationToken);
+        await otpChallenges.RemoveAllAsync(originalEmail, cancellationToken);
+        await integrationOutbox.RemovePersonalDataAsync(originalEmail.Value, cancellationToken);
+        await refreshTokens.RevokeAllAsync(customerId, now, cancellationToken);
+        customer.Anonymize(now);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        foreach (var order in customerOrders)
+        {
+            try
+            {
+                var payment = await payments.FindByOrderAsync(order.Id, cancellationToken);
+                // A encomenda deixa de apontar ao perfil eliminado, mas mantém os
+                // snapshots necessários para o histórico comercial.
+                await orderProjection.UpsertAsync(order, null, payment, cancellationToken);
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested) { }
+            catch { /* a anonimização local prevalece e a projeção pode ser reconciliada */ }
+        }
+        try
+        {
+            // Só removemos o espelho administrativo depois de todas as relações
+            // das encomendas terem sido desligadas no CMS.
+            await customerProjection.DeleteAsync(customerId, cancellationToken);
+        }
+        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested) { }
+        catch { /* o perfil local já está anonimizado; a remoção no CMS será reconciliada */ }
     }
 
     private async Task SynchronizeCustomerAsync(Customer customer, CancellationToken cancellationToken)

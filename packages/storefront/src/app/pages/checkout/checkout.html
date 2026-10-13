@@ -27,13 +27,14 @@
         </button>
         }
       </div>
+      <button class="address-add" type="button" (click)="openAddressModal()">+ {{ 'CHECKOUT.ADD_ADDRESS' | translate }}</button>
       } @else {
       <div class="address-empty">
         <p>{{ 'CHECKOUT.NO_ADDRESS' | translate }}</p>
-        <a routerLink="/conta/perfil">
+        <button type="button" (click)="openAddressModal()">
           {{ 'CHECKOUT.ADD_ADDRESS' | translate }}
           <span aria-hidden="true">→</span>
-        </a>
+        </button>
       </div>
       }
     </section>
@@ -92,3 +93,31 @@
     </aside>
   </div>
 </main>
+
+@if (addressModalOpen()) {
+<div class="address-modal-backdrop" data-lenis-prevent>
+  <button class="address-modal-dismiss" type="button" (click)="closeAddressModal()" [attr.aria-label]="'ACCOUNT.PROFILE.ADDRESS.CLOSE' | translate"></button>
+  <section class="address-modal" data-lenis-prevent role="dialog" aria-modal="true" aria-labelledby="checkout-address-title">
+    <header><div><span>{{ 'CHECKOUT.LABEL' | translate }}</span><h2 id="checkout-address-title">{{ 'ACCOUNT.PROFILE.ADDRESS.ADD_TITLE' | translate }}</h2></div><button type="button" (click)="closeAddressModal()" [attr.aria-label]="'ACCOUNT.PROFILE.ADDRESS.CLOSE' | translate">×</button></header>
+    <form [formGroup]="addressForm" (ngSubmit)="saveAddress()">
+      <div class="address-fields">
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.LABEL' | translate }} *</span><input formControlName="label" required /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }} *</span><input formControlName="recipient" required /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }} *</span><input type="tel" inputmode="numeric" formControlName="phone" [mask]="phoneMask()" [prefix]="phonePrefix()" [dropSpecialCharacters]="false" [required]="true" /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }} *</span><select formControlName="country">@for (country of countries; track country.iso) { <option [value]="country.country">{{ country.country }}</option> }</select></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PROVINCE' | translate }} *</span><input formControlName="province" required /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.CITY' | translate }} *</span><input formControlName="city" required /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.NEIGHBORHOOD' | translate }} *</span><input formControlName="neighborhood" required /></label>
+        <label class="address-fields__wide"><span>{{ 'ACCOUNT.PROFILE.ADDRESS.STREET' | translate }} *</span><input formControlName="street" required /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.HOUSE_NUMBER' | translate }}</span><input formControlName="houseNumber" /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.APARTMENT' | translate }}</span><input formControlName="apartment" /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.POSTAL_CODE' | translate }}</span><input formControlName="postalCode" /></label>
+      </div>
+      <label class="address-default"><input type="checkbox" formControlName="isDefault" /><span>{{ 'ACCOUNT.PROFILE.ADDRESS.SET_DEFAULT' | translate }}</span></label>
+      @if (addressForm.invalid && addressForm.touched) { <p class="error">{{ 'ACCOUNT.PROFILE.ADDRESS.REQUIRED' | translate }}</p> }
+      @if (addressError()) { <p class="error">{{ 'ACCOUNT.PROFILE.ADDRESS.ERROR' | translate }}</p> }
+      <div class="address-modal__actions"><button type="button" (click)="closeAddressModal()">{{ 'ACCOUNT.PROFILE.ADDRESS.CANCEL' | translate }}</button><button class="address-save" type="submit" [disabled]="addressSaving()">{{ (addressSaving() ? 'ACCOUNT.PROFILE.ADDRESS.SAVING' : 'ACCOUNT.PROFILE.ADDRESS.SAVE') | translate }}</button></div>
+    </form>
+  </section>
+</div>
+}

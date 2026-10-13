@@ -154,32 +154,6 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.ToTable("customers", (string)null);
                 });
 
-            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationInboxMessage", b =>
-                {
-                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
-                    b.Property<DateTimeOffset>("ProcessedAt").HasColumnType("datetime").HasColumnName("processed_at");
-                    b.Property<string>("Type").IsRequired().HasMaxLength(100).HasColumnType("varchar(100)").HasColumnName("type");
-                    b.HasKey("Id");
-                    b.ToTable("integration_inbox", (string)null);
-                });
-
-            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationOutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("char(36)");
-                    b.Property<int>("Attempts").HasColumnType("int").HasColumnName("attempts");
-                    b.Property<DateTimeOffset>("CreatedAt").HasColumnType("datetime").HasColumnName("created_at");
-                    b.Property<string>("Destination").IsRequired().HasMaxLength(40).HasColumnType("varchar(40)").HasColumnName("destination");
-                    b.Property<string>("LastError").HasMaxLength(1000).HasColumnType("varchar(1000)").HasColumnName("last_error");
-                    b.Property<DateTimeOffset>("NextAttemptAt").HasColumnType("datetime").HasColumnName("next_attempt_at");
-                    b.Property<string>("Payload").IsRequired().HasColumnType("longtext").HasColumnName("payload");
-                    b.Property<DateTimeOffset?>("PublishedAt").HasColumnType("datetime").HasColumnName("published_at");
-                    b.Property<string>("Status").IsRequired().HasMaxLength(20).HasColumnType("varchar(20)").HasColumnName("status");
-                    b.Property<string>("Type").IsRequired().HasMaxLength(100).HasColumnType("varchar(100)").HasColumnName("type");
-                    b.HasKey("Id");
-                    b.HasIndex("Status", "NextAttemptAt");
-                    b.ToTable("integration_outbox", (string)null);
-                });
-
             modelBuilder.Entity("PriscilaSkincare.Domain.Customers.CustomerAddress", b =>
                 {
                     b.Property<Guid>("Id")
@@ -270,6 +244,84 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.HasIndex("CustomerId", "IsDefault");
 
                     b.ToTable("customer_addresses", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationInboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("ProcessedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("processed_at");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("integration_inbox", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationOutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int")
+                        .HasColumnName("attempts");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Destination")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)")
+                        .HasColumnName("destination");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("last_error");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("next_attempt_at");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("payload");
+
+                    b.Property<DateTimeOffset?>("PublishedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("published_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status", "NextAttemptAt");
+
+                    b.ToTable("integration_outbox", (string)null);
                 });
 
             modelBuilder.Entity("PriscilaSkincare.Domain.Notifications.EmailOutboxMessage", b =>
@@ -369,9 +421,23 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(3)")
                         .HasColumnName("currency");
 
+                    b.Property<DateTimeOffset?>("CustomerAccountDeletedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("customer_account_deleted_at");
+
+                    b.Property<string>("CustomerEmailSnapshot")
+                        .HasMaxLength(320)
+                        .HasColumnType("varchar(320)")
+                        .HasColumnName("customer_email_snapshot");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("char(36)")
                         .HasColumnName("customer_id");
+
+                    b.Property<string>("CustomerNameSnapshot")
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)")
+                        .HasColumnName("customer_name_snapshot");
 
                     b.Property<string>("HouseNumber")
                         .HasMaxLength(40)
@@ -528,7 +594,6 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PriscilaSkincare.Domain.Orders.OrderStatusEntry", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<DateTimeOffset>("OccurredAt")
@@ -639,7 +704,6 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("PriscilaSkincare.Domain.Orders.ShoppingCartItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("CartId")

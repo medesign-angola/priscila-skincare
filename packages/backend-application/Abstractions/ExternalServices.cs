@@ -30,6 +30,7 @@ public interface IPaymentGateway { Task<PaymentDecision> AuthorizeAsync(PaymentR
 public interface IIntegrationOutbox
 {
     void Add(IntegrationOutboxMessage message);
+    Task RemovePersonalDataAsync(string value, CancellationToken cancellationToken = default);
 }
 
 public interface IIntegrationInbox
@@ -54,11 +55,12 @@ public interface IReviewProjection
 public interface ICustomerProjection
 {
     Task UpsertAsync(Customer customer, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Guid customerId, CancellationToken cancellationToken = default);
 }
 
 public interface IOrderProjection
 {
-    Task<string?> UpsertAsync(Order order, Customer customer, Payment? payment,
+    Task<string?> UpsertAsync(Order order, Customer? customer, Payment? payment,
         CancellationToken cancellationToken = default);
 }
 
@@ -87,6 +89,7 @@ public sealed record OrderConfirmationEmail(Guid OrderId, string OrderNumber, st
 public interface IOrderEmailOutbox
 {
     void Enqueue(OrderConfirmationEmail message, DateTimeOffset now);
+    Task RemovePersonalDataAsync(IReadOnlyCollection<Guid> orderIds, CancellationToken cancellationToken = default);
 }
 
 public interface IOrderEmailSender

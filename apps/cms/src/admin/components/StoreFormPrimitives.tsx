@@ -14,8 +14,8 @@ export const FormShell = styled(Main)`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #292824;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 
@@ -27,15 +27,15 @@ const Topbar = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 28px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 `;
 
 const Back = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 650;
   text-decoration: none;
@@ -68,7 +68,7 @@ export const FormHeading = styled.header`
 
   h1 {
     margin: 0 0 8px;
-    color: #292824;
+    color: var(--ps-heading);
     font-size: clamp(28px, 3vw, 36px);
     font-weight: 650;
     line-height: 1.15;
@@ -79,7 +79,7 @@ export const FormHeading = styled.header`
   p {
     max-width: 66ch;
     margin: 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 15px;
     line-height: 1.65;
   }
@@ -87,9 +87,9 @@ export const FormHeading = styled.header`
 
 export const FormCard = styled.section`
   overflow: hidden;
-  border: 1px solid #e8e2d9;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 14px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 
 export const FormSection = styled.section`
@@ -98,7 +98,7 @@ export const FormSection = styled.section`
   padding: 30px;
 
   & + & {
-    border-top: 1px solid #ece8e1;
+    border-top: 1px solid var(--ps-border);
   }
 
   @media (max-width: 48rem) {
@@ -109,7 +109,7 @@ export const FormSection = styled.section`
 export const SectionHeading = styled.header`
   h2 {
     margin: 0;
-    color: #292824;
+    color: var(--ps-heading);
     font-size: 20px;
     font-weight: 650;
     letter-spacing: -0.2px;
@@ -118,7 +118,7 @@ export const SectionHeading = styled.header`
   p {
     max-width: 68ch;
     margin: 7px 0 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 14px;
     line-height: 1.55;
   }
@@ -138,12 +138,12 @@ export const Field = styled.label`
   display: grid;
   gap: 9px;
   min-width: 0;
-  color: #292824;
+  color: var(--ps-heading);
   font-size: 15px;
   font-weight: 650;
 
   small {
-    color: #817a70;
+    color: var(--ps-text-subtle);
     font-size: 13px;
     font-weight: 400;
     line-height: 1.5;
@@ -151,7 +151,7 @@ export const Field = styled.label`
 `;
 
 export const Required = styled.span`
-  color: #c33d4d;
+  color: var(--ps-danger-text);
 `;
 
 const control = `
@@ -159,18 +159,18 @@ const control = `
   width: 100%;
   min-height: 56px;
   padding: 14px 16px;
-  border: 1px solid #d9d4cc;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
   outline: none;
-  color: #292824;
-  background: #fbfbfa;
+  color: var(--ps-heading);
+  background: var(--ps-field);
   font: inherit;
   font-size: 15px;
   font-weight: 500;
   transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
-  &:hover { border-color: #b8aa98; }
-  &:focus { border-color: #92754d; box-shadow: 0 0 0 3px rgba(146, 117, 77, .13); background: #fff; }
-  &:disabled { cursor: not-allowed; color: #8b857c; background: #f1efec; }
+  &:hover { border-color: var(--ps-border-strong); }
+  &:focus { border-color: var(--ps-accent-alt); box-shadow: 0 0 0 3px rgba(146, 117, 77, .13); background: var(--ps-surface); }
+  &:disabled { cursor: not-allowed; color: var(--ps-text-subtle); background: var(--ps-surface-muted); }
 `;
 
 export const Input = styled.input`
@@ -194,16 +194,16 @@ export const CheckRow = styled.label`
   align-items: flex-start;
   gap: 12px;
   padding: 17px 18px;
-  border: 1px solid #e4ddd3;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 11px;
-  background: #fbfaf8;
+  background: var(--ps-surface-raised);
   cursor: pointer;
 
   input {
     width: 19px;
     height: 19px;
     margin: 1px 0 0;
-    accent-color: #8f7048;
+    accent-color: var(--ps-accent-alt);
   }
 
   strong,
@@ -212,13 +212,13 @@ export const CheckRow = styled.label`
   }
 
   strong {
-    color: #292824;
+    color: var(--ps-heading);
     font-size: 15px;
   }
 
   small {
     margin-top: 3px;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 13px;
     line-height: 1.45;
   }
@@ -229,12 +229,12 @@ export const FormNotice = styled.div<{ $error?: boolean; $success?: boolean }>`
   padding: 14px 16px;
   border: 1px solid
     ${({ $error, $success }) =>
-      $error ? '#efb3bb' : $success ? '#a6d7b8' : '#e0d4c3'};
+      $error ? 'var(--ps-danger-border)' : $success ? 'var(--ps-success-border)' : 'var(--ps-border-strong)'};
   border-radius: 10px;
   color: ${({ $error, $success }) =>
-    $error ? '#9f1239' : $success ? '#166534' : '#705835'};
+    $error ? 'var(--ps-danger-text)' : $success ? 'var(--ps-success-text)' : 'var(--ps-accent)'};
   background: ${({ $error, $success }) =>
-    $error ? '#fff4f5' : $success ? '#f0fbf4' : '#fbf7f0'};
+    $error ? 'var(--ps-danger-bg)' : $success ? 'var(--ps-success-bg)' : 'var(--ps-surface-raised)'};
   font-size: 14px;
   line-height: 1.5;
 `;
@@ -244,24 +244,24 @@ export const FormFooter = styled.footer`
   justify-content: flex-end;
   gap: 12px;
   padding: 22px 30px;
-  border-top: 1px solid #ece8e1;
-  background: #fbfaf8;
+  border-top: 1px solid var(--ps-border);
+  background: var(--ps-surface-raised);
 `;
 
 export const FormButton = styled.button<{ $primary?: boolean }>`
   min-height: 48px;
   padding: 12px 20px;
-  border: 1px solid ${({ $primary }) => ($primary ? '#8f7048' : '#bca98f')};
+  border: 1px solid ${({ $primary }) => ($primary ? 'var(--ps-accent-alt)' : 'var(--ps-border-strong)')};
   border-radius: 9px;
-  color: ${({ $primary }) => ($primary ? '#fff' : '#755a36')};
-  background: ${({ $primary }) => ($primary ? '#8f7048' : '#fff')};
+  color: ${({ $primary }) => ($primary ? 'var(--ps-on-accent)' : 'var(--ps-accent)')};
+  background: ${({ $primary }) => ($primary ? 'var(--ps-accent-alt)' : 'var(--ps-surface)')};
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: transform 150ms ease, background-color 150ms ease;
 
   &:hover:not(:disabled) {
-    background: ${({ $primary }) => ($primary ? '#765b38' : '#f8f3ec')};
+    background: ${({ $primary }) => ($primary ? 'var(--ps-accent-hover)' : 'var(--ps-accent-soft)')};
   }
 
   &:active:not(:disabled) {
@@ -285,19 +285,19 @@ export const SummaryList = styled.dl`
   gap: 1px;
   margin: 0;
   overflow: hidden;
-  border: 1px solid #e8e2d9;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 11px;
-  background: #e8e2d9;
+  background: var(--ps-border-strong);
 
   div {
     min-width: 0;
     padding: 17px 18px;
-    background: #fff;
+    background: var(--ps-surface);
   }
 
   dt {
     margin-bottom: 6px;
-    color: #817a70;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
@@ -307,7 +307,7 @@ export const SummaryList = styled.dl`
   dd {
     margin: 0;
     overflow-wrap: anywhere;
-    color: #292824;
+    color: var(--ps-heading);
     font-size: 15px;
     font-weight: 600;
     line-height: 1.5;

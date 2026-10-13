@@ -27,6 +27,14 @@ internal sealed class OtpChallengeRepository(ApplicationDbContext dbContext) : I
             .FirstOrDefaultAsync(cancellationToken);
 
     public void Add(OtpChallenge challenge) => dbContext.OtpChallenges.Add(challenge);
+
+    public async Task RemoveAllAsync(EmailAddress email, CancellationToken cancellationToken = default)
+    {
+        var challenges = await dbContext.OtpChallenges
+            .Where(challenge => challenge.Email == email)
+            .ToListAsync(cancellationToken);
+        dbContext.OtpChallenges.RemoveRange(challenges);
+    }
 }
 
 internal sealed class RefreshTokenRepository(ApplicationDbContext dbContext) : IRefreshTokenRepository
@@ -37,4 +45,12 @@ internal sealed class RefreshTokenRepository(ApplicationDbContext dbContext) : I
         dbContext.RefreshTokens.SingleOrDefaultAsync(token => token.TokenHash == tokenHash, cancellationToken);
 
     public void Add(RefreshToken refreshToken) => dbContext.RefreshTokens.Add(refreshToken);
+
+    public async Task RevokeAllAsync(Guid customerId, DateTimeOffset now, CancellationToken cancellationToken = default)
+    {
+        var tokens = await dbContext.RefreshTokens
+            .Where(token => token.CustomerId == customerId && token.RevokedAt == null)
+            .ToListAsync(cancellationToken);
+        foreach (var token in tokens) token.Revoke(now);
+    }
 }

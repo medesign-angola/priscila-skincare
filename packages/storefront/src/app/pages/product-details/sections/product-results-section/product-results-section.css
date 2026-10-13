@@ -55,15 +55,6 @@
 .results__after {
   z-index: 1;
 }
-.results__before-filter {
-  position: absolute;
-  inset: 0 auto 0 0;
-  z-index: 1;
-  border-right: 1.5px solid #fff;
-  background: rgb(255 255 255 / 1%);
-  backdrop-filter: blur(7.5px);
-  pointer-events: none;
-}
 .results__label {
   position: absolute;
   top: 0.5rem;

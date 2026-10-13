@@ -30,6 +30,7 @@ type Order = Record<string, any> & {
   number?: string;
   customerName?: string;
   customerEmail?: string;
+  customerAccountDeletedAt?: string | null;
   orderStatus?: string;
   paymentStatus?: string;
   currency?: string;
@@ -88,8 +89,8 @@ const Shell = styled(Main)`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  color: #252421;
-  background: #f7f5f2;
+  color: var(--ps-heading);
+  background: var(--ps-canvas);
   font-family: 'Priscila Inter', Inter, Arial, sans-serif;
 `;
 const Topbar = styled.header`
@@ -100,14 +101,14 @@ const Topbar = styled.header`
   justify-content: space-between;
   gap: 24px;
   padding: 16px 28px;
-  border-bottom: 1px solid #ece8e1;
-  background: #fafafa;
+  border-bottom: 1px solid var(--ps-border);
+  background: var(--ps-surface-soft);
 `;
 const Back = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #7d6645;
+  color: var(--ps-accent);
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -125,7 +126,7 @@ const Language = styled(Link)`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #1a1917;
+  color: var(--ps-text);
   font-size: 14px;
   font-weight: 700;
   text-decoration: none;
@@ -140,10 +141,10 @@ const Profile = styled(Link)`
   align-items: center;
   gap: 9px;
   padding: 6px 12px;
-  border: 1px solid #ece8e1;
+  border: 1px solid var(--ps-border);
   border-radius: 12px;
-  color: #1a1917;
-  background: #fff;
+  color: var(--ps-text);
+  background: var(--ps-surface);
   text-decoration: none;
 `;
 const Avatar = styled.span`
@@ -152,8 +153,8 @@ const Avatar = styled.span`
   height: 40px;
   place-items: center;
   border-radius: 10px;
-  color: #fff;
-  background: #7d6645;
+  color: var(--ps-on-accent);
+  background: var(--ps-accent);
   font-size: 13px;
   font-weight: 700;
 `;
@@ -165,7 +166,7 @@ const ProfileText = styled.span`
     font-weight: 500;
   }
   small {
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 12px;
   }
 `;
@@ -190,7 +191,7 @@ const Header = styled.header`
   }
   p {
     margin: 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 14px;
   }
 `;
@@ -198,16 +199,16 @@ const statusColors: Record<
   string,
   { background: string; border: string; color: string }
 > = {
-  pending: { background: '#fff7e6', border: '#f0c36a', color: '#75530b' },
-  confirmed: { background: '#eef6ff', border: '#93c5fd', color: '#1e4f86' },
-  processing: { background: '#f7f2e9', border: '#d6c19a', color: '#6b522d' },
-  shipped: { background: '#f1f0ff', border: '#b9b4f6', color: '#47408f' },
-  delivered: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  approved: { background: '#dcfce7', border: '#7bf1a8', color: '#166534' },
-  rejected: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
-  cancelled: { background: '#fff1f2', border: '#fda4af', color: '#9f1239' },
-  refunded: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
-  restricted: { background: '#f5f5f4', border: '#d6d3d1', color: '#57534e' },
+  pending: { background: 'var(--ps-warning-bg)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  confirmed: { background: 'var(--ps-info-bg)', border: 'var(--ps-info-border)', color: 'var(--ps-info-text)' },
+  processing: { background: 'var(--ps-surface-muted)', border: 'var(--ps-warning-border)', color: 'var(--ps-warning-text)' },
+  shipped: { background: 'var(--ps-violet-bg)', border: 'var(--ps-violet-border)', color: 'var(--ps-violet-text)' },
+  delivered: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  approved: { background: 'var(--ps-success-bg)', border: 'var(--ps-success-border)', color: 'var(--ps-success-text)' },
+  rejected: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
+  cancelled: { background: 'var(--ps-danger-bg)', border: 'var(--ps-danger-border)', color: 'var(--ps-danger-text)' },
+  refunded: { background: 'var(--ps-neutral-badge-bg)', border: 'var(--ps-neutral-badge-border)', color: 'var(--ps-neutral-badge-text)' },
+  restricted: { background: 'var(--ps-neutral-badge-bg)', border: 'var(--ps-neutral-badge-border)', color: 'var(--ps-neutral-badge-text)' },
 };
 const StatusGroup = styled.div`
   display: flex;
@@ -232,11 +233,47 @@ const Badge = styled.span<{ $status: string }>`
 `;
 const Notice = styled.div<{ $error?: boolean }>`
   padding: 13px 16px;
-  border: 1px solid ${({ $error }) => ($error ? '#fecaca' : '#bbf7d0')};
+  border: 1px solid ${({ $error }) => ($error ? 'var(--ps-danger-border)' : 'var(--ps-success-border)')};
   border-radius: 9px;
-  color: ${({ $error }) => ($error ? '#991b1b' : '#166534')};
-  background: ${({ $error }) => ($error ? '#fef2f2' : '#f0fdf4')};
+  color: ${({ $error }) => ($error ? 'var(--ps-danger-text)' : 'var(--ps-success-text)')};
+  background: ${({ $error }) => ($error ? 'var(--ps-danger-bg)' : 'var(--ps-success-bg)')};
   font-size: 14px;
+`;
+const HistoricalAccountNotice = styled.section`
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 15px 18px;
+  border: 1px solid color-mix(in srgb, var(--ps-accent-alt) 38%, var(--ps-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--ps-accent-alt) 9%, var(--ps-surface));
+  > span {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--ps-on-accent);
+    background: var(--ps-accent-alt);
+    font-size: 14px;
+    font-weight: 800;
+  }
+  strong,
+  p {
+    display: block;
+  }
+  strong {
+    margin-bottom: 3px;
+    color: var(--ps-heading);
+    font-size: 14px;
+  }
+  p {
+    margin: 0;
+    color: var(--ps-text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
 `;
 const SummaryGrid = styled.section`
   display: grid;
@@ -255,13 +292,13 @@ const Metric = styled.article`
   height: 100%;
   align-content: start;
   padding: 18px;
-  border: 1px solid #e8e2d9;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  background: #fff;
+  background: var(--ps-surface);
   small {
     display: block;
     margin-bottom: 8px;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 12px;
   }
   strong {
@@ -289,13 +326,13 @@ const ColumnStack = styled.div`
 `;
 const Card = styled.section`
   overflow: hidden;
-  border: 1px solid #e8e2d9;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 12px;
-  background: #fff;
+  background: var(--ps-surface);
 `;
 const CardHeader = styled.header`
   padding: 18px 20px;
-  border-bottom: 1px solid #ece8e1;
+  border-bottom: 1px solid var(--ps-border);
   h2 {
     margin: 0;
     font-size: 18px;
@@ -303,7 +340,7 @@ const CardHeader = styled.header`
   }
   p {
     margin: 5px 0 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 13px;
   }
 `;
@@ -316,7 +353,7 @@ const Product = styled.article`
   gap: 16px;
   align-items: center;
   padding: 18px 20px;
-  border-bottom: 1px solid #ece8e1;
+  border-bottom: 1px solid var(--ps-border);
   &:last-child {
     border-bottom: 0;
   }
@@ -325,7 +362,7 @@ const Product = styled.article`
     height: 78px;
     border-radius: 9px;
     object-fit: cover;
-    background: #f1eee9;
+    background: var(--ps-surface-muted);
   }
   h3 {
     margin: 0 0 5px;
@@ -333,7 +370,7 @@ const Product = styled.article`
   }
   p {
     margin: 2px 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 13px;
   }
   strong {
@@ -349,11 +386,11 @@ const Address = styled.dl`
   padding: 8px 20px 18px;
   div {
     padding: 12px 0;
-    border-bottom: 1px solid #f0ece6;
+    border-bottom: 1px solid var(--ps-border);
   }
   dt {
     margin-bottom: 4px;
-    color: #8a837a;
+    color: var(--ps-text-subtle);
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -382,16 +419,16 @@ const Flow = styled.ol`
     grid-template-columns: 18px 1fr;
     gap: 12px;
     padding: 11px 0;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 14px;
   }
   li::before {
     width: 12px;
     height: 12px;
     margin-top: 3px;
-    border: 2px solid #d8d1c7;
+    border: 2px solid var(--ps-border-strong);
     border-radius: 50%;
-    background: #fff;
+    background: var(--ps-surface);
     content: '';
   }
   li:not(:last-child)::after {
@@ -400,27 +437,27 @@ const Flow = styled.ol`
     bottom: -5px;
     left: 7px;
     width: 2px;
-    background: #e7e1d8;
+    background: var(--ps-border);
     content: '';
   }
   li.done {
-    color: #252421;
+    color: var(--ps-heading);
     font-weight: 600;
   }
   li.done::before {
-    border-color: #8b7048;
-    background: #8b7048;
+    border-color: var(--ps-accent-alt);
+    background: var(--ps-accent-alt);
   }
 `;
 const Advance = styled.div`
   display: grid;
   gap: 12px;
   padding: 18px 20px;
-  border-top: 1px solid #ece8e1;
-  background: #faf9f7;
+  border-top: 1px solid var(--ps-border);
+  background: var(--ps-surface-raised);
   p {
     margin: 0;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 13px;
     line-height: 1.5;
   }
@@ -432,15 +469,15 @@ const Advance = styled.div`
     padding: 12px 16px;
     border: 0;
     border-radius: 9px;
-    color: #fff;
-    background: #8b7048;
+    color: var(--ps-on-accent);
+    background: var(--ps-accent-alt);
     font: inherit;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
   }
   button:hover {
-    background: #6f593d;
+    background: var(--ps-accent-hover);
   }
   button:disabled {
     cursor: not-allowed;
@@ -453,26 +490,26 @@ const PaymentActions = styled.div`
   padding: 18px 20px;
   p {
     margin: 0 0 4px;
-    color: #6d675f;
+    color: var(--ps-text-muted);
     font-size: 13px;
     line-height: 1.5;
   }
   button {
     min-height: 48px;
     padding: 0 15px;
-    border: 1px solid #8b7048;
+    border: 1px solid var(--ps-accent-alt);
     border-radius: 9px;
-    color: #fff;
-    background: #8b7048;
+    color: var(--ps-on-accent);
+    background: var(--ps-accent-alt);
     font: inherit;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
   }
   button.secondary {
-    color: #8a3d48;
-    border-color: #e1b7bd;
-    background: #fff;
+    color: var(--ps-danger-text);
+    border-color: var(--ps-danger-border);
+    background: var(--ps-surface);
   }
   button:disabled {
     cursor: not-allowed;
@@ -720,6 +757,18 @@ export default function OrderDetailPage() {
                     </Badge>
                   </StatusGroup>
                 </Header>
+                {order.customerAccountDeletedAt && (
+                  <HistoricalAccountNotice role="status">
+                    <span aria-hidden>!</span>
+                    <div>
+                      <strong>Conta de cliente eliminada</strong>
+                      <p>
+                        Os dados abaixo foram preservados exclusivamente para o
+                        histórico, suporte e cumprimento desta encomenda.
+                      </p>
+                    </div>
+                  </HistoricalAccountNotice>
+                )}
                 <SummaryGrid>
                   <Metric>
                     <small>Cliente</small>

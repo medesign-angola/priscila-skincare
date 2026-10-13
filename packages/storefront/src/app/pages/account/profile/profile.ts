@@ -14,12 +14,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthFacade, CustomerAddress, SaveCustomerAddress } from '@org/core';
+import { NgxMaskDirective } from 'ngx-mask';
+import { AuthFacade, CustomerAddress, internationalPhone, localPhoneValue, PHONE_COUNTRIES, phoneCountry, SaveCustomerAddress } from '@org/core';
 
 @Component({
   selector: 'app-profile',
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, NgxMaskDirective],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,10 +32,19 @@ export class Profile {
   private readonly document = inject(DOCUMENT);
   readonly name = new FormControl('', { nonNullable: true });
   readonly phone = new FormControl('', { nonNullable: true });
+  readonly profilePhoneCountry = signal('Angola');
+  readonly countries = PHONE_COUNTRIES;
   readonly modalOpen = signal(false);
   readonly editingAddress = signal<CustomerAddress | null>(null);
   readonly addressSaving = signal(false);
   readonly addressError = signal(false);
+  readonly deleteModalOpen = signal(false);
+  readonly deleteConfirmation = new FormControl('', { nonNullable: true });
+  readonly deletingAccount = signal(false);
+  readonly deleteErrorCode = signal<string | null>(null);
+  readonly profileSaving = signal(false);
+  readonly profileNotice = signal<string | null>(null);
+  private profileNoticeTimeout?: ReturnType<typeof setTimeout>;
 
   readonly addressForm = new FormGroup({
     label: new FormControl('', {
@@ -78,10 +89,12 @@ export class Profile {
     effect(() => {
       const customer = this.auth.customer();
       this.name.setValue(customer?.name ?? '', { emitEvent: false });
-      this.phone.setValue(customer?.phone ?? '', { emitEvent: false });
+      const config=phoneCountry(customer?.phone);
+      this.profilePhoneCountry.set(config.country);
+      this.phone.setValue(localPhoneValue(customer?.phone,config.country), { emitEvent: false });
     });
     effect((onCleanup) => {
-      if (!this.modalOpen()) return;
+      if (!this.modalOpen() && !this.deleteModalOpen()) return;
       const body = this.document.body;
       const root = this.document.documentElement;
       const view = this.document.defaultView;
@@ -115,6 +128,7 @@ export class Profile {
   @HostListener('document:keydown.escape')
   closeOnEscape(): void {
     if (this.modalOpen() && !this.addressSaving()) this.closeAddressModal();
+    if (this.deleteModalOpen() && !this.deletingAccount()) this.closeDeleteAccount();
   }
 
   openAddAddress(): void {
@@ -123,7 +137,7 @@ export class Profile {
     this.addressForm.reset({
       label: '',
       recipient: this.auth.customer()?.name ?? '',
-      phone: this.auth.customer()?.phone ?? '',
+      phone: localPhoneValue(this.auth.customer()?.phone, 'Angola'),
       country: 'Angola',
       province: '',
       city: '',
@@ -143,7 +157,7 @@ export class Profile {
     this.addressForm.reset({
       label: address.label,
       recipient: address.recipient,
-      phone: address.phone,
+      phone: localPhoneValue(address.phone, address.country),
       country: address.country,
       province: address.province,
       city: address.city,
@@ -173,6 +187,7 @@ export class Profile {
     const raw = this.addressForm.getRawValue();
     const payload: SaveCustomerAddress = {
       ...raw,
+      phone: internationalPhone(raw.phone, raw.country),
       houseNumber: raw.houseNumber.trim() || undefined,
       apartment: raw.apartment.trim() || undefined,
       postalCode: raw.postalCode.trim() || undefined,
@@ -197,18 +212,71 @@ export class Profile {
     await this.auth.deleteAddress(address.id);
   }
 
-  async saveProfile(): Promise<void> {
+  async saveProfile(field: 'name' | 'phone'): Promise<void> {
+    if (this.profileSaving()) return;
     const name = this.name.value.trim();
-    if (name) await this.auth.updateProfile(name, this.phone.value.trim());
+    const phone = internationalPhone(this.phone.value, this.profilePhoneCountry());
+    const customer = this.auth.customer();
+    if (!name || (name === customer?.name && phone === customer?.phone)) return;
+    this.profileSaving.set(true);
+    this.profileNotice.set(null);
+    try {
+      await this.auth.updateProfile(name, phone);
+      this.showProfileNotice(
+        field === 'name'
+          ? 'ACCOUNT.PROFILE.SYNC.NAME_UPDATED'
+          : 'ACCOUNT.PROFILE.SYNC.PHONE_UPDATED',
+      );
+    } finally {
+      this.profileSaving.set(false);
+    }
   }
+
+  profileMask():string{return phoneCountry(this.profilePhoneCountry()).mask;}
+  profilePrefix():string{return `${phoneCountry(this.profilePhoneCountry()).dialCode} `;}
+  addressMask():string{return phoneCountry(this.addressForm.controls.country.value).mask;}
+  addressPrefix():string{return `${phoneCountry(this.addressForm.controls.country.value).dialCode} `;}
 
   async signOut(): Promise<void> {
     await this.auth.signOut();
     await this.router.navigate(['/']);
   }
 
+  openDeleteAccount(): void {
+    this.deleteConfirmation.setValue('');
+    this.deleteErrorCode.set(null);
+    this.deleteModalOpen.set(true);
+  }
+
+  closeDeleteAccount(): void {
+    if (!this.deletingAccount()) this.deleteModalOpen.set(false);
+  }
+
+  async deleteAccount(): Promise<void> {
+    if (this.deletingAccount() || this.deleteConfirmation.value.trim().toLowerCase() !== this.auth.customer()?.email.toLowerCase()) return;
+    this.deletingAccount.set(true);
+    this.deleteErrorCode.set(null);
+    try {
+      await this.auth.deleteAccount(this.deleteConfirmation.value);
+      await this.router.navigate(['/']);
+    } catch (error) {
+      const code = error instanceof HttpErrorResponse && typeof error.error?.code === 'string'
+        ? error.error.code
+        : 'account_deletion_failed';
+      this.deleteErrorCode.set(code);
+    } finally {
+      this.deletingAccount.set(false);
+    }
+  }
+
   private closeAddressModalAfterSave(): void {
     this.modalOpen.set(false);
     this.editingAddress.set(null);
+  }
+
+  private showProfileNotice(message: string): void {
+    if (this.profileNoticeTimeout) clearTimeout(this.profileNoticeTimeout);
+    this.profileNotice.set(message);
+    this.profileNoticeTimeout = setTimeout(() => this.profileNotice.set(null), 4500);
   }
 }

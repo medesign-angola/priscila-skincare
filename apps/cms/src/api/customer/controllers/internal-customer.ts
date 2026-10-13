@@ -68,4 +68,27 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     if (!customer) return ctx.badRequest('Não foi possível sincronizar o cliente.');
     ctx.body = { documentId: customer.documentId };
   },
+  async remove(ctx: {
+    request: { headers: Record<string, string | undefined> };
+    params: { externalCustomerId?: string };
+    unauthorized: () => void;
+    badRequest: (message: string) => void;
+    body?: unknown;
+  }) {
+    const expected = process.env.REVIEW_INTEGRATION_SECRET;
+    const supplied = ctx.request.headers['x-integration-secret'];
+    if (!expected || supplied !== expected) return ctx.unauthorized();
+    const externalCustomerId = ctx.params.externalCustomerId;
+    if (!externalCustomerId) return ctx.badRequest('Cliente inválido.');
+    const customers = await strapi.documents('api::customer.customer').findMany({
+      filters: { externalCustomerId: { $eq: externalCustomerId } } as never,
+      limit: 1,
+    });
+    if (customers[0]) {
+      await strapi.documents('api::customer.customer').delete({
+        documentId: customers[0].documentId,
+      });
+    }
+    ctx.body = { deleted: Boolean(customers[0]) };
+  },
 });

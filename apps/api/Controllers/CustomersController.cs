@@ -30,6 +30,16 @@ public sealed class CustomersController(AuthenticationService authentication) : 
         return Ok(CustomerResponse.From(customer));
     }
 
+    [HttpDelete("me")]
+    public async Task<IActionResult> DeleteAccount(
+        DeleteCustomerRequest request,
+        CancellationToken cancellationToken)
+    {
+        await authentication.AnonymizeCustomerAsync(CustomerId(), request.Confirmation, cancellationToken);
+        Response.Cookies.Delete("psc_refresh", new CookieOptions { Path = "/api/v1/auth" });
+        return NoContent();
+    }
+
     private Guid CustomerId()
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -41,6 +51,7 @@ public sealed class CustomersController(AuthenticationService authentication) : 
 }
 
 public sealed record UpdateCustomerRequest(string Name, string? Phone);
+public sealed record DeleteCustomerRequest(string Confirmation);
 public sealed record CustomerResponse(Guid Id, string Email, string? Name, string? Phone, bool AcceptsMarketing)
 {
     public static CustomerResponse From(AuthenticatedCustomer customer) =>

@@ -149,6 +149,21 @@ export class AuthFacade {
     await this.loadAddresses();
   }
 
+  async deleteAccount(confirmation: string): Promise<void> {
+    await firstValueFrom(this.http.delete<void>(
+      `${this.config.baseUrl}/customers/me`,
+      { body: { confirmation }, withCredentials: true },
+    ));
+    this.session.clear();
+    this.customer.set(null);
+    this.orders.set([]);
+    this.pendingEmail.set('');
+    if (this.isBrowser) {
+      sessionStorage.removeItem('psc_pending_email');
+      sessionStorage.removeItem('psc_pending_marketing');
+    }
+  }
+
   async updateName(name: string): Promise<void> {
     await this.updateProfile(name, this.customer()?.phone);
   }

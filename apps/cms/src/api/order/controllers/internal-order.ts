@@ -3,8 +3,9 @@ import type { Core } from '@strapi/strapi';
 type Payload = Record<string, unknown> & {
   externalOrderId: string;
   number: string;
-  externalCustomerId: string;
+  externalCustomerId?: string;
   customerEmail: string;
+  customerAccountDeletedAt?: string | null;
   orderStatus?: string;
   paymentStatus?: string;
   status?: string;
@@ -23,18 +24,19 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     if (
       !payload?.externalOrderId ||
       !payload.number ||
-      !payload.externalCustomerId
+      !payload.customerEmail
     )
       return ctx.badRequest('Encomenda inválida.');
-    const customers = await strapi
-      .documents('api::customer.customer')
-      .findMany({
-        filters: {
-          externalCustomerId: { $eq: payload.externalCustomerId },
-        } as never,
-        limit: 1,
-      });
-    if (!customers[0])
+    const accountWasDeleted = Boolean(payload.customerAccountDeletedAt);
+    const customers = !accountWasDeleted && payload.externalCustomerId
+      ? await strapi.documents('api::customer.customer').findMany({
+          filters: {
+            externalCustomerId: { $eq: payload.externalCustomerId },
+          } as never,
+          limit: 1,
+        })
+      : [];
+    if (!accountWasDeleted && !customers[0])
       return ctx.badRequest('Cliente da encomenda não encontrado.');
     const orderDocuments = strapi.documents(
       'api::order.order' as never,
@@ -47,11 +49,15 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       filters: { externalOrderId: { $eq: payload.externalOrderId } },
       limit: 1,
     });
-    const { status: legacyStatus, ...orderPayload } = payload;
+    const {
+      status: legacyStatus,
+      externalCustomerId: _externalCustomerId,
+      ...orderPayload
+    } = payload;
     const data = {
       ...orderPayload,
       orderStatus: payload.orderStatus ?? legacyStatus ?? 'pending',
-      customer: customers[0].documentId,
+      customer: accountWasDeleted ? null : customers[0].documentId,
     } as never;
     const order = existing[0]
       ? await orderDocuments.update({

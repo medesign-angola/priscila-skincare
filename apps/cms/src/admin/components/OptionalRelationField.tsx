@@ -13,22 +13,22 @@ const ToggleRow = styled.div`
   justify-content: space-between;
   gap: 18px;
   padding: 14px 16px;
-  border: 1px solid #e5ded4;
+  border: 1px solid var(--ps-border-strong);
   border-radius: 10px;
-  background: #faf8f5;
+  background: var(--ps-surface-raised);
 
   strong,
   small {
     display: block;
   }
   strong {
-    color: #2f303a;
+    color: var(--ps-heading);
     font-size: 14px;
     font-weight: 600;
   }
   small {
     margin-top: 4px;
-    color: #777168;
+    color: var(--ps-text-subtle);
     font-size: 12px;
     font-weight: 400;
     line-height: 1.45;
@@ -43,7 +43,7 @@ const Switch = styled.button<{ $checked: boolean }>`
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: ${({ $checked }) => ($checked ? '#8b7048' : '#d7d1c8')};
+  background: ${({ $checked }) => ($checked ? 'var(--ps-accent-alt)' : 'var(--ps-border-strong)')};
   cursor: pointer;
   transition: background-color 180ms ease;
 
@@ -54,8 +54,8 @@ const Switch = styled.button<{ $checked: boolean }>`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 4px rgba(47, 48, 58, 0.2);
+    background: var(--ps-surface);
+    box-shadow: 0 1px 4px var(--ps-shadow);
     content: '';
     transform: translateX(${({ $checked }) => ($checked ? '20px' : '0')});
     transition: transform 180ms ease;
