@@ -1,5 +1,6 @@
 using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Common;
+using System.Text.Json;
 
 namespace PriscilaSkincare.Domain.Orders;
 
@@ -76,12 +77,12 @@ public sealed class Order : AggregateRoot<Guid>
     public static Order Create(Guid customerId, DateTimeOffset now) =>
         Create(customerId, $"PSC-{now:yyyyMMddHHmmss}", "AOA", new OrderAddress("Cliente", "N/D", "Angola", "N/D", "N/D", "N/D", "N/D", null, null, null), "Cliente", null, now);
 
-    public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null)
+    public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null, IReadOnlyList<OrderComponentSnapshot>? components = null)
     {
         if (Status != OrderStatus.Pending) throw new InvalidOperationException("A encomenda já não pode ser alterada.");
         if (unitPrice.Currency != Currency) throw new InvalidOperationException("Todos os itens devem usar a moeda da encomenda.");
         if (quantity < 1) throw new ArgumentOutOfRangeException(nameof(quantity));
-        _items.Add(OrderItem.Create(Id, itemType, reference, productName, variant, unitPrice, quantity, imageUrl));
+        _items.Add(OrderItem.Create(Id, itemType, reference, productName, variant, unitPrice, quantity, imageUrl, components));
         Recalculate();
     }
 
@@ -149,6 +150,9 @@ public sealed class Order : AggregateRoot<Guid>
 public sealed record OrderAddress(string Recipient, string Phone, string Country, string Province, string City,
     string Neighborhood, string Street, string? HouseNumber, string? Apartment, string? PostalCode);
 
+// Quantities describe one unit of the purchased item, not the entire order line.
+public sealed record OrderComponentSnapshot(string Sku, string Name, int Quantity, string? ImageUrl);
+
 public sealed class OrderItem : Entity<Guid>
 {
     private OrderItem() : base(Guid.Empty) { }
@@ -166,9 +170,18 @@ public sealed class OrderItem : Entity<Guid>
     public string Currency { get; private set; } = string.Empty;
     public int Quantity { get; private set; }
     public string? ImageUrl { get; private set; }
+    public string? ComponentsJson { get; private set; }
+    public IReadOnlyList<OrderComponentSnapshot>? Components => ComponentsJson is null
+        ? null : JsonSerializer.Deserialize<OrderComponentSnapshot[]>(ComponentsJson);
     public Money UnitPrice => Money.Create(UnitPriceAmount, Currency);
-    internal static OrderItem Create(Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) =>
-        new(Guid.NewGuid(), orderId, itemType, reference, productName, variant, unitPrice, quantity, imageUrl);
+    internal static OrderItem Create(Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl, IReadOnlyList<OrderComponentSnapshot>? components = null)
+    {
+        if (components is not null && (components.Count == 0 || components.Any(x =>
+            string.IsNullOrWhiteSpace(x.Sku) || string.IsNullOrWhiteSpace(x.Name) || x.Quantity < 1)))
+            throw new ArgumentException("A composição deve conter produtos e quantidades válidos.", nameof(components));
+        return new(Guid.NewGuid(), orderId, itemType, reference, productName, variant, unitPrice, quantity, imageUrl)
+        { ComponentsJson = components is null ? null : JsonSerializer.Serialize(components) };
+    }
 }
 
 public sealed class OrderStatusEntry : Entity<Guid>

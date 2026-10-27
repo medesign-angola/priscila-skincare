@@ -15,11 +15,11 @@ export class Checkout {
   readonly preview=signal<CheckoutPreview|null>(null); readonly loading=signal(false); readonly errorCode=signal<string|null>(null);
   readonly summary=computed(()=>{
     const preview=this.preview();
-    if(preview)return{items:preview.items.map(item=>({itemType:item.itemType??'product',name:item.productName,variant:item.variant,quantity:item.quantity,total:item.total,imageUrl:item.imageUrl})),subtotal:preview.subtotal,shipping:preview.shipping,total:preview.total,complete:true};
+    if(preview)return{items:preview.items.map(item=>({components:item.components,itemType:item.itemType??'product',name:item.productName,variant:item.variant,quantity:item.quantity,total:item.total,imageUrl:item.imageUrl})),subtotal:preview.subtotal,shipping:preview.shipping,total:preview.total,complete:true};
     const cart=this.cart.syncedCart();
     if(!cart)return null;
     const currency=this.header.currency();
-    const items=cart.items.map(item=>{const unitPrice=currency==='AOA'?item.aoaPrice:item.eurPrice;return{itemType:item.itemType??'product',name:item.productName,variant:item.variantLabel??undefined,quantity:item.quantity,total:unitPrice*item.quantity,imageUrl:item.imageUrl??undefined};});
+    const items=cart.items.map(item=>{const unitPrice=currency==='AOA'?item.aoaPrice:item.eurPrice;return{components:undefined,itemType:item.itemType??'product',name:item.productName,variant:item.variantLabel??undefined,quantity:item.quantity,total:unitPrice*item.quantity,imageUrl:item.imageUrl??undefined};});
     return{items,subtotal:currency==='AOA'?cart.aoaSubtotal:cart.eurSubtotal,shipping:null,total:null,complete:false};
   });
   readonly errorMessageKey=computed(()=>this.errorCode()==='cart_sync_failed'?'CHECKOUT.CART_SYNC_ERROR':this.errorCode()==='create_failed'?'CHECKOUT.CREATE_ERROR':'CHECKOUT.PREVIEW_ERROR');

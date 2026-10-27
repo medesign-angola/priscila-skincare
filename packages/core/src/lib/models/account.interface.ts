@@ -27,6 +27,7 @@ export interface Customer {
 }
 
 export interface OrderItem {
+  components?: OrderComponentSnapshot[] | null;
   itemType?: 'product' | 'kit' | 'collection';
   reference?: string;
   productId?: string;
@@ -61,4 +62,5 @@ export interface Order {
 export interface CheckoutPreview {
   addressId: string; currency: 'AOA' | 'EUR'; subtotal: number; shipping: number; total: number; items: ApiOrderItem[];
 }
-export interface ApiOrderItem { itemType?: 'product'|'kit'|'collection'; reference?: string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; total: number; imageUrl?: string; }
+export interface OrderComponentSnapshot { sku: string; name: string; quantity: number; imageUrl?: string | null; }
+export interface ApiOrderItem { components?: OrderComponentSnapshot[] | null; itemType?: 'product'|'kit'|'collection'; reference?: string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; total: number; imageUrl?: string; }

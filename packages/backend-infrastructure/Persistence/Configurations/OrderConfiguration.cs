@@ -56,6 +56,8 @@ public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3);
         builder.Property(x => x.Quantity).HasColumnName("quantity");
         builder.Property(x => x.ImageUrl).HasColumnName("image_url").HasMaxLength(500);
+        builder.Property(x => x.ComponentsJson).HasColumnName("components_snapshot").HasColumnType("longtext");
+        builder.Ignore(x => x.Components);
         builder.Ignore(x => x.UnitPrice);
     }
 }

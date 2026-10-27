@@ -9,7 +9,8 @@ public sealed record CartResult(Guid? Id, IReadOnlyList<CartItemResult> Items, d
 
 public sealed record CheckoutPreviewRequest(Guid AddressId, string Currency = "AOA", string Locale = "pt");
 public sealed record CheckoutItemResult(string ItemType, string Reference, string ProductName, string? Variant,
-    int Quantity, decimal UnitPrice, decimal Total, string? ImageUrl);
+    int Quantity, decimal UnitPrice, decimal Total, string? ImageUrl,
+    IReadOnlyList<PriscilaSkincare.Domain.Orders.OrderComponentSnapshot>? Components = null);
 public sealed record CheckoutPreviewResult(Guid AddressId, string Currency, decimal Subtotal,
     decimal Shipping, decimal Total, IReadOnlyList<CheckoutItemResult> Items);
 public sealed record CreateOrderCommand(Guid AddressId, string Currency, string Locale, string IdempotencyKey, string PaymentMethod = "simulated");

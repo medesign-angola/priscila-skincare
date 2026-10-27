@@ -537,6 +537,10 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("ComponentsJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("components_snapshot");
+
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)

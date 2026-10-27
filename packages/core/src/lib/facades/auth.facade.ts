@@ -279,6 +279,7 @@ export class AuthFacade {
       total: order.total,
       items: order.items.map((item) => ({
         itemType: item.itemType,
+        components: item.components,
         reference: item.reference,
         productSku: item.reference ?? item.productSku ?? '',
         productName: item.productName,
@@ -308,6 +309,6 @@ export class AuthFacade {
 
 interface ApiOrder {
   id: string; number: string; placedAt: string; status: Order['status']; currency: 'AOA'|'EUR'; subtotal: number; shipping: number; total: number;
-  items: { itemType?:'product'|'kit'|'collection'; reference?:string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
+  items: { components?: import('../models/account.interface').OrderComponentSnapshot[] | null; itemType?:'product'|'kit'|'collection'; reference?:string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
   deliveryAddress: CustomerAddress; timeline: { status: Order['status']; occurredAt: string }[];
 }

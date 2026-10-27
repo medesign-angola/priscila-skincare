@@ -32,7 +32,7 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
             customer.Name, customer.Email.Value, now, command.IdempotencyKey);
         foreach (var item in preview.Items)
             order.AddItem(CartService.ParseType(item.ItemType), CommerceItemReference.Create(item.Reference), item.ProductName, item.Variant,
-                Money.Create(item.UnitPrice, preview.Currency), item.Quantity, item.ImageUrl);
+                Money.Create(item.UnitPrice, preview.Currency), item.Quantity, item.ImageUrl, item.Components);
         order.SetShipping(Money.Create(preview.Shipping, preview.Currency));
         var stockRequests = await BuildInventoryRequests(order, command.Locale, cancellationToken);
         await inventory.ValidateAsync(stockRequests, cancellationToken);
@@ -173,7 +173,14 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
                 ?? throw new CommerceException("catalog_item_not_found", $"O item {cartItem.Reference.Value} deixou de existir.");
             CartService.ValidateItem(product, cartItem.VariantId, cartItem.Quantity);
             var unit = normalized == "EUR" ? product.EurPrice : product.AoaPrice;
-            items.Add(new(cartItem.ItemType.ToString().ToLowerInvariant(), cartItem.Reference.Value, product.Name, cartItem.VariantLabel, cartItem.Quantity, unit, unit * cartItem.Quantity, product.ImageUrl));
+            var components = new List<OrderComponentSnapshot>();
+            foreach (var component in product.Components)
+            {
+                var included = await catalog.FindBySkuAsync(component.Sku, locale, token)
+                    ?? throw new CommerceException("product_not_found", $"O produto {component.Sku.Value} deixou de existir.");
+                components.Add(new(component.Sku.Value, included.Name, component.Quantity, included.ImageUrl));
+            }
+            items.Add(new(cartItem.ItemType.ToString().ToLowerInvariant(), cartItem.Reference.Value, product.Name, cartItem.VariantLabel, cartItem.Quantity, unit, unit * cartItem.Quantity, product.ImageUrl, components));
         }
         var subtotal = items.Sum(item => item.Total);
         const decimal shipping = 0;
@@ -185,13 +192,38 @@ public sealed class OrderService(IOrderRepository orders, IShoppingCartRepositor
     private static OrderResult Map(Order order, Payment? payment = null) => new(order.Id, order.Number, order.CreatedAt,
         order.Status.ToString().ToLowerInvariant(), order.Currency, order.SubtotalAmount, order.ShippingAmount,
         order.TotalAmount, order.Items.Select(item => new CheckoutItemResult(item.ItemType.ToString().ToLowerInvariant(), item.Reference?.Value ?? string.Empty, item.ProductName,
-            item.Variant, item.Quantity, item.UnitPriceAmount, item.UnitPriceAmount * item.Quantity, item.ImageUrl)).ToArray(),
+            item.Variant, item.Quantity, item.UnitPriceAmount, item.UnitPriceAmount * item.Quantity, item.ImageUrl, item.Components)).ToArray(),
         new(order.Recipient, order.Phone, order.Country, order.Province, order.City, order.Neighborhood,
             order.Street, order.HouseNumber, order.Apartment, order.PostalCode),
         order.Timeline.OrderBy(item => item.OccurredAt).Select(item => new OrderTimelineResult(item.Status.ToString().ToLowerInvariant(), item.OccurredAt)).ToArray(),payment is null?null:new(payment.Provider,payment.Reference,payment.Status.ToString().ToLowerInvariant()));
 
     private async Task<IReadOnlyList<InventoryRequest>> BuildInventoryRequests(Order order,string locale,CancellationToken token)
-    {var totals=new Dictionary<string,InventoryRequest>(StringComparer.OrdinalIgnoreCase);foreach(var item in order.Items){var entry=await catalog.FindAsync(item.ItemType,item.Reference,locale,token)??throw new CommerceException("catalog_item_not_found",$"O item {item.Reference.Value} deixou de existir.");foreach(var component in entry.Components){var product=await catalog.FindBySkuAsync(component.Sku,locale,token)??throw new CommerceException("product_not_found",$"O produto {component.Sku.Value} deixou de existir.");var quantity=component.Quantity*item.Quantity;totals[component.Sku.Value]=totals.TryGetValue(component.Sku.Value,out var current)?current with{Quantity=current.Quantity+quantity}:new(component.Sku.Value,quantity,product.Stock);}}return totals.Values.ToArray();}
+    {
+        var totals = new Dictionary<string, InventoryRequest>(StringComparer.OrdinalIgnoreCase);
+        foreach (var item in order.Items)
+        {
+            IReadOnlyList<CatalogComponent> components;
+            if (item.Components is { } snapshot)
+                components = snapshot.Select(x => new CatalogComponent(Domain.Catalog.ProductSku.Create(x.Sku), x.Quantity)).ToArray();
+            else
+            {
+                // Legacy orders have no composition snapshot.
+                var entry = await catalog.FindAsync(item.ItemType, item.Reference, locale, token)
+                    ?? throw new CommerceException("catalog_item_not_found", $"O item {item.Reference.Value} deixou de existir.");
+                components = entry.Components;
+            }
+            foreach (var component in components)
+            {
+                var product = await catalog.FindBySkuAsync(component.Sku, locale, token)
+                    ?? throw new CommerceException("product_not_found", $"O produto {component.Sku.Value} deixou de existir.");
+                var quantity = checked(component.Quantity * item.Quantity);
+                totals[component.Sku.Value] = totals.TryGetValue(component.Sku.Value, out var current)
+                    ? current with { Quantity = checked(current.Quantity + quantity) }
+                    : new(component.Sku.Value, quantity, product.Stock);
+            }
+        }
+        return totals.Values.ToArray();
+    }
 
     private static OrderConfirmationEmail CreateConfirmationEmail(Order order, Payment payment,
         Domain.Customers.Customer customer, string locale) => new(

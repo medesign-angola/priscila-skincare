@@ -6,6 +6,32 @@ namespace PriscilaSkincare.Api.Tests.Domain;
 public sealed class OrderTests
 {
     [Fact]
+    public void AddItem_CopiesCompositionWithoutDependingOnMutableCatalog()
+    {
+        var order = Order.Create(Guid.NewGuid(), DateTimeOffset.UtcNow);
+        var components = new List<OrderComponentSnapshot> { new("SOAP-01", "Sabonete", 2, "/uploads/soap.webp") };
+        order.AddItem(CommerceItemType.Kit, CommerceItemReference.Create("kit-01"), "Kit", null,
+            Money.Create(100, "AOA"), 3, components: components);
+        components.Clear();
+        var item = Assert.Single(order.Items);
+        var snapshot = Assert.Single(item.Components!);
+        Assert.Equal("SOAP-01", snapshot.Sku);
+        Assert.Equal(2, snapshot.Quantity);
+        Assert.Equal(3, item.Quantity);
+        Assert.Equal(300, order.TotalAmount);
+    }
+
+    [Fact]
+    public void AddItem_RejectsInvalidCompositionWithoutAddingItem()
+    {
+        var order = Order.Create(Guid.NewGuid(), DateTimeOffset.UtcNow);
+        Assert.Throws<ArgumentException>(() => order.AddItem(CommerceItemType.Kit,
+            CommerceItemReference.Create("kit-01"), "Kit", null, Money.Create(100, "AOA"), 1,
+            components: [new("SOAP-01", "Sabonete", 0, null)]));
+        Assert.Empty(order.Items);
+    }
+
+    [Fact]
     public void AddItem_KeepsCommercialSnapshot()
     {
         var order = Order.Create(Guid.NewGuid(), DateTimeOffset.UtcNow);

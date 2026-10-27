@@ -52,6 +52,12 @@
             <span>{{ (item.itemType === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</span>
             }
             <strong>{{ item.name }}</strong>
+            @if ((item.itemType === 'kit' || item.itemType === 'collection') && item.components?.length) {
+            <span>{{ 'BUNDLE_DETAILS.INCLUDES' | translate }}:</span>
+            @for (component of item.components; track $index) {
+            <span>{{ component.quantity * item.quantity }} × {{ component.name }}</span>
+            }
+            }
             <span>@if (item.itemType === 'product' && item.variant) { {{ item.variant }} · }{{ item.quantity }}x</span>
           </div>
           <strong>{{ price(item.total) }}</strong>

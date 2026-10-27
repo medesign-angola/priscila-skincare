@@ -43,6 +43,12 @@
           <strong>
             {{ entry.item.productName || entry.product?.translations?.[products.currentLanguage()]?.name }}
           </strong>
+          @if ((entry.item.itemType === 'kit' || entry.item.itemType === 'collection') && entry.item.components?.length) {
+          <span>{{ 'BUNDLE_DETAILS.INCLUDES' | translate }}:</span>
+          @for (component of entry.item.components; track $index) {
+          <span>{{ component.quantity * entry.item.quantity }} × {{ component.name }}</span>
+          }
+          }
           @if ((!entry.item.itemType || entry.item.itemType === 'product') && entry.item.sizeLabel && entry.item.sizeLabel !== '—') {
           <span>
             {{ 'ACCOUNT.ORDERS.SIZE' | translate }}:
