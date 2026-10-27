@@ -41,6 +41,12 @@ export class Checkout {
   });
   private readonly document=inject(DOCUMENT);
   constructor(){
+    const countrySubscription = this.addressForm.controls.country.valueChanges.subscribe(country => {
+      const postal = this.addressForm.controls.postalCode;
+      if (country === 'Angola' && !postal.value) postal.setValue('0000');
+      else if (country !== 'Angola' && postal.value === '0000') postal.setValue('');
+    });
+    inject(DestroyRef).onDestroy(() => countrySubscription.unsubscribe());
     const previous=this.header.theme();this.header.theme.set('black');inject(DestroyRef).onDestroy(()=>this.header.theme.set(previous));
     effect(()=>{const addresses=this.addresses();if(!this.selectedAddressId()&&addresses.length){this.selectedAddressId.set(addresses.find(item=>item.isDefault)?.id??addresses[0].id);void this.refresh();}});
     effect((onCleanup)=>{if(!this.addressModalOpen())return;const body=this.document.body;const overflow=body.style.overflow;body.style.overflow='hidden';onCleanup(()=>body.style.overflow=overflow);});
@@ -52,7 +58,7 @@ export class Checkout {
   price(value:number){return formatPrice(value,this.preview()?.currency??this.header.currency(),this.products.currentLanguage(),true);}
   phoneMask(){return phoneCountry(this.addressForm.controls.country.value).mask;}
   phonePrefix(){return `${phoneCountry(this.addressForm.controls.country.value).dialCode} `;}
-  openAddressModal(){this.addressError.set(false);this.addressForm.reset({label:'',recipient:this.auth.customer()?.name??'',phone:localPhoneValue(this.auth.customer()?.phone,'Angola'),country:'Angola',province:'',city:'',neighborhood:'',street:'',houseNumber:'',apartment:'',postalCode:'',isDefault:this.addresses().length===0});this.addressModalOpen.set(true);}
+  openAddressModal(){this.addressError.set(false);this.addressForm.reset({label:'',recipient:this.auth.customer()?.name??'',phone:localPhoneValue(this.auth.customer()?.phone,'Angola'),country:'Angola',province:'',city:'',neighborhood:'',street:'',houseNumber:'',apartment:'',postalCode:'0000',isDefault:this.addresses().length===0});this.addressModalOpen.set(true);}
   closeAddressModal(){if(!this.addressSaving())this.addressModalOpen.set(false);}
   @HostListener('document:keydown.escape') closeOnEscape(){if(this.addressModalOpen())this.closeAddressModal();}
   async saveAddress(){if(this.addressForm.invalid||this.addressSaving()){this.addressForm.markAllAsTouched();return;}this.addressSaving.set(true);this.addressError.set(false);const raw=this.addressForm.getRawValue();const payload:SaveCustomerAddress={...raw,phone:internationalPhone(raw.phone,raw.country),houseNumber:raw.houseNumber.trim()||undefined,apartment:raw.apartment.trim()||undefined,postalCode:raw.postalCode.trim()||undefined};try{const created=await this.auth.createAddress(payload);this.selectedAddressId.set(created.id);this.checkoutAttemptId.set(null);this.addressModalOpen.set(false);await this.refresh();}catch{this.addressError.set(true);}finally{this.addressSaving.set(false);}}

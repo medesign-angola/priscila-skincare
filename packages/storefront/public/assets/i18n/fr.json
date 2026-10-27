@@ -123,10 +123,10 @@
       "DESCRIPTION": "Révélez tout le potentiel de votre peau avec nos coffrets Snow White. Revitalisez-la et préservez sa résistance tout au long de la journée, pour un confort durable et un teint lumineux."
     },
     "BRAND": {
-      "LABEL": "La marque", "IMAGE_ALT": "Priscila Skin Care", "FOUNDATION_LABEL": "Fondation :",
+      "LABEL": "La marque", "IMAGE_ALT": "Priscila Skincare", "FOUNDATION_LABEL": "Fondation :",
       "FOUNDATION_DESCRIPTION": "Le début d'un parcours consacré à la science, à l'innovation et au soin de la peau.",
       "PRODUCTS_LABEL": "Produits :", "PRODUCTS_DESCRIPTION": "Des formules soigneusement développées pour offrir des résultats visibles et une expérience de soin complète.",
-      "CLIENTS_LABEL": "Clients :", "CLIENTS_DESCRIPTION": "Une communauté grandissante qui choisit chaque jour la qualité et la confiance de Priscila Skin Care.",
+      "CLIENTS_LABEL": "Clients :", "CLIENTS_DESCRIPTION": "Une communauté grandissante qui choisit chaque jour la qualité et la confiance de Priscila Skincare.",
       "FOOTER_TITLE": "Une marque fondée sur la mission et la science", "FOOTER_DESCRIPTION": "Des ingrédients sélectionnés et une technologie avancée pour des résultats visibles."
     },
     "PILLARS": {
@@ -137,7 +137,7 @@
     },
     "FOUNDER": {
       "LABEL": "Fondatrice", "IMAGE_ALT": "Priscila Araujo, fondatrice", "BUY_PRODUCTS": "Acheter les produits",
-      "PARAGRAPH_ONE": "Priscila Skin Care est née d'une vision simple mais profonde : créer des cosmétiques de haute qualité qui respectent et révèlent la beauté naturelle de la peau africaine. Priscila Araujo a grandi au contact de la richesse des traditions de beauté angolaises et a ressenti le besoin d'unir cet héritage à la science cosmétique moderne.",
+      "PARAGRAPH_ONE": "Priscila Skincare est née d'une vision simple mais profonde : créer des cosmétiques de haute qualité qui respectent et révèlent la beauté naturelle de la peau africaine. Priscila Araujo a grandi au contact de la richesse des traditions de beauté angolaises et a ressenti le besoin d'unir cet héritage à la science cosmétique moderne.",
       "PARAGRAPH_TWO": "Formée en cosmétique et animée par une passion inébranlable pour la santé de la peau, elle a développé des formules uniques à partir d'actifs soigneusement sélectionnés — huile de coco, papaïne, vitamine C et persil — pour hydrater, protéger et illuminer. Chaque produit porte sa signature : efficacité réelle, ingrédients sûrs et résultats visibles au quotidien."
     },
     "CONTACT": {
@@ -146,7 +146,7 @@
       "LUANDA_TITLE": "Luanda, Angola", "LUANDA_DESCRIPTION": "Quartier Miramar, Luanda, Angola",
       "ONLINE_TITLE": "Commander en ligne", "ONLINE_DESCRIPTION": "Livraison sur tout le territoire angolais sous 3 à 7 jours ouvrés",
       "INTERNATIONAL_TITLE": "Livraison internationale", "INTERNATIONAL_DESCRIPTION": "Disponible dans le monde entier",
-      "IMAGE_ALT": "Point de vente Priscila Skin Care"
+      "IMAGE_ALT": "Point de vente Priscila Skincare"
     }
   }
 }

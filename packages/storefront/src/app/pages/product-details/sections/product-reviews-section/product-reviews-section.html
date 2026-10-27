@@ -5,7 +5,7 @@
       {{ 'PRODUCT_DETAILS.REVIEWS.TITLE' | translate }}
     </h2>
     <strong>{{ reviewData.averageRating | number: '1.1-1' }}</strong>
-    <div class="reviews__stars" aria-hidden="true">★★★★★</div>
+    <div class="reviews__stars" aria-hidden="true">@for (star of stars; track star) {<span class="rating-star">☆<span [style.width.%]="starFill(reviewData.averageRating, star)">★</span></span>}</div>
     <a class="reviews__action" [routerLink]="reviewRoute()">
       <span>
         {{ (ownReview()
@@ -43,7 +43,7 @@
         }
 
         <span class="reviews__rating">
-          <span aria-hidden="true">★★★★★</span>
+          <span aria-hidden="true">@for (star of stars; track star) {<span class="rating-star">☆<span [style.width.%]="starFill(review.rating, star)">★</span></span>}</span>
           {{ review.rating }}
         </span>
       </header>

@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  DestroyRef,
   effect,
   inject,
   signal,
@@ -86,6 +87,12 @@ export class Profile {
   });
 
   constructor() {
+    const countrySubscription = this.addressForm.controls.country.valueChanges.subscribe(country => {
+      const postal = this.addressForm.controls.postalCode;
+      if (country === 'Angola' && !postal.value) postal.setValue('0000');
+      else if (country !== 'Angola' && postal.value === '0000') postal.setValue('');
+    });
+    inject(DestroyRef).onDestroy(() => countrySubscription.unsubscribe());
     effect(() => {
       const customer = this.auth.customer();
       this.name.setValue(customer?.name ?? '', { emitEvent: false });
@@ -145,7 +152,7 @@ export class Profile {
       street: '',
       houseNumber: '',
       apartment: '',
-      postalCode: '',
+      postalCode: '0000',
       isDefault: (this.auth.customer()?.addresses.length ?? 0) === 0,
     });
     this.modalOpen.set(true);
@@ -165,7 +172,7 @@ export class Profile {
       street: address.street,
       houseNumber: address.houseNumber ?? '',
       apartment: address.apartment ?? '',
-      postalCode: address.postalCode ?? '',
+      postalCode: address.postalCode ?? (address.country === 'Angola' ? '0000' : ''),
       isDefault: address.isDefault,
     });
     this.modalOpen.set(true);

@@ -204,3 +204,5 @@
     margin: 0 auto;
   }
 }
+.rating-star { position: relative; display: inline-block; }
+.rating-star > span { position: absolute; inset: 0 auto 0 0; overflow: hidden; white-space: nowrap; }

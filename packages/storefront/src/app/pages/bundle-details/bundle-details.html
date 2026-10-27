@@ -8,7 +8,7 @@
           <p class="bundle-hero__category">{{ (type === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</p>
           <h1>{{ content()?.name }}</h1>
           <p>{{ content()?.description }}</p>
-          <div class="bundle-hero__rating"><span aria-hidden="true">★★★★★</span> {{ rating().average.toFixed(1) }} ({{ rating().total }})</div>
+          <div class="bundle-hero__rating"><span class="rating-stars" aria-hidden="true">☆☆☆☆☆<span [style.width.%]="rating().average * 20">★★★★★</span></span> {{ rating().average.toFixed(1) }} ({{ rating().total }})</div>
         </div>
         <div class="bundle-hero__included">
           <h2>{{ bundle.products.length }} {{ 'BUNDLE_DETAILS.INCLUDES' | translate }}</h2>

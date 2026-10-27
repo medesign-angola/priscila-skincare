@@ -58,7 +58,9 @@ public sealed class CustomerAddress : Entity<Guid>
         Street = Required(street, 240, "rua ou endereço");
         HouseNumber = Optional(houseNumber, 40, "número da casa");
         Apartment = Optional(apartment, 120, "complemento");
-        PostalCode = Optional(postalCode, 24, "código postal");
+        PostalCode = string.Equals(Country, "Angola", StringComparison.OrdinalIgnoreCase)
+            && string.IsNullOrWhiteSpace(postalCode)
+            ? "0000" : Optional(postalCode, 24, "código postal");
         UpdatedAt = now;
     }
 

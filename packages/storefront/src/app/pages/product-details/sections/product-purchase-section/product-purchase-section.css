@@ -343,3 +343,5 @@
     display: none;
   }
 }
+.rating-stars { position: relative; display: inline-block; }
+.rating-stars > span { position: absolute; inset: 0 auto 0 0; overflow: hidden; white-space: nowrap; max-width: 100%; }
