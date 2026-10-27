@@ -48,8 +48,11 @@
           @if (item.imageUrl) {
           <img [src]="item.imageUrl" [alt]="item.name" /> }
           <div>
-            <strong>{{ item.name }}</strong
-            ><span>{{ item.variant || '—' }} · {{ item.quantity }}x</span>
+            @if (item.itemType === 'kit' || item.itemType === 'collection') {
+            <span>{{ (item.itemType === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</span>
+            }
+            <strong>{{ item.name }}</strong>
+            <span>@if (item.itemType === 'product' && item.variant) { {{ item.variant }} · }{{ item.quantity }}x</span>
           </div>
           <strong>{{ price(item.total) }}</strong>
         </li>

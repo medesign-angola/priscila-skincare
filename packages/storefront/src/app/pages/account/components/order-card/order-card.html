@@ -1,1 +1,28 @@
-<article class="order-card"><header><div><strong>#{{order().number}}</strong><time>{{order().placedAt|date:'dd MMM y'}}</time></div><div><span class="status">{{('ACCOUNT.STATUS.'+order().status.toUpperCase())|translate}}</span><a [routerLink]="['/conta/encomendas',order().id]">{{'ACCOUNT.ORDERS.VIEW_DETAILS'|translate}} →</a></div></header><div class="items">@for(entry of items();track entry.item.productSku){<div class="item"><img [src]="entry.product?.thumbnailImage || entry.item.imageUrl" alt=""/><div class="item__copy"><strong>{{entry.product?.translations?.[this.products.currentLanguage()]?.name || entry.item.productName}}</strong><span>{{'ACCOUNT.ORDERS.SIZE'|translate}}: {{entry.item.sizeLabel}}</span><span>{{'ACCOUNT.ORDERS.QUANTITY_SHORT'|translate}}: {{entry.item.quantity}}</span></div><strong>{{price(entry.item.unitPrice*entry.item.quantity)}}</strong></div>}</div><footer><span>{{'ACCOUNT.ORDERS.TOTAL'|translate}}</span><strong>{{price(total())}}</strong></footer></article>
+<article class="order-card">
+  <header>
+    <div><strong>#{{ order().number }}</strong><time>{{ order().placedAt | date: 'dd MMM y' }}</time></div>
+    <div>
+      <span class="status">{{ ('ACCOUNT.STATUS.' + order().status.toUpperCase()) | translate }}</span>
+      <a [routerLink]="['/conta/encomendas', order().id]">{{ 'ACCOUNT.ORDERS.VIEW_DETAILS' | translate }} →</a>
+    </div>
+  </header>
+  <div class="items">
+    @for (entry of items(); track $index) {
+    <div class="item">
+      <img [src]="entry.item.imageUrl || entry.product?.thumbnailImage" [alt]="entry.item.productName" />
+      <div class="item__copy">
+        @if (entry.item.itemType === 'kit' || entry.item.itemType === 'collection') {
+        <span>{{ (entry.item.itemType === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</span>
+        }
+        <strong>{{ entry.item.productName || entry.product?.translations?.[products.currentLanguage()]?.name }}</strong>
+        @if ((!entry.item.itemType || entry.item.itemType === 'product') && entry.item.sizeLabel && entry.item.sizeLabel !== '—') {
+        <span>{{ 'ACCOUNT.ORDERS.SIZE' | translate }}: {{ entry.item.sizeLabel }}</span>
+        }
+        <span>{{ 'ACCOUNT.ORDERS.QUANTITY_SHORT' | translate }}: {{ entry.item.quantity }}</span>
+      </div>
+      <strong>{{ price(entry.item.unitPrice * entry.item.quantity) }}</strong>
+    </div>
+    }
+  </div>
+  <footer><span>{{ 'ACCOUNT.ORDERS.TOTAL' | translate }}</span><strong>{{ price(total()) }}</strong></footer>
+</article>

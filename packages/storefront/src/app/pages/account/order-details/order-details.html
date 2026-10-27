@@ -33,17 +33,22 @@
     <h2>
       {{ 'ACCOUNT.DETAILS.PRODUCTS' | translate }} ({{ current.items.length }})
     </h2>
-    @for (entry of items(); track entry.item.productSku) {
+    @for (entry of items(); track $index) {
       <div class="product">
-        <img [src]="entry.product?.thumbnailImage || entry.item.imageUrl" alt="" />
+        <img [src]="entry.item.imageUrl || entry.product?.thumbnailImage" [alt]="entry.item.productName" />
         <div class="product__copy">
+          @if (entry.item.itemType === 'kit' || entry.item.itemType === 'collection') {
+          <span>{{ (entry.item.itemType === 'kit' ? 'BUNDLE_DETAILS.KIT' : 'BUNDLE_DETAILS.COLLECTION') | translate }}</span>
+          }
           <strong>
-            {{ entry.product?.translations?.[products.currentLanguage()]?.name || entry.item.productName }}
+            {{ entry.item.productName || entry.product?.translations?.[products.currentLanguage()]?.name }}
           </strong>
+          @if ((!entry.item.itemType || entry.item.itemType === 'product') && entry.item.sizeLabel && entry.item.sizeLabel !== '—') {
           <span>
             {{ 'ACCOUNT.ORDERS.SIZE' | translate }}:
             {{ entry.item.sizeLabel }}
           </span>
+          }
           <span>
             {{ 'ACCOUNT.ORDERS.QUANTITY_SHORT' | translate }}:
             {{ entry.item.quantity }}
