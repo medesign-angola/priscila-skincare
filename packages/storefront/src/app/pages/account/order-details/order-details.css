@@ -301,3 +301,15 @@ dd {
     margin-top: 2rem;
   }
 }
+:host .pickup-instructions {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.pickup-phone { display: inline-block; margin-top: .375rem; color: #746e66; font-size: .875rem; text-underline-offset: 3px; }
+.pickup-extra { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #e9e3da; }
+.pickup-extra summary { cursor: pointer; color: #7d6645; font-size: .8125rem; font-weight: 600; line-height: 1.6; }
+.pickup-extra summary:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pickup-extra summary:focus-visible, .pickup-phone:focus-visible { outline: 2px solid #7d6645; outline-offset: 4px; }
+.pickup-extra .pickup-instructions { margin-top: .75rem; font-size: .875rem; }
+

@@ -143,7 +143,7 @@ const installAdminBranding = () => {
     icon.type = 'image/svg+xml';
     icon.href = '/priscila-logo.svg';
 
-    const title = `${resolveAdminPageTitle(window.location.pathname)} | Priscila Skincare`;
+    const title = `${resolveAdminPageTitle(window.location.pathname)} | Priscila Araújo Skincare`;
     if (document.title !== title) document.title = title;
   };
 
@@ -234,11 +234,11 @@ export default {
         'global.plugins.content-manager': 'Conteúdos da loja',
         'Content Type Builder': 'Estrutura técnica',
         'global.plugins.content-type-builder': 'Estrutura técnica',
-        'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
+        'app.components.LeftMenu.navbrand.title': 'Priscila Araújo Skincare',
         'app.components.LeftMenu.navbrand.workplace': 'Gestão da loja',
         'Auth.form.welcome.title': 'Bem-vindo (a)',
         'Auth.form.welcome.subtitle':
-          'Entre para gerir a loja, os conteúdos e as encomendas da Priscila Skincare.',
+          'Entre para gerir a loja, os conteúdos e as encomendas da Priscila Araújo Skincare.',
         'Auth.form.email.label': 'Email',
         'Auth.form.email.placeholder': 'ex.: nome@empresa.com',
         'Auth.form.rememberMe.label': 'Lembrar-me',
@@ -267,7 +267,7 @@ export default {
         'global.plugins.content-manager': 'Contenus de la boutique',
         'Content Type Builder': 'Structure technique',
         'global.plugins.content-type-builder': 'Structure technique',
-        'app.components.LeftMenu.navbrand.title': 'Priscila Skincare',
+        'app.components.LeftMenu.navbrand.title': 'Priscila Araújo Skincare',
         'app.components.LeftMenu.navbrand.workplace': 'Gestion de la boutique',
         'content-manager.containers.edit.tabs.published': 'Publié',
         'content-manager.containers.edit.tabs.draft': 'Brouillon',
@@ -381,6 +381,16 @@ export default {
           Component: (await import('./pages/RevenuePage')).default,
         }),
       },
+      {
+        path: 'store/locations',
+        lazy: async () => ({ Component: (await import('./pages/LocationsPage')).default }),
+      },
+      {
+        path: 'store/locations/:id/stock',
+        lazy: async () => ({ Component: (await import('./pages/LocationStockPage')).default }),
+      },
+      { path: 'store/delivery-rates', lazy: async () => ({ Component: (await import('./pages/CommerceRulesPage')).DeliveryRatesPage }) },
+      { path: 'store/promotions', lazy: async () => ({ Component: (await import('./pages/CommerceRulesPage')).PromotionsPage }) },
       {
         path: 'store/reviews/:documentId',
         lazy: async () => ({

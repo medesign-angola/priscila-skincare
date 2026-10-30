@@ -2252,13 +2252,14 @@ export default function ProductCreatePage() {
           />
         </Field>
         <Field>
-          Quantidade em stock
+          {language === 'fr' ? 'Quantité initiale' : 'Quantidade inicial'}
           <Input
             type="number"
             min="0"
             value={form.stock}
             onChange={(e) => setField('stock', e.target.value)}
           />
+          <small>{language === 'fr' ? 'Utilisée uniquement avant la première opération de stock. Ensuite, gérez les entrées et transferts dans Magasins et entrepôts.' : 'Usada apenas antes da primeira operação de stock. Depois, faça entradas e transferências em Lojas e armazéns.'}</small>
         </Field>
         <Field as="div">
           Etiqueta apresentada no produto

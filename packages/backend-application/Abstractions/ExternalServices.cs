@@ -41,11 +41,15 @@ public interface IIntegrationInbox
 
 public interface IInventoryService
 {
+    Task<IReadOnlyList<PickupLocation>> PickupLocationsAsync(IReadOnlyList<InventoryRequest> items, CancellationToken cancellationToken = default);
+    Task ReserveAsync(Guid orderId, IReadOnlyList<InventoryRequest> items, CancellationToken cancellationToken = default);
+    Task ReleaseAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task ValidateAsync(IReadOnlyList<InventoryRequest> items, CancellationToken cancellationToken = default);
     Task DebitAsync(Guid orderId, IReadOnlyList<InventoryRequest> items, CancellationToken cancellationToken = default);
     Task CreditAsync(Guid orderId, CancellationToken cancellationToken = default);
 }
-public sealed record InventoryRequest(string ProductSku, int Quantity, int? CatalogStock);
+public sealed record InventoryRequest(string ProductSku, int Quantity, int? CatalogStock, Guid? LocationId = null);
+public sealed record PickupLocation(Guid Id, string Name, string Country, string City, string Address, string Phone, string Instructions, string? Hours = null, string? Notes = null);
 
 public interface IReviewProjection
 {
@@ -84,7 +88,7 @@ public sealed record OrderConfirmationEmailAddress(string Recipient, string Phon
 public sealed record OrderConfirmationEmail(Guid OrderId, string OrderNumber, string RecipientEmail,
     string? CustomerName, string Locale, DateTimeOffset PlacedAt, string Status, string PaymentStatus,
     string Currency, decimal Subtotal, decimal Shipping, decimal Total,
-    IReadOnlyList<OrderConfirmationEmailItem> Items, OrderConfirmationEmailAddress Address);
+    IReadOnlyList<OrderConfirmationEmailItem> Items, OrderConfirmationEmailAddress Address, OrderPickup? Pickup = null);
 
 public interface IOrderEmailOutbox
 {

@@ -1,0 +1,5 @@
+[
+  { "country": "Angola", "iso": "AO", "fr": "Angola", "dialCode": "+244", "mask": "000 000 000", "localDigits": 9 },
+  { "country": "Portugal", "iso": "PT", "fr": "Portugal", "dialCode": "+351", "mask": "000 000 000", "localDigits": 9 },
+  { "country": "França", "iso": "FR", "fr": "France", "dialCode": "+33", "mask": "0 00 00 00 00", "localDigits": 9 }
+]

@@ -7,7 +7,7 @@ const customized = original
   .replace(/<html lang="[^"]*">/, '<html lang="pt">')
   .replace(
     /<title>[^<]*<\/title>/,
-    '<title>Priscila Skincare — Administração</title>',
+    '<title>Priscila Araújo Skincare — Administração</title>',
   );
 
 if (customized === original) {

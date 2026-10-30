@@ -2,7 +2,7 @@
   <header>
     <div><strong>#{{ order().number }}</strong><time>{{ order().placedAt | date: 'dd MMM y' }}</time></div>
     <div>
-      <span class="status">{{ ('ACCOUNT.STATUS.' + order().status.toUpperCase()) | translate }}</span>
+      <span class="status">{{ (order().pickup && order().status === 'shipped' ? 'CHECKOUT.PICKUP_READY' : order().pickup && order().status === 'delivered' ? 'CHECKOUT.PICKUP_COLLECTED' : 'ACCOUNT.STATUS.' + order().status.toUpperCase()) | translate }}</span>
       <a [routerLink]="['/conta/encomendas', order().id]">{{ 'ACCOUNT.ORDERS.VIEW_DETAILS' | translate }} →</a>
     </div>
   </header>

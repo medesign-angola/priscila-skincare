@@ -1,5 +1,6 @@
 {
-  "GLOBAL": { "TITLE": "Priscila Skincare - Site Oficial", "LOADING": "A carregar" },
+  "PICKUP_DETAILS": { "HOURS": "Horário de levantamento", "INSTRUCTIONS": "Ver instruções de levantamento", "WAIT": "Aguarde a confirmação antes de ir à loja." },
+  "GLOBAL": { "TITLE": "Priscila Araújo Skincare - Site Oficial", "LOADING": "A carregar" },
   "ACCESSIBILITY": { "GALLERY": "Galeria" },
   "HOME": {
     "WELCOME": "Bem-vindo ao mundo dos cuidados com a pele!",
@@ -42,7 +43,7 @@
     "PRODUCTS": "Produtos", "COLLECTIONS": "Coleção", "SOCIALS": "Redes sociais",
     "NEWSLETTER_TITLE": "Cadastre-se para receber notícias e histórias exclusivas sobre nossos produtos",
     "EMAIL": "Insira o seu email", "SEND": "Enviar", "EMAIL_ERROR": "Insira um endereço de email válido.",
-    "CONSENT_PREFIX": "Ao se cadastrar, você concorda em receber e-mails de marketing da Priscila Araujo Skincare de acordo com nossos",
+    "CONSENT_PREFIX": "Ao se cadastrar, você concorda em receber e-mails de marketing da Priscila Araújo Skincare de acordo com nossos",
     "TERMS": "Termos", "CONSENT_JOIN": "e", "PRIVACY": "Política de Privacidade",
     "CONSENT_SUFFIX": "Cancele a assinatura a qualquer momento.", "RIGHTS": "Todos os direitos reservados.",
     "BACK_TO_TOP": "Voltar ao topo"
@@ -102,7 +103,7 @@
     "ERRORS": { "REQUEST_FAILED": "Não foi possível enviar o código. Tente novamente.", "INTERNAL_ERROR": "Não foi possível concluir o pedido agora. Tente novamente.", "OTP_DELIVERY_FAILED": "Não foi possível enviar o código agora. Tente novamente.", "OTP_DELIVERY_TIMEOUT": "O envio demorou mais do que o esperado. Pode tentar novamente.", "OTP_RESEND_TOO_SOON": "Aguarde antes de pedir outro código.", "RATE_LIMIT_EXCEEDED": "Foram feitos demasiados pedidos. Aguarde alguns minutos." },
     "OTP": { "TITLE": "Digite o código", "SENT_TO": "Enviado para {{email}}", "DELIVERY_HINT": "Não recebeu? Verifique também a pasta de spam ou lixo eletrónico.", "DIGIT": "Dígito {{number}} do código", "INVALID": "Insira o código completo de seis dígitos.", "RESEND": "Reenviar código", "RESEND_IN": "Reenviar em {{seconds}}s", "SENDING": "A enviar novo código...", "VERIFYING": "A verificar código...", "ERRORS": { "OTP_INVALID": "O código informado é inválido.", "OTP_EXPIRED": "O código expirou. Solicite um novo.", "RATE_LIMIT_EXCEEDED": "Foram feitas demasiadas tentativas. Aguarde alguns minutos.", "REQUEST_FAILED": "Não foi possível validar o código." } }
   },
-  "CHECKOUT": { "LABEL": "Finalizar compra", "TITLE": "Confirme a sua encomenda", "ADDRESS": "Morada de entrega", "NO_ADDRESS": "Adicione uma morada antes de continuar.", "ADD_ADDRESS": "Adicionar morada", "ADDRESS_TOTAL_HINT": "Adicione uma morada para calcular a entrega e o total final.", "SUMMARY": "Resumo", "CONFIRM": "Confirmar encomenda", "PROCESSING": "A processar...", "CONTINUE_SHOPPING": "Continuar a comprar", "ERROR": "Não foi possível concluir. Verifique os produtos e tente novamente.", "CART_SYNC_ERROR": "Não foi possível sincronizar o seu carrinho. Tente novamente.", "PREVIEW_ERROR": "Não foi possível calcular o resumo da encomenda. Verifique os produtos e a morada.", "CREATE_ERROR": "Não foi possível confirmar a encomenda. Nenhuma compra foi registada." },
+  "CHECKOUT": { "PICKUP_NONE": "Não há lojas disponíveis para levantamento de todos os produtos deste cesto.", "PICKUP_CONTACT":"Contacto para levantamento", "CONTACT_ERROR":"Preencha o nome e o telefone para levantamento.", "RECEIVE":"Como deseja receber?", "HOME_DELIVERY":"Entrega ao domicílio", "PICKUP":"Levantamento em loja", "PICKUP_READY":"Pronta para levantamento", "PICKUP_COLLECTED":"Levantada", "PICKUP_ERROR":"A loja já não dispõe de todos os produtos. Escolha outra opção.", "PICKUP_WAIT":"Aguarde a confirmação de que a encomenda está pronta antes de se deslocar à loja.", "COUPON_ERROR": "Este cupão não está disponível para esta encomenda.", "DELIVERY_ERROR": "Ainda não existe entrega disponível para esta morada e moeda.", "CHANGED": "O total mudou. Reveja o resumo antes de confirmar novamente.", "COUPON": "Cupão", "APPLY": "Aplicar", "DELIVERY_SERVICE": "Modalidade de entrega", "DAYS": "dias", "DISCOUNT": "Desconto", "LABEL": "Finalizar compra", "TITLE": "Confirme a sua encomenda", "ADDRESS": "Morada de entrega", "NO_ADDRESS": "Adicione uma morada antes de continuar.", "ADD_ADDRESS": "Adicionar morada", "ADDRESS_TOTAL_HINT": "Adicione uma morada para calcular a entrega e o total final.", "SUMMARY": "Resumo", "CONFIRM": "Confirmar encomenda", "PROCESSING": "A processar...", "CONTINUE_SHOPPING": "Continuar a comprar", "ERROR": "Não foi possível concluir. Verifique os produtos e tente novamente.", "CART_SYNC_ERROR": "Não foi possível sincronizar o seu carrinho. Tente novamente.", "PREVIEW_ERROR": "Não foi possível calcular o resumo da encomenda. Verifique os produtos e a morada.", "CREATE_ERROR": "Não foi possível confirmar a encomenda. Nenhuma compra foi registada." },
   "ACCOUNT": {
     "NAV": { "ORDERS": "Encomendas", "PROFILE": "Perfil" },
     "STATUS": { "PENDING": "Pendente", "CONFIRMED": "Confirmada", "PAID": "Paga", "PAYMENTFAILED": "Pagamento não aprovado", "PROCESSING": "Em preparação", "SHIPPED": "Enviada", "DELIVERED": "Entregue", "CANCELLED": "Cancelada", "REFUNDED": "Reembolsada" },
@@ -110,6 +111,7 @@
       "TITLE": "Perfil", "NAME": "Insira o seu nome", "PHONE": "Telefone", "EMAIL": "Email", "ADDRESSES": "Moradas", "ADD": "Adicionar", "NO_ADDRESS": "Nenhuma morada adicionada", "SELECT_ADDRESS": "Selecionar morada", "SIGN_OUT": "Terminar sessão", "SYNC": { "NAME_UPDATED": "Nome atualizado.", "PHONE_UPDATED": "Telefone atualizado." },
       "DELETE": { "CAUTION": "Zona sensível", "TITLE": "Eliminar conta", "DESCRIPTION": "Remove o acesso à conta e anonimiza permanentemente os seus dados pessoais.", "ACTION": "Eliminar a minha conta", "CONFIRM_TITLE": "Confirmar eliminação", "CONFIRM_TEXT": "Esta ação é irreversível. Digite o e-mail da conta para confirmar.", "CONFIRM": "Eliminar permanentemente", "DELETING": "A eliminar...", "ACTIVE_ORDERS": "Ainda existe uma encomenda ativa. Aguarde a sua conclusão ou contacte o suporte.", "ERROR": "Não foi possível eliminar a conta. Tente novamente." },
       "ADDRESS": {
+        "SELECT_COUNTRY": "Seleccionar país", "COUNTRIES_HINT": "Países com entrega activa. A disponibilidade e o preço dependem da região e da moeda.", "COUNTRIES_LOADING": "A carregar países…", "COUNTRIES_ERROR": "Não foi possível carregar os países de entrega.", "COUNTRIES_RETRY": "Tentar novamente", "COUNTRIES_EMPTY": "De momento não existem países com entrega activa.",
         "ADD_TITLE": "Adicionar morada", "EDIT_TITLE": "Editar morada", "CLOSE": "Fechar", "LABEL": "Nome da morada", "RECIPIENT": "Destinatário", "PHONE": "Telefone", "COUNTRY": "País", "PROVINCE": "Província", "CITY": "Município ou cidade", "NEIGHBORHOOD": "Bairro", "STREET": "Rua ou endereço", "HOUSE_NUMBER": "Número da casa", "APARTMENT": "Complemento ou referência", "POSTAL_CODE": "Código postal", "SET_DEFAULT": "Definir como morada principal", "DEFAULT": "Principal", "EDIT": "Editar", "MAKE_DEFAULT": "Tornar principal", "REMOVE": "Remover", "CANCEL": "Cancelar", "SAVE": "Guardar morada", "SAVING": "A guardar...", "REQUIRED": "Preencha todos os campos obrigatórios.", "ERROR": "Não foi possível guardar a morada. Tente novamente."
       }
     },
@@ -123,10 +125,10 @@
       "DESCRIPTION": "Desperte todo o potencial da sua pele com nossos kits Snow White. Revitalize sua pele, jovem e resistente durante todo o dia, garantindo conforto e uma tonalidade radiante."
     },
     "BRAND": {
-      "LABEL": "A marca", "IMAGE_ALT": "Priscila Skincare", "FOUNDATION_LABEL": "Fundação:",
+      "LABEL": "A marca", "IMAGE_ALT": "Priscila Araújo Skincare", "FOUNDATION_LABEL": "Fundação:",
       "FOUNDATION_DESCRIPTION": "Início de uma jornada dedicada à ciência, inovação e cuidado com a pele.",
       "PRODUCTS_LABEL": "Produtos:", "PRODUCTS_DESCRIPTION": "Fórmulas cuidadosamente desenvolvidas para oferecer resultados visíveis e uma experiência de cuidado completa.",
-      "CLIENTS_LABEL": "Clientes:", "CLIENTS_DESCRIPTION": "Uma comunidade crescente que escolhe diariamente a qualidade e a confiança da Priscila Skincare.",
+      "CLIENTS_LABEL": "Clientes:", "CLIENTS_DESCRIPTION": "Uma comunidade crescente que escolhe diariamente a qualidade e a confiança da Priscila Araújo Skincare.",
       "FOOTER_TITLE": "Uma marca construída com propósito e ciência", "FOOTER_DESCRIPTION": "Ingredientes selecionados e tecnologia avançada para resultados visíveis."
     },
     "PILLARS": {
@@ -137,7 +139,7 @@
     },
     "FOUNDER": {
       "LABEL": "Fundadora", "IMAGE_ALT": "Priscila Araujo, fundadora", "BUY_PRODUCTS": "Comprar produtos",
-      "PARAGRAPH_ONE": "A Priscila Skincare nasceu de uma visão simples mas profunda: criar produtos de cosmética de alta qualidade que respeitassem e realçassem a beleza natural da pele africana. Priscila Araujo cresceu a observar a riqueza das tradições de beleza angolanas e sentiu a necessidade de unir essa herança com a ciência cosmética moderna.",
+      "PARAGRAPH_ONE": "A Priscila Araújo Skincare nasceu de uma visão simples mas profunda: criar produtos de cosmética de alta qualidade que respeitassem e realçassem a beleza natural da pele africana. Priscila Araujo cresceu a observar a riqueza das tradições de beleza angolanas e sentiu a necessidade de unir essa herança com a ciência cosmética moderna.",
       "PARAGRAPH_TWO": "Com formação em cosmética e uma paixão inabalável pela saúde da pele, desenvolveu fórmulas únicas com ativos cuidadosamente selecionados — óleo de coco, papaína, vitamina C e salsinha — para criar produtos que hidratam, protegem e iluminam. Cada produto carrega a sua assinatura: eficácia real, ingredientes seguros e resultados visíveis todos os dias."
     },
     "CONTACT": {
@@ -146,7 +148,7 @@
       "LUANDA_TITLE": "Luanda, Angola", "LUANDA_DESCRIPTION": "Bairro Miramar, Luanda, Angola",
       "ONLINE_TITLE": "Encomendar Online", "ONLINE_DESCRIPTION": "Entregas em todo o território angolano, 3 a 7 dias úteis",
       "INTERNATIONAL_TITLE": "Envio Internacional", "INTERNATIONAL_DESCRIPTION": "Disponível para todo o mundo",
-      "IMAGE_ALT": "Localização Priscila Skincare"
+      "IMAGE_ALT": "Localização Priscila Araújo Skincare"
     }
   }
 }

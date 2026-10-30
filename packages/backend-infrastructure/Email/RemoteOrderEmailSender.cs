@@ -10,6 +10,7 @@ internal sealed class RemoteOrderEmailSender(HttpClient client, NotificationServ
         CancellationToken cancellationToken = default)
     {
         var delivered = string.Equals(message.Status, "Delivered", StringComparison.OrdinalIgnoreCase);
+        var pickupReady = message.Pickup is not null && string.Equals(message.Status, "Shipped", StringComparison.OrdinalIgnoreCase);
         var endpoint = delivered ? "api/v1/emails/order-delivered" : "api/v1/emails/order-confirmation";
         using var request = new HttpRequestMessage(HttpMethod.Post, endpoint);
         request.Headers.Add("X-Internal-Api-Key", options.InternalApiKey);
@@ -17,7 +18,7 @@ internal sealed class RemoteOrderEmailSender(HttpClient client, NotificationServ
         {
             idempotencyKey = delivered
                 ? $"order-delivered-{message.OrderId}"
-                : $"order-confirmation-{message.OrderId}",
+                : pickupReady ? $"order-pickup-ready-{message.OrderId}" : $"order-confirmation-{message.OrderId}",
             message.OrderId,
             message.OrderNumber,
             message.RecipientEmail,
@@ -31,7 +32,8 @@ internal sealed class RemoteOrderEmailSender(HttpClient client, NotificationServ
             message.Shipping,
             message.Total,
             message.Items,
-            message.Address
+            message.Address,
+            message.Pickup
         });
         var response = await client.SendAsync(request, cancellationToken);
         if (!response.IsSuccessStatusCode)

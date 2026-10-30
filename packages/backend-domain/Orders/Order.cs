@@ -42,6 +42,11 @@ public sealed class Order : AggregateRoot<Guid>
     public decimal SubtotalAmount { get; private set; }
     public decimal ShippingAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
+    public decimal DiscountAmount { get; private set; }
+    public string? PromotionName { get; private set; }
+    public Guid? DeliveryRateId { get; private set; }
+    public string? PickupJson { get; private set; }
+    public OrderPickup? Pickup => PickupJson is null ? null : JsonSerializer.Deserialize<OrderPickup>(PickupJson);
     public string Recipient { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string Country { get; private set; } = string.Empty;
@@ -89,8 +94,26 @@ public sealed class Order : AggregateRoot<Guid>
     public void SetShipping(Money shipping)
     {
         if (shipping.Currency != Currency) throw new InvalidOperationException("A moeda do envio é inválida.");
+        if (Pickup is not null && shipping.Amount != 0) throw new InvalidOperationException("O levantamento em loja não tem taxa de entrega.");
         ShippingAmount = shipping.Amount;
         Recalculate();
+    }
+
+    public void SetPickup(OrderPickup pickup)
+    {
+        if (Status != OrderStatus.Pending || pickup.LocationId == Guid.Empty || string.IsNullOrWhiteSpace(pickup.Name) || string.IsNullOrWhiteSpace(pickup.Address))
+            throw new InvalidOperationException("Local de levantamento inválido.");
+        PickupJson = JsonSerializer.Serialize(pickup);
+        ShippingAmount = 0;
+        DeliveryRateId = null;
+        Recalculate();
+    }
+
+    public void SetCommercialTerms(decimal discount, string? promotionName, Guid? deliveryRateId)
+    {
+        if (Status != OrderStatus.Pending || discount < 0 || discount > SubtotalAmount + ShippingAmount)
+            throw new InvalidOperationException("Condições comerciais inválidas.");
+        DiscountAmount = discount; PromotionName = promotionName; DeliveryRateId = deliveryRateId; Recalculate();
     }
 
     public void ChangeStatus(OrderStatus status, DateTimeOffset now)
@@ -143,12 +166,13 @@ public sealed class Order : AggregateRoot<Guid>
     private void Recalculate()
     {
         SubtotalAmount = _items.Sum(item => item.UnitPriceAmount * item.Quantity);
-        TotalAmount = SubtotalAmount + ShippingAmount;
+        TotalAmount = SubtotalAmount + ShippingAmount - DiscountAmount;
     }
 }
 
 public sealed record OrderAddress(string Recipient, string Phone, string Country, string Province, string City,
     string Neighborhood, string Street, string? HouseNumber, string? Apartment, string? PostalCode);
+public sealed record OrderPickup(Guid LocationId, string Name, string Country, string City, string Address, string Phone, string Instructions);
 
 // Quantities describe one unit of the purchased item, not the entire order line.
 public sealed record OrderComponentSnapshot(string Sku, string Name, int Quantity, string? ImageUrl);

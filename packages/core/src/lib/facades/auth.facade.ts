@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { API_CONFIG } from '../config/api.config';
 import { CMS_CONFIG } from '../config/cms.config';
 import { absoluteCmsUrl } from '../mappers/cms.mapper';
-import { CheckoutPreview, Customer, CustomerAddress, Order, SaveCustomerAddress } from '../models/account.interface';
+import { CheckoutPreview, Customer, CustomerAddress, Order, PickupLocation, SaveCustomerAddress } from '../models/account.interface';
 import { AuthenticationResponse, AuthSessionStore, SessionRefreshService } from '../services/auth-session.service';
 
 interface OtpRequestResponse {
@@ -181,8 +181,14 @@ export class AuthFacade {
     } catch { return undefined; }
   }
 
-  async checkoutPreview(addressId: string, currency: 'AOA'|'EUR', locale: string): Promise<CheckoutPreview> {
-    const preview = await firstValueFrom(this.http.post<CheckoutPreview>(`${this.config.baseUrl}/orders/preview`, { addressId, currency, locale }));
+  async pickupLocations(locale: string): Promise<PickupLocation[]> {
+    return firstValueFrom(this.http.get<PickupLocation[]>(`${this.config.baseUrl}/orders/pickup-options`, {params:{locale}}));
+  }
+  async deliveryCountries(): Promise<string[]> {
+    return firstValueFrom(this.http.get<string[]>(`${this.config.baseUrl}/delivery/countries`));
+  }
+  async checkoutPreview(addressId: string, currency: 'AOA'|'EUR', locale: string, coupon?: string, deliveryRateId?: string, pickupLocationId?: string, contact?: {name: string; phone: string}): Promise<CheckoutPreview> {
+    const preview = await firstValueFrom(this.http.post<CheckoutPreview>(`${this.config.baseUrl}/orders/preview`, { addressId, currency, locale, coupon, deliveryRateId, pickupLocationId, contact }));
     return {
       ...preview,
       items: preview.items.map((item) => ({
@@ -192,8 +198,8 @@ export class AuthFacade {
     };
   }
 
-  async createOrder(addressId: string, currency: 'AOA'|'EUR', locale: string, idempotencyKey: string): Promise<Order> {
-    const order = this.mapOrder(await firstValueFrom(this.http.post<ApiOrder>(`${this.config.baseUrl}/orders`, { addressId, currency, locale, idempotencyKey })));
+  async createOrder(addressId: string, currency: 'AOA'|'EUR', locale: string, idempotencyKey: string, coupon?: string, deliveryRateId?: string, expectedTotal?: number, pickupLocationId?: string, contact?: {name: string; phone: string}): Promise<Order> {
+    const order = this.mapOrder(await firstValueFrom(this.http.post<ApiOrder>(`${this.config.baseUrl}/orders`, { addressId, currency, locale, idempotencyKey, coupon, deliveryRateId, expectedTotal, pickupLocationId, contact })));
     this.orders.update(items => [order, ...items]);
     return order;
   }
@@ -275,6 +281,9 @@ export class AuthFacade {
       status: order.status,
       currency: order.currency,
       subtotal: order.subtotal,
+      discount: order.discount,
+      promotionName: order.promotionName,
+      pickup: order.pickup,
       shippingPrice: order.shipping,
       total: order.total,
       items: order.items.map((item) => ({
@@ -308,6 +317,8 @@ export class AuthFacade {
 }
 
 interface ApiOrder {
+  pickup?: Order['pickup'];
+  discount?: number; promotionName?: string;
   id: string; number: string; placedAt: string; status: Order['status']; currency: 'AOA'|'EUR'; subtotal: number; shipping: number; total: number;
   items: { components?: import('../models/account.interface').OrderComponentSnapshot[] | null; itemType?:'product'|'kit'|'collection'; reference?:string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; imageUrl?: string }[];
   deliveryAddress: CustomerAddress; timeline: { status: Order['status']; occurredAt: string }[];

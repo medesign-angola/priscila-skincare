@@ -246,6 +246,245 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.ToTable("customer_addresses", (string)null);
                 });
 
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.DeliveryRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Carrier")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("MaximumDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinimumDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<string>("Province")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Service")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<Guid>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("delivery_rates", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.LocationStock", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("OnHand")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Reserved")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId", "Sku")
+                        .IsUnique();
+
+                    b.ToTable("location_stock", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.StockAdjustment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<Guid>("DestinationLocationId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTimeOffset?>("ReceivedAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<Guid?>("SourceLocationId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("received");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("DestinationLocationId");
+
+                    b.HasIndex("SourceLocationId");
+
+                    b.ToTable("stock_adjustments", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.StockLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("address");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("city");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)")
+                        .HasColumnName("country");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsWarehouse")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_warehouse");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)")
+                        .HasColumnName("phone");
+
+                    b.Property<bool>("PickupEnabled")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("pickup_enabled");
+
+                    b.Property<string>("PickupHours")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("pickup_hours");
+
+                    b.Property<string>("PickupInstructions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("pickup_instructions");
+
+                    b.Property<Guid>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("stock_locations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("334a7da4-f292-48dc-a346-8ff03170fd0d"),
+                            IsActive = true,
+                            IsWarehouse = true,
+                            Name = "Armazém central",
+                            PickupEnabled = false,
+                            Version = new Guid("4ce97c6f-9e27-4e42-8de3-0291556df489")
+                        });
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.StockReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<Guid>("StockId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("StockId");
+
+                    b.HasIndex("Status", "ExpiresAt");
+
+                    b.ToTable("stock_reservations", (string)null);
+                });
+
             modelBuilder.Entity("PriscilaSkincare.Domain.Integration.IntegrationInboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -439,6 +678,15 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(160)")
                         .HasColumnName("customer_name_snapshot");
 
+                    b.Property<Guid?>("DeliveryRateId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("delivery_rate_id");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("discount");
+
                     b.Property<string>("HouseNumber")
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)")
@@ -467,10 +715,19 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(32)")
                         .HasColumnName("phone");
 
+                    b.Property<string>("PickupJson")
+                        .HasColumnType("longtext")
+                        .HasColumnName("pickup_snapshot");
+
                     b.Property<string>("PostalCode")
                         .HasMaxLength(24)
                         .HasColumnType("varchar(24)")
                         .HasColumnName("postal_code");
+
+                    b.Property<string>("PromotionName")
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)")
+                        .HasColumnName("promotion_name");
 
                     b.Property<string>("Province")
                         .IsRequired()
@@ -679,6 +936,105 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                     b.ToTable("payments", (string)null);
                 });
 
+            modelBuilder.Entity("PriscilaSkincare.Domain.Orders.Promotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Benefit")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Coupon")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)");
+
+                    b.Property<DateTimeOffset>("EndsAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool>("FirstPurchaseOnly")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("ItemReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("ItemType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaximumUses")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaximumUsesPerCustomer")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinimumSubtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<DateTimeOffset>("StartsAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Coupon")
+                        .IsUnique();
+
+                    b.ToTable("promotions", (string)null);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Orders.PromotionUsage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("datetime");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PromotionId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("PromotionId", "CustomerId");
+
+                    b.ToTable("promotion_usage", (string)null);
+                });
+
             modelBuilder.Entity("PriscilaSkincare.Domain.Orders.ShoppingCart", b =>
                 {
                     b.Property<Guid>("Id")
@@ -883,6 +1239,38 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.LocationStock", b =>
+                {
+                    b.HasOne("PriscilaSkincare.Domain.Fulfillment.StockLocation", null)
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.StockAdjustment", b =>
+                {
+                    b.HasOne("PriscilaSkincare.Domain.Fulfillment.StockLocation", null)
+                        .WithMany()
+                        .HasForeignKey("DestinationLocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PriscilaSkincare.Domain.Fulfillment.StockLocation", null)
+                        .WithMany()
+                        .HasForeignKey("SourceLocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Fulfillment.StockReservation", b =>
+                {
+                    b.HasOne("PriscilaSkincare.Domain.Fulfillment.LocationStock", null)
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PriscilaSkincare.Domain.Orders.OrderItem", b =>
                 {
                     b.HasOne("PriscilaSkincare.Domain.Orders.Order", null)
@@ -898,6 +1286,15 @@ namespace PriscilaSkincare.Infrastructure.Persistence.Migrations
                         .WithMany("Timeline")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PriscilaSkincare.Domain.Orders.PromotionUsage", b =>
+                {
+                    b.HasOne("PriscilaSkincare.Domain.Orders.Promotion", null)
+                        .WithMany()
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

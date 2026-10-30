@@ -630,6 +630,10 @@ export default function OrderDetailPage() {
     order?.deliveryAddress,
     {},
   );
+  const pickup = address.pickup as {name: string; address: string; city: string; country: string; phone: string; instructions: string} | undefined;
+  const stateLabel = (value: string) => pickup && value === 'shipped'
+    ? (language === 'fr' ? 'Prête à retirer' : 'Pronta para levantamento')
+    : pickup && value === 'delivered' ? (language === 'fr' ? 'Retirée' : 'Levantada') : states[value]?.[language] ?? value;
   const money = (value: unknown) =>
     new Intl.NumberFormat(language === 'fr' ? 'fr-FR' : 'pt-AO', {
       style: 'currency',
@@ -749,7 +753,7 @@ export default function OrderDetailPage() {
                   </div>
                   <StatusGroup>
                     <Badge $status={status}>
-                      {states[status]?.[language] ?? status}
+                      {stateLabel(status)}
                     </Badge>
                     <Badge $status={paymentStatus}>
                       {paymentStates[paymentStatus]?.[language] ??
@@ -848,6 +852,7 @@ export default function OrderDetailPage() {
                           <dt>Entrega</dt>
                           <dd>{money(order.shipping)}</dd>
                         </div>
+                        {(Number(order.subtotal ?? 0) + Number(order.shipping ?? 0) - Number(order.total ?? 0)) > 0 && <div><dt>Desconto</dt><dd>−{money(Number(order.subtotal ?? 0) + Number(order.shipping ?? 0) - Number(order.total ?? 0))}</dd></div>}
                         <div>
                           <dt>Total</dt>
                           <dd>{money(order.total)}</dd>
@@ -862,9 +867,10 @@ export default function OrderDetailPage() {
                   <ColumnStack>
                     <Card>
                       <CardHeader>
-                        <h2>Morada de entrega</h2>
+                        <h2>{pickup ? (language === 'fr' ? 'Retrait en boutique' : 'Levantamento em loja') : 'Morada de entrega'}</h2>
                       </CardHeader>
                       <Address>
+                        {pickup && <><div><dt>Loja</dt><dd>{pickup.name}</dd></div><div><dt>Morada</dt><dd>{pickup.address}, {pickup.city}, {pickup.country}</dd></div><div><dt>Contacto</dt><dd>{pickup.phone}</dd></div></>}
                         {Object.entries(addressLabels).map(([key, label]) =>
                           address[key] ? (
                             <div key={key}>
@@ -966,7 +972,7 @@ export default function OrderDetailPage() {
                                 ? 'En continuant, la commande passera à : '
                                 : 'Ao continuar, a encomenda passará para: '}
                               <strong>
-                                {states[next]?.[language] ?? next}
+                                {stateLabel(next)}
                               </strong>
                               .
                             </p>
@@ -977,7 +983,7 @@ export default function OrderDetailPage() {
                             >
                               {saving
                                 ? 'A atualizar…'
-                                : `Avançar para ${states[next]?.[language] ?? next}`}
+                                : `Avançar para ${stateLabel(next)}`}
                               <span>→</span>
                             </button>
                           </>

@@ -10,7 +10,7 @@
       <time>{{ current.placedAt | date: 'dd MMM y' }}</time>
     </div>
     <span class="status">
-      {{ 'ACCOUNT.STATUS.' + current.status.toUpperCase() | translate }}
+      {{ (current.pickup && current.status === 'shipped' ? 'CHECKOUT.PICKUP_READY' : current.pickup && current.status === 'delivered' ? 'CHECKOUT.PICKUP_COLLECTED' : 'ACCOUNT.STATUS.' + current.status.toUpperCase()) | translate }}
     </span>
   </header>
 
@@ -21,7 +21,7 @@
       <div class="timeline__step" [class.timeline__step--complete]="entry.state === 'complete'" [class.timeline__step--current]="entry.state === 'current'" [class.timeline__step--future]="entry.state === 'future'">
         <span>{{ entry.state === 'complete' ? '✓' : entry.state === 'current' ? '•' : '' }}</span>
         <strong>
-          {{ 'ACCOUNT.STATUS.' + entry.status.toUpperCase() | translate }}
+          {{ (current.pickup && entry.status === 'shipped' ? 'CHECKOUT.PICKUP_READY' : current.pickup && entry.status === 'delivered' ? 'CHECKOUT.PICKUP_COLLECTED' : 'ACCOUNT.STATUS.' + entry.status.toUpperCase()) | translate }}
         </strong>
         @if (entry.occurredAt) { <time>{{ entry.occurredAt | date: 'dd MMM y, HH:mm' }}</time> }
       </div>
@@ -69,6 +69,18 @@
 
   <div class="details-grid">
     <article class="information">
+      @if (current.pickup; as pickup) {
+      <h2>{{ 'CHECKOUT.PICKUP' | translate }}</h2>
+      <strong>{{ pickup.name }}</strong>
+      <p>{{ pickup.address }}, {{ pickup.city }}, {{ pickup.country }}</p>
+      <a class="pickup-phone" [href]="'tel:' + pickup.phone">{{ pickup.phone }}</a>
+      @if (pickup.instructions) {
+      <details class="pickup-extra">
+        <summary>{{ 'PICKUP_DETAILS.HOURS' | translate }} · {{ 'PICKUP_DETAILS.INSTRUCTIONS' | translate }}</summary>
+        <p class="pickup-instructions">{{ pickup.instructions }}</p>
+      </details>
+      }
+      } @else {
       <h2>{{ 'ACCOUNT.DETAILS.DELIVERY_ADDRESS' | translate }}</h2>
       <strong>{{ current.deliveryAddress.recipient }}</strong>
       <p>
@@ -77,6 +89,7 @@
         {{ current.deliveryAddress.city }},
         {{ current.deliveryAddress.country }}
       </p>
+      }
       <hr />
       @if (current.payment) {
       <h2>{{ 'ACCOUNT.DETAILS.PAYMENT_METHOD' | translate }}</h2>
@@ -91,7 +104,7 @@
         </div>
         <div>
           <dt>{{ 'ACCOUNT.DETAILS.AMOUNT' | translate }}</dt>
-          <dd>{{ price(subtotal() + current.shippingPrice) }}</dd>
+          <dd>{{ price(current.total) }}</dd>
         </div>
       </dl>
       }
@@ -112,6 +125,7 @@
               : price(current.shippingPrice) }}
           </dd>
         </div>
+        @if (current.discount) { <div><dt>{{ 'CHECKOUT.DISCOUNT' | translate }} · {{ current.promotionName }}</dt><dd>−{{ price(current.discount) }}</dd></div> }
         <div class="total">
           <dt>{{ 'ACCOUNT.ORDERS.TOTAL' | translate }}</dt>
           <dd>{{ price(current.total) }}</dd>

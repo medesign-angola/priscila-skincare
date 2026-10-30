@@ -12,6 +12,8 @@ const StyledStoreSelectShell = styled.details.attrs({
   'data-store-select': '',
 })`
   position: relative;
+  min-width: 0;
+  &[open] { z-index: 7; }
 
   summary {
     box-sizing: border-box;
@@ -54,6 +56,8 @@ const StyledStoreSelectShell = styled.details.attrs({
     gap: 4px;
     width: 100%;
     max-height: 240px;
+    max-height: min(240px, 45dvh);
+    overscroll-behavior: contain;
     padding: 8px;
     overflow: auto;
     border: 1px solid var(--ps-border);
@@ -167,12 +171,14 @@ export function StoreSelect({
   onChange,
   placeholder,
   loadError,
+  disabled = false,
 }: {
   value: string;
   options: StoreSelectOption[];
   onChange: (value: string) => void;
   placeholder: string;
   loadError?: boolean;
+  disabled?: boolean;
 }) {
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   const selected = options.find((option) => option.value === value);
@@ -183,7 +189,7 @@ export function StoreSelect({
 
   return (
     <StoreSelectShell ref={detailsRef}>
-      <summary>
+      <summary aria-disabled={disabled} tabIndex={disabled ? -1 : 0} onClick={event => { if (disabled) event.preventDefault(); }}>
         {loadError
           ? 'Não foi possível carregar os dados'
           : selected?.label || placeholder}
@@ -196,6 +202,7 @@ export function StoreSelect({
           options.map((option) => (
             <button
               type="button"
+              disabled={disabled}
               role="option"
               aria-selected={option.value === value}
               key={option.value}

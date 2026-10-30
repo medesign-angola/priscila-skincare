@@ -1,11 +1,13 @@
 @let reviewData = reviews();
-<section id="avaliacoes" class="reviews" aria-labelledby="reviews-title">
+<section id="avaliacoes" class="reviews" [style.min-height]="visibleReviews().length ? null : '0'" aria-labelledby="reviews-title">
   <div class="reviews__summary">
     <h2 id="reviews-title">
       {{ 'PRODUCT_DETAILS.REVIEWS.TITLE' | translate }}
     </h2>
+    @if (reviewData.totalReviews > 0) {
     <strong>{{ reviewData.averageRating | number: '1.1-1' }}</strong>
     <div class="reviews__stars" aria-hidden="true">@for (star of stars; track star) {<span class="rating-star">☆<span [style.width.%]="starFill(reviewData.averageRating, star)">★</span></span>}</div>
+    }
     <a class="reviews__action" [routerLink]="reviewRoute()">
       <span>
         {{ (ownReview()
@@ -17,6 +19,9 @@
   </div>
 
   <div class="reviews__list">
+    @if (!visibleReviews().length) {
+      <p>{{ language() === 'fr' ? 'Aucun avis publié. Vous avez essayé ce produit ? Partagez votre expérience en laissant un avis.' : 'Ainda não há avaliações publicadas. Já experimentou este produto? Partilhe a sua experiência deixando uma avaliação.' }}</p>
+    }
     @for (review of visibleReviews(); track review.id ?? $index; let index = $index) {
     <article [class.reviews__item--own]="review.isOwn">
       <header>

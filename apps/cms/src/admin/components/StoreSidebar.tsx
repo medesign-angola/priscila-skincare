@@ -10,6 +10,7 @@ type SidebarItem = {
   frenchLabel: string;
   href: string;
   icon: string;
+  pendingKey?: 'orders' | 'reviews';
   section?: 'site' | 'admin';
   permissions?: string[];
   developmentOnly?: boolean;
@@ -43,13 +44,17 @@ const navigation: SidebarItem[] = [
     frenchLabel: 'Commandes',
     href: storeListLink('orders'),
     icon: 'orders',
+    pendingKey: 'orders',
   },
   {
     label: 'Receitas',
     frenchLabel: 'Recettes',
     href: storeListLink('revenue'),
-    icon: 'orders',
+    icon: 'revenue',
   },
+  { label: 'Promoções e cupões', frenchLabel: 'Promotions et codes promo', href: storeListLink('promotions'), icon: 'promotions', permissions: ['admin::commerce.read'] },
+  { label: 'Zonas de entrega', frenchLabel: 'Zones de livraison', href: storeListLink('delivery-rates'), icon: 'delivery-zones', permissions: ['admin::commerce.read'] },
+  { label: 'Lojas e armazéns', frenchLabel: 'Magasins et entrepôts', href: storeListLink('locations'), icon: 'locations', permissions: ['admin::commerce.read'] },
   {
     label: 'Produtos',
     frenchLabel: 'Produits',
@@ -61,6 +66,7 @@ const navigation: SidebarItem[] = [
     frenchLabel: 'Avis',
     href: storeListLink('reviews'),
     icon: 'reviews',
+    pendingKey: 'reviews',
   },
   {
     label: 'Clientes',
@@ -434,7 +440,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
 
   const renderItems = (items: SidebarItem[]) =>
     items.map((item) => {
-      const count = pending[item.icon] ?? 0;
+      const count = item.pendingKey ? pending[item.pendingKey] ?? 0 : 0;
       const label = isFrench ? item.frenchLabel : item.label;
       const currentPath = activeHref.split('?')[0];
       const itemPath = item.href.split('?')[0];
@@ -464,7 +470,7 @@ export function StoreSidebar({ activeHref }: { activeHref: string }) {
 
   return (
     <Sidebar>
-      <SidebarLogo src={iconPath('logo')} alt="Priscila Skincare" />
+      <SidebarLogo src={iconPath('logo')} alt="Priscila Araújo Skincare" />
       <Navigation aria-label="Navegação da loja">
         {renderItems(mainNavigation)}
         <NavigationTitle>

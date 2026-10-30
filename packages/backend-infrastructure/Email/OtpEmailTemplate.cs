@@ -12,18 +12,18 @@ internal static class OtpEmailTemplate
         var french = message.Locale == "fr";
         var copy = french
             ? new Copy(
-                "Votre code d’accès | Priscila Skincare",
+                "Votre code d’accès | Priscila Araújo Skincare",
                 "VOTRE CODE D’ACCÈS",
                 "Bonjour,",
-                "Utilisez le code ci-dessous pour accéder en toute sécurité à votre compte Priscila Skincare.",
+                "Utilisez le code ci-dessous pour accéder en toute sécurité à votre compte Priscila Araújo Skincare.",
                 $"Ce code est valable pendant {message.LifetimeMinutes} minutes.",
                 "Si vous n’avez pas demandé ce code, vous pouvez ignorer cet e-mail.",
                 "Beauté africaine, soutenue par la science.")
             : new Copy(
-                "O seu código de acesso | Priscila Skincare",
+                "O seu código de acesso | Priscila Araújo Skincare",
                 "O SEU CÓDIGO DE ACESSO",
                 "Olá,",
-                "Use o código abaixo para entrar com segurança na sua conta Priscila Skincare.",
+                "Use o código abaixo para entrar com segurança na sua conta Priscila Araújo Skincare.",
                 $"Este código é válido durante {message.LifetimeMinutes} minutos.",
                 "Se não pediu este código, pode ignorar este e-mail.",
                 "Beleza africana, sustentada pela ciência.");
@@ -51,7 +51,7 @@ internal static class OtpEmailTemplate
                   <table role="presentation" class="shell" width="680" cellspacing="0" cellpadding="0" style="width:680px;max-width:100%;background:#ffffff;border-collapse:collapse;box-shadow:0 12px 38px rgba(54,42,28,.12);">
                     <tr>
                       <td class="content-cell" width="100%" valign="top" style="padding:48px 42px;border-right:12px solid #806a49;">
-                        <div style="color:#806a49;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:58px;">PRISCILA ARAUJO<br>SKINCARE</div>
+                        <div style="color:#806a49;font-size:12px;font-weight:700;letter-spacing:1.5px;margin-bottom:58px;">PRISCILA ARAÚJO SKINCARE</div>
                         <div style="font-size:14px;font-weight:700;margin-bottom:18px;">{{WebUtility.HtmlEncode(copy.Greeting)}}</div>
                         <h1 class="headline" style="font-family:Georgia,'Times New Roman',serif;font-size:42px;line-height:.95;font-weight:500;letter-spacing:-1.3px;margin:0 0 24px;">{{WebUtility.HtmlEncode(copy.Title)}}</h1>
                         <p style="font-size:15px;line-height:1.65;margin:0 0 26px;color:#4d4943;">{{WebUtility.HtmlEncode(copy.Body)}}</p>

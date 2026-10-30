@@ -5,6 +5,43 @@
   background: #f7f5f1;
 }
 
+.pickup-instructions {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+
+.pickup-details {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1rem 0 1.25rem;
+  margin-bottom: .25rem;
+  border-bottom: 1px solid #ece8e1;
+}
+
+.pickup-details h3,
+.pickup-details h4,
+.pickup-details p { margin: 0; }
+.pickup-details h3 { font-size: .9375rem; font-weight: 600; line-height: 1.4; }
+.pickup-details h4 { font-size: .75rem; font-weight: 600; color: #5e5851; }
+.pickup-details__store,
+.pickup-details__hours { display: grid; gap: .375rem; }
+.pickup-details__store p,
+.pickup-details__store a { font-size: .8125rem; line-height: 1.5; color: #746e66; }
+.pickup-details__store a { width: fit-content; text-underline-offset: 3px; }
+.pickup-details__instructions summary { color: #7d6645; cursor: pointer; font-weight: 500; }
+.pickup-details__instructions summary:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pickup-details__instructions summary:focus-visible,
+.pickup-details__store a:focus-visible { outline: 2px solid #7d6645; outline-offset: 4px; }
+.pickup-details__instructions p { margin-top: .75rem; color: #746e66; font-size: .8125rem; }
+.pickup-details__notice { padding-left: .75rem; border-left: 2px solid #a99578; color: #5e5851; font-size: .8125rem; line-height: 1.5; }
+
+.commercial-options { display: grid; gap: .75rem; margin: 1.25rem 0; font-size: .875rem; }
+.coupon-row { display: flex; gap: .5rem; }
+.commercial-options input, .commercial-options select { min-width: 0; width: 100%; box-sizing: border-box; padding: .75rem; border: 1px solid #dcd5cb; background: #fff; color: inherit; font: inherit; }
+.coupon-row button { cursor: pointer; padding: .75rem; border: 1px solid #7d6645; color: #7d6645; background: #fff; font: inherit; }
+.coupon-row button:disabled { cursor: not-allowed; opacity: .5; }
+
 .checkout-page {
   box-sizing: border-box;
   width: min(100% - 2rem, 76rem);
@@ -41,7 +78,7 @@
 .checkout-header {
   display: grid;
   gap: 0.625rem;
-  margin: clamp(2.75rem, 5vw, 4.5rem) 0 clamp(2.75rem, 5vw, 4.25rem);
+  margin: clamp(2.75rem, 5vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
 }
 
 .checkout-header > span,
@@ -187,6 +224,47 @@
   background: #fff;
 }
 
+/* Keep pickup contact spacing independent from the address modal. */
+.pickup-phone { display: flex; align-items: center; border: 1px solid #cfc7bc; border-radius: 2px; background: #fff; }
+.pickup-phone > span { padding-left: .75rem; font-size: .875rem; white-space: nowrap; }
+.pickup-phone input { min-width: 0; border: 0; }
+.pickup-phone:focus-within { border-color: #7d6645; box-shadow: 0 0 0 2px #eee8df; }
+.pickup-phone input:focus { box-shadow: none; }
+.pickup-contact-fields {
+  margin-top: 1.5rem;
+  column-gap: 1.25rem;
+  row-gap: 1.5rem;
+  align-items: start;
+}
+
+.pickup-contact-fields label {
+  min-width: 0;
+  gap: 0.625rem;
+}
+
+.pickup-contact-fields label:first-child {
+  grid-column: 1 / -1;
+}
+
+.pickup-contact-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 1.75rem;
+}
+
+.pickup-contact-actions .address-add {
+  margin-top: 0;
+  min-width: 8rem;
+  justify-content: center;
+}
+
+.pickup-contact-actions .address-add:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  color: #7d6645;
+  background: transparent;
+}
+
 .checkout-summary ul {
   margin: 0;
   padding: 0;
@@ -327,7 +405,16 @@
   }
 
   .checkout-header {
-    margin-block: 2.5rem 2.75rem;
+    margin-block: 2.5rem 2rem;
+  }
+
+  .pickup-contact-fields {
+    margin-top: 1.25rem;
+    row-gap: 1.25rem;
+  }
+
+  .pickup-contact-actions {
+    margin-top: 1.5rem;
   }
 
   .checkout-page h1 {

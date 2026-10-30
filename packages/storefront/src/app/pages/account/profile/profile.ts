@@ -35,6 +35,19 @@ export class Profile {
   readonly phone = new FormControl('', { nonNullable: true });
   readonly profilePhoneCountry = signal('Angola');
   readonly countries = PHONE_COUNTRIES;
+  readonly deliveryCountries = signal<string[]>([]);
+  readonly countriesLoading = signal(false);
+  readonly countriesError = signal(false);
+  async loadDeliveryCountries() {
+    this.countriesLoading.set(true); this.countriesError.set(false);
+    try {
+      const values = await this.auth.deliveryCountries();
+      this.deliveryCountries.set(values);
+      if (!this.addressForm.controls.country.value) this.addressForm.controls.country.setValue(values[0] ?? '');
+    } catch { this.countriesError.set(true); }
+    finally { this.countriesLoading.set(false); }
+  }
+
   readonly modalOpen = signal(false);
   readonly editingAddress = signal<CustomerAddress | null>(null);
   readonly addressSaving = signal(false);
@@ -145,7 +158,7 @@ export class Profile {
       label: '',
       recipient: this.auth.customer()?.name ?? '',
       phone: localPhoneValue(this.auth.customer()?.phone, 'Angola'),
-      country: 'Angola',
+      country: '',
       province: '',
       city: '',
       neighborhood: '',
@@ -156,6 +169,7 @@ export class Profile {
       isDefault: (this.auth.customer()?.addresses.length ?? 0) === 0,
     });
     this.modalOpen.set(true);
+    void this.loadDeliveryCountries();
   }
 
   openEditAddress(address: CustomerAddress): void {
@@ -176,6 +190,7 @@ export class Profile {
       isDefault: address.isDefault,
     });
     this.modalOpen.set(true);
+    void this.loadDeliveryCountries();
   }
 
   closeAddressModal(): void {
@@ -185,7 +200,7 @@ export class Profile {
   }
 
   async saveAddress(): Promise<void> {
-    if (this.addressForm.invalid || this.addressSaving()) {
+    if (this.addressForm.invalid || this.addressSaving() || this.countriesLoading() || this.countriesError() || (!this.deliveryCountries().includes(this.addressForm.controls.country.value) && this.editingAddress()?.country !== this.addressForm.controls.country.value)) {
       this.addressForm.markAllAsTouched();
       return;
     }

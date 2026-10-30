@@ -22,6 +22,19 @@ internal static class OrderConfirmationEmailTemplate
         var greeting = french ? $"Bonjour {message.CustomerName ?? message.Address.Recipient}," : $"Olá {message.CustomerName ?? message.Address.Recipient},";
         var intro = french ? "Votre commande a bien été confirmée. Voici les détails de votre achat."
             : "A sua encomenda foi confirmada. Aqui estão os detalhes da sua compra.";
+        var isPickup = message.Pickup is not null;
+        if (string.Equals(message.Status, "Shipped", StringComparison.OrdinalIgnoreCase) && isPickup)
+        {
+            subject = french ? $"Commande {message.OrderNumber} prête à retirer" : $"Encomenda {message.OrderNumber} pronta para levantamento";
+            intro = french ? "Votre commande est prête. Vous pouvez la retirer dans la boutique indiquée ci-dessous." : "A sua encomenda está pronta. Já pode levantá-la na loja indicada abaixo.";
+        }
+        else if (string.Equals(message.Status, "Delivered", StringComparison.OrdinalIgnoreCase))
+        {
+            subject = french ? $"Commande {message.OrderNumber} reçue" : $"Encomenda {message.OrderNumber} recebida";
+            intro = french ? "La réception de votre commande a été confirmée. Merci pour votre achat !" : "A recepção da sua encomenda foi confirmada. Obrigado pela sua compra!";
+        }
+        else if (isPickup)
+            intro += french ? " Attendez notre confirmation avant de vous rendre en boutique." : " Aguarde a nossa confirmação antes de se deslocar à loja.";
         var items = new StringBuilder();
         var textItems = new StringBuilder();
         foreach (var item in message.Items)
@@ -32,21 +45,25 @@ internal static class OrderConfirmationEmailTemplate
 
         var address = $"{message.Address.Street}{(string.IsNullOrWhiteSpace(message.Address.HouseNumber) ? "" : ", " + message.Address.HouseNumber)}, {message.Address.Neighborhood}, {message.Address.City}, {message.Address.Province}, {message.Address.Country}";
         var orderUrl = $"{options.StorefrontUrl.TrimEnd('/')}/conta/encomendas/{message.OrderId}";
+        if (message.Pickup is { } pickup) address = $"{pickup.Name}, {pickup.Address}, {pickup.City}, {pickup.Country}. {pickup.Phone}. {pickup.Instructions}";
+        var addressHeading = isPickup ? (french ? "Retrait en boutique" : "Levantamento em loja") : (french ? "Adresse de livraison" : "Morada de entrega");
+        var discount = Math.Max(0, message.Subtotal + message.Shipping - message.Total);
+        var discountRow = discount > 0 ? $"<tr><td>{(french ? "Réduction" : "Desconto")}</td><td align=\"right\">−{E(Money(discount))}</td></tr>" : "";
         var html = $$"""
         <!doctype html><html><body style="margin:0;background:#f5f1eb;font-family:Arial,sans-serif;color:#171717">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center" style="padding:32px 16px">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#fff">
-        <tr><td style="padding:30px 36px;background:#6d5638;color:#fff"><div style="font-family:Georgia,serif;font-size:26px">Priscila Araújo</div><div style="font-size:12px;letter-spacing:2px;margin-top:4px">SKINCARE</div></td></tr>
+        <tr><td style="padding:30px 36px;background:#6d5638;color:#fff"><div style="font-family:Georgia,serif;font-size:26px">Priscila Araújo Skincare</div></td></tr>
         <tr><td style="padding:36px"><h1 style="font-size:24px;margin:0 0 20px">{{E(subject)}}</h1><p style="font-size:16px;line-height:1.6">{{E(greeting)}}</p><p style="font-size:16px;line-height:1.6">{{E(intro)}}</p>
         <div style="margin:28px 0;padding:18px;background:#f8f5f0"><strong>{{(french ? "Numéro de commande" : "Número da encomenda")}}:</strong> {{E(message.OrderNumber)}}<br><span style="color:#6d675f">{{message.PlacedAt.ToString("dd/MM/yyyy HH:mm", culture)}}</span></div>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><thead><tr><th align="left">{{(french ? "Article" : "Produto")}}</th><th>{{(french ? "Qté" : "Qtd.")}}</th><th align="right">{{(french ? "Total" : "Total")}}</th></tr></thead><tbody>{{items}}</tbody></table>
-        <table role="presentation" width="100%" style="margin-top:22px"><tr><td>{{(french ? "Sous-total" : "Subtotal")}}</td><td align="right">{{E(Money(message.Subtotal))}}</td></tr><tr><td style="padding-top:8px">{{(french ? "Livraison" : "Entrega")}}</td><td align="right" style="padding-top:8px">{{E(Money(message.Shipping))}}</td></tr><tr><td style="padding-top:12px;font-size:18px"><strong>Total</strong></td><td align="right" style="padding-top:12px;font-size:18px"><strong>{{E(Money(message.Total))}}</strong></td></tr></table>
-        <h2 style="font-size:17px;margin:30px 0 10px">{{(french ? "Adresse de livraison" : "Morada de entrega")}}</h2><p style="line-height:1.6;margin:0">{{E(message.Address.Recipient)}}<br>{{E(address)}}<br>{{E(message.Address.Phone)}}</p>
+        <table role="presentation" width="100%" style="margin-top:22px"><tr><td>{{(french ? "Sous-total" : "Subtotal")}}</td><td align="right">{{E(Money(message.Subtotal))}}</td></tr><tr><td style="padding-top:8px">{{(french ? "Livraison" : "Entrega")}}</td><td align="right" style="padding-top:8px">{{E(Money(message.Shipping))}}</td></tr>{{discountRow}}<tr><td style="padding-top:12px;font-size:18px"><strong>Total</strong></td><td align="right" style="padding-top:12px;font-size:18px"><strong>{{E(Money(message.Total))}}</strong></td></tr></table>
+        <h2 style="font-size:17px;margin:30px 0 10px">{{E(addressHeading)}}</h2><p style="line-height:1.6;margin:0">{{E(message.Address.Recipient)}}<br>{{E(address)}}<br>{{E(message.Address.Phone)}}</p>
         <p style="margin:32px 0 0"><a href="{{E(orderUrl)}}" style="display:inline-block;background:#8a7049;color:#fff;text-decoration:none;padding:15px 24px;font-weight:bold">{{(french ? "VOIR MA COMMANDE" : "VER A MINHA ENCOMENDA")}}</a></p>
         </td></tr><tr><td style="padding:22px 36px;background:#171717;color:#fff;font-size:12px;line-height:1.6">{{(french ? "Besoin d'aide ?" : "Precisa de ajuda?")}} {{E(options.SupportEmail)}}</td></tr></table>
         </td></tr></table></body></html>
         """;
-        var text = $"{subject}\n\n{greeting}\n{intro}\n\n{message.OrderNumber}\n{textItems}\nSubtotal: {Money(message.Subtotal)}\nEntrega: {Money(message.Shipping)}\nTotal: {Money(message.Total)}\n\n{address}\n{message.Address.Phone}\n\n{orderUrl}";
+        var text = $"{subject}\n\n{greeting}\n{intro}\n\n{message.OrderNumber}\n{textItems}\nSubtotal: {Money(message.Subtotal)}\nEntrega: {Money(message.Shipping)}\n{(french ? "Réduction" : "Desconto")}: {Money(discount)}\nTotal: {Money(message.Total)}\n\n{address}\n{message.Address.Phone}\n\n{orderUrl}";
         return new(subject, html, text);
     }
 }

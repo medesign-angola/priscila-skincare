@@ -11,6 +11,17 @@
 
   <div class="checkout-layout">
     <section class="checkout-addresses">
+      @if (pickupLocationId()) {
+      <h2>{{ 'CHECKOUT.PICKUP_CONTACT' | translate }}</h2>
+      <div class="address-fields pickup-contact-fields">
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }} *</span><input [formControl]="pickupName" maxlength="160" (input)="contactChanged()" /></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }}</span><select [formControl]="contactCountry" (change)="contactChanged()">@for (country of countries; track country.iso) { <option [value]="country.country">{{ country.country }}</option> }</select></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }} *</span><div class="pickup-phone"><span>{{ pickupPhonePrefix() }}</span><input type="tel" inputmode="numeric" autocomplete="tel-national" [formControl]="pickupPhone" [mask]="pickupPhoneMask()" [dropSpecialCharacters]="true" [required]="true" (input)="contactChanged()" /></div></label>
+      </div>
+      <div class="pickup-contact-actions">
+        <button type="button" class="address-add" [disabled]="loading() || !pickupContactValid()" (click)="refresh()">{{ 'CHECKOUT.APPLY' | translate }}</button>
+      </div>
+      } @else {
       <h2>{{ 'CHECKOUT.ADDRESS' | translate }}</h2>
       @if (addresses().length) {
       <div class="address-list">
@@ -37,10 +48,53 @@
         </button>
       </div>
       }
+      }
     </section>
 
     <aside class="checkout-summary">
       <h2>{{ 'CHECKOUT.SUMMARY' | translate }}</h2>
+      <div class="commercial-options">
+        <label for="checkout-receive">{{ 'CHECKOUT.RECEIVE' | translate }}</label>
+        <select id="checkout-receive" [disabled]="loading()" [value]="pickupLocationId() ?? ''" (change)="selectPickup($any($event.target).value)">
+          <option value="">{{ 'CHECKOUT.HOME_DELIVERY' | translate }}</option>
+          @for (location of pickupLocations(); track location.id) {
+          <option [value]="location.id">{{ 'CHECKOUT.PICKUP' | translate }} — {{ location.name }} · {{ 'ACCOUNT.DETAILS.FREE' | translate }}</option>
+          }
+        </select>
+        @if (!loading() && !pickupLocations().length) { <p>{{ 'CHECKOUT.PICKUP_NONE' | translate }}</p> }
+        @if (pickupLocation(); as location) {
+          <section class="pickup-details" [attr.aria-label]="location.name">
+            <div class="pickup-details__store">
+              <h3>{{ location.name }}</h3>
+              <p>{{ location.address }}, {{ location.city }}</p>
+              <a [href]="'tel:' + location.phone">{{ location.phone }}</a>
+            </div>
+            @if (location.hours) {
+              <div class="pickup-details__hours">
+                <h4>{{ 'PICKUP_DETAILS.HOURS' | translate }}</h4>
+                <p class="pickup-instructions">{{ location.hours }}</p>
+              </div>
+            }
+            @if (location.notes || (!location.hours && location.instructions)) {
+              <details class="pickup-details__instructions">
+                <summary>{{ 'PICKUP_DETAILS.INSTRUCTIONS' | translate }}</summary>
+                <p class="pickup-instructions">{{ location.notes ?? location.instructions }}</p>
+              </details>
+            }
+            <p class="pickup-details__notice">{{ 'PICKUP_DETAILS.WAIT' | translate }}</p>
+          </section>
+        }
+        <label for="checkout-coupon">{{ 'CHECKOUT.COUPON' | translate }}</label>
+        <div class="coupon-row"><input id="checkout-coupon" [formControl]="couponInput" maxlength="60" autocomplete="off"/><button type="button" [disabled]="loading() || !checkoutAddressId()" (click)="applyCoupon()">{{ 'CHECKOUT.APPLY' | translate }}</button></div>
+        @if (!pickupLocationId() && preview()?.deliveryOptions?.length) {
+        <label for="checkout-delivery">{{ 'CHECKOUT.DELIVERY_SERVICE' | translate }}</label>
+        <select id="checkout-delivery" [disabled]="loading()" [value]="deliveryRateId()" (change)="selectDelivery($any($event.target).value)">
+          @for (option of preview()?.deliveryOptions; track option.id) {
+          <option [value]="option.id">{{ option.carrier }} — {{ option.service }} · {{ price(option.amount) }} · {{ option.minimumDays }}–{{ option.maximumDays }} {{ 'CHECKOUT.DAYS' | translate }}</option>
+          }
+        </select>
+        }
+      </div>
       @if (summary(); as data) {
       <ul>
         @for (item of data.items; track $index) {
@@ -77,13 +131,16 @@
             price(data.shipping) }}
           </dd>
         </div>
+        @if (preview()?.discount) {
+        <div><dt>{{ 'CHECKOUT.DISCOUNT' | translate }} · {{ preview()?.promotionName }}</dt><dd>−{{ price(preview()?.discount ?? 0) }}</dd></div>
+        }
         <div class="total">
           <dt>{{ 'ACCOUNT.ORDERS.TOTAL' | translate }}</dt>
           <dd>{{ price(data.total) }}</dd>
         </div>
         }
       </dl>
-      @if (!data.complete) {
+      @if (!data.complete && !pickupLocationId()) {
       <p class="summary-hint">
         {{ 'CHECKOUT.ADDRESS_TOTAL_HINT' | translate }}
       </p>
@@ -113,7 +170,10 @@
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.LABEL' | translate }} *</span><input formControlName="label" required /></label>
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.RECIPIENT' | translate }} *</span><input formControlName="recipient" required /></label>
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PHONE' | translate }} *</span><input type="tel" inputmode="numeric" formControlName="phone" [mask]="phoneMask()" [prefix]="phonePrefix()" [dropSpecialCharacters]="false" [required]="true" /></label>
-        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }} *</span><select formControlName="country">@for (country of countries; track country.iso) { <option [value]="country.country">{{ country.country }}</option> }</select></label>
+        <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRY' | translate }} *</span><select formControlName="country"><option value="">{{ 'ACCOUNT.PROFILE.ADDRESS.SELECT_COUNTRY' | translate }}</option>@for (country of deliveryCountries(); track country) { <option [value]="country">{{ country }}</option> }</select><small>{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRIES_HINT' | translate }}</small></label>
+        @if (countriesLoading()) { <p role="status">{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRIES_LOADING' | translate }}</p> }
+        @else if (countriesError()) { <p role="alert">{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRIES_ERROR' | translate }}</p><button type="button" (click)="loadDeliveryCountries()">{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRIES_RETRY' | translate }}</button> }
+        @else if (!deliveryCountries().length) { <p role="status">{{ 'ACCOUNT.PROFILE.ADDRESS.COUNTRIES_EMPTY' | translate }}</p> }
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.PROVINCE' | translate }} *</span><input formControlName="province" required /></label>
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.CITY' | translate }} *</span><input formControlName="city" required /></label>
         <label><span>{{ 'ACCOUNT.PROFILE.ADDRESS.NEIGHBORHOOD' | translate }} *</span><input formControlName="neighborhood" required /></label>
@@ -125,7 +185,7 @@
       <label class="address-default"><input type="checkbox" formControlName="isDefault" /><span>{{ 'ACCOUNT.PROFILE.ADDRESS.SET_DEFAULT' | translate }}</span></label>
       @if (addressForm.invalid && addressForm.touched) { <p class="error">{{ 'ACCOUNT.PROFILE.ADDRESS.REQUIRED' | translate }}</p> }
       @if (addressError()) { <p class="error">{{ 'ACCOUNT.PROFILE.ADDRESS.ERROR' | translate }}</p> }
-      <div class="address-modal__actions"><button type="button" (click)="closeAddressModal()">{{ 'ACCOUNT.PROFILE.ADDRESS.CANCEL' | translate }}</button><button class="address-save" type="submit" [disabled]="addressSaving()">{{ (addressSaving() ? 'ACCOUNT.PROFILE.ADDRESS.SAVING' : 'ACCOUNT.PROFILE.ADDRESS.SAVE') | translate }}</button></div>
+      <div class="address-modal__actions"><button type="button" (click)="closeAddressModal()">{{ 'ACCOUNT.PROFILE.ADDRESS.CANCEL' | translate }}</button><button class="address-save" type="submit" [disabled]="addressSaving() || countriesLoading() || countriesError() || !deliveryCountries().includes(addressForm.controls.country.value)">{{ (addressSaving() ? 'ACCOUNT.PROFILE.ADDRESS.SAVING' : 'ACCOUNT.PROFILE.ADDRESS.SAVE') | translate }}</button></div>
     </form>
   </section>
 </div>

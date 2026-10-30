@@ -45,6 +45,9 @@ export interface OrderTimelineEntry {
 }
 
 export interface Order {
+  pickup?: { locationId: string; name: string; address: string; country: string; city: string; phone: string; instructions: string };
+  discount?: number;
+  promotionName?: string;
   id: string;
   number: string;
   placedAt: string;
@@ -60,7 +63,10 @@ export interface Order {
 }
 
 export interface CheckoutPreview {
+  discount?: number; promotionName?: string; deliveryRateId?: string;
+  deliveryOptions?: { id: string; name: string; carrier: string; service: string; amount: number; minimumDays: number; maximumDays: number }[];
   addressId: string; currency: 'AOA' | 'EUR'; subtotal: number; shipping: number; total: number; items: ApiOrderItem[];
 }
+export interface PickupLocation { id: string; name: string; address: string; country: string; city: string; phone: string; instructions: string; hours?: string; notes?: string; }
 export interface OrderComponentSnapshot { sku: string; name: string; quantity: number; imageUrl?: string | null; }
 export interface ApiOrderItem { components?: OrderComponentSnapshot[] | null; itemType?: 'product'|'kit'|'collection'; reference?: string; productSku?: string; productName: string; variant?: string; quantity: number; unitPrice: number; total: number; imageUrl?: string; }

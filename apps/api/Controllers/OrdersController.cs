@@ -9,14 +9,17 @@ namespace PriscilaSkincare.Api.Controllers;
 [ApiController, Authorize, Route("api/v1/orders")]
 public sealed class OrdersController(OrderService orders) : ControllerBase
 {
+    [HttpGet("pickup-options")]
+    public async Task<IActionResult> PickupOptions(string locale = "pt", CancellationToken token = default) =>
+        Ok(await orders.PickupOptionsAsync(CustomerId(), locale, token));
     [HttpPost("preview")]
     public async Task<ActionResult<CheckoutPreviewResult>> Preview(CheckoutRequest request, CancellationToken token) =>
-        Ok(await orders.PreviewAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale), token));
+        Ok(await orders.PreviewAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale, request.Coupon, request.DeliveryRateId, request.PickupLocationId, request.Contact), token));
 
     [HttpPost]
     public async Task<ActionResult<OrderResult>> Create(CreateOrderRequest request, CancellationToken token)
     {
-        var result = await orders.CreateAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale, request.IdempotencyKey, request.PaymentMethod), token);
+        var result = await orders.CreateAsync(CustomerId(), new(request.AddressId, request.Currency, request.Locale, request.IdempotencyKey, request.PaymentMethod, request.Coupon, request.DeliveryRateId, request.ExpectedTotal, request.PickupLocationId, request.Contact), token);
         return Created($"/api/v1/orders/{result.Id}", result);
     }
 
@@ -30,5 +33,5 @@ public sealed class OrdersController(OrderService orders) : ControllerBase
         ? id : throw new AuthenticationException("invalid_identity", "A sessão não contém um cliente válido.");
 }
 
-public sealed record CheckoutRequest(Guid AddressId, string Currency = "AOA", string Locale = "pt");
-public sealed record CreateOrderRequest(Guid AddressId, string Currency, string Locale, string IdempotencyKey, string PaymentMethod = "simulated");
+public sealed record CheckoutRequest(Guid AddressId, string Currency = "AOA", string Locale = "pt", string? Coupon = null, Guid? DeliveryRateId = null, Guid? PickupLocationId = null, CheckoutContact? Contact = null);
+public sealed record CreateOrderRequest(Guid AddressId, string Currency, string Locale, string IdempotencyKey, string PaymentMethod = "simulated", string? Coupon = null, Guid? DeliveryRateId = null, decimal? ExpectedTotal = null, Guid? PickupLocationId = null, CheckoutContact? Contact = null);

@@ -16,6 +16,11 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(x => x.SubtotalAmount).HasColumnName("subtotal").HasPrecision(18, 2);
         builder.Property(x => x.ShippingAmount).HasColumnName("shipping").HasPrecision(18, 2);
         builder.Property(x => x.TotalAmount).HasColumnName("total").HasPrecision(18, 2);
+        builder.Property(x => x.DiscountAmount).HasColumnName("discount").HasPrecision(18, 2);
+        builder.Property(x => x.PromotionName).HasColumnName("promotion_name").HasMaxLength(160);
+        builder.Property(x => x.DeliveryRateId).HasColumnName("delivery_rate_id");
+        builder.Property(x => x.PickupJson).HasColumnName("pickup_snapshot").HasColumnType("longtext");
+        builder.Ignore(x => x.Pickup);
         builder.Property(x => x.Recipient).HasColumnName("recipient").HasMaxLength(160);
         builder.Property(x => x.Phone).HasColumnName("phone").HasMaxLength(32);
         builder.Property(x => x.Country).HasColumnName("country").HasMaxLength(80);
