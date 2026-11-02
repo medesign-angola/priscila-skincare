@@ -10,7 +10,7 @@
       <h1 id="product-title">{{ details.name }}</h1>
       <p>{{ details.description }}</p>
       <div class="purchase__rating">
-        <span aria-hidden="true">★★★★★</span> {{ details.reviews.averageRating
+        <span class="rating-stars" aria-hidden="true">☆☆☆☆☆<span [style.width.%]="details.reviews.averageRating * 20">★★★★★</span></span> {{ details.reviews.averageRating
         }} ({{ details.reviews.totalReviews }})
       </div>
     </div>

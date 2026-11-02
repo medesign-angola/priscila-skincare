@@ -10,7 +10,7 @@ export class OrderDetails {
   private readonly regularFlow: readonly OrderStatus[] = ['pending','confirmed','paid','processing','shipped','delivered'];
   private readonly route=inject(ActivatedRoute); readonly auth=inject(AuthFacade); readonly products=inject(ProductFacade);
   readonly order=computed(()=>this.auth.orderById(this.route.snapshot.paramMap.get('orderId')??''));
-  readonly items=computed(()=>(this.order()?.items??[]).map(item=>({item,product:this.products.products().find(product=>product.sku===item.productSku)})));
+  readonly items=computed(()=>(this.order()?.items??[]).map(item=>({item,product:(!item.itemType||item.itemType==='product')?this.products.products().find(product=>product.sku===item.productSku):undefined})));
   readonly timelineSteps=computed(()=>{
     const order=this.order();
     if(!order)return[];

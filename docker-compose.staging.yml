@@ -55,7 +55,7 @@ services:
       Email__Username: ${SMTP_USERNAME:-}
       Email__Password: ${SMTP_PASSWORD:-}
       Email__FromEmail: ${SMTP_FROM_EMAIL:-}
-      Email__FromName: ${SMTP_FROM_NAME:-Priscila Skin Care}
+      Email__FromName: ${SMTP_FROM_NAME:-Priscila Araújo Skincare}
       Email__TimeoutSeconds: ${SMTP_TIMEOUT_SECONDS:-30}
       Email__OrderConfirmationEnabled: ${ORDER_CONFIRMATION_EMAIL_ENABLED:-true}
       Email__StorefrontUrl: ${STOREFRONT_ORIGIN:?Defina STOREFRONT_ORIGIN}
@@ -135,7 +135,7 @@ services:
       Notifications__Username: ${SMTP_USERNAME:-}
       Notifications__Password: ${SMTP_PASSWORD:-}
       Notifications__FromEmail: ${SMTP_FROM_EMAIL:-}
-      Notifications__FromName: ${SMTP_FROM_NAME:-Priscila Skincare}
+      Notifications__FromName: ${SMTP_FROM_NAME:-Priscila Araújo Skincare}
       Notifications__StorefrontUrl: ${STOREFRONT_ORIGIN:?Defina STOREFRONT_ORIGIN}
       Notifications__SupportEmail: ${EMAIL_SUPPORT_ADDRESS:-}
       Notifications__ApplicationApiUrl: http://api:8080

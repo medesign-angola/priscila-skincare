@@ -12,6 +12,7 @@ export interface CartItem {
 export interface ApiCartItem {
   id: string;
   itemType: 'product' | 'kit' | 'collection';
+  productCount?: number;
   reference: string;
   productSku: string;
   productName: string;

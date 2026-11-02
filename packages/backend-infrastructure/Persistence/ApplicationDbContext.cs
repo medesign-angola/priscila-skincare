@@ -13,6 +13,13 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     : DbContext(options), IUnitOfWork
 {
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<Domain.Fulfillment.StockLocation> StockLocations => Set<Domain.Fulfillment.StockLocation>();
+    public DbSet<Domain.Fulfillment.LocationStock> LocationStocks => Set<Domain.Fulfillment.LocationStock>();
+    public DbSet<Domain.Fulfillment.StockReservation> StockReservations => Set<Domain.Fulfillment.StockReservation>();
+    public DbSet<Domain.Fulfillment.StockAdjustment> StockAdjustments => Set<Domain.Fulfillment.StockAdjustment>();
+    public DbSet<Domain.Fulfillment.DeliveryRate> DeliveryRates => Set<Domain.Fulfillment.DeliveryRate>();
+    public DbSet<Promotion> Promotions => Set<Promotion>();
+    public DbSet<PromotionUsage> PromotionUsages => Set<PromotionUsage>();
     public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
     public DbSet<OtpChallenge> OtpChallenges => Set<OtpChallenge>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();

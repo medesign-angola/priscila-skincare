@@ -12,7 +12,8 @@ internal sealed class OrderEmailOutbox(ApplicationDbContext db) : IOrderEmailOut
     {
         var kind = string.Equals(message.Status, "Delivered", StringComparison.OrdinalIgnoreCase)
             ? "order-delivered"
-            : "order-confirmation";
+            : message.Pickup is not null && string.Equals(message.Status, "Shipped", StringComparison.OrdinalIgnoreCase)
+                ? "order-pickup-ready" : "order-confirmation";
         db.EmailOutboxMessages.Add(EmailOutboxMessage.Create(
             kind, message.OrderId, message.RecipientEmail,
             JsonSerializer.Serialize(message), now));

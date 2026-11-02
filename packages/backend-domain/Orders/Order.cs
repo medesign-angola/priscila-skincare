@@ -1,5 +1,6 @@
 using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Common;
+using System.Text.Json;
 
 namespace PriscilaSkincare.Domain.Orders;
 
@@ -41,6 +42,11 @@ public sealed class Order : AggregateRoot<Guid>
     public decimal SubtotalAmount { get; private set; }
     public decimal ShippingAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
+    public decimal DiscountAmount { get; private set; }
+    public string? PromotionName { get; private set; }
+    public Guid? DeliveryRateId { get; private set; }
+    public string? PickupJson { get; private set; }
+    public OrderPickup? Pickup => PickupJson is null ? null : JsonSerializer.Deserialize<OrderPickup>(PickupJson);
     public string Recipient { get; private set; } = string.Empty;
     public string Phone { get; private set; } = string.Empty;
     public string Country { get; private set; } = string.Empty;
@@ -76,20 +82,38 @@ public sealed class Order : AggregateRoot<Guid>
     public static Order Create(Guid customerId, DateTimeOffset now) =>
         Create(customerId, $"PSC-{now:yyyyMMddHHmmss}", "AOA", new OrderAddress("Cliente", "N/D", "Angola", "N/D", "N/D", "N/D", "N/D", null, null, null), "Cliente", null, now);
 
-    public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null)
+    public void AddItem(CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl = null, IReadOnlyList<OrderComponentSnapshot>? components = null)
     {
         if (Status != OrderStatus.Pending) throw new InvalidOperationException("A encomenda já não pode ser alterada.");
         if (unitPrice.Currency != Currency) throw new InvalidOperationException("Todos os itens devem usar a moeda da encomenda.");
         if (quantity < 1) throw new ArgumentOutOfRangeException(nameof(quantity));
-        _items.Add(OrderItem.Create(Id, itemType, reference, productName, variant, unitPrice, quantity, imageUrl));
+        _items.Add(OrderItem.Create(Id, itemType, reference, productName, variant, unitPrice, quantity, imageUrl, components));
         Recalculate();
     }
 
     public void SetShipping(Money shipping)
     {
         if (shipping.Currency != Currency) throw new InvalidOperationException("A moeda do envio é inválida.");
+        if (Pickup is not null && shipping.Amount != 0) throw new InvalidOperationException("O levantamento em loja não tem taxa de entrega.");
         ShippingAmount = shipping.Amount;
         Recalculate();
+    }
+
+    public void SetPickup(OrderPickup pickup)
+    {
+        if (Status != OrderStatus.Pending || pickup.LocationId == Guid.Empty || string.IsNullOrWhiteSpace(pickup.Name) || string.IsNullOrWhiteSpace(pickup.Address))
+            throw new InvalidOperationException("Local de levantamento inválido.");
+        PickupJson = JsonSerializer.Serialize(pickup);
+        ShippingAmount = 0;
+        DeliveryRateId = null;
+        Recalculate();
+    }
+
+    public void SetCommercialTerms(decimal discount, string? promotionName, Guid? deliveryRateId)
+    {
+        if (Status != OrderStatus.Pending || discount < 0 || discount > SubtotalAmount + ShippingAmount)
+            throw new InvalidOperationException("Condições comerciais inválidas.");
+        DiscountAmount = discount; PromotionName = promotionName; DeliveryRateId = deliveryRateId; Recalculate();
     }
 
     public void ChangeStatus(OrderStatus status, DateTimeOffset now)
@@ -142,12 +166,16 @@ public sealed class Order : AggregateRoot<Guid>
     private void Recalculate()
     {
         SubtotalAmount = _items.Sum(item => item.UnitPriceAmount * item.Quantity);
-        TotalAmount = SubtotalAmount + ShippingAmount;
+        TotalAmount = SubtotalAmount + ShippingAmount - DiscountAmount;
     }
 }
 
 public sealed record OrderAddress(string Recipient, string Phone, string Country, string Province, string City,
     string Neighborhood, string Street, string? HouseNumber, string? Apartment, string? PostalCode);
+public sealed record OrderPickup(Guid LocationId, string Name, string Country, string City, string Address, string Phone, string Instructions);
+
+// Quantities describe one unit of the purchased item, not the entire order line.
+public sealed record OrderComponentSnapshot(string Sku, string Name, int Quantity, string? ImageUrl);
 
 public sealed class OrderItem : Entity<Guid>
 {
@@ -166,9 +194,18 @@ public sealed class OrderItem : Entity<Guid>
     public string Currency { get; private set; } = string.Empty;
     public int Quantity { get; private set; }
     public string? ImageUrl { get; private set; }
+    public string? ComponentsJson { get; private set; }
+    public IReadOnlyList<OrderComponentSnapshot>? Components => ComponentsJson is null
+        ? null : JsonSerializer.Deserialize<OrderComponentSnapshot[]>(ComponentsJson);
     public Money UnitPrice => Money.Create(UnitPriceAmount, Currency);
-    internal static OrderItem Create(Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl) =>
-        new(Guid.NewGuid(), orderId, itemType, reference, productName, variant, unitPrice, quantity, imageUrl);
+    internal static OrderItem Create(Guid orderId, CommerceItemType itemType, CommerceItemReference reference, string productName, string? variant, Money unitPrice, int quantity, string? imageUrl, IReadOnlyList<OrderComponentSnapshot>? components = null)
+    {
+        if (components is not null && (components.Count == 0 || components.Any(x =>
+            string.IsNullOrWhiteSpace(x.Sku) || string.IsNullOrWhiteSpace(x.Name) || x.Quantity < 1)))
+            throw new ArgumentException("A composição deve conter produtos e quantidades válidos.", nameof(components));
+        return new(Guid.NewGuid(), orderId, itemType, reference, productName, variant, unitPrice, quantity, imageUrl)
+        { ComponentsJson = components is null ? null : JsonSerializer.Serialize(components) };
+    }
 }
 
 public sealed class OrderStatusEntry : Entity<Guid>

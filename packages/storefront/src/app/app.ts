@@ -80,7 +80,7 @@ export class App {
         currency,
         language,
       ),
-    })), ...this.cart.bundles().map((item) => ({ key: `${item.type}:${item.id}`, itemType: item.type, reference: item.id, productId: item.id, sizeId: '', name: item.name, image: item.image, size: `${item.productCount} produtos`, quantity: item.quantity, price: formatPrice(item.prices[currency] * item.quantity, currency, language) }))];
+    })), ...this.cart.bundles().map((item) => ({ key: `${item.type}:${item.id}`, itemType: item.type, reference: item.id, productId: item.id, sizeId: '', name: item.name, image: item.image, size: `${item.productCount} ${language === 'fr' ? 'produits' : 'produtos'}`, quantity: item.quantity, price: formatPrice(item.prices[currency] * item.quantity, currency, language) }))];
   });
   readonly headerCartTotal = computed(() => {
     const currency = this.headerService.currency();
@@ -147,7 +147,8 @@ export class App {
     effect(() => {
       const language = this.facade.currentLanguage();
       const siteName =
-        this.facade.siteSetting()?.siteName || 'Priscila Skincare';
+        (this.facade.siteSetting()?.siteName || 'Priscila Araújo Skincare')
+          .replace(/Priscila\s+Skin\s*Care/gi, 'Priscila Araújo Skincare');
       const pageTitle = this.resolvePageTitle(this.currentUrl(), language);
       this.documentTitle.setTitle(
         pageTitle ? `${pageTitle} | ${siteName}` : siteName,

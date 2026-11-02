@@ -2,10 +2,13 @@ using System.Text.Json;
 using PriscilaSkincare.Application.Abstractions;
 using PriscilaSkincare.Domain.Catalog;
 using PriscilaSkincare.Domain.Orders;
+using Microsoft.EntityFrameworkCore;
+using PriscilaSkincare.Domain.Fulfillment;
+using PriscilaSkincare.Infrastructure.Persistence;
 
 namespace PriscilaSkincare.Infrastructure.Catalog;
 
-internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGateway
+internal sealed class StrapiCatalogGateway(HttpClient httpClient, ApplicationDbContext db, IClock clock) : ICatalogGateway
 {
     public async Task<CatalogItem?> FindAsync(CommerceItemType type, CommerceItemReference reference, string locale, CancellationToken token = default)
     {
@@ -32,7 +35,7 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGate
                 var product = Unwrap(raw); var skuText = Text(product, "sku"); if (string.IsNullOrWhiteSpace(skuText)) continue;
                 components.Add(new(ProductSku.Create(skuText)));
                 var commerce = product.TryGetProperty("commerce", out var c) ? Unwrap(c) : default;
-                var availability = Text(commerce, "availability"); var stock = Integer(commerce, "stock");
+                var availability = Text(commerce, "availability"); var stock = await AvailableStock(skuText, Integer(commerce, "stock"), token);
                 sellable &= availability == "in-stock" && stock != 0;
                 if (stock is not null) bundleStock = bundleStock is null ? stock : Math.Min(bundleStock.Value, stock.Value);
             }
@@ -54,7 +57,7 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGate
         var commerce = source.TryGetProperty("commerce", out var commerceNode) ? Unwrap(commerceNode) : default;
         var prices = commerce.ValueKind != JsonValueKind.Undefined && commerce.TryGetProperty("prices", out var pricesNode) ? Unwrap(pricesNode) : default;
         var availability = Text(commerce, "availability") ?? "out-of-stock";
-        var stock = Integer(commerce, "stock");
+        var stock = await AvailableStock(sku.Value, Integer(commerce, "stock"), token);
         var variants = new List<CatalogVariant>();
         if (source.TryGetProperty("sizes", out var sizesNode))
         {
@@ -70,6 +73,24 @@ internal sealed class StrapiCatalogGateway(HttpClient httpClient) : ICatalogGate
         return new CatalogProduct(sku, Text(source, "name") ?? sku.Value,
             Decimal(prices, "aoa"), Decimal(prices, "eur"), availability == "in-stock" && stock != 0,
             stock, MediaUrl(source, "thumbnailImage"), variants);
+    }
+
+    private async Task<int?> AvailableStock(string sku, int? legacyStock, CancellationToken token)
+    {
+        var stocks = await db.LocationStocks.AsNoTracking().Where(x => x.Sku == sku).ToListAsync(token);
+        if (stocks.Count == 0) return legacyStock;
+        var locations = await db.StockLocations.AsNoTracking().Where(x => x.IsActive &&
+            (x.Id == StockLocation.CentralWarehouseId || (x.PickupEnabled && !x.IsWarehouse))).Select(x => x.Id).ToListAsync(token);
+        // Expired reservations must not make an available product disappear from the cart.
+        // Physical stock is changed by the inventory ledger, not by the CMS catalogue.
+        var available = 0;
+        foreach (var stock in stocks.Where(x => locations.Contains(x.LocationId)))
+        {
+            var reserved = await db.StockReservations.Where(x => x.StockId == stock.Id &&
+                x.Status == "reserved" && x.ExpiresAt > clock.UtcNow).SumAsync(x => (int?)x.Quantity, token) ?? 0;
+            available += Math.Max(0, stock.OnHand - reserved);
+        }
+        return available;
     }
 
     private string? MediaUrl(JsonElement source, string property)

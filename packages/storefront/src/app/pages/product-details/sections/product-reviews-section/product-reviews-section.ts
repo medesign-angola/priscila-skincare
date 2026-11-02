@@ -29,6 +29,11 @@ interface ReviewListItem extends ProductReview {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductReviewsSection {
+  readonly stars = [1, 2, 3, 4, 5];
+
+  starFill(rating: number, star: number): number {
+    return Number.isFinite(rating) ? Math.max(0, Math.min(1, rating - star + 1)) * 100 : 0;
+  }
   private readonly auth = inject(AuthFacade);
   private readonly reviewFacade = inject(ReviewFacade);
 

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "resolveJsonModule": true,
     "composite": false,
     "emitDeclarationOnly": false,
     "noPropertyAccessFromIndexSignature": true,

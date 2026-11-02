@@ -8,7 +8,7 @@ const adminShellPlugin: Plugin = {
       .replace(/<html lang="[^"]*">/, '<html lang="pt">')
       .replace(
         /<title>[^<]*<\/title>/,
-        '<title>Priscila Skincare — Administração</title>',
+        '<title>Priscila Araújo Skincare — Administração</title>',
       );
   },
 };

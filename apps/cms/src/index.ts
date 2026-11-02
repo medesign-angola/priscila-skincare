@@ -2,6 +2,7 @@ import type { Core } from '@strapi/strapi';
 import { applyPortugueseContentManager } from './admin/content-manager-portuguese';
 import { registerHomeReadinessRelationFilter } from './home-readiness';
 import { registerTranslationProxy } from './translation-proxy';
+import { registerCommercePermissions, registerCommerceProxy } from './commerce-proxy';
 
 const PUBLIC_READ_CONTENT_TYPES = [
   'api::category.category',
@@ -92,7 +93,10 @@ async function normalizeHeroSlidePresentation(
 }
 
 export default {
-  register({ strapi }: { strapi: Core.Strapi }) {
+  async register({ strapi }: { strapi: Core.Strapi }) {
+    // Register before Strapi's admin bootstrap synchronizes roles and removes
+    // unknown permissions; doing this in app bootstrap is already too late.
+    await registerCommercePermissions(strapi);
     strapi.customFields.register({
       name: 'friendly-select',
       type: 'string',
@@ -113,6 +117,7 @@ export default {
     }
     registerHomeReadinessRelationFilter(strapi);
     registerTranslationProxy(strapi);
+    registerCommerceProxy(strapi);
   },
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {

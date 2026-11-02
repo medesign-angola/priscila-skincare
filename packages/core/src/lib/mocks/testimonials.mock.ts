@@ -41,7 +41,7 @@ export const MOCK_HOME_TESTIMONIALS: HomeTestimonialsPresentation = {
     },
     {
       id: 'testimonial-priscila-01',
-      authorLabel: 'Priscila Skincare',
+      authorLabel: 'Priscila Araújo Skincare',
       videoUrl: '/assets/videos/testimonials/priscila-01.mp4',
       order: 5,
     },
@@ -73,7 +73,7 @@ export const MOCK_HOME_TESTIMONIALS: HomeTestimonialsPresentation = {
       },
       {
         id: 'testimonial-priscila-01',
-        authorLabel: 'Priscila Skincare',
+        authorLabel: 'Priscila Araújo Skincare',
         videoUrl: '/assets/videos/testimonials/priscila-01.mp4',
         order: 5,
       },

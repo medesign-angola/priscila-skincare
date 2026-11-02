@@ -144,7 +144,7 @@ export class CartFacade {
         stock: item.stock,
       };
     }));
-    this.bundles.set(normalizedCart.items.filter(item=>item.itemType==='kit'||item.itemType==='collection').map(item=>({apiId:item.id,id:item.reference,type:item.itemType as 'kit'|'collection',name:item.productName,image:item.imageUrl??'',productCount:0,quantity:item.quantity,prices:{AOA:item.aoaPrice,EUR:item.eurPrice}})));
+    this.bundles.set(normalizedCart.items.filter(item=>item.itemType==='kit'||item.itemType==='collection').map(item=>({apiId:item.id,id:item.reference,type:item.itemType as 'kit'|'collection',name:item.productName,image:item.imageUrl??'',productCount:item.productCount??0,quantity:item.quantity,prices:{AOA:item.aoaPrice,EUR:item.eurPrice}})));
   }
   private readLocal(): CartItem[] {
     if (!this.browser) return [];

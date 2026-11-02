@@ -50,6 +50,8 @@ public static class DependencyInjection
         services.AddScoped<ReviewService>();
         services.AddScoped<CartService>();
         services.AddScoped<OrderService>();
+        services.AddScoped<ICommercePricing, CommercePricing>();
+        services.AddScoped<ICommerceTransactions, CommerceTransactions>();
         services.AddSingleton<IOtpCodeGenerator, OtpCodeGenerator>();
         AddEmailDelivery(services, configuration);
         AddNotificationIntegration(services, configuration);

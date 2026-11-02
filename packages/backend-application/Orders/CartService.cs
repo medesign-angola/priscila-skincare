@@ -96,7 +96,7 @@ public sealed class CartService(IShoppingCartRepository carts, ICustomerReposito
             var product = await catalog.FindAsync(item.ItemType, item.Reference, locale, cancellationToken);
             results.Add(new(item.Id, item.ItemType.ToString().ToLowerInvariant(), item.Reference.Value, product?.Name ?? item.Reference.Value,
                 item.VariantId, item.VariantLabel, item.Quantity, product?.AoaPrice ?? 0,
-                product?.EurPrice ?? 0, product?.IsAvailable == true, product?.Stock, product?.ImageUrl));
+                product?.EurPrice ?? 0, product?.IsAvailable == true, product?.Stock, product?.ImageUrl, product?.Components.Sum(x => x.Quantity) ?? 0));
         }
         return new(cart.Id, results, results.Sum(i => i.AoaPrice * i.Quantity), results.Sum(i => i.EurPrice * i.Quantity));
     }

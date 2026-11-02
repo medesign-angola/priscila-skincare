@@ -87,6 +87,7 @@ export const FormHeading = styled.header`
 
 export const FormCard = styled.section`
   overflow: hidden;
+  &:has(details[data-store-select]) { overflow: visible; }
   border: 1px solid var(--ps-border-strong);
   border-radius: 14px;
   background: var(--ps-surface);

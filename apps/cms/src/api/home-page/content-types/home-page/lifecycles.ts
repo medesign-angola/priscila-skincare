@@ -178,7 +178,7 @@ export default {
     await validate(event.params.data);
     await applyAutomaticSeo(event, {
       uid: 'api::home-page.home-page',
-      fixedTitle: 'Priscila Skincare',
+      fixedTitle: 'Priscila Araújo Skincare',
       descriptionPaths: [
         'ingredients.description',
         'testimonials.description',
@@ -202,7 +202,7 @@ export default {
     await validate(event.params.data);
     await applyAutomaticSeo(event, {
       uid: 'api::home-page.home-page',
-      fixedTitle: 'Priscila Skincare',
+      fixedTitle: 'Priscila Araújo Skincare',
       descriptionPaths: [
         'ingredients.description',
         'testimonials.description',
