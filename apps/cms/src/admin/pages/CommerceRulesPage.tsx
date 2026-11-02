@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 import { StoreFormPage, FormHeading, FormCard, FormSection, Field, Input, CheckRow, FormNotice, FormFooter, FormButton } from '../components/StoreFormPrimitives';
 import { CommerceGrid as FormGrid, CommerceStack, CommerceActions, CommerceRow } from '../components/CommerceLayout';
 
-import countries from '../../../../../packages/core/src/lib/utils/countries.json';
+import countries from '../data/countries.json';
 
 type Definition = { key: string; pt: string; fr: string; type?: 'number' | 'date'; optional?: boolean; options?: [string, string, string][] };
 const currency: Definition = { key: 'currency', pt: 'Moeda', fr: 'Devise', options: [['AOA', 'AOA', 'AOA'], ['EUR', 'EUR', 'EUR']] };
