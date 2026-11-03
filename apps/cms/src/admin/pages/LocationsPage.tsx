@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CommerceGrid as FormGrid, CommerceStack, CommerceActions, CommerceRow } from '../components/CommerceLayout';
 import { StoreFormPage, FormHeading, FormCard, FormSection, Field, Input, Textarea, CheckRow, FormNotice, FormFooter, FormButton, Required } from '../components/StoreFormPrimitives';
 
-import countries from '../../../../../packages/core/src/lib/utils/countries.json';
+import countries from '../data/countries.json';
 
 const defaultInstructions = 'Aguarde a confirmação de que a encomenda está pronta e apresente o número da encomenda no levantamento.';
 
